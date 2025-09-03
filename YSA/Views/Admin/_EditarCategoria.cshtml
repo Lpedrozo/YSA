@@ -1,0 +1,20 @@
+﻿@model YSA.Web.Models.ViewModels.CategoriaViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">Editar Categoría</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <form asp-action="EditarCategoria" method="post" id="formEditarCategoria">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group mb-3">
+            <label asp-for="NombreCategoria"></label>
+            <input asp-for="NombreCategoria" class="form-control" />
+            <span asp-validation-for="NombreCategoria" class="text-danger"></span>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+        </div>
+    </form>
+</div>

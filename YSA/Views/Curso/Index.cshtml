@@ -1,0 +1,158 @@
+﻿@model List<YSA.Web.Models.ViewModels.CursoViewModel>
+@{
+    ViewData["Title"] = "Cursos Disponibles";
+}
+
+<style>
+    /* Estilos globales */
+    body {
+        background-color: #f7f9fc; /* Un gris muy suave para romper con el blanco */
+    }
+
+    /* Estilos para el carrusel de cursos */
+    .carousel-item-custom {
+        position: relative;
+        height: 500px; /* Ajusta la altura del carrusel */
+        background-size: cover;
+        background-position: center;
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .carousel-overlay {
+        background-color: rgba(0, 0, 0, 0.4); /* Fondo semi-transparente */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 20px;
+    }
+
+    /* Estilos para las tarjetas de curso */
+    .card {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        border-radius: 12px;
+        border: none;
+        overflow: hidden; /* Para que la imagen no se desborde del radio */
+    }
+
+        .card:hover {
+            transform: translateY(-5px); /* Efecto de "levantar" la tarjeta */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important; /* Sombra más pronunciada */
+        }
+
+    .card-img-top {
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    /* Contenido de la tarjeta */
+    .card-body h5 {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .card-text {
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .card-categories {
+        font-size: 0.8em;
+        color: #999;
+        margin-bottom: 10px;
+    }
+
+        .card-categories .badge {
+            padding: 5px 10px;
+            margin-right: 5px;
+        }
+</style>
+
+<div class="container mt-4">
+    <hr />
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center" role="alert">
+            No hay cursos disponibles en este momento.
+        </div>
+    }
+    else
+    {
+        var cursosCarrusel = Model.Take(3).ToList();
+        var cursosRestantes = Model.Skip(3).ToList();
+
+        @if (cursosCarrusel.Any())
+        {
+            <div id="cursoCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+                <div class="carousel-inner rounded">
+                    @for (int i = 0; i < cursosCarrusel.Count; i++)
+                    {
+                        var curso = cursosCarrusel[i];
+                        <div class="carousel-item @(i == 0 ? "active" : "") carousel-item-custom" style="background-image: url('@curso.UrlImagen');">
+                            <div class="carousel-overlay">
+                                <div class="container text-start">
+                                    <h2 class="display-4 fw-bold">@curso.Titulo</h2>
+                                    <p class="lead">@curso.DescripcionCorta</p>
+                                    <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary btn-lg mt-3">Ver Curso</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#cursoCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#cursoCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
+            </div>
+        }
+
+        <h2 class="text-center mt-5 mb-4">Explora todos los cursos</h2>
+        <hr />
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var curso in cursosRestantes)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(curso.UrlImagen))
+                        {
+                            <img src="@curso.UrlImagen" class="card-img-top" alt="Imagen del curso: @curso.Titulo" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <img src="https://via.placeholder.com/400x200.png?text=Sin+Imagen" class="card-img-top" alt="Imagen de marcador de posición" style="height: 200px; object-fit: cover;">
+                        }
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@curso.Titulo</h5>
+                            <p class="card-text text-muted flex-grow-1">@curso.DescripcionCorta</p>
+
+                            @if (curso.ListaCategorias != null && curso.ListaCategorias.Any())
+                            {
+                                <div class="card-categories">
+                                    @foreach (var categoria in curso.ListaCategorias)
+                                    {
+                                        <span class="badge bg-secondary">@categoria</span>
+                                    }
+                                </div>
+                            }
+
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <h6 class="card-subtitle text-primary mb-0">@curso.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</h6>
+                                <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary">Ver Detalles</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

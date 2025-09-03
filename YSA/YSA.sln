@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YSA", "YSA.csproj", "{FC670C52-537C-4561-8BF1-C21CA1B828EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YSA.Core", "..\YSA.Core\YSA.Core.csproj", "{D821E77D-E0FB-4DE4-BD0C-661324101827}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YSA.Data", "..\YSA.Data\YSA.Data.csproj", "{91FA92BF-D426-4AD2-94DF-EA4B34795655}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FC670C52-537C-4561-8BF1-C21CA1B828EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC670C52-537C-4561-8BF1-C21CA1B828EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC670C52-537C-4561-8BF1-C21CA1B828EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC670C52-537C-4561-8BF1-C21CA1B828EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D821E77D-E0FB-4DE4-BD0C-661324101827}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D821E77D-E0FB-4DE4-BD0C-661324101827}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D821E77D-E0FB-4DE4-BD0C-661324101827}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D821E77D-E0FB-4DE4-BD0C-661324101827}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91FA92BF-D426-4AD2-94DF-EA4B34795655}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91FA92BF-D426-4AD2-94DF-EA4B34795655}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91FA92BF-D426-4AD2-94DF-EA4B34795655}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91FA92BF-D426-4AD2-94DF-EA4B34795655}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D0FA5B87-CF52-43D1-AA75-7693062863E0}
+	EndGlobalSection
+EndGlobal

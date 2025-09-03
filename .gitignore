@@ -1,0 +1,9 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio temporary files
+.vs/
+*.suo
+*.user
+*.log

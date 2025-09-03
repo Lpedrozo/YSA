@@ -1,0 +1,334 @@
+﻿@model List<YSA.Web.Models.ViewModels.CursoViewModel>
+@{
+    ViewData["Title"] = "Gestión de Cursos";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Gestión de Cursos</h1>
+    <hr />
+
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearCursoModal">
+            <i class="fas fa-plus-circle"></i> Nuevo Curso
+        </button>
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Título</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaCursos">
+            @foreach (var curso in Model)
+            {
+                <tr>
+                    <td>@curso.Titulo</td>
+                    <td>@curso.Precio.ToString("C")</td>
+                    <td class="text-center">
+                        <a asp-action="GestionarModulos" asp-route-cursoId="@curso.Id" class="btn btn-sm btn-info">
+                            <i class="fas fa-cubes"></i> Módulos
+                        </a>
+                        <button type="button" class="btn btn-sm btn-primary editar-btn"
+                                data-id="@curso.Id"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editarCursoModal"
+                                data-titulo="@curso.Titulo"
+                                data-descripcioncorta="@curso.DescripcionCorta"
+                                data-descripcionlarga="@curso.DescripcionLarga"
+                                data-precio="@curso.Precio"
+                                data-urlimagen="@curso.UrlImagen"
+                                data-categorias="@string.Join(",", curso.CategoriasSeleccionadas)">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <form asp-action="EliminarCurso" asp-route-id="@curso.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-danger eliminar-btn">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="crearCursoModal" tabindex="-1" aria-labelledby="crearCursoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearCursoModalLabel">Crear Curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formCrearCurso" asp-action="CrearCurso" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div id="crear-curso-validation-errors" class="alert alert-danger d-none"></div>
+                    <div class="form-group mb-3">
+                        <label for="Titulo">Título</label>
+                        <input type="text" id="Crear_Titulo" name="Titulo" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="DescripcionCorta">Descripción Corta</label>
+                        <textarea id="Crear_DescripcionCorta" name="DescripcionCorta" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="DescripcionLarga">Descripción Larga</label>
+                        <textarea id="Crear_DescripcionLarga" name="DescripcionLarga" class="form-control" rows="5"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Precio">Precio</label>
+                        <input type="number" id="Crear_Precio" name="Precio" class="form-control" step="0.01" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="imagenArchivo">Imagen del Curso</label>
+                        <input type="file" id="Crear_imagenArchivo" name="imagenArchivo" class="form-control" accept=".jpg,.jpeg,.png" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Categorías</label>
+                        <div id="crear-categorias-checkboxes">
+                            @foreach (var categoria in ViewBag.CategoriasCrear)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="CategoriasSeleccionadas" value="@categoria.Value" id="crear-categoria-@categoria.Value">
+                                    <label class="form-check-label" for="crear-categoria-@categoria.Value">
+                                        @categoria.Text
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editarCursoModal" tabindex="-1" aria-labelledby="editarCursoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarCursoModalLabel">Editar Curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarCurso" asp-action="EditarCurso" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div id="editar-curso-validation-errors" class="alert alert-danger d-none"></div>
+                    <input type="hidden" id="Editar_Id" name="Id" />
+                    <div class="form-group mb-3">
+                        <label for="Titulo">Título</label>
+                        <input type="text" id="Editar_Titulo" name="Titulo" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="DescripcionCorta">Descripción Corta</label>
+                        <textarea id="Editar_DescripcionCorta" name="DescripcionCorta" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="DescripcionLarga">Descripción Larga</label>
+                        <textarea id="Editar_DescripcionLarga" name="DescripcionLarga" class="form-control" rows="5"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Precio">Precio</label>
+                        <input type="number" id="Editar_Precio" name="Precio" class="form-control" step="0.01" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="imagenArchivo">Imagen del Curso</label>
+                        <input type="file" id="Editar_imagenArchivo" name="imagenArchivo" class="form-control" accept=".jpg,.jpeg,.png" />
+                        <small class="form-text text-muted">Deja este campo vacío para conservar la imagen actual.</small>
+                        <img id="Editar_PreviewImagen" src="" class="img-thumbnail mt-2" style="max-height: 150px; display: none;" alt="Imagen actual del curso" />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Categorías</label>
+                        <div id="editar-categorias-checkboxes">
+                            @foreach (var categoria in ViewBag.CategoriasEditar)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="CategoriasSeleccionadas" value="@categoria.Value" id="editar-categoria-@categoria.Value">
+                                    <label class="form-check-label" for="editar-categoria-@categoria.Value">
+                                        @categoria.Text
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tablaCursos = document.getElementById('tablaCursos');
+            const crearModalEl = document.getElementById('crearCursoModal');
+            const editarModalEl = document.getElementById('editarCursoModal');
+            const crearForm = document.getElementById('formCrearCurso');
+            const editarForm = document.getElementById('formEditarCurso');
+
+            function getAntiForgeryToken() {
+                const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
+                return tokenElement ? tokenElement.value : '';
+            }
+
+            // Envío del formulario de creación de curso
+            crearForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                formData.append('__RequestVerificationToken', getAntiForgeryToken());
+
+                // Añadir categorías al FormData
+                Array.from(document.querySelectorAll('#crear-categorias-checkboxes input:checked')).forEach(cb => {
+                    formData.append('CategoriasSeleccionadas', cb.value);
+                });
+
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const modal = bootstrap.Modal.getInstance(crearModalEl);
+                    modal.hide();
+                    Swal.fire('Éxito', 'Curso creado con éxito.', 'success');
+                    crearForm.reset();
+                    await recargarTabla();
+                } else {
+                    Swal.fire('Error', 'Hubo un problema al crear el curso.', 'error');
+                }
+            });
+
+            // Llenar el modal de edición de curso
+            editarModalEl.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const cursoId = button.getAttribute('data-id');
+                const titulo = button.getAttribute('data-titulo');
+                const descripcionCorta = button.getAttribute('data-descripcioncorta');
+                const descripcionLarga = button.getAttribute('data-descripcionlarga');
+                const precio = button.getAttribute('data-precio');
+                const urlImagen = button.getAttribute('data-urlimagen');
+                const categoriasSeleccionadas = button.getAttribute('data-categorias') ? button.getAttribute('data-categorias').split(',').map(Number) : [];
+
+                document.getElementById('Editar_Id').value = cursoId;
+                document.getElementById('Editar_Titulo').value = titulo;
+                document.getElementById('Editar_DescripcionCorta').value = descripcionCorta;
+                document.getElementById('Editar_DescripcionLarga').value = descripcionLarga;
+                document.getElementById('Editar_Precio').value = precio;
+
+                const imagenPreview = document.getElementById('Editar_PreviewImagen');
+                if (urlImagen) {
+                    imagenPreview.src = urlImagen;
+                    imagenPreview.style.display = 'block';
+                } else {
+                    imagenPreview.style.display = 'none';
+                }
+
+                const checkboxes = document.querySelectorAll('#editar-categorias-checkboxes input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    const categoriaId = parseInt(checkbox.value);
+                    checkbox.checked = categoriasSeleccionadas.includes(categoriaId);
+                });
+            });
+
+            // Envío del formulario de edición de curso
+                    editarForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            formData.append('__RequestVerificationToken', getAntiForgeryToken());
+
+            Array.from(document.querySelectorAll('#editar-categorias-checkboxes input:checked')).forEach(cb => {
+                formData.append('CategoriasSeleccionadas', cb.value);
+            });
+
+            const response = await fetch(this.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json(); // Parsea la respuesta JSON
+
+            if (result.success) {
+                const modal = bootstrap.Modal.getInstance(editarModalEl);
+                modal.hide();
+                Swal.fire('Éxito', result.message, 'success');
+                await recargarTabla();
+            } else {
+                // Manejar los errores de validación
+                Swal.fire({
+                    title: 'Error de validación',
+                    html: formatValidationErrors(result.errors),
+                    icon: 'error'
+                });
+            }
+        });
+
+        // Función para formatear los errores
+        function formatValidationErrors(errors) {
+            let html = '<ul>';
+            for (const key in errors) {
+                if (errors.hasOwnProperty(key)) {
+                    errors[key].forEach(message => {
+                        html += `<li>${message}</li>`;
+                    });
+                }
+            }
+            html += '</ul>';
+            return html;
+        }
+
+            // Recargar la tabla de cursos (ajustada para el nuevo flujo)
+            async function recargarTabla() {
+                try {
+                    const response = await fetch('@Url.Action("GestionarCursos", "Admin")');
+                    if (!response.ok) {
+                        throw new Error('No se pudieron cargar los cursos.');
+                    }
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newTableBody = doc.getElementById('tablaCursos').innerHTML;
+                    tablaCursos.innerHTML = newTableBody;
+                    attachEventListeners();
+                } catch (error) {
+                    Swal.fire('Error', error.message, 'error');
+                }
+            }
+
+            // Lógica para confirmar eliminación
+            function attachEventListeners() {
+                document.querySelectorAll('.eliminar-btn').forEach(button => {
+                    button.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const form = this.closest('form');
+                        Swal.fire({
+                            title: '¿Estás seguro?',
+                            text: "¡No podrás revertir esto!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Sí, ¡bórralo!',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+            }
+            attachEventListeners();
+        });
+    </script>
+}

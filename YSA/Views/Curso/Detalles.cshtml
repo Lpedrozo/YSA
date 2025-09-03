@@ -1,0 +1,106 @@
+﻿@model YSA.Web.Models.ViewModels.CursoCompletoViewModel
+@{
+    ViewData["Title"] = Model.Titulo;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="mb-3">@Model.Titulo</h1>
+            <p class="lead">@Model.DescripcionLarga</p>
+            <hr />
+
+            @if (Model.TieneAcceso)
+            {
+                <h3>Contenido del Curso</h3>
+                <div class="accordion" id="acordeonModulos">
+                    @if (Model.Modulos != null && Model.Modulos.Any())
+                    {
+                        @foreach (var modulo in Model.Modulos)
+                        {
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading_@modulo.Id">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
+                                        @modulo.Titulo
+                                    </button>
+                                </h2>
+                                <div id="collapse_@modulo.Id" class="accordion-collapse collapse" aria-labelledby="heading_@modulo.Id" data-bs-parent="#acordeonModulos">
+                                    <div class="accordion-body">
+                                        <ul class="list-group list-group-flush">
+                                            @if (modulo.Lecciones != null && modulo.Lecciones.Any())
+                                            {
+                                                @foreach (var leccion in modulo.Lecciones)
+                                                {
+                                                    <li class="list-group-item">
+                                                        <strong>@leccion.Titulo</strong>
+                                                        <div class="mt-2">
+                                                            @if (!string.IsNullOrEmpty(leccion.UrlVideo))
+                                                            {
+                                                                <div class="ratio ratio-16x9 mb-3">
+                                                                    <iframe src="@leccion.UrlVideo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                                                </div>
+                                                            }
+                                                            <p>@Html.Raw(leccion.Contenido)</p>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <li class="list-group-item">No hay lecciones en este módulo.</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">Este curso no contiene módulos ni lecciones.</div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning" role="alert">
+                    Para ver el contenido completo de este curso, debes adquirirlo.
+                </div>
+            }
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mt-4 mt-md-0 shadow-sm">
+                @if (!string.IsNullOrEmpty(Model.UrlImagen))
+                {
+                    <img src="@Model.UrlImagen" class="card-img-top" alt="Imagen del curso" style="height: 250px; object-fit: cover;">
+                }
+                <div class="card-body">
+                    <h5 class="card-title">Precio: <span class="text-primary">@Model.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</span></h5>
+                    <p class="card-text">
+                        <i class="fas fa-check-circle text-success"></i> Acceso de por vida
+                    </p>
+                    @if (Model.TieneAcceso)
+                    {
+                        <div class="alert alert-success text-center m-3">
+                            <i class="fas fa-check-circle"></i> Ya tienes acceso a este curso.
+                        </div>
+                    }
+                    else if (Model.EstaEnValidacion)
+                    {
+                        <div class="alert alert-info text-center m-3">
+                            <i class="fas fa-hourglass-half"></i> Su pago está en proceso de validación.
+                        </div>
+                    }
+                    else
+                    {
+                        <form asp-controller="Pedido" asp-action="IniciarCompra" method="post">
+                            <input type="hidden" name="cursoId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-success w-100">Inscribirse ahora</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

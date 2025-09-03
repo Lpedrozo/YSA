@@ -1,0 +1,281 @@
+﻿@model List<YSA.Web.Models.ViewModels.LeccionViewModel>
+
+@{
+    ViewData["Title"] = "Gestión de Lecciones - " + ViewBag.ModuloTitulo;
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Lecciones para el Módulo: @ViewBag.ModuloTitulo</h1>
+    <hr />
+
+    <a asp-action="GestionarModulos" asp-route-cursoId="@ViewBag.CursoId" class="btn btn-secondary mb-3">
+        <i class="fas fa-arrow-left"></i> Volver a Módulos
+    </a>
+
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearLeccionModal">
+            <i class="fas fa-plus-circle"></i> Nueva Lección
+        </button>
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Orden</th>
+                <th>Título</th>
+                <th>Contenido</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaLecciones">
+            @foreach (var leccion in Model)
+            {
+                <tr>
+                    <td>@leccion.Orden</td>
+                    <td>@leccion.Titulo</td>
+                    <td>@(leccion.Contenido?.Length > 50 ? leccion.Contenido.Substring(0, 50) + "..." : leccion.Contenido)</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-primary editar-btn"
+                                data-id="@leccion.Id"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editarLeccionModal">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <form asp-action="EliminarLeccion" asp-route-id="@leccion.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-danger eliminar-btn">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="crearLeccionModal" tabindex="-1" aria-labelledby="crearLeccionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearLeccionModalLabel">Crear Lección</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formCrearLeccion" asp-action="CrearLeccion" method="post">
+                <div class="modal-body">
+                    <div id="crear-leccion-validation-errors" class="alert alert-danger d-none"></div>
+                    <input type="hidden" name="ModuloId" value="@ViewBag.ModuloId" />
+                    <div class="form-group mb-3">
+                        <label for="Crear_Titulo" class="form-label">Título</label>
+                        <input type="text" id="Crear_Titulo" name="Titulo" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Crear_Orden" class="form-label">Orden</label>
+                        <input type="number" id="Crear_Orden" name="Orden" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Crear_Contenido" class="form-label">Contenido</label>
+                        <textarea id="Crear_Contenido" name="Contenido" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Crear_UrlVideo" class="form-label">URL del Video</label>
+                        <input type="text" id="Crear_UrlVideo" name="UrlVideo" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editarLeccionModal" tabindex="-1" aria-labelledby="editarLeccionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarLeccionModalLabel">Editar Lección</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarLeccion" asp-action="EditarLeccion" method="post">
+                <div class="modal-body">
+                    <div id="editar-leccion-validation-errors" class="alert alert-danger d-none"></div>
+                    <input type="hidden" id="Editar_Id" name="Id" />
+                    <input type="hidden" id="Editar_ModuloId" name="ModuloId" value="@ViewBag.ModuloId" />
+                    <div class="form-group mb-3">
+                        <label for="Editar_Titulo" class="form-label">Título</label>
+                        <input type="text" id="Editar_Titulo" name="Titulo" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Editar_Orden" class="form-label">Orden</label>
+                        <input type="number" id="Editar_Orden" name="Orden" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Editar_Contenido" class="form-label">Contenido</label>
+                        <textarea id="Editar_Contenido" name="Contenido" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Editar_UrlVideo" class="form-label">URL del Video</label>
+                        <input type="text" id="Editar_UrlVideo" name="UrlVideo" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const crearModalEl = document.getElementById('crearLeccionModal');
+            const editarModalEl = document.getElementById('editarLeccionModal');
+            const crearForm = document.getElementById('formCrearLeccion');
+            const editarForm = document.getElementById('formEditarLeccion');
+
+            function getAntiForgeryToken() {
+                const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
+                return tokenElement ? tokenElement.value : '';
+            }
+
+            function displayErrors(formId, errors) {
+                const errorDiv = document.getElementById(formId);
+                errorDiv.innerHTML = '';
+                for (const key in errors) {
+                    if (errors.hasOwnProperty(key)) {
+                        errors[key].forEach(error => {
+                            errorDiv.innerHTML += `<div>${error}</div>`;
+                        });
+                    }
+                }
+                errorDiv.classList.remove('d-none');
+            }
+
+            crearForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = {
+                    ModuloId: parseInt(formData.get('ModuloId')),
+                    Titulo: formData.get('Titulo'),
+                    Orden: parseInt(formData.get('Orden')),
+                    Contenido: formData.get('Contenido'),
+                    UrlVideo: formData.get('UrlVideo')
+                };
+
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': getAntiForgeryToken()
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire({
+                        title: '¡Éxito!',
+                        text: result.message,
+                        icon: 'success',
+                        willClose: () => {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    displayErrors('crear-leccion-validation-errors', result.errors);
+                }
+            });
+
+            editarModalEl.addEventListener('show.bs.modal', async function (event) {
+                const button = event.relatedTarget;
+                const leccionId = button.getAttribute('data-id');
+
+                try {
+                    const response = await fetch(`/Admin/ObtenerLeccionPorIdJson?id=${leccionId}`);
+                    if (!response.ok) {
+                        throw new Error('No se pudo cargar la información de la lección.');
+                    }
+                    const result = await response.json();
+                    if (result.success) {
+                        const leccion = result.data;
+                        document.getElementById('Editar_Id').value = leccion.id;
+                        document.getElementById('Editar_ModuloId').value = leccion.moduloId;
+                        document.getElementById('Editar_Titulo').value = leccion.titulo;
+                        document.getElementById('Editar_Orden').value = leccion.orden;
+                        document.getElementById('Editar_Contenido').value = leccion.contenido;
+                        document.getElementById('Editar_UrlVideo').value = leccion.urlVideo;
+                        document.getElementById('editar-leccion-validation-errors').classList.add('d-none');
+                    } else {
+                        Swal.fire('Error', result.message, 'error');
+                    }
+                } catch (error) {
+                    Swal.fire('Error', error.message, 'error');
+                }
+            });
+
+            editarForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = {
+                    Id: parseInt(formData.get('Id')),
+                    ModuloId: parseInt(formData.get('ModuloId')),
+                    Titulo: formData.get('Titulo'),
+                    Orden: parseInt(formData.get('Orden')),
+                    Contenido: formData.get('Contenido'),
+                    UrlVideo: formData.get('UrlVideo')
+                };
+
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': getAntiForgeryToken()
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire({
+                        title: '¡Éxito!',
+                        text: result.message,
+                        icon: 'success',
+                        willClose: () => {
+                            window.location.reload();
+                        }
+                    });
+                } else {
+                    displayErrors('editar-leccion-validation-errors', result.errors);
+                }
+            });
+
+            function attachEventListeners() {
+                document.querySelectorAll('.eliminar-btn').forEach(button => {
+                    button.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const form = this.closest('form');
+                        Swal.fire({
+                            title: '¿Estás seguro?',
+                            text: "¡No podrás revertir esto!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Sí, ¡bórralo!',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+            }
+            attachEventListeners();
+        });
+    </script>
+}

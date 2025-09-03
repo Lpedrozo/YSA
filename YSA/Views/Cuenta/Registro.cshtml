@@ -1,0 +1,49 @@
+﻿@model YSA.Web.Models.ViewModels.RegistroViewModel
+@{
+    ViewData["Title"] = "Registro de Estudiantes";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card my-5">
+            <div class="card-body p-4">
+                <h2 class="card-title text-center mb-4">Registro de Estudiantes</h2>
+                <form asp-action="Registro" asp-controller="Cuenta" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="mb-3">
+                        <label asp-for="Nombre" class="form-label">Nombre</label>
+                        <input type="text" asp-for="Nombre" class="form-control" placeholder="Introduce tu nombre" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Apellido" class="form-label">Apellido</label>
+                        <input type="text" asp-for="Apellido" class="form-control" placeholder="Introduce tu apellido" />
+                        <span asp-validation-for="Apellido" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Correo Electrónico</label>
+                        <input type="email" asp-for="Email" class="form-control" placeholder="ejemplo@correo.com" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Contrasena" class="form-label">Contraseña</label>
+                        <input type="password" asp-for="Contrasena" class="form-control" placeholder="Crea una contraseña segura" />
+                        <span asp-validation-for="Contrasena" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ConfirmarContrasena" class="form-label">Confirmar Contraseña</label>
+                        <input type="password" asp-for="ConfirmarContrasena" class="form-control" placeholder="Repite la contraseña" />
+                        <span asp-validation-for="ConfirmarContrasena" class="text-danger"></span>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Crear Cuenta</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

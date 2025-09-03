@@ -1,0 +1,269 @@
+﻿@model List<YSA.Web.Models.ViewModels.CategoriaViewModel>
+
+@{
+    ViewData["Title"] = "Gestionar Categorías";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Gestión de Categorías</h1>
+    <hr />
+
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">
+            <i class="fas fa-plus-circle"></i> Nueva Categoría
+        </button>
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaCategorias">
+            @foreach (var categoria in Model)
+            {
+                <tr>
+                    <td>@categoria.Id</td>
+                    <td>@categoria.NombreCategoria</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-primary editar-btn"
+                                data-id="@categoria.Id"
+                                data-nombre="@categoria.NombreCategoria"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editarCategoriaModal">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <form asp-action="EliminarCategoria" asp-route-id="@categoria.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-danger eliminar-btn">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="crearCategoriaModal" tabindex="-1" aria-labelledby="crearCategoriaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearCategoriaModalLabel">Crear Categoría</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formCrearCategoria" asp-action="CrearCategoria" method="post">
+                <div class="modal-body">
+                    <div id="crear-validation-errors" class="alert alert-danger d-none"></div>
+                    @Html.AntiForgeryToken()
+                    <div class="form-group mb-3">
+                        <label for="Crear_NombreCategoria" class="form-label">Nombre de la Categoría</label>
+                        <input type="text" id="Crear_NombreCategoria" name="NombreCategoria" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editarCategoriaModal" tabindex="-1" aria-labelledby="editarCategoriaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarCategoriaModalLabel">Editar Categoría</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarCategoria" asp-action="EditarCategoria" method="post">
+                <div class="modal-body">
+                    <div id="editar-validation-errors" class="alert alert-danger d-none"></div>
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="Editar_Id" name="Id" />
+                    <div class="form-group mb-3">
+                        <label for="Editar_NombreCategoria" class="form-label">Nombre de la Categoría</label>
+                        <input type="text" id="Editar_NombreCategoria" name="NombreCategoria" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tablaCategorias = document.getElementById('tablaCategorias');
+            const crearModalEl = document.getElementById('crearCategoriaModal');
+            const editarModalEl = document.getElementById('editarCategoriaModal');
+            const crearForm = document.getElementById('formCrearCategoria');
+            const editarForm = document.getElementById('formEditarCategoria');
+
+            // Función para recargar la tabla de categorías
+            async function recargarTabla() {
+                try {
+                    const response = await fetch('@Url.Action("ObtenerCategoriasJson", "Admin")');
+                    if (!response.ok) {
+                        throw new Error('No se pudo cargar las categorías.');
+                    }
+                    const categorias = await response.json();
+                    tablaCategorias.innerHTML = ''; // Limpiar la tabla
+
+                    categorias.forEach(categoria => {
+                        const row = `
+                            <tr>
+                                <td>${categoria.id}</td>
+                                <td>${categoria.nombreCategoria}</td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-primary editar-btn"
+                                            data-id="${categoria.id}"
+                                            data-nombre="${categoria.nombreCategoria}"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editarCategoriaModal">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <form action="@Url.Action("EliminarCategoria", "Admin")?id=${categoria.id}" method="post" class="d-inline">
+                                        <input type="hidden" name="__RequestVerificationToken" value="${getAntiForgeryToken()}" />
+                                        <button type="submit" class="btn btn-sm btn-danger eliminar-btn">
+                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        `;
+                        tablaCategorias.insertAdjacentHTML('beforeend', row);
+                    });
+
+                    attachEventListeners();
+                } catch (error) {
+                    Swal.fire('Error', error.message, 'error');
+                }
+            }
+
+            // Función para obtener el token de validación
+            function getAntiForgeryToken() {
+                const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
+                return tokenElement ? tokenElement.value : '';
+            }
+
+            // Función para mostrar errores de validación
+            function showValidationErrors(errors, errorContainerId) {
+                const container = document.getElementById(errorContainerId);
+                let errorHtml = '';
+                for (const key in errors) {
+                    if (Array.isArray(errors[key])) {
+                        errors[key].forEach(msg => {
+                            errorHtml += `<div>${msg}</div>`;
+                        });
+                    } else {
+                        errorHtml += `<div>${errors[key]}</div>`;
+                    }
+                }
+                container.innerHTML = errorHtml;
+                container.classList.remove('d-none');
+            }
+
+            // Envío del formulario de creación
+            crearForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries()); // <-- Convertir a objeto
+
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // <-- Nuevo header
+                        'RequestVerificationToken': getAntiForgeryToken() // <-- Token en el header
+                    },
+                    body: JSON.stringify(data) // <-- Enviar como JSON
+                });
+
+                // Si la respuesta es JSON, la procesamos
+                const result = await response.json();
+                if (result.success) {
+                    const modal = bootstrap.Modal.getInstance(crearModalEl);
+                    modal.hide();
+                    Swal.fire('Éxito', result.message, 'success');
+                    crearForm.reset();
+                    await recargarTabla();
+                } else {
+                    showValidationErrors(result.errors, 'crear-validation-errors');
+                }
+            });
+
+            // Llenar el modal de edición
+            editarModalEl.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const id = button.getAttribute('data-id');
+                const nombre = button.getAttribute('data-nombre');
+
+                editarModalEl.querySelector('#Editar_Id').value = id;
+                editarModalEl.querySelector('#Editar_NombreCategoria').value = nombre;
+                document.getElementById('editar-validation-errors').classList.add('d-none');
+            });
+
+            // Envío del formulario de edición
+            editarForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': getAntiForgeryToken()
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    const modal = bootstrap.Modal.getInstance(editarModalEl);
+                    modal.hide();
+                    Swal.fire('Éxito', result.message, 'success');
+                    await recargarTabla();
+                } else {
+                    showValidationErrors(result.errors, 'editar-validation-errors');
+                }
+            });
+
+            // Lógica para confirmar la eliminación con SweetAlert2
+            function attachEventListeners() {
+                document.querySelectorAll('.eliminar-btn').forEach(button => {
+                    button.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const form = this.closest('form');
+                        Swal.fire({
+                            title: '¿Estás seguro?',
+                            text: "¡No podrás revertir esto!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Sí, ¡bórralo!',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+            }
+
+            attachEventListeners();
+        });
+    </script>
+}

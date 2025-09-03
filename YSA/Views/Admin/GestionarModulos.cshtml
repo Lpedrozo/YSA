@@ -1,0 +1,291 @@
+﻿@model List<YSA.Web.Models.ViewModels.ModuloViewModel>
+@{
+    ViewData["Title"] = "Gestión de Módulos - " + ViewBag.CursoTitulo;
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Módulos para el curso: @ViewBag.CursoTitulo</h1>
+    <hr />
+
+    <a asp-action="GestionarCursos" class="btn btn-secondary mb-3">
+        <i class="fas fa-arrow-left"></i> Volver a Cursos
+    </a>
+
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearModuloModal">
+            <i class="fas fa-plus-circle"></i> Nuevo Módulo
+        </button>
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Orden</th>
+                <th>Título</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaModulos">
+            @foreach (var modulo in Model)
+            {
+                <tr>
+                    <td>@modulo.Orden</td>
+                    <td>@modulo.Titulo</td>
+                    <td class="text-center">
+                        <a asp-action="GestionarLecciones" asp-route-moduloId="@modulo.Id" class="btn btn-sm btn-info">
+                            <i class="fas fa-list"></i> Lecciones
+                        </a>
+                        <button type="button" class="btn btn-sm btn-primary editar-btn" data-id="@modulo.Id" data-bs-toggle="modal" data-bs-target="#editarModuloModal">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <form asp-action="EliminarModulo" asp-route-id="@modulo.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-danger eliminar-btn">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="crearModuloModal" tabindex="-1" aria-labelledby="crearModuloModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearModuloModalLabel">Crear Módulo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formCrearModulo" asp-action="CrearModulo" method="post">
+                <div class="modal-body">
+                    <div id="crear-modulo-validation-errors" class="alert alert-danger d-none"></div>
+                    <input type="hidden" name="CursoId" value="@ViewBag.CursoId" />
+                    <div class="form-group mb-3">
+                        <label for="Crear_Titulo">Título</label>
+                        <input type="text" id="Crear_Titulo" name="Titulo" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Crear_Orden">Orden</label>
+                        <input type="number" id="Crear_Orden" name="Orden" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editarModuloModal" tabindex="-1" aria-labelledby="editarModuloModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarModuloModalLabel">Editar Módulo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarModulo" asp-action="EditarModulo" method="post">
+                <div class="modal-body">
+                    <div id="editar-modulo-validation-errors" class="alert alert-danger d-none"></div>
+                    <input type="hidden" id="Editar_Id" name="Id" />
+                    <input type="hidden" id="Editar_CursoId" name="CursoId" value="@ViewBag.CursoId" />
+                    <div class="form-group mb-3">
+                        <label for="Editar_Titulo">Título</label>
+                        <input type="text" id="Editar_Titulo" name="Titulo" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Editar_Orden">Orden</label>
+                        <input type="number" id="Editar_Orden" name="Orden" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tablaModulos = document.getElementById('tablaModulos');
+            const crearModalEl = document.getElementById('crearModuloModal');
+            const editarModalEl = document.getElementById('editarModuloModal');
+            const crearForm = document.getElementById('formCrearModulo');
+            const editarForm = document.getElementById('formEditarModulo');
+
+            function getAntiForgeryToken() {
+                const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
+                return tokenElement ? tokenElement.value : '';
+            }
+
+            function displayErrors(formId, errors) {
+                const errorDiv = document.getElementById(formId);
+                errorDiv.innerHTML = '';
+                for (const key in errors) {
+                    if (errors.hasOwnProperty(key)) {
+                        errors[key].forEach(error => {
+                            errorDiv.innerHTML += `<div>${error}</div>`;
+                        });
+                    }
+                }
+                errorDiv.classList.remove('d-none');
+            }
+
+            async function recargarTabla() {
+                const cursoId = @ViewBag.CursoId;
+                try {
+                    const response = await fetch(`/Admin/ObtenerModulosPorCursoIdJson?cursoId=${cursoId}`);
+                    if (!response.ok) {
+                        throw new Error('No se pudieron cargar los módulos.');
+                    }
+                    const modulos = await response.json();
+                    tablaModulos.innerHTML = '';
+                    modulos.data.forEach(modulo => {
+                        const row = `
+                            <tr>
+                                <td>${modulo.orden}</td>
+                                <td>${modulo.titulo}</td>
+                                <td class="text-center">
+                                    <a href="/Admin/GestionarLecciones?moduloId=${modulo.id}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-list"></i> Lecciones
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-primary editar-btn"
+                                            data-id="${modulo.id}"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editarModuloModal">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <form action="/Admin/EliminarModulo?id=${modulo.id}" method="post" class="d-inline">
+                                        <input type="hidden" name="__RequestVerificationToken" value="${getAntiForgeryToken()}" />
+                                        <button type="submit" class="btn btn-sm btn-danger eliminar-btn">
+                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        `;
+                        tablaModulos.insertAdjacentHTML('beforeend', row);
+                    });
+                    attachEventListeners();
+                } catch (error) {
+                    Swal.fire('Error', error.message, 'error');
+                }
+            }
+
+            crearForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = {
+                    CursoId: parseInt(formData.get('CursoId')),
+                    Titulo: formData.get('Titulo'),
+                    Orden: parseInt(formData.get('Orden'))
+                };
+
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': getAntiForgeryToken()
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    const modal = bootstrap.Modal.getInstance(crearModalEl);
+                    modal.hide();
+                    Swal.fire('Éxito', result.message, 'success');
+                    crearForm.reset();
+                    await recargarTabla();
+                } else {
+                    displayErrors('crear-modulo-validation-errors', result.errors);
+                }
+            });
+
+            editarModalEl.addEventListener('show.bs.modal', async function (event) {
+                const button = event.relatedTarget;
+                const moduloId = button.getAttribute('data-id');
+
+                try {
+                    const response = await fetch(`/Admin/ObtenerModuloPorIdJson?id=${moduloId}`);
+                    if (!response.ok) {
+                        throw new Error('No se pudo cargar la información del módulo.');
+                    }
+                    const result = await response.json();
+                    if (result.success) {
+                        const modulo = result.data;
+                        document.getElementById('Editar_Id').value = modulo.id;
+                        document.getElementById('Editar_CursoId').value = modulo.cursoId;
+                        document.getElementById('Editar_Titulo').value = modulo.titulo;
+                        document.getElementById('Editar_Orden').value = modulo.orden;
+                        document.getElementById('editar-modulo-validation-errors').classList.add('d-none');
+                    } else {
+                        Swal.fire('Error', result.message, 'error');
+                    }
+                } catch (error) {
+                    Swal.fire('Error', error.message, 'error');
+                }
+            });
+
+            editarForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = {
+                    Id: parseInt(formData.get('Id')),
+                    CursoId: parseInt(formData.get('CursoId')),
+                    Titulo: formData.get('Titulo'),
+                    Orden: parseInt(formData.get('Orden'))
+                };
+
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': getAntiForgeryToken()
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    const modal = bootstrap.Modal.getInstance(editarModalEl);
+                    modal.hide();
+                    Swal.fire('Éxito', result.message, 'success');
+                    await recargarTabla();
+                } else {
+                    displayErrors('editar-modulo-validation-errors', result.errors);
+                }
+            });
+
+            function attachEventListeners() {
+                document.querySelectorAll('.eliminar-btn').forEach(button => {
+                    button.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const form = this.closest('form');
+                        Swal.fire({
+                            title: '¿Estás seguro?',
+                            text: "¡No podrás revertir esto!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Sí, ¡bórralo!',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+            }
+            attachEventListeners();
+        });
+    </script>
+}
