@@ -3,8 +3,57 @@
     ViewData["Title"] = "Registro de Estudiantes";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
+<style>
+    /* Estilos globales para mantener la coherencia */
+    body {
+        background-color: #000000;
+        color: #fff;
+    }
+
+    /* Estilos para la tarjeta del formulario */
+    .card {
+        border-radius: 12px;
+        background-color: #ffffff;
+        color: #000;
+        box-shadow: 0 4px 16px rgba(255, 255, 255, 0.08);
+    }
+
+    .card-title {
+        color: #000;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        transition: border-color 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: #c49900;
+            box-shadow: 0 0 0 0.25rem rgba(196, 153, 0, 0.25);
+        }
+
+    /* Estilos para el botón de registro */
+    .btn-register {
+        background-color: #c49900;
+        border-color: #c49900;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+
+        .btn-register:hover {
+            background-color: #a38200;
+            border-color: #a38200;
+            color: white;
+            transform: translateY(-2px);
+        }
+</style>
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="col-md-4">
         <div class="card my-5">
             <div class="card-body p-4">
                 <h2 class="card-title text-center mb-4">Registro de Estudiantes</h2>
@@ -36,7 +85,7 @@
                         <span asp-validation-for="ConfirmarContrasena" class="text-danger"></span>
                     </div>
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Crear Cuenta</button>
+                        <button type="submit" class="btn btn-register">Crear Cuenta</button>
                     </div>
                 </form>
             </div>

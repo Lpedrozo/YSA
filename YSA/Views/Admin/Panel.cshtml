@@ -2,32 +2,114 @@
     ViewData["Title"] = "Panel de Administración";
 }
 
+<style>
+    /* Estilos globales */
+    body {
+        background-color: #000000;
+        color: #fff;
+    }
+
+    /* Estilos para la tarjeta principal */
+    .card {
+        border-radius: 12px;
+        background-color: #ffffff;
+        color: #000;
+        box-shadow: 0 4px 16px rgba(255, 255, 255, 0.08);
+    }
+
+    .card-title, .card-body h1 {
+        color: #000000;
+    }
+
+    .text-muted-dark {
+        color: #666;
+    }
+
+    /* Estilos para los botones */
+    a.btn-panel {
+        padding: 25px 15px;
+        font-size: 1.1em;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background-color: #c49900;
+        border-color: #c49900;
+        color: #000 !important; /* Aseguramos el color del texto con !important */
+        text-decoration: none;
+    }
+
+        a.btn-panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            background-color: #a38200;
+            border-color: #a38200;
+            color: #000 !important;
+        }
+
+    .btn-panel i {
+        margin-bottom: 10px;
+    }
+
+    .hr-light {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+</style>
+
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card shadow-lg p-4">
                 <div class="card-body">
                     <h1 class="card-title text-center mb-4">Panel de Administración</h1>
-                    <p class="text-muted text-center">Bienvenido al panel de control, Administrador.</p>
-                    <hr class="my-4">
+                    <p class="text-muted-dark text-center">Bienvenido al panel de control, Administrador.</p>
+                    <hr class="my-4" style="color:#c49900;">
 
-                    <div class="row text-center">
-                        <div class="col-md-4 mb-3">
-                            <a href="#" class="btn btn-primary btn-lg d-block">
+                    <div class="row text-center g-4">
+                        <div class="col-6 col-md-4 mb-3">
+                            <a href="#" class="btn btn-panel d-block">
                                 <i class="fas fa-users-cog fa-2x"></i>
                                 <br>
                                 Gestionar Usuarios
                             </a>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <a href="#" class="btn btn-success btn-lg d-block">
+                        <div class="col-6 col-md-4 mb-3">
+                            <a href="#" class="btn btn-panel d-block">
+                                <i class="fas fa-tags fa-2x"></i>
+                                <br>
+                                Gestionar Categorías
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4 mb-3">
+                            <a href="#" class="btn btn-panel d-block">
+                                <i class="fas fa-credit-card fa-2x"></i>
+                                <br>
+                                Gestionar Cuentas
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4 mb-3">
+                            <a href="#" class="btn btn-panel d-block">
+                                <i class="fas fa-shopping-bag fa-2x"></i>
+                                <br>
+                                Gestionar Pedidos
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4 mb-3">
+                            <a href="#" class="btn btn-panel d-block">
+                                <i class="fas fa-dollar-sign fa-2x"></i>
+                                <br>
+                                Gestionar Pagos
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-4 mb-3">
+                            <a href="#" class="btn btn-panel d-block">
                                 <i class="fas fa-cubes fa-2x"></i>
                                 <br>
                                 Gestionar Productos
                             </a>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <a href="#" class="btn btn-info btn-lg d-block">
+                        <div class="col-6 col-md-4 mb-3">
+                            <a href="#" class="btn btn-panel d-block">
                                 <i class="fas fa-chart-line fa-2x"></i>
                                 <br>
                                 Ver Estadísticas

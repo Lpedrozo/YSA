@@ -20,23 +20,59 @@ public class CursoController : Controller
         _pedidoService = pedidoService;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string categoria, string searchString, int page = 1)
     {
-        var cursos = await _cursoService.ObtenerTodosLosCursosAsync();
+        // Define la cantidad de cursos por página
+        const int pageSize = 8;
 
-        var cursosOrdenados = cursos.OrderByDescending(c => c.Id).ToList();
+        // 1. Obtiene todos los cursos y categorías
+        var todosLosCursos = await _cursoService.ObtenerTodosLosCursosAsync();
+        var todasLasCategorias = await _cursoService.ObtenerTodasLasCategoriasAsync();
 
-        var cursoViewModels = cursosOrdenados.Select(c => new CursoViewModel
+        // 2. Filtra por categoría si se seleccionó una
+        if (!string.IsNullOrEmpty(categoria))
+        {
+            todosLosCursos = todosLosCursos.Where(c => c.CursoCategorias.Any(cc => cc.Categoria.NombreCategoria == categoria)).ToList();
+        }
+
+        // 2.1. Filtra por cadena de búsqueda si se proporcionó una
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            todosLosCursos = todosLosCursos.Where(c =>
+                c.Titulo.Contains(searchString, System.StringComparison.OrdinalIgnoreCase) ||
+                c.DescripcionCorta.Contains(searchString, System.StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+        // 3. Ordena los cursos
+        var cursosOrdenados = todosLosCursos.OrderByDescending(c => c.Id).ToList();
+
+        // 4. Implementa la paginación
+        var totalCursos = cursosOrdenados.Count();
+        var totalPaginas = (int)Math.Ceiling(totalCursos / (double)pageSize);
+        var cursosPaginados = cursosOrdenados.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+        // 5. Mapea a ViewModels
+        var cursosParaVista = cursosPaginados.Select(c => new CursoIndexViewModel
         {
             Id = c.Id,
             Titulo = c.Titulo,
             DescripcionCorta = c.DescripcionCorta,
-            DescripcionLarga = c.DescripcionLarga,
             UrlImagen = c.UrlImagen,
-            Precio = c.Precio
+            Precio = c.Precio,
+            ListaCategorias = c.CursoCategorias?.Select(cc => cc.Categoria.NombreCategoria).ToList() ?? new List<string>()
         }).ToList();
 
-        return View(cursoViewModels);
+        // 6. Crea el ViewModel completo
+        var viewModel = new CursosIndexViewModel
+        {
+            Cursos = cursosParaVista,
+            CategoriasDisponibles = todasLasCategorias.Select(cat => cat.NombreCategoria).ToList(),
+            PaginaActual = page,
+            TotalPaginas = totalPaginas,
+            CategoriaActual = categoria
+        };
+
+        return View(viewModel);
     }
     public async Task<IActionResult> Detalles(int id)
     {
@@ -72,6 +108,7 @@ public class CursoController : Controller
             Id = curso.Id,
             Titulo = curso.Titulo,
             DescripcionLarga = curso.DescripcionLarga,
+            DescripcionCorta = curso.DescripcionCorta,
             UrlImagen = curso.UrlImagen,
             Precio = curso.Precio,
             TieneAcceso = tieneAcceso,

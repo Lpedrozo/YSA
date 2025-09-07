@@ -1,10 +1,60 @@
 ﻿@model YSA.Web.Models.ViewModels.LoginViewModel
 
 @{
+    ViewData["Title"] = "Iniciar Sesión";
     Layout = "_Layout";
 }
 
-<div class="d-flex justify-content-center align-items-center pt-4 mt-4">
+<style>
+    /* Estilos globales para mantener la coherencia con el panel de administración */
+    body {
+        background-color: #000000;
+        color: #fff;
+    }
+
+    /* Estilos para la tarjeta de inicio de sesión */
+    .card {
+        border-radius: 12px;
+        background-color: #ffffff;
+        color: #000;
+        box-shadow: 0 4px 16px rgba(255, 255, 255, 0.08);
+    }
+
+    .card-title {
+        color: #000;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        transition: border-color 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: #c49900;
+            box-shadow: 0 0 0 0.25rem rgba(196, 153, 0, 0.25);
+        }
+
+    .btn-login {
+        background-color: #c49900;
+        border-color: #c49900;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+
+        .btn-login:hover {
+            background-color: #a38200;
+            border-color: #a38200;
+            color: white;
+            color:;
+            transform: translateY(-2px);
+        }
+</style>
+
+<div class="d-flex justify-content-center align-items-center pt-4 mt-4" style="min-height: 80vh;">
     <div class="card p-5 shadow-lg" style="max-width: 400px; width: 100%;">
         <div class="text-center mb-4">
             <h2 class="h4 card-title">Iniciar Sesión</h2>
@@ -15,24 +65,24 @@
             <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
             <div class="mb-3">
-                <label asp-for="Email" class="form-label"></label>
+                <label asp-for="Email" class="form-label">Email</label>
                 <input asp-for="Email" type="email" class="form-control">
                 <span asp-validation-for="Email" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Contrasena" class="form-label"></label>
+                <label asp-for="Contrasena" class="form-label">Contraseña</label>
                 <input asp-for="Contrasena" type="password" class="form-control">
                 <span asp-validation-for="Contrasena" class="text-danger small"></span>
             </div>
 
             <div class="form-check mb-4">
                 <input asp-for="RecordarMe" type="checkbox" class="form-check-input">
-                <label asp-for="RecordarMe" class="form-check-label"></label>
+                <label asp-for="RecordarMe" class="form-check-label">Recordarme</label>
             </div>
 
             <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-login">
                     Iniciar Sesión
                 </button>
             </div>
@@ -45,3 +95,4 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+s

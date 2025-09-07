@@ -1,0 +1,280 @@
+﻿@model YSA.Web.Models.ViewModels.UserViewModel
+@{
+    ViewData["Title"] = "Mi Perfil y Cursos";
+}
+
+<style>
+    /* New styles based on the provided image */
+    body {
+        background-color: #f7f7f7; /* Light gray background */
+        color: #000;
+    }
+
+    .main-container {
+        padding: 40px 0;
+    }
+
+    .profile-sidebar {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+        min-height: calc(100vh - 80px); /* Adjust to fill screen height */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-photo {
+        width: 100px;
+        height: 100px;
+        background-color: #f0f0f0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #fff;
+        background-color: #c49900; /* Purple for initials */
+    }
+
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin-top: 30px;
+        width: 100%;
+    }
+
+    .sidebar-menu-item a {
+        display: block;
+        padding: 12px 15px;
+        margin-bottom: 5px;
+        border-radius: 8px;
+        color: #6a6a6a;
+        text-decoration: none;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+        .sidebar-menu-item a.active,
+        .sidebar-menu-item a:hover {
+            background-color: #c49900;
+            color: #fff;
+        }
+
+    .profile-content {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        padding: 40px;
+    }
+
+    /* General card and content styles */
+    .content-section {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+
+        .content-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #000;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 12px;
+        background-color: #f7f7f7;
+        width: 100%;
+    }
+
+        .form-control:focus {
+            border-color: #6a0dad;
+            box-shadow: 0 0 0 0.25rem rgba(106, 13, 173, 0.25);
+        }
+
+    /* Styles for course cards */
+    .curso-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+        .curso-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .curso-card img {
+            height: 200px;
+            object-fit: cover;
+        }
+
+    .curso-title {
+        font-weight: 600;
+        color: #000;
+    }
+
+    .curso-price {
+        font-weight: 700;
+        color: #c49900;
+    }
+</style>
+
+<div class="container main-container">
+    <div class="row g-4">
+        <!-- Profile Sidebar -->
+        <div class="col-md-4">
+            <div class="profile-sidebar">
+                <div class="profile-photo">
+                    @{
+                        // Get the first initial of the name and last name
+                        string initials = "";
+                        if (!string.IsNullOrEmpty(Model.Nombre) && !string.IsNullOrEmpty(Model.Apellido))
+                        {
+                            initials = Model.Nombre.ToUpper()[0].ToString() + Model.Apellido.ToUpper()[0].ToString();
+                        }
+                    }
+                    @initials
+                </div>
+                <h4 class="mt-3">@Model.Nombre @Model.Apellido</h4>
+                <p class="text-muted-dark">@Model.Email</p>
+
+                <ul class="sidebar-menu">
+                    <li class="sidebar-menu-item"><a href="#" id="miPerfilLink" class="active"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+                    <li class="sidebar-menu-item"><a href="#" id="seguridadLink"><i class="fas fa-lock"></i> Seguridad de la Cuenta</a></li>
+                    <li class="sidebar-menu-item">
+                        <form asp-controller="Cuenta" asp-action="Logout" method="post" id="logoutForm">
+                            <button type="submit" class="btn btn-link" style="color: #6a6a6a; text-decoration: none; padding: 12px 15px; width: 100%; text-align: left; transition: background-color 0.2s, color 0.2s;">
+                                <i class="fas fa-power-off"></i> Cerrar Sesión
+                            </button>
+                            @Html.AntiForgeryToken()
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-8">
+            <div class="profile-content">
+                <!-- Información del Perfil Section -->
+                <div id="profileSection" class="content-section">
+                    <form asp-action="UpdateProfile" method="post">
+                        <h2 class="section-title">Información del Perfil</h2>
+                        <p class="text-muted-dark">Establece la configuración de tu cuenta y cambia la contraseña aquí.</p>
+                        <div class="mb-3">
+                            <label class="form-label">Correo electrónico</label>
+                            <input type="text" class="form-control" value="@Model.Email" readonly />
+                        </div>
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" id="nombre" name="Nombre" class="form-control" value="@Model.Nombre" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="apellido" class="form-label">Apellido</label>
+                            <input type="text" id="apellido" name="Apellido" class="form-control" value="@Model.Apellido" />
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="background-color: #c49900; border-color: #c49900;">Guardar cambios</button>
+                    </form>
+                </div>
+                <!-- Seguridad de la Cuenta Section -->
+                <div id="securitySection" class="content-section" style="display: none;">
+                    <h2 class="section-title">Cambiar Contraseña</h2>
+                    <form asp-action="ChangePassword" method="post">
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label">Contraseña Actual</label>
+                            <input type="password" id="currentPassword" name="CurrentPassword" class="form-control" />
+                            <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">Nueva Contraseña</label>
+                            <input type="password" id="newPassword" name="NewPassword" class="form-control" />
+                            <span asp-validation-for="NewPassword" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirmar Nueva Contraseña</label>
+                            <input type="password" id="confirmPassword" name="ConfirmPassword" class="form-control" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="background-color: #c49900; border-color: #c49900;">Actualizar Contraseña</button>
+                    </form>
+                </div>
+                <!-- Mis Cursos Section -->
+                <div id="coursesSection" class="content-section">
+                    <h2 class="section-title">Mis Cursos</h2>
+                    @if (Model.CursosComprados != null && Model.CursosComprados.Any())
+                    {
+                        <div class="row row-cols-1 row-cols-md-2 g-4">
+                            @foreach (var curso in Model.CursosComprados)
+                            {
+                                <div class="col">
+                                    <div class="card h-100 curso-card">
+                                        <img src="@curso.UrlImagen" class="card-img-top" alt="@curso.Titulo" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFF/000?text=Sin+Imagen';" />
+                                        <div class="card-body">
+                                            <h5 class="card-title curso-title">@curso.Titulo</h5>
+                                            <p class="card-text text-muted-dark">@curso.DescripcionCorta</p>
+                                            <p class="card-text curso-price">@curso.Precio.ToString("C")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info text-center" role="alert">
+                            Aún no has comprado ningún curso.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const miPerfilLink = document.getElementById('miPerfilLink');
+        const seguridadLink = document.getElementById('seguridadLink');
+        const profileSection = document.getElementById('profileSection');
+        const securitySection = document.getElementById('securitySection');
+
+        function setActiveLink(activeLink) {
+            miPerfilLink.classList.remove('active');
+            seguridadLink.classList.remove('active');
+            activeLink.classList.add('active');
+        }
+
+        miPerfilLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            setActiveLink(this);
+            profileSection.style.display = 'block';
+            securitySection.style.display = 'none';
+        });
+
+        seguridadLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            setActiveLink(this);
+            profileSection.style.display = 'none';
+            securitySection.style.display = 'block';
+        });
+
+        // Add class to the active link based on the initial state
+        const urlParams = new URLSearchParams(window.location.search);
+        const section = urlParams.get('section');
+        if (section === 'security') {
+            setActiveLink(seguridadLink);
+            profileSection.style.display = 'none';
+            securitySection.style.display = 'block';
+        }
+    });
+</script>

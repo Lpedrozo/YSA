@@ -46,6 +46,8 @@ builder.Services.AddScoped<IVentaItemService, VentaItemService>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IEstudianteCursoRepository, EstudianteCursoRepository>();
 builder.Services.AddScoped<IEstudianteCursoService, EstudianteCursoService>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

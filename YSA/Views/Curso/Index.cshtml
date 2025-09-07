@@ -1,4 +1,4 @@
-﻿@model List<YSA.Web.Models.ViewModels.CursoViewModel>
+﻿@model YSA.Web.Models.ViewModels.CursosIndexViewModel
 @{
     ViewData["Title"] = "Cursos Disponibles";
 }
@@ -6,7 +6,50 @@
 <style>
     /* Estilos globales */
     body {
-        background-color: #f7f9fc; /* Un gris muy suave para romper con el blanco */
+        background-color: #EAF3F3;
+        color: #fff;
+    }
+
+    /* Estilos para la sección de bienvenida */
+    .bienvenida-section {
+        display: flex;
+        align-items: center;
+        padding-top: 10px;
+        background-color: #f7f7f7;
+        color: #000;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .bienvenida-perfil {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .bienvenida-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: #333;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-right: 20px;
+    }
+
+    .bienvenida-info h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .bienvenida-info p {
+        margin: 0;
+        color: #666;
     }
 
     /* Estilos para el carrusel de cursos */
@@ -37,11 +80,13 @@
         border-radius: 12px;
         border: none;
         overflow: hidden; /* Para que la imagen no se desborde del radio */
+        background-color: #fff;
+        color: #000;
     }
 
         .card:hover {
             transform: translateY(-5px); /* Efecto de "levantar" la tarjeta */
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important; /* Sombra más pronunciada */
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.15) !important; /* Sombra más pronunciada */
         }
 
     .card-img-top {
@@ -52,7 +97,7 @@
     /* Contenido de la tarjeta */
     .card-body h5 {
         font-weight: 600;
-        color: #333;
+        color: #000;
     }
 
     .card-text {
@@ -69,57 +114,135 @@
         .card-categories .badge {
             padding: 5px 10px;
             margin-right: 5px;
+            background-color: #c49900 !important;
+            color: #000 !important;
         }
+
+    .btn-primary {
+        background-color: #c49900;
+        border-color: #c49900;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #a38200;
+            border-color: #a38200;
+            color: #000;
+        }
+
+    .filtro-menu {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    .filtro-item a {
+        padding: 8px 15px;
+        margin: 5px;
+        text-decoration: none;
+        color: #000;
+        background-color: #fff;
+        border-radius: 20px;
+        transition: background-color 0.2s, color 0.2s;
+        border: 1px solid #ddd;
+    }
+
+        .filtro-item a.active {
+            background-color: #c49900;
+            color: #fff;
+            border-color: #c49900;
+        }
+
+    .pagination a {
+        color: #000;
+    }
 </style>
 
-<div class="container mt-4">
-    <hr />
-
-    @if (Model == null || !Model.Any())
-    {
-        <div class="alert alert-info text-center" role="alert">
-            No hay cursos disponibles en este momento.
+@if (Model == null || !Model.Cursos.Any())
+{
+    <div class="alert alert-info text-center" role="alert">
+        No hay cursos disponibles en este momento.
+    </div>
+}
+else
+{
+    <!-- Sección de Bienvenida -->
+    <div class="bienvenida-section">
+        <div class="container">
+            <div class="bienvenida-perfil">
+                <div class="bienvenida-avatar">LP</div>
+                <div class="bienvenida-info">
+                    <h1>Hola de nuevo, Luis</h1>
+                </div>
+            </div>
         </div>
-    }
-    else
-    {
-        var cursosCarrusel = Model.Take(3).ToList();
-        var cursosRestantes = Model.Skip(3).ToList();
+    </div>
 
-        @if (cursosCarrusel.Any())
-        {
-            <div id="cursoCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
-                <div class="carousel-inner rounded">
-                    @for (int i = 0; i < cursosCarrusel.Count; i++)
-                    {
-                        var curso = cursosCarrusel[i];
-                        <div class="carousel-item @(i == 0 ? "active" : "") carousel-item-custom" style="background-image: url('@curso.UrlImagen');">
-                            <div class="carousel-overlay">
-                                <div class="container text-start">
-                                    <h2 class="display-4 fw-bold">@curso.Titulo</h2>
-                                    <p class="lead">@curso.DescripcionCorta</p>
-                                    <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary btn-lg mt-3">Ver Curso</a>
-                                </div>
+    var cursosCarrusel = Model.Cursos.Take(3).ToList();
+    var cursosRestantes = Model.Cursos.Skip(3).ToList();
+
+    @if (cursosCarrusel.Any())
+    {
+        <div id="cursoCarousel" class="carousel slide mb-5" data-bs-ride="carousel" style="width:100%">
+            <div class="carousel-inner rounded">
+                @for (int i = 0; i < cursosCarrusel.Count; i++)
+                {
+                    var curso = cursosCarrusel[i];
+                    <div class="carousel-item @(i == 0 ? "active" : "") carousel-item-custom" style="background-image: url('@curso.UrlImagen');">
+                        <div class="carousel-overlay">
+                            <div class="container text-start">
+                                <h2 class="display-4 fw-bold">@curso.Titulo</h2>
+                                <p class="lead">@curso.DescripcionCorta</p>
+                                <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary btn-lg mt-3">Ver Curso</a>
                             </div>
                         </div>
-                    }
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#cursoCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#cursoCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Siguiente</span>
-                </button>
+                    </div>
+                }
             </div>
-        }
+            <button class="carousel-control-prev" type="button" data-bs-target="#cursoCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#cursoCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+            </button>
+        </div>
+    }
 
-        <h2 class="text-center mt-5 mb-4">Explora todos los cursos</h2>
-        <hr />
+    <div class="container mt-4 mb-5">
+        <h2 class="text-center mt-5 mb-4 text-black">Explora todos los cursos</h2>
+        <hr style="color:#fff;" />
 
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            @foreach (var curso in cursosRestantes)
+        <!-- Formulario de búsqueda -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6">
+                <form asp-action="Index" method="get">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="searchString" placeholder="Buscar por título o descripción..." value="@ViewData["searchString"]" />
+                        <button class="btn btn-primary" type="submit">Buscar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Filtros de Categoría -->
+        <div class="filtro-menu">
+            <div class="filtro-item">
+                <a asp-action="Index" asp-route-categoria="" class="@(string.IsNullOrEmpty(Model.CategoriaActual) ? "active" : "")">Todas</a>
+            </div>
+            @foreach (var categoria in Model.CategoriasDisponibles)
+            {
+                <div class="filtro-item">
+                    <a asp-action="Index" asp-route-categoria="@categoria" class="@(Model.CategoriaActual == categoria ? "active" : "")">@categoria</a>
+                </div>
+            }
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            @foreach (var curso in Model.Cursos)
             {
                 <div class="col">
                     <div class="card h-100 shadow-sm">
@@ -146,13 +269,31 @@
                             }
 
                             <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <h6 class="card-subtitle text-primary mb-0">@curso.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</h6>
-                                <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary">Ver Detalles</a>
+                                <h6 class="card-subtitle mb-0" style="">@curso.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</h6>
+                                <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary text-white">Ver Detalles</a>
                             </div>
                         </div>
                     </div>
                 </div>
             }
         </div>
-    }
-</div>
+
+        <!-- Paginación -->
+        <nav aria-label="Paginación de cursos" class="mt-5 pb-5">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.PaginaActual <= 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PaginaActual - 1)" asp-route-categoria="@Model.CategoriaActual" asp-route-searchString="@ViewData["searchString"]" tabindex="-1" aria-disabled="true">Anterior</a>
+                </li>
+                @for (var i = 1; i <= Model.TotalPaginas; i++)
+                {
+                    <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-categoria="@Model.CategoriaActual" asp-route-searchString="@ViewData["searchString"]">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.PaginaActual >= Model.TotalPaginas ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PaginaActual + 1)" asp-route-categoria="@Model.CategoriaActual" asp-route-searchString="@ViewData["searchString"]">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+}
