@@ -105,5 +105,20 @@ namespace YSA.Data.Repositories
                 .AnyAsync(p => p.EstudianteId == estudianteId && p.Estado == estado &&
                                p.PedidoItems.Any(pi => pi.VentaItem.CursoId == cursoId));
         }
+        public async Task<IEnumerable<Pedido>> GetPedidosByUsuarioAndEstadoAsync(int estudianteId, string estado)
+        {
+            return await _context.Pedidos
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                .Where(p => p.EstudianteId == estudianteId && p.Estado == estado)
+                .ToListAsync();
+        }
+        public async Task<IEnumerable<VentaItem>> GetItemsByPedidoIdAsync(int pedidoId)
+        {
+            return await _context.VentaItems
+                .Where(vi => vi.PedidoItems.Any(pi => pi.PedidoId == pedidoId))
+                .Include(vi => vi.Curso) 
+                .ToListAsync();
+        }
     }
 }

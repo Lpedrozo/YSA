@@ -1,0 +1,21 @@
+﻿@model List<YSA.Web.Models.ViewModels.CursoViewModel>
+
+<div class="dropdown-menu dropdown-menu-end shadow p-3" aria-labelledby="miAprendizajeDropdown">
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var curso in Model)
+        {
+            <a class="dropdown-item d-flex align-items-center mb-2" asp-controller="Curso" asp-action="VerCurso" asp-route-id="@curso.Id">
+                <img src="@curso.UrlImagen" alt="@curso.Titulo" class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;" />
+                <div>
+                    <h6 class="mb-0">@curso.Titulo</h6>
+                    <small class="text-muted">Empieza a aprender</small>
+                </div>
+            </a>
+        }
+        <div class="dropdown-divider"></div>
+    }
+    <a class="dropdown-item btn btn-primary text-black text-center" href="/Curso/MisCursos">
+        Ir a Mi aprendizaje
+    </a>
+</div>

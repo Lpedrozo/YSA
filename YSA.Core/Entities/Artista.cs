@@ -23,5 +23,7 @@ namespace YSA.Core.Entities
         // Relaciones de navegación
         public virtual ICollection<Curso> Cursos { get; set; }
         public virtual ICollection<Producto> Productos { get; set; }
+        public ICollection<PreguntaRespuesta> PreguntasRespuestas { get; set; }
+
     }
 }

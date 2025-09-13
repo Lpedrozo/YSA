@@ -25,6 +25,13 @@ namespace YSA.Data.Data
         public DbSet<Pago> Pagos { get; set; }
         public DbSet<EstudianteCurso> EstudianteCursos { get; set; }
         public DbSet<VentaItem> VentaItems { get; set; }
+        
+        // Nuevos DbSet
+        public DbSet<PreguntaRespuesta> PreguntasRespuestas { get; set; }
+        public DbSet<Anuncio> Anuncios { get; set; }
+        public DbSet<Resena> Resenas { get; set; }
+        public DbSet<MetodoPago> MetodosPago { get; set; }
+        public DbSet<ProgresoLeccion> ProgresoLecciones { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -107,6 +114,62 @@ namespace YSA.Data.Data
                 .HasOne(vi => vi.Producto)
                 .WithMany()
                 .HasForeignKey(vi => vi.ProductoId);
+
+            // Configuración para la clave compuesta de Resena
+            modelBuilder.Entity<Resena>()
+                .HasKey(r => new { r.EstudianteId, r.CursoId });
+            
+            // Nueva configuración para PreguntaRespuesta
+            modelBuilder.Entity<PreguntaRespuesta>()
+                .HasOne(pr => pr.Curso)
+                .WithMany(c => c.PreguntasRespuestas)
+                .HasForeignKey(pr => pr.CursoId);
+            
+            modelBuilder.Entity<PreguntaRespuesta>()
+                .HasOne(pr => pr.Estudiante)
+                .WithMany()
+                .HasForeignKey(pr => pr.EstudianteId);
+
+            modelBuilder.Entity<PreguntaRespuesta>()
+                .HasOne(pr => pr.Instructor)
+                .WithMany(i => i.PreguntasRespuestas)
+                .HasForeignKey(pr => pr.InstructorId);
+            
+            // Nueva configuración para Anuncio
+            modelBuilder.Entity<Anuncio>()
+                .HasOne(a => a.Curso)
+                .WithMany(c => c.Anuncios)
+                .HasForeignKey(a => a.CursoId);
+
+            // Nueva configuración para Resena
+            modelBuilder.Entity<Resena>()
+                .HasOne(r => r.Estudiante)
+                .WithMany()
+                .HasForeignKey(r => r.EstudianteId);
+
+            modelBuilder.Entity<Resena>()
+                .HasOne(r => r.Curso)
+                .WithMany(c => c.Resenas)
+                .HasForeignKey(r => r.CursoId);
+
+            // Nueva configuración para MetodoPago
+            modelBuilder.Entity<MetodoPago>()
+                .HasOne(mp => mp.Estudiante)
+                .WithMany()
+                .HasForeignKey(mp => mp.EstudianteId);
+            modelBuilder.Entity<VentaItem>()
+                .HasMany(vi => vi.PedidoItems) 
+                .WithOne(pi => pi.VentaItem)  
+                .HasForeignKey(pi => pi.VentaItemId);
+            modelBuilder.Entity<ProgresoLeccion>()
+                .HasOne(pl => pl.Estudiante)
+                .WithMany()
+                .HasForeignKey(pl => pl.EstudianteId);
+
+            modelBuilder.Entity<ProgresoLeccion>()
+                .HasOne(pl => pl.Leccion)
+                .WithMany()
+                .HasForeignKey(pl => pl.LeccionId);
         }
     }
 }

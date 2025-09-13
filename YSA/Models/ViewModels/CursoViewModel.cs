@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using YSA.Core.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using YSA.Core.Enums;
 
 namespace YSA.Web.Models.ViewModels
 {
@@ -34,6 +35,11 @@ namespace YSA.Web.Models.ViewModels
         public int[] CategoriasSeleccionadas { get; set; }
 
         public IEnumerable<SelectListItem>? ListaCategorias { get; set; }
+        public bool EsDestacado { get; set; }
+        public bool EsRecomendado { get; set; }
+        public string? NombreInstructor { get; set; }
+        public NivelDificultad Nivel { get; set; } // Añadir esta propiedad
+
     }
 
     public class CursoIndexViewModel
@@ -66,6 +72,8 @@ namespace YSA.Web.Models.ViewModels
         public int[] CategoriasSeleccionadas { get; set; }
 
         public List<string> ListaCategorias { get; set; }
+        public NivelDificultad Nivel { get; set; } // Añadir esta propiedad
+
     }
 
     public class CrearCursoPostViewModel
@@ -90,13 +98,56 @@ namespace YSA.Web.Models.ViewModels
         public bool TieneAcceso { get; set; }
         public bool EstaEnValidacion { get; set; }
         public List<ModuloConLeccionesViewModel> Modulos { get; set; }
+        public List<ResenaViewModel> Resenas { get; set; } = new List<ResenaViewModel>();
+        public List<PreguntaRespuestaViewModel> Preguntas { get; set; }
+        public List<AnuncioViewModel> Anuncios { get; set; }
+        public List<Curso> CursosDestacados { get; set; }
+
+
+    }
+
+    public class ResenaViewModel
+    {
+        public string NombreUsuario { get; set; }
+        public int Calificacion { get; set; } // Ejemplo: 1 a 5
+        public string Comentario { get; set; }
+        public DateTime Fecha { get; set; }
     }
     public class CursosIndexViewModel
     {
         public List<CursoIndexViewModel> Cursos { get; set; }
+        public List<CursoIndexViewModel> CursosDestacados { get; set; }
+        public List<CursoIndexViewModel> CursosRecomendados { get; set; }
         public List<string> CategoriasDisponibles { get; set; }
         public int PaginaActual { get; set; }
         public int TotalPaginas { get; set; }
         public string CategoriaActual { get; set; }
+    }
+    public class PreguntaRespuestaViewModel
+    {
+        public int Id { get; set; }
+        public string Pregunta { get; set; }
+        public string NombreEstudiante { get; set; }
+        public DateTime FechaPregunta { get; set; }
+
+        // Propiedades de la respuesta
+        public string Respuesta { get; set; }
+        public string NombreInstructor { get; set; }
+        public DateTime? FechaRespuesta { get; set; }
+    }
+    public class AnuncioViewModel
+    {
+        public int Id { get; set; }
+
+        [Required]
+        [StringLength(255)]
+        public string Titulo { get; set; }
+
+        [Required]
+        public string Contenido { get; set; }
+
+        public int CursoId { get; set; }
+
+        public DateTime FechaPublicacion { get; set; }
     }
 }

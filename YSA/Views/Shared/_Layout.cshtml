@@ -44,12 +44,6 @@
                         <ul class="navbar-nav">
                             @if (Context.Session.GetString("IsSignedIn") == "true")
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-white" asp-controller="Curso" asp-action="Index">
-                                        <i class="fa-solid fa-cart-shopping"></i>
-                                    </a>
-                                </li>
-                                // Si el usuario está logueado, muestra el enlace al panel de administrador si tiene el rol
                                 @if (Context.Session.GetString("UserRole") == "Administrador")
                                 {
                                     <li class="nav-item">
@@ -58,12 +52,31 @@
                                         </a>
                                     </li>
                                 }
-
-                                // Muestra el icono de usuario para cualquier usuario logueado
-                                <li class="nav-item">
-                                    <a class="nav-link text-white" asp-controller="Cuenta" asp-action="MiPerfil" title="Manage">
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link text-white dropdown-toggle" href="#" id="miAprendizajeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Mi Aprendizaje
+                                    </a>
+                                    @await Component.InvokeAsync("CursosUsuario")
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="fa-solid fa-user"></i>
                                     </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Cuenta" asp-action="MiPerfil">
+                                                <i class="fas fa-user-circle"></i> Mi Perfil
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <form asp-controller="Cuenta" asp-action="Logout" method="post" id="logoutForm">
+                                                <button type="submit" class="dropdown-item">
+                                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
                                 </li>
                             }
                             else

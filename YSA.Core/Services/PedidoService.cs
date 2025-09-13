@@ -117,5 +117,9 @@ namespace YSA.Core.Services
         {
             return await _pedidoRepository.ExistePedidoEnEstadoParaCursoAsync(estudianteId, cursoId, "Validando");
         }
+        public async Task<IEnumerable<Pedido>> ObtenerPedidosAprobadosPorUsuarioAsync(int estudianteId)
+        {
+            return await _pedidoRepository.GetPedidosByUsuarioAndEstadoAsync(estudianteId, "Completado");
+        }
     }
 }

@@ -1,0 +1,322 @@
+﻿@model List<YSA.Web.Models.ViewModels.ArtistaListViewModel>
+@{
+    ViewData["Title"] = "Gestión de Artistas";
+}
+<style>
+    .table-actions .btn {
+        margin-right: 5px;
+    }
+
+    .modal-dialog {
+        max-width: 600px;
+    }
+
+    .profile-img-preview {
+        max-height: 100px;
+        max-width: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+</style>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Gestión de Artistas</h1>
+    <hr />
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearArtistaModal">
+            <i class="fas fa-plus-circle"></i> Nuevo Artista
+        </button>
+    </div>
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Imagen</th>
+                <th>Nombre Artístico</th>
+                <th>Nombre Completo</th>
+                <th>Correo</th>
+                <th>Estilo Principal</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaArtistas">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var artista in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@(string.IsNullOrEmpty(artista.UrlImagen) ? "/images/default-avatar.png" : artista.UrlImagen)" class="profile-img-preview" alt="Foto de Perfil" />
+                        </td>
+                        <td>@artista.NombreArtistico</td>
+                        <td>@artista.NombreCompleto</td>
+                        <td>@artista.Email</td>
+                        <td>@artista.EstiloPrincipal</td>
+                        <td class="text-center">
+                            <div class="d-inline-flex table-actions">
+                                <button type="button" class="btn btn-sm btn-primary editar-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editarArtistaModal"
+                                        data-id="@artista.Id"
+                                        data-usuarioid="@artista.UsuarioId"
+                                        data-nombre="@artista.NombreCompleto.Split(' ')[0]"
+                                        data-apellido="@(artista.NombreCompleto.Split(' ').Length > 1 ? artista.NombreCompleto.Split(' ')[1] : "")"
+                                        data-email="@artista.Email"
+                                        data-nombreartistico="@artista.NombreArtistico"
+                                        data-estiloprincipal="@artista.EstiloPrincipal"
+                                        data-urlimagen="@artista.UrlImagen" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <form asp-action="DeleteArtista" asp-route-id="@artista.Id" method="post" class="d-inline eliminar-form">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-danger eliminar-btn" title="Eliminar">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center">No hay artistas registrados.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="crearArtistaModal" tabindex="-1" aria-labelledby="crearArtistaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearArtistaModalLabel">Crear Nuevo Artista</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formCrearArtista" asp-action="CrearArtista" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="form-group mb-3">
+                        <label for="Crear_Nombre">Nombre</label>
+                        <input type="text" id="Crear_Nombre" name="Nombre" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Crear_Apellido">Apellido</label>
+                        <input type="text" id="Crear_Apellido" name="Apellido" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Crear_Email">Correo Electrónico</label>
+                        <input type="email" id="Crear_Email" name="Email" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Crear_Password">Contraseña</label>
+                        <input type="password" id="Crear_Password" name="Password" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Crear_NombreArtistico">Nombre Artístico</label>
+                        <input type="text" id="Crear_NombreArtistico" name="NombreArtistico" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Crear_Biografia">Biografía</label>
+                        <textarea id="Crear_Biografia" name="Biografia" class="form-control" rows="5"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Crear_EstiloPrincipal">Estilo Principal</label>
+                        <input type="text" id="Crear_EstiloPrincipal" name="EstiloPrincipal" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Crear_ImagenPerfil">Imagen de Perfil</label>
+                        <input type="file" id="Crear_ImagenPerfil" name="ImagenPerfil" class="form-control" accept=".jpg,.jpeg,.png" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editarArtistaModal" tabindex="-1" aria-labelledby="editarArtistaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarArtistaModalLabel">Editar Artista</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarArtista" asp-action="UpdateArtista" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="Editar_Id" name="Id" />
+                <input type="hidden" id="Editar_UsuarioId" name="UsuarioId" />
+                <div class="modal-body">
+                    <div class="form-group mb-3">
+                        <label for="Editar_Nombre">Nombre</label>
+                        <input type="text" id="Editar_Nombre" name="Nombre" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Editar_Apellido">Apellido</label>
+                        <input type="text" id="Editar_Apellido" name="Apellido" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Editar_Email">Correo Electrónico</label>
+                        <input type="email" id="Editar_Email" name="Email" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Editar_Password">Nueva Contraseña</label>
+                        <input type="password" id="Editar_Password" name="Password" class="form-control" placeholder="Dejar vacío para no cambiar" />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Editar_NombreArtistico">Nombre Artístico</label>
+                        <input type="text" id="Editar_NombreArtistico" name="NombreArtistico" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Editar_Biografia">Biografía</label>
+                        <textarea id="Editar_Biografia" name="Biografia" class="form-control" rows="5"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Editar_EstiloPrincipal">Estilo Principal</label>
+                        <input type="text" id="Editar_EstiloPrincipal" name="EstiloPrincipal" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Editar_ImagenPerfil">Imagen de Perfil</label>
+                        <input type="file" id="Editar_ImagenPerfil" name="ImagenPerfil" class="form-control" accept=".jpg,.jpeg,.png" />
+                        <small class="form-text text-muted">Dejar vacío para conservar la imagen actual.</small>
+                        <img id="Editar_PreviewImagen" src="" class="img-thumbnail mt-2 profile-img-preview" style="display: none;" alt="Imagen actual del artista" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function getAntiForgeryToken() {
+            const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
+            return tokenElement ? tokenElement.value : '';
+        }
+
+        async function recargarTabla() {
+            const response = await fetch('@Url.Action("GestionarArtistas", "Admin")');
+            if (response.ok) {
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newTableBody = doc.getElementById('tablaArtistas').innerHTML;
+                document.getElementById('tablaArtistas').innerHTML = newTableBody;
+                attachEventListeners();
+            } else {
+                Swal.fire('Error', 'No se pudieron cargar los artistas.', 'error');
+            }
+        }
+
+        function attachEventListeners() {
+            document.querySelectorAll('.eliminar-btn').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const form = this.closest('form');
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "¡No podrás revertir esto!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Sí, ¡bórralo!',
+                        cancelButtonText: 'Cancelar'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            const formData = new FormData(form);
+                            formData.append('__RequestVerificationToken', getAntiForgeryToken());
+                            const response = await fetch(form.action, { method: 'POST', body: formData });
+                            const result = await response.json();
+                            if (result.success) {
+                                Swal.fire('Eliminado!', result.message, 'success');
+                                await recargarTabla();
+                            } else {
+                                Swal.fire('Error', result.message, 'error');
+                            }
+                        }
+                    });
+                });
+            });
+
+            document.querySelectorAll('.editar-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const id = this.getAttribute('data-id');
+                    const usuarioId = this.getAttribute('data-usuarioid');
+                    const nombre = this.getAttribute('data-nombre');
+                    const apellido = this.getAttribute('data-apellido');
+                    const email = this.getAttribute('data-email');
+                    const nombreArtistico = this.getAttribute('data-nombreartistico');
+                    const estiloPrincipal = this.getAttribute('data-estiloprincipal');
+                    const urlImagen = this.getAttribute('data-urlimagen');
+
+                    document.getElementById('Editar_Id').value = id;
+                    document.getElementById('Editar_UsuarioId').value = usuarioId;
+                    document.getElementById('Editar_Nombre').value = nombre;
+                    document.getElementById('Editar_Apellido').value = apellido;
+                    document.getElementById('Editar_Email').value = email;
+                    document.getElementById('Editar_NombreArtistico').value = nombreArtistico;
+                    document.getElementById('Editar_EstiloPrincipal').value = estiloPrincipal;
+
+                    const previewImg = document.getElementById('Editar_PreviewImagen');
+                    if (urlImagen && urlImagen !== 'null') {
+                        previewImg.src = urlImagen;
+                        previewImg.style.display = 'block';
+                    } else {
+                        previewImg.src = '';
+                        previewImg.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            attachEventListeners();
+
+            document.getElementById('formCrearArtista').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire('Éxito', result.message, 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('crearArtistaModal')).hide();
+                    this.reset();
+                    await recargarTabla();
+                } else {
+                    const errorMsg = result.message || 'Hubo un error al crear el artista.';
+                    Swal.fire('Error', errorMsg, 'error');
+                }
+            });
+
+            document.getElementById('formEditarArtista').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire('Éxito', result.message, 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('editarArtistaModal')).hide();
+                    await recargarTabla();
+                } else {
+                    const errorMsg = result.message || 'Hubo un error al actualizar el artista.';
+                    Swal.fire('Error', errorMsg, 'error');
+                }
+            });
+        });
+    </script>
+}

@@ -81,5 +81,10 @@ namespace YSA.Core.Services
         {
             await _ventaItemRepository.UpdateAsync(ventaItem);
         }
+        public async Task<IEnumerable<VentaItem>> ObtenerItemsPorPedidoIdAsync(int pedidoId)
+        {
+            // Llama al repositorio para obtener los items del pedido
+            return await _ventaItemRepository.GetItemsByPedidoIdAsync(pedidoId);
+        }
     }
 }

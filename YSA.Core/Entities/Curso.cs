@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using YSA.Core.Entities;
+using YSA.Core.Enums;
 
 namespace YSA.Core.Entities
 {
@@ -29,9 +30,14 @@ namespace YSA.Core.Entities
 
         public int? InstructorId { get; set; }
         public Artista Instructor { get; set; }
-
-        // Relaciones de navegación
+        public bool EsDestacado { get; set; }
+        public bool EsRecomendado { get; set; }
         public virtual ICollection<Modulo> Modulos { get; set; }
         public virtual ICollection<CursoCategoria> CursoCategorias { get; set; }
+        public ICollection<Anuncio> Anuncios { get; set; }
+        public ICollection<Resena> Resenas { get; set; }
+        public ICollection<PreguntaRespuesta> PreguntasRespuestas { get; set; }
+        [Required]
+        public NivelDificultad Nivel { get; set; }
     }
 }

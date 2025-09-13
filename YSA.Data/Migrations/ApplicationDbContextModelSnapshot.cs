@@ -134,6 +134,36 @@ namespace YSA.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("YSA.Core.Entities.Anuncio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Contenido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CursoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaPublicacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CursoId");
+
+                    b.ToTable("Anuncios");
+                });
+
             modelBuilder.Entity("YSA.Core.Entities.Artista", b =>
                 {
                     b.Property<int>("Id")
@@ -202,10 +232,19 @@ namespace YSA.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("EsDestacado")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EsRecomendado")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("FechaPublicacion")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("InstructorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Nivel")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Precio")
@@ -302,6 +341,46 @@ namespace YSA.Data.Migrations
                     b.HasIndex("ModuloId");
 
                     b.ToTable("Lecciones");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.MetodoPago", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EstudianteId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TipoMetodo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("TokenPago")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UltimosCuatroDigitos")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
+
+                    b.Property<int?>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EstudianteId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("MetodosPago");
                 });
 
             modelBuilder.Entity("YSA.Core.Entities.Modulo", b =>
@@ -429,6 +508,53 @@ namespace YSA.Data.Migrations
                     b.ToTable("PedidoItems");
                 });
 
+            modelBuilder.Entity("YSA.Core.Entities.PreguntaRespuesta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CursoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EstudianteId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaPregunta")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaRespuesta")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("InstructorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Pregunta")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Respuesta")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CursoId");
+
+                    b.HasIndex("EstudianteId");
+
+                    b.HasIndex("InstructorId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("PreguntasRespuestas");
+                });
+
             modelBuilder.Entity("YSA.Core.Entities.Producto", b =>
                 {
                     b.Property<int>("Id")
@@ -495,6 +621,65 @@ namespace YSA.Data.Migrations
                     b.HasIndex("CategoriaId");
 
                     b.ToTable("ProductoCategorias");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.ProgresoLeccion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Completado")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("EstudianteId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaCompletado")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LeccionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EstudianteId");
+
+                    b.HasIndex("LeccionId");
+
+                    b.ToTable("ProgresoLecciones");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.Resena", b =>
+                {
+                    b.Property<int>("EstudianteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CursoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Calificacion")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Comentario")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaResena")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EstudianteId", "CursoId");
+
+                    b.HasIndex("CursoId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Resenas");
                 });
 
             modelBuilder.Entity("YSA.Core.Entities.Rol", b =>
@@ -588,6 +773,11 @@ namespace YSA.Data.Migrations
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
+
+                    b.Property<string>("UrlImagen")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -705,6 +895,17 @@ namespace YSA.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("YSA.Core.Entities.Anuncio", b =>
+                {
+                    b.HasOne("YSA.Core.Entities.Curso", "Curso")
+                        .WithMany("Anuncios")
+                        .HasForeignKey("CursoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Curso");
+                });
+
             modelBuilder.Entity("YSA.Core.Entities.Artista", b =>
                 {
                     b.HasOne("YSA.Core.Entities.Usuario", "Usuario")
@@ -775,6 +976,21 @@ namespace YSA.Data.Migrations
                     b.Navigation("Modulo");
                 });
 
+            modelBuilder.Entity("YSA.Core.Entities.MetodoPago", b =>
+                {
+                    b.HasOne("YSA.Core.Entities.Usuario", "Estudiante")
+                        .WithMany()
+                        .HasForeignKey("EstudianteId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("YSA.Core.Entities.Usuario", null)
+                        .WithMany("MetodosPago")
+                        .HasForeignKey("UsuarioId");
+
+                    b.Navigation("Estudiante");
+                });
+
             modelBuilder.Entity("YSA.Core.Entities.Modulo", b =>
                 {
                     b.HasOne("YSA.Core.Entities.Curso", "Curso")
@@ -824,7 +1040,7 @@ namespace YSA.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("YSA.Core.Entities.VentaItem", "VentaItem")
-                        .WithMany()
+                        .WithMany("PedidoItems")
                         .HasForeignKey("VentaItemId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -832,6 +1048,36 @@ namespace YSA.Data.Migrations
                     b.Navigation("Pedido");
 
                     b.Navigation("VentaItem");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.PreguntaRespuesta", b =>
+                {
+                    b.HasOne("YSA.Core.Entities.Curso", "Curso")
+                        .WithMany("PreguntasRespuestas")
+                        .HasForeignKey("CursoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("YSA.Core.Entities.Usuario", "Estudiante")
+                        .WithMany()
+                        .HasForeignKey("EstudianteId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("YSA.Core.Entities.Artista", "Instructor")
+                        .WithMany("PreguntasRespuestas")
+                        .HasForeignKey("InstructorId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("YSA.Core.Entities.Usuario", null)
+                        .WithMany("PreguntasRespuestas")
+                        .HasForeignKey("UsuarioId");
+
+                    b.Navigation("Curso");
+
+                    b.Navigation("Estudiante");
+
+                    b.Navigation("Instructor");
                 });
 
             modelBuilder.Entity("YSA.Core.Entities.Producto", b =>
@@ -861,6 +1107,48 @@ namespace YSA.Data.Migrations
                     b.Navigation("Categoria");
 
                     b.Navigation("Producto");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.ProgresoLeccion", b =>
+                {
+                    b.HasOne("YSA.Core.Entities.Usuario", "Estudiante")
+                        .WithMany()
+                        .HasForeignKey("EstudianteId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("YSA.Core.Entities.Leccion", "Leccion")
+                        .WithMany()
+                        .HasForeignKey("LeccionId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Estudiante");
+
+                    b.Navigation("Leccion");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.Resena", b =>
+                {
+                    b.HasOne("YSA.Core.Entities.Curso", "Curso")
+                        .WithMany("Resenas")
+                        .HasForeignKey("CursoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("YSA.Core.Entities.Usuario", "Estudiante")
+                        .WithMany()
+                        .HasForeignKey("EstudianteId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("YSA.Core.Entities.Usuario", null)
+                        .WithMany("Resenas")
+                        .HasForeignKey("UsuarioId");
+
+                    b.Navigation("Curso");
+
+                    b.Navigation("Estudiante");
                 });
 
             modelBuilder.Entity("YSA.Core.Entities.VentaItem", b =>
@@ -903,6 +1191,8 @@ namespace YSA.Data.Migrations
                 {
                     b.Navigation("Cursos");
 
+                    b.Navigation("PreguntasRespuestas");
+
                     b.Navigation("Productos");
                 });
 
@@ -915,9 +1205,15 @@ namespace YSA.Data.Migrations
 
             modelBuilder.Entity("YSA.Core.Entities.Curso", b =>
                 {
+                    b.Navigation("Anuncios");
+
                     b.Navigation("CursoCategorias");
 
                     b.Navigation("Modulos");
+
+                    b.Navigation("PreguntasRespuestas");
+
+                    b.Navigation("Resenas");
                 });
 
             modelBuilder.Entity("YSA.Core.Entities.Modulo", b =>
@@ -948,9 +1244,20 @@ namespace YSA.Data.Migrations
                     b.Navigation("Artista")
                         .IsRequired();
 
+                    b.Navigation("MetodosPago");
+
                     b.Navigation("Pedidos");
 
+                    b.Navigation("PreguntasRespuestas");
+
+                    b.Navigation("Resenas");
+
                     b.Navigation("UsuarioRoles");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.VentaItem", b =>
+                {
+                    b.Navigation("PedidoItems");
                 });
 #pragma warning restore 612, 618
         }

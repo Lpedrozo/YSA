@@ -54,6 +54,13 @@ namespace YSA.Data.Repositories
             _context.Entry(ventaItem).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
+        public async Task<IEnumerable<VentaItem>> GetItemsByPedidoIdAsync(int pedidoId)
+        {
+            return await _context.VentaItems
+                .Where(vi => vi.PedidoItems.Any(pi => pi.PedidoId == pedidoId))
+                .Include(vi => vi.Curso) // Incluir el curso para obtener el título
+                .ToListAsync();
+        }
 
     }
 }

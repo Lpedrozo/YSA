@@ -2,60 +2,98 @@
 
 @{
     ViewData["Title"] = "Iniciar Sesión";
-    Layout = "_Layout";
 }
 
 <style>
-    /* Estilos globales para mantener la coherencia con el panel de administración */
-    body {
-        background-color: #000000;
-        color: #fff;
+    /* Estilos del contenedor principal */
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 2rem 1rem;
     }
 
-    /* Estilos para la tarjeta de inicio de sesión */
-    .card {
+    /* Estilos de la tarjeta de login */
+    .login-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 12px;
-        background-color: #ffffff;
-        color: #000;
-        box-shadow: 0 4px 16px rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        padding: 2.5rem;
+        max-width: 420px;
+        width: 100%;
+        transition: transform 0.3s ease-in-out;
     }
 
-    .card-title {
-        color: #000;
-    }
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
 
+        .login-card .card-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+    /* Estilos de los inputs */
     .form-control {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 8px;
-        border: 1px solid #ddd;
-        padding: 10px;
-        transition: border-color 0.2s;
+        padding: 12px 15px;
+        transition: all 0.3s ease-in-out;
     }
 
         .form-control:focus {
-            border-color: #c49900;
-            box-shadow: 0 0 0 0.25rem rgba(196, 153, 0, 0.25);
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: #ffb800; /* Color de acento de YSA */
+            box-shadow: 0 0 0 0.25rem rgba(255, 184, 0, 0.25);
         }
 
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+    /* Estilos de la casilla de verificación */
+    .form-check-input {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.5);
+        transition: background-color 0.2s;
+    }
+
+        .form-check-input:checked {
+            background-color: #ffb800;
+            border-color: #ffb800;
+        }
+
+    /* Estilos del botón de login */
     .btn-login {
-        background-color: #c49900;
-        border-color: #c49900;
-        color: white;
-        font-weight: 600;
+        background-color: #ffb800;
+        border: none;
+        color: #1a1a1a;
+        font-weight: 700;
         border-radius: 8px;
-        transition: background-color 0.2s, transform 0.2s;
+        padding: 12px;
+        transition: all 0.3s ease-in-out;
     }
 
         .btn-login:hover {
-            background-color: #a38200;
-            border-color: #a38200;
-            color: white;
-            color:;
-            transform: translateY(-2px);
+            background-color: #e0a400;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 184, 0, 0.4);
         }
+
+    /* Mensajes de validación */
+    .text-danger {
+        color: #dc3545 !important;
+    }
 </style>
 
-<div class="d-flex justify-content-center align-items-center pt-4 mt-4" style="min-height: 80vh;">
-    <div class="card p-5 shadow-lg" style="max-width: 400px; width: 100%;">
+<div class="login-container mt-0 pt-0">
+    <div class="login-card">
         <div class="text-center mb-4">
             <h2 class="h4 card-title">Iniciar Sesión</h2>
             <p class="text-muted mt-2">Bienvenido de nuevo a YSA</p>
@@ -95,4 +133,3 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-s

@@ -8,6 +8,8 @@ using YSA.Web.Models.ViewModels;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using YSA.Core.Services;
+using System.Data;
+using Microsoft.AspNetCore.Hosting;
 
 namespace YSA.Web.Controllers
 {
@@ -17,13 +19,15 @@ namespace YSA.Web.Controllers
         private readonly SignInManager<Usuario> _signInManager;
         private readonly ApplicationDbContext _context;
         private readonly IUsuarioService _usuarioService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public CuentaController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ApplicationDbContext context, IUsuarioService usuarioService)
+        public CuentaController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ApplicationDbContext context, IUsuarioService usuarioService, IWebHostEnvironment webHostEnvironment)
         {
             _userManager = userManager;
             _usuarioService = usuarioService;
             _signInManager = signInManager;
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: /Cuenta/Registro
@@ -160,7 +164,8 @@ namespace YSA.Web.Controllers
                     Nombre = usuario.Nombre,
                     Apellido = usuario.Apellido,
                     Email = usuario.Email,
-                    CursosComprados = cursosComprados
+                    CursosComprados = cursosComprados,
+                    UrlImagen = usuario.UrlImagen
                 };
 
                 return View("MiPerfil", viewModel);
@@ -235,5 +240,86 @@ namespace YSA.Web.Controllers
 
             return RedirectToAction(nameof(MiPerfil));
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateProfileImage(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Por favor, selecciona una imagen para subir.";
+                return RedirectToAction(nameof(MiPerfil));
+            }
+
+            var usuario = await _userManager.GetUserAsync(User);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                string userIdString = usuario.Id.ToString();
+
+                // 1. Definir la ruta de la carpeta del usuario.
+                // Esta es la parte clave para crear la estructura que quieres: wwwroot/FotoPerfil/UsuarioId
+                string userFolder = Path.Combine(_webHostEnvironment.WebRootPath, "FotoPerfil", userIdString);
+
+                // 2. Crear la carpeta si no existe.
+                if (!Directory.Exists(userFolder))
+                {
+                    Directory.CreateDirectory(userFolder);
+                }
+
+                // 3. Eliminar la imagen anterior si existe.
+                // El nombre de la imagen anterior se obtiene del final de la URL guardada en la base de datos.
+                if (!string.IsNullOrEmpty(usuario.UrlImagen))
+                {
+                    var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, usuario.UrlImagen.TrimStart('/'));
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+
+                // 4. Generar un nombre único para la nueva imagen y la ruta completa del archivo.
+                string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                string filePath = Path.Combine(userFolder, uniqueFileName);
+
+                // 5. Guardar la nueva imagen en la carpeta del usuario.
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+                // 6. Actualizar la propiedad UrlImagen con la nueva ruta relativa.
+                // Esta es la URL que se guardará en la base de datos.
+                usuario.UrlImagen = Path.Combine("/FotoPerfil", userIdString, uniqueFileName).Replace("\\", "/");
+
+                // 7. Persistir los cambios en la base de datos.
+                var resultado = await _userManager.UpdateAsync(usuario);
+
+                if (resultado.Succeeded)
+                {
+                    await _signInManager.RefreshSignInAsync(usuario);
+                    TempData["SuccessMessage"] = "Foto de perfil actualizada con éxito.";
+                }
+                else
+                {
+                    // Si falla la actualización, eliminar la imagen recién subida.
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+                    TempData["ErrorMessage"] = "Error al actualizar la foto de perfil.";
+                }
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Ocurrió un error al subir la imagen. Inténtalo de nuevo.";
+            }
+
+            return RedirectToAction(nameof(MiPerfil));
+        }
+
     }
 }

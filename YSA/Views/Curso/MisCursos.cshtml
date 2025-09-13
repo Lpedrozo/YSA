@@ -1,0 +1,135 @@
+﻿@model List<YSA.Web.Models.ViewModels.CursoViewModel>
+
+@{
+    ViewData["Title"] = "Mis Cursos";
+}
+
+<style>
+    /* Estilos globales */
+    body {
+        background-color: #EAF3F3;
+        color: #fff;
+    }
+
+    /* Estilos para la sección de bienvenida */
+    .bienvenida-section {
+        display: flex;
+        align-items: center;
+        padding-top: 10px;
+        background-color: #f7f7f7;
+        color: #000;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .bienvenida-perfil {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .bienvenida-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: #333;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-right: 20px;
+    }
+
+    .bienvenida-info h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .bienvenida-info p {
+        margin: 0;
+        color: #666;
+    }
+
+    /* Estilos para las tarjetas de curso */
+    .card {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        border-radius: 12px;
+        border: none;
+        overflow: hidden; /* Para que la imagen no se desborde del radio */
+        background-color: #fff;
+        color: #000;
+    }
+
+        .card:hover {
+            transform: translateY(-5px); /* Efecto de "levantar" la tarjeta */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important; /* Sombra más pronunciada */
+        }
+
+    .card-img-top {
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    /* Contenido de la tarjeta */
+    .card-body h5 {
+        font-weight: 600;
+        color: #000;
+    }
+
+    .card-text {
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .btn-primary {
+        background-color: #c49900;
+        border-color: #c49900;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #a38200;
+            border-color: #a38200;
+            color: #000;
+        }
+</style>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info text-center" role="alert">
+        Aún no te has inscrito en ningún curso.
+    </div>
+}
+    <div class="container mt-4 mb-5">
+        <h2 class="text-center mt-5 mb-4 text-black">Tus Cursos</h2>
+        <hr style="color:#000;" />
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            @foreach (var curso in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(curso.UrlImagen))
+                        {
+                            <img src="@curso.UrlImagen" class="card-img-top" alt="Imagen del curso: @curso.Titulo" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <img src="https://via.placeholder.com/400x200.png?text=Sin+Imagen" class="card-img-top" alt="Imagen de marcador de posición" style="height: 200px; object-fit: cover;">
+                        }
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@curso.Titulo</h5>
+                            <p class="card-text text-muted flex-grow-1">@curso.DescripcionCorta</p>
+                            <div class="d-grid mt-auto">
+                                <a asp-action="VerCurso" asp-route-id="@curso.Id" class="btn btn-primary text-white">Ver Curso</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

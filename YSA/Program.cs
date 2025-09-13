@@ -48,6 +48,10 @@ builder.Services.AddScoped<IEstudianteCursoRepository, EstudianteCursoRepository
 builder.Services.AddScoped<IEstudianteCursoService, EstudianteCursoService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<IArtistaService, ArtistaService>();
+builder.Services.AddScoped<IArtistaRepository, ArtistaRepository>();
+builder.Services.AddScoped<IProgresoLeccionRepository, ProgresoLeccionRepository>();
+builder.Services.AddScoped<IProgresoLeccionService, ProgresoLeccionService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

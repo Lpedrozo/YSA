@@ -10,6 +10,16 @@ namespace YSA.Core.Interfaces
         Task UpdateAsync(Curso curso);
         Task DeleteAsync(int id);
         Task UpdateWithCategoriesAsync(Curso curso, int[] categoriasSeleccionadas);
-
+        Task ActualizarCursoAsync(Curso curso);
+        Task CrearResenaAsync(Resena resena);
+        Task<List<Resena>> GetResenasPorCursoAsync(int cursoId);
+        Task CrearPreguntaAsync(PreguntaRespuesta pregunta);
+        Task<List<PreguntaRespuesta>> GetPreguntasPorCursoAsync(int cursoId);
+        Task<List<Anuncio>> GetAnunciosPorCursoAsync(int cursoId);
+        Task<Anuncio> GetAnuncioByIdAsync(int id);
+        Task CrearAnuncioAsync(Anuncio anuncio);
+        Task UpdateAnuncioAsync(Anuncio anuncio);
+        Task DeleteAnuncioAsync(int id);
+        Task<List<Curso>> GetCursosByEstudianteIdAsync(int estudianteId);
     }
 }

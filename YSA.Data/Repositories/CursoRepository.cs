@@ -29,7 +29,9 @@ namespace YSA.Data.Repositories
         {
             return await _context.Cursos
                                  .Include(c => c.CursoCategorias)
-                                 .ThenInclude(cc => cc.Categoria)
+                                    .ThenInclude(cc => cc.Categoria)
+                                 .Include(c => c.Modulos)
+                                    .ThenInclude(m => m.Lecciones)
                                  .FirstOrDefaultAsync(c => c.Id == id);
         }
 
@@ -101,6 +103,85 @@ namespace YSA.Data.Repositories
                     throw;
                 }
             }
+        }
+        public async Task ActualizarCursoAsync(Curso curso)
+        {
+            _context.Cursos.Update(curso);
+            await _context.SaveChangesAsync();
+        }
+        public async Task CrearResenaAsync(Resena resena)
+        {
+            _context.Resenas.Add(resena);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Resena>> GetResenasPorCursoAsync(int cursoId)
+        {
+            return await _context.Resenas
+                .Include(r => r.Estudiante) // Asumiendo que tienes una relación con el usuario
+                .Where(r => r.CursoId == cursoId)
+                .ToListAsync();
+        }
+        public async Task CrearPreguntaAsync(PreguntaRespuesta pregunta)
+        {
+            _context.PreguntasRespuestas.Add(pregunta);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<PreguntaRespuesta>> GetPreguntasPorCursoAsync(int cursoId)
+        {
+            return await _context.PreguntasRespuestas
+                .Include(p => p.Estudiante)
+                .Include(p => p.Instructor)
+                .Where(p => p.CursoId == cursoId)
+                .OrderByDescending(p => p.FechaPregunta)
+                .ToListAsync();
+        }
+        public async Task<List<Anuncio>> GetAnunciosPorCursoAsync(int cursoId)
+        {
+            return await _context.Anuncios
+                .Where(a => a.CursoId == cursoId)
+                .OrderByDescending(a => a.FechaPublicacion)
+                .ToListAsync();
+        }
+
+        public async Task<Anuncio> GetAnuncioByIdAsync(int id)
+        {
+            return await _context.Anuncios.FindAsync(id);
+        }
+
+        public async Task CrearAnuncioAsync(Anuncio anuncio)
+        {
+            _context.Anuncios.Add(anuncio);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAnuncioAsync(Anuncio anuncio)
+        {
+            _context.Entry(anuncio).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAnuncioAsync(int id)
+        {
+            var anuncio = await _context.Anuncios.FindAsync(id);
+            if (anuncio != null)
+            {
+                _context.Anuncios.Remove(anuncio);
+                await _context.SaveChangesAsync();
+            }
+        }
+        public async Task<List<Curso>> GetCursosByEstudianteIdAsync(int estudianteId)
+        {
+            var cursos = await _context.EstudianteCursos
+                                       .Where(ec => ec.EstudianteId == estudianteId)
+                                       .Include(ec => ec.Curso)
+                                       .ThenInclude(c => c.Instructor)
+                                       .OrderByDescending(ec => ec.FechaAccesoOtorgado)
+                                       .Take(5)
+                                       .Select(ec => ec.Curso)
+                                       .ToListAsync();
+            return cursos;
         }
     }
 }

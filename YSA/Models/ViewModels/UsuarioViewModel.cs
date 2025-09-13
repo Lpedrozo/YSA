@@ -20,6 +20,9 @@ namespace YSA.Web.Models.ViewModels
         [Compare("NewPassword", ErrorMessage = "La nueva contraseña y la de confirmación no coinciden.")]
         public string? ConfirmPassword { get; set; }
         public ICollection<CursoViewModel> CursosComprados { get; set; } = new List<CursoViewModel>();
+        public string? UrlImagen { get; set; }
+        public IFormFile? File { get; set; }
+
 
     }
     public class PerfilViewModel
@@ -34,5 +37,79 @@ namespace YSA.Web.Models.ViewModels
         [Required(ErrorMessage = "El Apellido es obligatorio.")]
         [StringLength(100, ErrorMessage = "El {0} debe tener al menos {2} y un máximo de {1} caracteres de longitud.", MinimumLength = 2)]
         public string Apellido { get; set; }
+    }
+    public class EstudianteConCursosViewModel
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Email { get; set; }
+        public List<string> CursosComprados { get; set; }
+    }
+    public class ArtistaViewModel
+    {
+        public int Id { get; set; }
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        public string Nombre { get; set; }
+
+        [Required(ErrorMessage = "El apellido es obligatorio.")]
+        public string Apellido { get; set; }
+
+        [Required(ErrorMessage = "El correo electrónico es obligatorio.")]
+        [EmailAddress(ErrorMessage = "El formato del correo electrónico no es válido.")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "La contraseña es obligatoria.")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
+        [Required(ErrorMessage = "El nombre artístico es obligatorio.")]
+        public string NombreArtistico { get; set; }
+
+        public string Biografia { get; set; }
+
+        [Required(ErrorMessage = "El estilo principal es obligatorio.")]
+        public string EstiloPrincipal { get; set; }
+
+        public IFormFile? ImagenPerfil { get; set; }
+    }
+    public class ArtistaAdminViewModel
+    {
+        public int Id { get; set; }
+        public int UsuarioId { get; set; }
+
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        public string Nombre { get; set; }
+
+        [Required(ErrorMessage = "El apellido es obligatorio.")]
+        public string Apellido { get; set; }
+
+        [Required(ErrorMessage = "El correo electrónico es obligatorio.")]
+        [EmailAddress(ErrorMessage = "El formato del correo electrónico no es válido.")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "La contraseña es obligatoria.")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
+        [Required(ErrorMessage = "El nombre artístico es obligatorio.")]
+        public string NombreArtistico { get; set; }
+
+        public string Biografia { get; set; }
+
+        [Required(ErrorMessage = "El estilo principal es obligatorio.")]
+        public string EstiloPrincipal { get; set; }
+
+        public IFormFile? ImagenPerfil { get; set; }
+        public string? UrlImagenExistente { get; set; }
+    }
+    public class ArtistaListViewModel
+    {
+        public int Id { get; set; }
+        public int UsuarioId { get; set; }
+        public string NombreCompleto { get; set; }
+        public string Email { get; set; }
+        public string NombreArtistico { get; set; }
+        public string EstiloPrincipal { get; set; }
+        public string? UrlImagen { get; set; }
     }
 }

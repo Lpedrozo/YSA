@@ -1,0 +1,149 @@
+﻿@model List<YSA.Web.Models.ViewModels.AnuncioViewModel>
+@{
+    ViewData["Title"] = "Gestión de Anuncios";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Gestión de Anuncios</h1>
+    <hr />
+
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearAnuncioModal">
+            <i class="fas fa-plus-circle"></i> Nuevo Anuncio
+        </button>
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Título</th>
+                <th>Fecha de Publicación</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var anuncio in Model)
+            {
+                <tr>
+                    <td>@anuncio.Titulo</td>
+                    <td>@anuncio.FechaPublicacion.ToShortDateString()</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-primary editar-anuncio-btn"
+                                data-id="@anuncio.Id"
+                                data-titulo="@anuncio.Titulo"
+                                data-contenido="@anuncio.Contenido"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editarAnuncioModal">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <form asp-action="EliminarAnuncio" asp-route-id="@anuncio.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-danger eliminar-anuncio-btn">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="crearAnuncioModal" tabindex="-1" aria-labelledby="crearAnuncioModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearAnuncioModalLabel">Crear Anuncio</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="CrearAnuncio" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="CursoId" value="@ViewBag.CursoId" />
+                    <div class="form-group mb-3">
+                        <label for="Titulo">Título</label>
+                        <input type="text" name="Titulo" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Contenido">Contenido</label>
+                        <textarea name="Contenido" class="form-control" rows="5" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editarAnuncioModal" tabindex="-1" aria-labelledby="editarAnuncioModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarAnuncioModalLabel">Editar Anuncio</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="EditarAnuncio" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="Id" id="editar-anuncio-id" />
+                    <input type="hidden" name="CursoId" value="@ViewBag.CursoId" />
+                    <div class="form-group mb-3">
+                        <label for="Titulo">Título</label>
+                        <input type="text" name="Titulo" id="editar-anuncio-titulo" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Contenido">Contenido</label>
+                        <textarea name="Contenido" id="editar-anuncio-contenido" class="form-control" rows="5" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Lógica para llenar el modal de edición
+            document.querySelectorAll('.editar-anuncio-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const titulo = this.getAttribute('data-titulo');
+                    const contenido = this.getAttribute('data-contenido');
+
+                    document.getElementById('editar-anuncio-id').value = id;
+                    document.getElementById('editar-anuncio-titulo').value = titulo;
+                    document.getElementById('editar-anuncio-contenido').value = contenido;
+                });
+            });
+
+            // Lógica para la confirmación de eliminación con SweetAlert2
+            document.querySelectorAll('.eliminar-anuncio-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const form = this.closest('form');
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "¡No podrás revertir esto!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Sí, ¡bórralo!',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}

@@ -32,5 +32,9 @@ namespace YSA.Web.Controllers
         {
             return View();
         }
+        public IActionResult SobreNosotros()
+        {
+            return View();
+        }
     }
 }

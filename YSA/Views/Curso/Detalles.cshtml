@@ -141,13 +141,15 @@
 
                 @if (Model.TieneAcceso)
                 {
-                    <div class="alert alert-success d-flex align-items-center justify-content-center">
+                    <a asp-action="VerCurso" asp-controller="Curso" asp-route-id="@Model.Id" class="btn btn-action w-100" style="color:white">Ver Curso</a>
+
+                    <div class="alert alert-success d-flex align-items-center justify-content-center mt-3" role="alert">
                         <i class="fas fa-check-circle me-2"></i>Ya tienes acceso a este curso.
                     </div>
                 }
                 else if (Model.EstaEnValidacion)
                 {
-                    <div class="alert alert-info d-flex align-items-center justify-content-center">
+                    <div class="alert alert-info d-flex align-items-center justify-content-center" role="alert">
                         <i class="fas fa-hourglass-half me-2"></i>Su pago está en proceso de validación.
                     </div>
                 }
@@ -155,7 +157,7 @@
                 {
                     <form asp-controller="Pedido" asp-action="IniciarCompra" method="post">
                         <input type="hidden" name="cursoId" value="@Model.Id" />
-                        <button type="submit" style="color:white" class="btn w-100 btn-action">Inscribirse ahora</button>
+                        <button type="submit" class="btn btn-action w-100" style="color:white">Inscribirse ahora</button>
                     </form>
                 }
             </div>

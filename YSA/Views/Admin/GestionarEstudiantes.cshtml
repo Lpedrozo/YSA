@@ -1,0 +1,68 @@
+﻿@using YSA.Web.Models.ViewModels
+@model IEnumerable<EstudianteConCursosViewModel>
+
+@{
+    ViewData["Title"] = "Gestión de Estudiantes";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h2 class="display-4">Gestión de Estudiantes y Cursos</h2>
+            <p class="lead">Lista de todos los estudiantes y los cursos que han adquirido.</p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var estudiante in Model)
+            {
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@estudiante.Nombre</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">@estudiante.Email</h6>
+
+                            <hr />
+
+                            <p class="card-text">
+                                <span class="font-weight-bold">Cursos Adquiridos:</span>
+                            </p>
+
+                            @if (estudiante.CursosComprados != null && estudiante.CursosComprados.Any())
+                            {
+                                <ul class="list-group list-group-flush">
+                                    @foreach (var curso in estudiante.CursosComprados)
+                                    {
+                                        <li class="list-group-item">
+                                            <i class="fas fa-book-open"></i> @curso
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning" role="alert">
+                                    No ha adquirido ningún curso.
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    No se encontraron estudiantes para mostrar.
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+}

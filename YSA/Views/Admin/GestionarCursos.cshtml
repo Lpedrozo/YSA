@@ -2,22 +2,29 @@
 @{
     ViewData["Title"] = "Gestión de Cursos";
 }
+<style>
+    .table-actions .btn {
+        margin-right: 5px;
+    }
 
+    .modal-dialog {
+        max-width: 800px;
+    }
+</style>
 <div class="container mt-4">
     <h1 class="text-center mb-4">Gestión de Cursos</h1>
     <hr />
-
     <div class="d-flex justify-content-end mb-3">
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearCursoModal">
             <i class="fas fa-plus-circle"></i> Nuevo Curso
         </button>
     </div>
-
     <table class="table table-bordered table-hover">
         <thead class="thead-dark">
             <tr>
                 <th>Título</th>
-                <th>Precio</th>
+                <th>Descripción Corta</th>
+                <th>Nivel</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -26,29 +33,69 @@
             {
                 <tr>
                     <td>@curso.Titulo</td>
-                    <td>@curso.Precio.ToString("C")</td>
+                    <td>@Html.Raw(curso.DescripcionCorta)</td>
+                    <td>@curso.Nivel</td>
                     <td class="text-center">
-                        <a asp-action="GestionarModulos" asp-route-cursoId="@curso.Id" class="btn btn-sm btn-info">
-                            <i class="fas fa-cubes"></i> Módulos
-                        </a>
-                        <button type="button" class="btn btn-sm btn-primary editar-btn"
-                                data-id="@curso.Id"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editarCursoModal"
-                                data-titulo="@curso.Titulo"
-                                data-descripcioncorta="@curso.DescripcionCorta"
-                                data-descripcionlarga="@curso.DescripcionLarga"
-                                data-precio="@curso.Precio"
-                                data-urlimagen="@curso.UrlImagen"
-                                data-categorias="@string.Join(",", curso.CategoriasSeleccionadas)">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <form asp-action="EliminarCurso" asp-route-id="@curso.Id" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-danger eliminar-btn">
-                                <i class="fas fa-trash-alt"></i> Eliminar
+                        <div class="d-inline-flex table-actions">
+                            <a asp-action="GestionarAnuncios" asp-route-cursoId="@curso.Id" class="btn btn-sm btn-dark" title="Anuncios">
+                                <i class="fas fa-bullhorn"></i>
+                            </a>
+                            <a asp-action="GestionarModulos" asp-route-cursoId="@curso.Id" class="btn btn-sm btn-info" title="Módulos">
+                                <i class="fas fa-cubes"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-primary editar-btn"
+                                    data-id="@curso.Id"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editarCursoModal"
+                                    data-titulo="@curso.Titulo"
+                                    data-descripcioncorta="@curso.DescripcionCorta"
+                                    data-descripcionlarga="@curso.DescripcionLarga"
+                                    data-precio="@curso.Precio"
+                                    data-urlimagen="@curso.UrlImagen"
+                                    data-nivel="@((int)curso.Nivel)"
+                                    data-categorias="@string.Join(",", curso.CategoriasSeleccionadas)" title="Editar">
+                                <i class="fas fa-edit"></i>
                             </button>
-                        </form>
+                            <form asp-action="EliminarCurso" asp-route-id="@curso.Id" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger eliminar-btn" title="Eliminar">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                            @if (curso.EsDestacado)
+                            {
+                                <form asp-action="QuitarDestacado" asp-route-id="@curso.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-warning" title="Quitar Destacado">
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </button>
+                                </form>
+                            }
+                            else if (curso.EsRecomendado)
+                            {
+                                <form asp-action="QuitarRecomendado" asp-route-id="@curso.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-info" title="Quitar Recomendado">
+                                        <i class="fas fa-thumbs-down"></i>
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-action="DestacarCurso" asp-route-id="@curso.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-warning" title="Destacar">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                </form>
+                                <form asp-action="RecomendarCurso" asp-route-id="@curso.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-info" title="Recomendar">
+                                        <i class="fas fa-thumbs-up"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
                     </td>
                 </tr>
             }
@@ -57,7 +104,7 @@
 </div>
 
 <div class="modal fade" id="crearCursoModal" tabindex="-1" aria-labelledby="crearCursoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="crearCursoModalLabel">Crear Curso</h5>
@@ -81,6 +128,15 @@
                     <div class="form-group mb-3">
                         <label for="Precio">Precio</label>
                         <input type="number" id="Crear_Precio" name="Precio" class="form-control" step="0.01" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Nivel">Nivel</label>
+                        <select id="Crear_Nivel" name="Nivel" class="form-control">
+                            @foreach (var nivel in ViewBag.Niveles)
+                            {
+                                <option value="@nivel.Value">@nivel.Text</option>
+                            }
+                        </select>
                     </div>
                     <div class="form-group mb-3">
                         <label for="imagenArchivo">Imagen del Curso</label>
@@ -111,7 +167,7 @@
 </div>
 
 <div class="modal fade" id="editarCursoModal" tabindex="-1" aria-labelledby="editarCursoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editarCursoModalLabel">Editar Curso</h5>
@@ -136,6 +192,15 @@
                     <div class="form-group mb-3">
                         <label for="Precio">Precio</label>
                         <input type="number" id="Editar_Precio" name="Precio" class="form-control" step="0.01" required />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Nivel">Nivel</label>
+                        <select id="Editar_Nivel" name="Nivel" class="form-control">
+                            @foreach (var nivel in ViewBag.Niveles)
+                            {
+                                <option value="@nivel.Value">@nivel.Text</option>
+                            }
+                        </select>
                     </div>
                     <div class="form-group mb-3">
                         <label for="imagenArchivo">Imagen del Curso</label>
@@ -168,9 +233,29 @@
 </div>
 
 @section Scripts {
+    <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Inicializa TinyMCE para los campos de descripción
+        function inicializarTinyMCE() {
+            tinymce.init({
+                selector: '#Crear_DescripcionLarga, #Editar_DescripcionLarga',
+                plugins: 'anchor autolink charmap codesample emoticons link lists searchreplace table visualblocks wordcount',
+                toolbar: 'undo redo | blocks fontfamily fontsize | forecolor backcolor | bold italic underline strikethrough | link image | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                height: 300,
+                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }'
+            });
+
+            tinymce.init({
+                selector: '#Crear_DescripcionCorta, #Editar_DescripcionCorta',
+                plugins: 'link lists',
+                toolbar: 'bold italic | bullist numlist | link',
+                height: 150
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
+            inicializarTinyMCE();
             const tablaCursos = document.getElementById('tablaCursos');
             const crearModalEl = document.getElementById('crearCursoModal');
             const editarModalEl = document.getElementById('editarCursoModal');
@@ -182,16 +267,16 @@
                 return tokenElement ? tokenElement.value : '';
             }
 
-            // Envío del formulario de creación de curso
             crearForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
+                // Asegura que el contenido del editor se actualice en el textarea antes del envío
+                tinymce.triggerSave();
+
                 const formData = new FormData(this);
                 formData.append('__RequestVerificationToken', getAntiForgeryToken());
 
-                // Añadir categorías al FormData
-                Array.from(document.querySelectorAll('#crear-categorias-checkboxes input:checked')).forEach(cb => {
-                    formData.append('CategoriasSeleccionadas', cb.value);
-                });
+                const categoriasSeleccionadas = Array.from(document.querySelectorAll('#crear-categorias-checkboxes input:checked')).map(cb => cb.value);
+                categoriasSeleccionadas.forEach(val => formData.append('CategoriasSeleccionadas', val));
 
                 const response = await fetch(this.action, {
                     method: 'POST',
@@ -209,7 +294,6 @@
                 }
             });
 
-            // Llenar el modal de edición de curso
             editarModalEl.addEventListener('show.bs.modal', function (event) {
                 const button = event.relatedTarget;
                 const cursoId = button.getAttribute('data-id');
@@ -218,13 +302,17 @@
                 const descripcionLarga = button.getAttribute('data-descripcionlarga');
                 const precio = button.getAttribute('data-precio');
                 const urlImagen = button.getAttribute('data-urlimagen');
+                const nivel = button.getAttribute('data-nivel');
                 const categoriasSeleccionadas = button.getAttribute('data-categorias') ? button.getAttribute('data-categorias').split(',').map(Number) : [];
 
                 document.getElementById('Editar_Id').value = cursoId;
                 document.getElementById('Editar_Titulo').value = titulo;
-                document.getElementById('Editar_DescripcionCorta').value = descripcionCorta;
-                document.getElementById('Editar_DescripcionLarga').value = descripcionLarga;
                 document.getElementById('Editar_Precio').value = precio;
+                document.getElementById('Editar_Nivel').value = nivel;
+
+                // Carga el contenido en los editores TinyMCE
+                tinymce.get('Editar_DescripcionCorta').setContent(descripcionCorta);
+                tinymce.get('Editar_DescripcionLarga').setContent(descripcionLarga);
 
                 const imagenPreview = document.getElementById('Editar_PreviewImagen');
                 if (urlImagen) {
@@ -241,53 +329,50 @@
                 });
             });
 
-            // Envío del formulario de edición de curso
-                    editarForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            formData.append('__RequestVerificationToken', getAntiForgeryToken());
+            editarForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                // Asegura que el contenido del editor se actualice en el textarea antes del envío
+                tinymce.triggerSave();
 
-            Array.from(document.querySelectorAll('#editar-categorias-checkboxes input:checked')).forEach(cb => {
-                formData.append('CategoriasSeleccionadas', cb.value);
-            });
+                const formData = new FormData(this);
+                formData.append('__RequestVerificationToken', getAntiForgeryToken());
 
-            const response = await fetch(this.action, {
-                method: 'POST',
-                body: formData
-            });
+                const categoriasSeleccionadas = Array.from(document.querySelectorAll('#editar-categorias-checkboxes input:checked')).map(cb => cb.value);
+                categoriasSeleccionadas.forEach(val => formData.append('CategoriasSeleccionadas', val));
 
-            const result = await response.json(); // Parsea la respuesta JSON
-
-            if (result.success) {
-                const modal = bootstrap.Modal.getInstance(editarModalEl);
-                modal.hide();
-                Swal.fire('Éxito', result.message, 'success');
-                await recargarTabla();
-            } else {
-                // Manejar los errores de validación
-                Swal.fire({
-                    title: 'Error de validación',
-                    html: formatValidationErrors(result.errors),
-                    icon: 'error'
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
                 });
-            }
-        });
 
-        // Función para formatear los errores
-        function formatValidationErrors(errors) {
-            let html = '<ul>';
-            for (const key in errors) {
-                if (errors.hasOwnProperty(key)) {
-                    errors[key].forEach(message => {
-                        html += `<li>${message}</li>`;
+                const result = await response.json();
+                if (result.success) {
+                    const modal = bootstrap.Modal.getInstance(editarModalEl);
+                    modal.hide();
+                    Swal.fire('Éxito', result.message, 'success');
+                    await recargarTabla();
+                } else {
+                    Swal.fire({
+                        title: 'Error de validación',
+                        html: formatValidationErrors(result.errors),
+                        icon: 'error'
                     });
                 }
-            }
-            html += '</ul>';
-            return html;
-        }
+            });
 
-            // Recargar la tabla de cursos (ajustada para el nuevo flujo)
+            function formatValidationErrors(errors) {
+                let html = '<ul>';
+                for (const key in errors) {
+                    if (errors.hasOwnProperty(key)) {
+                        errors[key].forEach(message => {
+                            html += `<li>${message}</li>`;
+                        });
+                    }
+                }
+                html += '</ul>';
+                return html;
+            }
+
             async function recargarTabla() {
                 try {
                     const response = await fetch('@Url.Action("GestionarCursos", "Admin")');
@@ -305,7 +390,6 @@
                 }
             }
 
-            // Lógica para confirmar eliminación
             function attachEventListeners() {
                 document.querySelectorAll('.eliminar-btn').forEach(button => {
                     button.addEventListener('click', function (e) {

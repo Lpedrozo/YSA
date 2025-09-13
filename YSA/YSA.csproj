@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="HtmlSanitizer" Version="9.0.886" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
@@ -23,6 +24,10 @@
   <ItemGroup>
     <ProjectReference Include="..\YSA.Core\YSA.Core.csproj" />
     <ProjectReference Include="..\YSA.Data\YSA.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\FotoPerfil\" />
   </ItemGroup>
 
 </Project>

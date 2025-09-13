@@ -1,123 +1,143 @@
-﻿@{
+﻿@model YSA.Web.Models.ViewModels.DashboardViewModel
+@{
     ViewData["Title"] = "Panel de Administración";
 }
 
 <style>
-    /* Estilos globales */
-    body {
-        background-color: #000000;
-        color: #fff;
+    /* CSS Mínimo y de alto valor */
+    :root {
+        --color-accent: #3b82f6;
     }
 
-    /* Estilos para la tarjeta principal */
-    .card {
-        border-radius: 12px;
-        background-color: #ffffff;
-        color: #000;
-        box-shadow: 0 4px 16px rgba(255, 255, 255, 0.08);
+    .stat-card-icon {
+        font-size: 2.5rem;
+        color: var(--color-accent);
+        transition: transform 0.3s ease;
     }
 
-    .card-title, .card-body h1 {
-        color: #000000;
+    .stat-card-text {
+        font-size: 2rem;
+        font-weight: 700;
+        transition: color 0.3s ease;
     }
 
-    .text-muted-dark {
-        color: #666;
+    .btn-management-icon {
+        font-size: 1.5rem;
+        margin-right: 1.5rem;
+        transition: color 0.3s ease, transform 0.3s ease;
     }
 
-    /* Estilos para los botones */
-    a.btn-panel {
-        padding: 25px 15px;
-        font-size: 1.1em;
-        font-weight: 600;
-        border-radius: 8px;
-        transition: transform 0.2s, box-shadow 0.2s;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        background-color: #c49900;
-        border-color: #c49900;
-        color: #000 !important; /* Aseguramos el color del texto con !important */
-        text-decoration: none;
+    /* Efectos de Hover para las tarjetas de estadísticas */
+    .card:hover {
+        transform: translateY(-5px) !important;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.5) !important;
     }
 
-        a.btn-panel:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            background-color: #a38200;
-            border-color: #a38200;
-            color: #000 !important;
+        .card:hover .stat-card-icon {
+            transform: scale(1.2);
         }
 
-    .btn-panel i {
-        margin-bottom: 10px;
+    /* Efectos de Hover para los enlaces de gestión */
+    .list-group-item:hover {
+        background-color: var(--color-accent) !important;
+        color: #fff !important;
+        transform: translateX(10px);
     }
 
-    .hr-light {
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
+        .list-group-item:hover .btn-management-icon {
+            color: #fff !important;
+            transform: scale(1.1);
+        }
 </style>
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card shadow-lg p-4">
-                <div class="card-body">
-                    <h1 class="card-title text-center mb-4">Panel de Administración</h1>
-                    <p class="text-muted-dark text-center">Bienvenido al panel de control, Administrador.</p>
-                    <hr class="my-4" style="color:#c49900;">
+<div class="container-fluid py-5">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-12">
+                    <div class="card bg-dark text-white shadow-lg border-secondary h-100 transition-all">
+                        <div class="card-body d-flex flex-column align-items-center text-center">
+                            <i class="fas fa-graduation-cap stat-card-icon mb-3"></i>
+                            <h5 class="card-title text-muted mb-1">Total de Cursos</h5>
+                            <p class="card-text stat-card-text text-white">@Model.TotalCursos</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-12">
+                    <div class="card bg-dark text-white shadow-lg border-secondary h-100 transition-all">
+                        <div class="card-body d-flex flex-column align-items-center text-center">
+                            <i class="fas fa-users stat-card-icon mb-3"></i>
+                            <h5 class="card-title text-muted mb-1">Total de Estudiantes</h5>
+                            <p class="card-text stat-card-text text-white">@Model.TotalEstudiantes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-12">
+                    <div class="card bg-dark text-white shadow-lg border-secondary h-100 transition-all">
+                        <div class="card-body d-flex flex-column align-items-center text-center">
+                            <i class="fas fa-box-open stat-card-icon mb-3"></i>
+                            <h5 class="card-title text-muted mb-1">Pedidos Pendientes</h5>
+                            <p class="card-text stat-card-text text-white">@Model.PedidosPendientes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                    <div class="row text-center g-4">
-                        <div class="col-6 col-md-4 mb-3">
-                            <a href="#" class="btn btn-panel d-block">
-                                <i class="fas fa-users-cog fa-2x"></i>
-                                <br>
-                                Gestionar Usuarios
-                            </a>
-                        </div>
-                        <div class="col-6 col-md-4 mb-3">
-                            <a href="#" class="btn btn-panel d-block">
-                                <i class="fas fa-tags fa-2x"></i>
-                                <br>
-                                Gestionar Categorías
-                            </a>
-                        </div>
-                        <div class="col-6 col-md-4 mb-3">
-                            <a href="#" class="btn btn-panel d-block">
-                                <i class="fas fa-credit-card fa-2x"></i>
-                                <br>
-                                Gestionar Cuentas
-                            </a>
-                        </div>
-                        <div class="col-6 col-md-4 mb-3">
-                            <a href="#" class="btn btn-panel d-block">
-                                <i class="fas fa-shopping-bag fa-2x"></i>
-                                <br>
-                                Gestionar Pedidos
-                            </a>
-                        </div>
-                        <div class="col-6 col-md-4 mb-3">
-                            <a href="#" class="btn btn-panel d-block">
-                                <i class="fas fa-dollar-sign fa-2x"></i>
-                                <br>
-                                Gestionar Pagos
-                            </a>
-                        </div>
-                        <div class="col-6 col-md-4 mb-3">
-                            <a href="#" class="btn btn-panel d-block">
-                                <i class="fas fa-cubes fa-2x"></i>
-                                <br>
-                                Gestionar Productos
-                            </a>
-                        </div>
-                        <div class="col-6 col-md-4 mb-3">
-                            <a href="#" class="btn btn-panel d-block">
-                                <i class="fas fa-chart-line fa-2x"></i>
-                                <br>
-                                Ver Estadísticas
-                            </a>
-                        </div>
+        <div class="col-lg-8">
+            <div class="card bg-dark text-white shadow-lg border-secondary h-100">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">Herramientas de Gestión</h3>
+                    <div class="list-group list-group-flush">
+                        <a href="@Url.Action("GestionarCursos", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-edit btn-management-icon text-white-50"></i>
+                                <span>Gestionar Cursos</span>
+                            </div>
+                        </a>
+                        <a href="@Url.Action("GestionarEstudiantes", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-friends btn-management-icon text-white-50"></i>
+                                <span>Gestionar Estudiantes</span>
+                            </div>
+                        </a>
+                        <a href="@Url.Action("GestionarModulos", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-folder-open btn-management-icon text-white-50"></i>
+                                <span>Gestionar Módulos</span>
+                            </div>
+                        </a>
+                        <a href="@Url.Action("GestionarLecciones", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-video btn-management-icon text-white-50"></i>
+                                <span>Gestionar Lecciones</span>
+                            </div>
+                        </a>
+                        <a href="@Url.Action("GestionarCategorias", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-tags btn-management-icon text-white-50"></i>
+                                <span>Gestionar Categorías</span>
+                            </div>
+                        </a>
+                        <a href="@Url.Action("GestionarAnuncios", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-bullhorn btn-management-icon text-white-50"></i>
+                                <span>Gestionar Anuncios</span>
+                            </div>
+                        </a>
+                        <a href="@Url.Action("PedidosPendientes", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-truck btn-management-icon text-white-50"></i>
+                                <span>Ver Pedidos Pendientes</span>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+}

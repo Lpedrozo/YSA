@@ -22,5 +22,7 @@ namespace YSA.Core.Entities
 
         [Column(TypeName = "decimal(10, 2)")]
         public decimal Precio { get; set; }
+        public ICollection<PedidoItem> PedidoItems { get; set; }
+
     }
 }

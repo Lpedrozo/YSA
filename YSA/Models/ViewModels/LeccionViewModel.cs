@@ -18,5 +18,7 @@ namespace YSA.Web.Models.ViewModels
 
         [Required(ErrorMessage = "El orden es obligatorio.")]
         public int Orden { get; set; }
+        public bool CompletadaPorEstudiante { get; set; } // Nuevo campo
+
     }
 }

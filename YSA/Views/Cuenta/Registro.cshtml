@@ -4,92 +4,130 @@
 }
 
 <style>
-    /* Estilos globales para mantener la coherencia */
-    body {
-        background-color: #000000;
-        color: #fff;
+    /* Estilos del contenedor principal, coherentes con la vista de Login */
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 2rem 1rem;
     }
 
-    /* Estilos para la tarjeta del formulario */
-    .card {
+    /* Estilos de la tarjeta de registro */
+    .register-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 12px;
-        background-color: #ffffff;
-        color: #000;
-        box-shadow: 0 4px 16px rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        padding: 2.5rem;
+        max-width: 500px;
+        width: 100%;
+        transition: transform 0.3s ease-in-out;
     }
 
-    .card-title {
-        color: #000;
-    }
+        .register-card:hover {
+            transform: translateY(-5px);
+        }
 
+        .register-card .card-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .register-card .text-muted {
+        }
+
+    /* Estilos de los inputs */
     .form-control {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid black;
         border-radius: 8px;
-        border: 1px solid #ddd;
-        padding: 10px;
-        transition: border-color 0.2s;
+        padding: 12px 15px;
+        transition: all 0.3s ease-in-out;
     }
 
         .form-control:focus {
-            border-color: #c49900;
-            box-shadow: 0 0 0 0.25rem rgba(196, 153, 0, 0.25);
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: #ffb800; /* Color de acento */
+            box-shadow: 0 0 0 0.25rem rgba(255, 184, 0, 0.25);
         }
 
-    /* Estilos para el botón de registro */
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+    /* Estilos del botón de registro */
     .btn-register {
-        background-color: #c49900;
-        border-color: #c49900;
-        color: white;
-        font-weight: 600;
+        background-color: #ffb800;
+        border: none;
+        color: #1a1a1a;
+        font-weight: 700;
         border-radius: 8px;
-        transition: background-color 0.2s, transform 0.2s;
+        padding: 12px;
+        transition: all 0.3s ease-in-out;
     }
 
         .btn-register:hover {
-            background-color: #a38200;
-            border-color: #a38200;
-            color: white;
-            transform: translateY(-2px);
+            background-color: #e0a400;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 184, 0, 0.4);
         }
+
+    /* Mensajes de validación */
+    .text-danger {
+        color: #dc3545 !important;
+        font-size: 0.875em;
+    }
 </style>
 
-<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="col-md-4">
-        <div class="card my-5">
-            <div class="card-body p-4">
-                <h2 class="card-title text-center mb-4">Registro de Estudiantes</h2>
-                <form asp-action="Registro" asp-controller="Cuenta" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="mb-3">
-                        <label asp-for="Nombre" class="form-label">Nombre</label>
-                        <input type="text" asp-for="Nombre" class="form-control" placeholder="Introduce tu nombre" />
-                        <span asp-validation-for="Nombre" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="Apellido" class="form-label">Apellido</label>
-                        <input type="text" asp-for="Apellido" class="form-control" placeholder="Introduce tu apellido" />
-                        <span asp-validation-for="Apellido" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label">Correo Electrónico</label>
-                        <input type="email" asp-for="Email" class="form-control" placeholder="ejemplo@correo.com" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="Contrasena" class="form-label">Contraseña</label>
-                        <input type="password" asp-for="Contrasena" class="form-control" placeholder="Crea una contraseña segura" />
-                        <span asp-validation-for="Contrasena" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="ConfirmarContrasena" class="form-label">Confirmar Contraseña</label>
-                        <input type="password" asp-for="ConfirmarContrasena" class="form-control" placeholder="Repite la contraseña" />
-                        <span asp-validation-for="ConfirmarContrasena" class="text-danger"></span>
-                    </div>
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-register">Crear Cuenta</button>
-                    </div>
-                </form>
-            </div>
+<div class="register-container">
+    <div class="register-card">
+        <div class="text-center mb-4">
+            <h2 class="h4 card-title">Registro de Estudiantes</h2>
+            <p class="text-muted mt-2">Crea una cuenta para comenzar</p>
         </div>
+
+        <form asp-action="Registro" asp-controller="Cuenta" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Nombre" class="form-label">Nombre</label>
+                    <input type="text" asp-for="Nombre" class="form-control" placeholder="Introduce tu nombre" />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Apellido" class="form-label">Apellido</label>
+                    <input type="text" asp-for="Apellido" class="form-control" placeholder="Introduce tu apellido" />
+                    <span asp-validation-for="Apellido" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Correo Electrónico</label>
+                <input type="email" asp-for="Email" class="form-control" placeholder="ejemplo@correo.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Contrasena" class="form-label">Contraseña</label>
+                <input type="password" asp-for="Contrasena" class="form-control" placeholder="Crea una contraseña segura" />
+                <span asp-validation-for="Contrasena" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="ConfirmarContrasena" class="form-label">Confirmar Contraseña</label>
+                <input type="password" asp-for="ConfirmarContrasena" class="form-control" placeholder="Repite la contraseña" />
+                <span asp-validation-for="ConfirmarContrasena" class="text-danger"></span>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-register">Crear Cuenta</button>
+            </div>
+        </form>
     </div>
 </div>
 
