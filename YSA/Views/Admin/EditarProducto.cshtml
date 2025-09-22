@@ -1,0 +1,93 @@
+﻿@model YSA.Web.Models.ViewModels.CrearProductoViewModel
+
+@{
+    ViewData["Title"] = "Editar Producto";
+}
+
+<h1>Editar Producto</h1>
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="EditarProducto" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group mb-3">
+                <label asp-for="Titulo" class="form-label"></label>
+                <input asp-for="Titulo" class="form-control" />
+                <span asp-validation-for="Titulo" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="DescripcionCorta" class="form-label"></label>
+                <input asp-for="DescripcionCorta" class="form-control" />
+                <span asp-validation-for="DescripcionCorta" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="DescripcionLarga" class="form-label"></label>
+                <textarea asp-for="DescripcionLarga" class="form-control"></textarea>
+                <span asp-validation-for="DescripcionLarga" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="TipoProducto" class="form-label"></label>
+                <select asp-for="TipoProducto" class="form-control" asp-items="@Model.TiposProductoDisponibles"></select>
+                <span asp-validation-for="TipoProducto" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Precio" class="form-label"></label>
+                <input asp-for="Precio" class="form-control" />
+                <span asp-validation-for="Precio" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="ImagenPortada" class="form-label"></label>
+                <input asp-for="ImagenPortada" type="file" class="form-control" />
+                <span asp-validation-for="ImagenPortada" class="text-danger"></span>
+                @if (!string.IsNullOrEmpty(TempData["UrlImagenExistente"] as string))
+                {
+                    <p class="text-muted mt-2">Imagen actual:</p>
+                    <img src="@TempData["UrlImagenExistente"]" alt="Imagen del producto" class="img-thumbnail" style="max-height: 150px;" />
+                }
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="ArchivoDigital" class="form-label"></label>
+                <input asp-for="ArchivoDigital" type="file" class="form-control" />
+                <span asp-validation-for="ArchivoDigital" class="text-danger"></span>
+                @if (!string.IsNullOrEmpty(TempData["UrlArchivoExistente"] as string))
+                {
+                    <p class="text-muted mt-2">Archivo actual: <a href="@TempData["UrlArchivoExistente"]" target="_blank">Ver archivo</a></p>
+                }
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="AutorId" class="form-label"></label>
+                <select asp-for="AutorId" class="form-control" asp-items="@Model.AutoresDisponibles">
+                    <option value="">-- Seleccionar --</option>
+                </select>
+                <span asp-validation-for="AutorId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="CategoriaIds" class="form-label"></label>
+                <select asp-for="CategoriaIds" class="form-control" multiple asp-items="@Model.CategoriasDisponibles">
+                </select>
+                <span asp-validation-for="CategoriaIds" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <a asp-action="GestionarProductos" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

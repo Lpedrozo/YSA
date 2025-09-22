@@ -24,6 +24,6 @@ namespace YSA.Core.Entities
         public virtual ICollection<Curso> Cursos { get; set; }
         public virtual ICollection<Producto> Productos { get; set; }
         public ICollection<PreguntaRespuesta> PreguntasRespuestas { get; set; }
-
+        public virtual ICollection<ArtistaFoto> Portafolio { get; set; }
     }
 }

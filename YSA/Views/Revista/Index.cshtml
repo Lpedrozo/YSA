@@ -1,0 +1,159 @@
+﻿@model YSA.Web.Models.ViewModels.RevistaIndexViewModel
+@{
+    ViewData["Title"] = "Revista de Artistas";
+}
+
+<style>
+    /* Estilos adaptados de la vista de Cursos */
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #EAF3F3;
+        color: #fff;
+    }
+
+    .card {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        border-radius: 12px;
+        border: none;
+        overflow: hidden;
+        background-color: #fff;
+        color: #000;
+        cursor: pointer;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.15) !important;
+        }
+
+    .card-img-top {
+        height: 200px; /* Tamaño fijo para la imagen del artista */
+        object-fit: cover;
+    }
+
+    .portafolio-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .portafolio-item {
+        width: 300px;
+        height: 300px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+        .portafolio-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .no-portafolio-msg {
+        text-align: center;
+        margin-top: 50px;
+        color: #666;
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="text-center text-black mb-4">Revista de Artistas</h1>
+
+    <div class="row mb-5">
+        <h2 class="text-black">Explora a nuestros Artistas</h2>
+        <hr style="color:#000;" />
+        <div id="artistasCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                @{
+                    int itemsPerSlide = 4;
+                    int totalArtists = Model.Artistas.Count;
+                    int totalSlides = (int)Math.Ceiling(totalArtists / (double)itemsPerSlide);
+                }
+                @for (int i = 0; i < totalSlides; i++)
+                {
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="row row-cols-1 row-cols-md-4 g-4">
+                            @foreach (var artista in Model.Artistas.Skip(i * itemsPerSlide).Take(itemsPerSlide))
+                            {
+                                <div class="col">
+                                    <div class="card h-100 shadow-sm artista-card" data-artista-id="@artista.Id">
+                                        <img src="@(string.IsNullOrEmpty(artista.Usuario.UrlImagen) ? "https://via.placeholder.com/400x200.png?text=Sin+Foto" : Url.Content(artista.Usuario.UrlImagen))"
+                                             class="card-img-top" alt="Foto de perfil de @artista.Usuario.Nombre">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title">@artista.Usuario.Nombre @artista.Usuario.Apellido</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#artistasCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#artistasCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+            </button>
+        </div>
+    </div>
+
+    <hr style="color:#000;" />
+    <h2 class="text-center text-black mb-4">Portafolio del Artista</h2>
+    <div id="portafolio-content">
+        <div class="alert alert-info text-center" role="alert">
+            Selecciona un artista para ver su portafolio.
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Lógica para cargar el portafolio
+            $('.artista-card').on('click', async function () {
+                const artistaId = $(this).data('artista-id');
+                const portafolioContainer = $('#portafolio-content');
+
+                portafolioContainer.html(`<div class="text-center mt-5 mb-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>`);
+
+                try {
+                    const url = `@Url.Action("ObtenerPortafolioJson", "Artista")?artistaId=${artistaId}`;
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error('Error al cargar el portafolio.');
+                    }
+                    const fotos = await response.json();
+
+                    let html = '';
+                    if (fotos && fotos.length > 0) {
+                        html += '<div class="row g-3">';
+                        fotos.forEach(foto => {
+                            html += `
+                                <div class="col-md-4">
+                                    <div class="portafolio-item">
+                                        <img src="${foto.urlImagen}" alt="${foto.titulo || 'Foto de portafolio'}" class="img-fluid">
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                    } else {
+                        html = `<div class="alert alert-warning text-center" role="alert">Este artista aún no tiene fotos en su portafolio.</div>`;
+                    }
+                    portafolioContainer.html(html);
+
+                } catch (error) {
+                    console.error('Error al cargar el portafolio:', error);
+                    portafolioContainer.html(`<div class="alert alert-danger text-center" role="alert">Error al cargar el portafolio. Por favor, inténtalo de nuevo.</div>`);
+                }
+            });
+        });
+    </script>
+}

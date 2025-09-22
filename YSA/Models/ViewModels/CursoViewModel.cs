@@ -39,6 +39,7 @@ namespace YSA.Web.Models.ViewModels
         public bool EsRecomendado { get; set; }
         public string? NombreInstructor { get; set; }
         public NivelDificultad Nivel { get; set; } // Añadir esta propiedad
+        public Artista Instructor { get; set; } // Agrega esta propiedad
 
     }
 
@@ -149,5 +150,10 @@ namespace YSA.Web.Models.ViewModels
         public int CursoId { get; set; }
 
         public DateTime FechaPublicacion { get; set; }
+    }
+    public class AsociarArtistaViewModel
+    {
+        public int CursoId { get; set; }
+        public int InstructorId { get; set; }
     }
 }

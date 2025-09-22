@@ -16,7 +16,10 @@ namespace YSA.Data.Repositories
         {
             _context = context;
         }
-
+        public async Task<Artista> GetByUsuarioIdAsync(string userId)
+        {
+            return await _context.Artistas.Include(a => a.Usuario).FirstOrDefaultAsync(a => a.UsuarioId.ToString() == userId);
+        }
         public async Task<Artista> GetByIdAsync(int id)
         {
             return await _context.Artistas.Include(a => a.Usuario).FirstOrDefaultAsync(a => a.Id == id);

@@ -206,5 +206,17 @@ namespace YSA.Core.Services
         {
             return await _cursoRepository.GetCursosByEstudianteIdAsync(estudianteId);
         }
+        public async Task AsociarArtistaACursoAsync(int cursoId, int instructorId)
+        {
+            var curso = await _cursoRepository.GetByIdAsync(cursoId);
+            if (curso == null)
+            {
+                throw new InvalidOperationException("Curso no encontrado.");
+            }
+
+            // Asigna el nuevo InstructorId
+            curso.InstructorId = instructorId;
+            await _cursoRepository.UpdateAsync(curso);
+        }
     }
 }

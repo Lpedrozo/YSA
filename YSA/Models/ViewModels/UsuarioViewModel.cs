@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using YSA.Core.Entities;
 namespace YSA.Web.Models.ViewModels
 {
     public class UserViewModel
@@ -111,5 +112,10 @@ namespace YSA.Web.Models.ViewModels
         public string NombreArtistico { get; set; }
         public string EstiloPrincipal { get; set; }
         public string? UrlImagen { get; set; }
+    }
+    public class PortafolioViewModel
+    {
+        public int ArtistaId { get; set; }
+        public List<ArtistaFoto> Fotos { get; set; }
     }
 }

@@ -2,10 +2,12 @@
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using YSA.Core.DTOs;
 using YSA.Core.Entities;
 using YSA.Core.Interfaces;
+using Microsoft.AspNetCore.Hosting;
 
 namespace YSA.Core.Services
 {
@@ -13,11 +15,13 @@ namespace YSA.Core.Services
     {
         private readonly UserManager<Usuario> _userManager;
         private readonly IArtistaRepository _artistaRepository;
+        IArtistaFotoRepository _artistaFotoRepository;
 
-        public ArtistaService(UserManager<Usuario> userManager, IArtistaRepository artistaRepository)
+        public ArtistaService(UserManager<Usuario> userManager, IArtistaRepository artistaRepository, IArtistaFotoRepository artistaFotoRepository)
         {
             _userManager = userManager;
             _artistaRepository = artistaRepository;
+            _artistaFotoRepository = artistaFotoRepository;
         }
 
         public async Task<(bool success, string message)> CrearArtistaAsync(Usuario usuario, string password, Artista artista)
@@ -97,6 +101,52 @@ namespace YSA.Core.Services
         public async Task<Artista> GetByIdAsync(int id)
         {
             return await _artistaRepository.GetByIdAsync(id);
+        }
+        public async Task<List<ArtistaFoto>> ObtenerFotosPortafolioAsync(int artistaId)
+        {
+            return await _artistaFotoRepository.GetByArtistaIdAsync(artistaId);
+        }
+
+        public async Task<ArtistaFoto> ObtenerFotoPorIdAsync(int fotoId)
+        {
+            return await _artistaFotoRepository.GetByIdAsync(fotoId); // Corregido: usa el repositorio de fotos
+        }
+
+        public async Task AgregarFotoPortafolioAsync(int artistaId, Stream fileStream, string fileName, string titulo)
+        {
+            var urlImagen = Path.Combine("/Artista", artistaId.ToString(), fileName).Replace("\\", "/");
+
+            var foto = new ArtistaFoto
+            {
+                ArtistaId = artistaId,
+                UrlImagen = urlImagen,
+                Titulo = titulo
+            };
+
+            await _artistaFotoRepository.AddAsync(foto);
+            await _artistaFotoRepository.SaveChangesAsync();
+        }
+
+
+        public async Task<string> EliminarFotoPortafolioAsync(int fotoId)
+        {
+            var foto = await _artistaFotoRepository.GetByIdAsync(fotoId);
+            if (foto == null)
+            {
+                throw new InvalidOperationException("La foto no fue encontrada.");
+            }
+
+            // Devuelve la URL para que el controlador la use para borrar el archivo
+            await _artistaFotoRepository.DeleteAsync(foto);
+            await _artistaFotoRepository.SaveChangesAsync();
+
+            return foto.UrlImagen;
+        }
+
+        // Este método estaba bien, solo asegúrate de que exista en el repositorio.
+        public async Task<Artista> ObtenerArtistaPorUsuarioIdAsync(string userId)
+        {
+            return await _artistaRepository.GetByUsuarioIdAsync(userId);
         }
     }
 }

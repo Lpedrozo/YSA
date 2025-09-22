@@ -5,126 +5,192 @@
 }
 
 <style>
-    /* Estilos del contenedor principal */
-    .login-container {
+    /* Estilos generales del contenedor principal */
+    .main-content-udemy {
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
-        padding: 2rem 1rem;
+        background-color: #fff; /* Fondo blanco para coincidir con la imagen */
     }
 
-    /* Estilos de la tarjeta de login */
-    .login-card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        padding: 2.5rem;
-        max-width: 420px;
-        width: 100%;
-        transition: transform 0.3s ease-in-out;
+    /* Sección de la ilustración */
+    .illustration-section-udemy {
+        flex: 0.6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-right: 5rem;
     }
 
-        .login-card:hover {
-            transform: translateY(-5px);
-        }
+    .illustration-udemy {
+        max-width: 100%;
+        height: auto;
+    }
 
-        .login-card .card-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
+    /* Sección del formulario de login */
+    .login-section-udemy {
+        flex: 0.4;
+        max-width: 500px;
+        padding: 2rem;
+    }
 
-    /* Estilos de los inputs */
-    .form-control {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Nuevo: Estilos de la tarjeta del formulario */
+    .login-card-udemy {
+        border: 1px solid #e0e6ed;
         border-radius: 8px;
-        padding: 12px 15px;
-        transition: all 0.3s ease-in-out;
+        padding: 2.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-        .form-control:focus {
-            background-color: rgba(255, 255, 255, 0.15);
-            border-color: #ffb800; /* Color de acento de YSA */
-            box-shadow: 0 0 0 0.25rem rgba(255, 184, 0, 0.25);
+        .login-card-udemy:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
         }
 
-        .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.5);
+    .login-title-udemy {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 2rem;
+        color: #1c1d1f;
+        text-align: center;
+    }
+
+    /* Nuevo: Estilos de los inputs modernos */
+    .form-control-udemy {
+        width: 100%;
+        padding: 12px 0;
+        border: none;
+        border-bottom: 2px solid #e0e6ed;
+        background-color: transparent;
+        font-size: 1rem;
+        transition: border-bottom-color 0.3s ease;
+    }
+
+        .form-control-udemy:focus {
+            outline: none;
+            border-bottom-color: #5624d0;
+            box-shadow: none;
         }
 
-    /* Estilos de la casilla de verificación */
-    .form-check-input {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-color: rgba(255, 255, 255, 0.5);
+    .form-group-udemy {
+        margin-bottom: 1.5rem; /* Ajuste para dar más espacio */
+        position: relative; /* Para los íconos */
+    }
+
+    .form-label-udemy {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #1c1d1f;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Estilos del botón principal */
+    .btn-primary-udemy {
+        width: 100%;
+        background-color: #5624d0;
+        color: #fff;
+        border: none;
+        border-radius: 0;
+        padding: 1rem 1.25rem;
+        font-weight: 700;
+        cursor: pointer;
         transition: background-color 0.2s;
     }
 
-        .form-check-input:checked {
-            background-color: #ffb800;
-            border-color: #ffb800;
+        .btn-primary-udemy:hover {
+            background-color: #401b9c;
         }
 
-    /* Estilos del botón de login */
-    .btn-login {
-        background-color: #ffb800;
-        border: none;
-        color: #1a1a1a;
-        font-weight: 700;
-        border-radius: 8px;
-        padding: 12px;
-        transition: all 0.3s ease-in-out;
+    /* Nuevo: Estilos del separador */
+    .divider-udemy {
+        text-align: center;
+        position: relative;
+        margin: 2rem 0;
+        font-size: 0.9rem;
+        color: #6a6f73;
     }
 
-        .btn-login:hover {
-            background-color: #e0a400;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255, 184, 0, 0.4);
+        .divider-udemy::before,
+        .divider-udemy::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background-color: #e0e6ed;
         }
 
-    /* Mensajes de validación */
+        .divider-udemy::before {
+            left: 0;
+        }
+
+        .divider-udemy::after {
+            right: 0;
+        }
+
     .text-danger {
         color: #dc3545 !important;
     }
+
+    .registration-links-udemy {
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+        .registration-links-udemy a {
+            color: #5624d0;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+            .registration-links-udemy a:hover {
+                text-decoration: underline;
+            }
 </style>
 
-<div class="login-container mt-0 pt-0">
-    <div class="login-card">
-        <div class="text-center mb-4">
-            <h2 class="h4 card-title">Iniciar Sesión</h2>
-            <p class="text-muted mt-2">Bienvenido de nuevo a YSA</p>
+<div class="main-content-udemy">
+    <div class="illustration-section-udemy">
+        <img src="~/diseño/login.webp" alt="Ilustración de personas interactuando con elementos de aprendizaje" class="illustration-udemy">
+    </div>
+
+    <div class="login-section-udemy">
+        <div class="login-card-udemy">
+            <h1 class="login-title-udemy">Continua tu aprendizaje</h1>
+
+            <form asp-controller="Cuenta" asp-action="Login" method="post" class="login-form-udemy">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                <div class="form-group-udemy">
+                    <label asp-for="Email" class="form-label-udemy">Correo electrónico</label>
+                    <input asp-for="Email" type="email" class="form-control-udemy">
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="form-group-udemy">
+                    <label asp-for="Contrasena" class="form-label-udemy">Contraseña</label>
+                    <input asp-for="Contrasena" type="password" class="form-control-udemy">
+                    <span asp-validation-for="Contrasena" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid-udemy">
+                    <button type="submit" class="btn-primary-udemy">
+                        Continuar
+                    </button>
+                </div>
+
+                <div class="divider-udemy">
+                    <span>o</span>
+                </div>
+
+                <div class="registration-links-udemy">
+                    <span>¿No tienes una cuenta? <a href="~/Cuenta/Registro">Regístrate</a></span>
+                </div>
+            </form>
         </div>
-
-        <form asp-controller="Cuenta" asp-action="Login" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
-
-            <div class="mb-3">
-                <label asp-for="Email" class="form-label">Email</label>
-                <input asp-for="Email" type="email" class="form-control">
-                <span asp-validation-for="Email" class="text-danger small"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Contrasena" class="form-label">Contraseña</label>
-                <input asp-for="Contrasena" type="password" class="form-control">
-                <span asp-validation-for="Contrasena" class="text-danger small"></span>
-            </div>
-
-            <div class="form-check mb-4">
-                <input asp-for="RecordarMe" type="checkbox" class="form-check-input">
-                <label asp-for="RecordarMe" class="form-check-label">Recordarme</label>
-            </div>
-
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-login">
-                    Iniciar Sesión
-                </button>
-            </div>
-        </form>
     </div>
 </div>
 

@@ -52,6 +52,11 @@ builder.Services.AddScoped<IArtistaService, ArtistaService>();
 builder.Services.AddScoped<IArtistaRepository, ArtistaRepository>();
 builder.Services.AddScoped<IProgresoLeccionRepository, ProgresoLeccionRepository>();
 builder.Services.AddScoped<IProgresoLeccionService, ProgresoLeccionService>();
+builder.Services.AddScoped<IArtistaFotoRepository, ArtistaFotoRepository>();
+builder.Services.AddScoped<IEventoRepository, EventoRepository>();
+builder.Services.AddScoped<IEventoService, EventoService>();
+builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
+builder.Services.AddScoped<IProductoService, ProductoService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

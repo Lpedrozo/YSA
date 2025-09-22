@@ -22,6 +22,8 @@ namespace YSA.Data.Repositories
             return await _context.Cursos
                                  .Include(c => c.CursoCategorias)
                                  .ThenInclude(cc => cc.Categoria)
+                                 .Include(c => c.Instructor) // Incluye la entidad Artista (el Instructor)
+                                  .ThenInclude(i => i.Usuario)
                                  .ToListAsync();
         }
 

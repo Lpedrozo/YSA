@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using YSA.Core.DTOs;
 using YSA.Core.Entities;
 
@@ -12,5 +13,12 @@ namespace YSA.Core.Services
         Task<(bool success, string message)> DeleteArtistaAsync(int id);
         Task<List<Artista>> GetAllArtistasAsync();
         Task<Artista> GetByIdAsync(int id);
+
+        Task<List<ArtistaFoto>> ObtenerFotosPortafolioAsync(int artistaId);
+        Task<ArtistaFoto> ObtenerFotoPorIdAsync(int fotoId);
+        Task AgregarFotoPortafolioAsync(int artistaId, Stream fileStream, string fileName, string titulo);
+        Task<string> EliminarFotoPortafolioAsync(int fotoId);
+        Task<Artista> ObtenerArtistaPorUsuarioIdAsync(string userId);
+
     }
 }

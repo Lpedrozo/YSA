@@ -2,477 +2,355 @@
 @model YSA.Web.Models.ViewModels.CursoCompletoViewModel
 
 @{
-    ViewData["Title"] = Model.Titulo;
-    Layout = "_Layout";
+	ViewData["Title"] = Model.Titulo;
+	Layout = "_Layout";
 }
 
 <style>
-    /* Importación de Google Fonts para una tipografía moderna */
-    @@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
-    
+	/* Estilos generales */
+		@@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    /* Estilos generales */
-    body {
-        font-family: 'Montserrat', sans-serif;
-        color: var(--color-text-main);
-        background-color: var(--color-bg-dark);
-    }
+		body {
+				font-family: 'Inter', sans-serif;
+				background-color: #f7f9fa;
+				color: #212529;
 
-    .course-player-container {
-        display: flex;
-        flex-direction: column;
-        min-height: calc(100vh - 56px); /* 100vh - altura de la barra de navegación */
-    }
+	}
 
-    .main-content {
-        flex-grow: 1;
-        display: flex;
-    }
+		.course-page-container {
+				padding: 2rem 0;
 
-    .video-player {
-        flex: 1;
-        background-color: var(--color-bg-dark);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        padding-bottom: 56.25%; /* Relación de aspecto 16:9 */
-        height: 0;
-        overflow: hidden;
-    }
+	}
 
-    .video-frame {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-    }
+		.course-tabs-header {
+				background-color: #fff;
+				padding: 1rem;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+				margin-bottom: 2rem;
 
-    .sidebar {
-        width: 350px;
-        background-color: var(--color-bg-light);
-        color: var(--color-text-main);
-        overflow-y: auto;
-        padding: 2rem;
-        border-left: 1px solid var(--color-border);
-        transition: transform 0.3s ease-in-out;
-    }
+	}
 
-    /* Estilos del menú del curso */
-    .course-menu h4 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--color-accent);
-        margin-bottom: 1.5rem;
-    }
+		.nav-tabs .nav-link {
+				font-weight: 500;
+				color: #6c757d;
+				border-color: transparent;
 
-    .accordion-item {
-        background-color: transparent;
-        border: none;
-        margin-bottom: 0.5rem;
-    }
+	}
 
-    .accordion-button {
-        background-color: var(--color-border);
-        color: var(--color-text-main);
-        font-weight: 600;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-    }
+			.nav-tabs .nav-link.active {
+					color: #212529;
+					border-color: #dee2e6 #dee2e6 #fff;
+					font-weight: 600;
 
-        .accordion-button:not(.collapsed) {
-            background-color: var(--color-accent);
-            color: var(--color-bg-dark); /* Texto oscuro en botón activo */
-        }
+	}
 
-        .accordion-button:hover {
-            background-color: #444;
-            color: var(--color-accent);
-            transform: translateY(-2px);
-        }
 
-    .list-group-item {
-        background-color: transparent;
-        border: none;
-        padding: 0.5rem 1rem;
-    }
+	/* Contenedor principal para el contenido */
+		.content-container {
+				background-color: #fff;
+				padding: 2rem;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-    .lesson-link {
-        color: var(--color-text-main);
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        padding: 0.5rem 1rem;
-        transition: background-color 0.3s, color 0.3s;
-        border-radius: 5px;
-    }
+	}
 
-        .lesson-link:hover {
-            background-color: #2a2a2a;
-            color: var(--color-accent);
-        }
+		.lesson-info-container {
+				margin-bottom: 2rem;
 
-        .lesson-link i {
-            color: var(--color-text-muted);
-            transition: color 0.3s;
-        }
+	}
 
-        .lesson-link:hover i {
-            color: var(--color-accent);
-        }
+			.lesson-info-container h3 {
+					font-size: 1.5rem;
+					font-weight: 600;
 
-        /* NUEVOS ESTILOS PARA LA LECCIÓN COMPLETADA */
-        .lesson-link.completed {
-            color: var(--color-success);
-            font-weight: 600;
-        }
+	}
 
-            .lesson-link.completed i {
-                color: var(--color-success);
-            }
+			.lesson-info-container p {
+					font-size: 1rem;
+					color: #6c757d;
+					line-height: 1.6;
 
-            .lesson-link.completed:hover {
-                background-color: #2a2a2a;
-                color: var(--color-success);
-            }
+	}
 
-    /* --- CAMBIOS PARA LA SECCIÓN INFERIOR --- */
-    .course-details-section {
-        background-color: var(--color-bg-bottom); /* Fondo blanco */
-        color: var(--color-text-bottom-main); /* Texto principal negro */
-        padding: 2rem;
-        flex-shrink: 0;
-        border-top: 1px solid var(--color-border-bottom); /* Borde superior gris claro */
-    }
+		.main-video-player {
+				position: relative;
+				width: 100%;
+				padding-bottom: 56.25%;
+				background-color: #000;
+				border-radius: 8px;
+				overflow: hidden;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
-        .course-details-section h5 {
-            color: var(--color-text-bottom-main); /* Títulos negros */
-        }
+	}
 
-        .course-details-section p,
-        .course-details-section small,
-        .course-details-section .text-muted {
-            color: var(--color-text-bottom-muted) !important; /* Texto secundario gris */
-        }
+		.video-frame,
+		.course-image {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				border: none;
 
-    .nav-tabs .nav-link {
-        color: var(--color-text-bottom-muted); /* Color de texto normal en pestañas */
-        border: none;
-        border-bottom: 2px solid transparent;
-        transition: all 0.3s;
-    }
+	}
 
-        .nav-tabs .nav-link:hover {
-            border-color: var(--color-accent);
-            color: var(--color-accent);
-        }
 
-        .nav-tabs .nav-link.active {
-            color: var(--color-accent);
-            background-color: transparent;
-            border-color: var(--color-accent);
-        }
+	/* Estilos del acordeón para módulos y lecciones */
+		.accordion-item {
+				border: none;
+				border-bottom: 1px solid #e9ecef;
 
-    .tab-content .card {
-        background-color: var(--color-card-bottom) !important; /* Fondo de tarjeta gris muy claro */
-        border: 1px solid var(--color-border-bottom); /* Borde de tarjeta gris claro */
-        border-radius: 10px;
-    }
+	}
 
-    .form-control, .form-select {
-        background-color: #fff; /* Fondo blanco para inputs */
-        color: var(--color-text-bottom-main); /* Texto negro en inputs */
-        border-color: var(--color-border-bottom); /* Borde gris en inputs */
-    }
+		.accordion-button {
+				background-color: #fff;
+				color: #212529;
+				font-weight: 600;
+				font-size: 1.1em;
+				padding: 1rem;
 
-        .form-control::placeholder {
-            color: var(--color-text-bottom-muted); /* Placeholder gris */
-        }
+	}
 
-    /* Mantener el botón de acción */
-    .btn-action {
-        background-color: var(--color-accent);
-        color: var(--color-bg-dark); /* Texto oscuro en el botón de acento */
-        border: none;
-        font-weight: 600;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
+			.accordion-button:not(.collapsed) {
+					color: #007bff;
+					background-color: #f8f9fa;
+					box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
 
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+	}
 
-    /* Media Queries para responsividad */
-    @@media (max-width: 992px) {
-        .main-content {
-            flex-direction: column;
-        }
+		.accordion-body {
+				padding: 0;
 
-        .sidebar {
-            width: 100%;
-            border-left: none;
-            border-top: 1px solid var(--color-border);
-        }
-    }
+	}
+
+		.lesson-item {
+				display: flex;
+				align-items: center;
+				padding: 1rem;
+				text-decoration: none;
+				color: #495057;
+				transition: background-color 0.2s;
+
+	}
+
+			.lesson-item:hover {
+					background-color: #f1f1f1;
+
+	}
+
+			.lesson-item.active {
+					background-color: #e9ecef;
+					font-weight: 500;
+					color: #212529;
+
+	}
+
+			.lesson-item.completed {
+					color: #28a745;
+
+	}
+
+		.lesson-icon {
+				margin-right: 15px;
+				font-size: 1.2em;
+
+	}
 </style>
 
-<div class="course-player-container">
-    <div class="main-content">
-        <div class="video-player">
-            @{
-                var firstLessonUrl = Model.Modulos.FirstOrDefault()?.Lecciones.FirstOrDefault()?.UrlVideo;
-                var firstLessonEmbedUrl = string.Empty;
+<div class="container course-page-container">
+	<div class="course-tabs-header">
+		<ul class="nav nav-tabs" id="courseTabs" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active" id="presentacion-tab" data-bs-toggle="tab" data-bs-target="#presentacion-tab-pane" type="button" role="tab">Presentación</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="contenido-tab" data-bs-toggle="tab" data-bs-target="#contenido-tab-pane" type="button" role="tab">Contenido</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="comunidad-tab" data-bs-toggle="tab" data-bs-target="#comunidad-tab-pane" type="button" role="tab">Comunidad</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="proyectos-tab" data-bs-toggle="tab" data-bs-target="#proyectos-tab-pane" type="button" role="tab">Proyectos</button>
+			</li>
+		</ul>
+	</div>
 
-                if (!string.IsNullOrEmpty(firstLessonUrl))
-                {
-                    var videoId = firstLessonUrl.Split('/').Last().Split('?').First();
-                    firstLessonEmbedUrl = $"https://www.youtube.com/embed/{videoId}";
-                }
-            }
-            <iframe class="video-frame" id="leccionVideo"
-                    src="@firstLessonEmbedUrl"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen></iframe>
-        </div>
+	<div class="tab-content" id="courseTabContent">
+		<div class="tab-pane fade show active" id="presentacion-tab-pane" role="tabpanel" tabindex="0">
+			<div class="row">
+				<div class="col-lg-4">
+					<div class="main-video-player">
+						<img class="course-image" src="@Model.UrlImagen" alt="Imagen de presentación del curso">
+					</div>
+				</div>
+				<div class="col-lg-8">
+					<div class="content-container">
+						<h2 class="mb-3">@Model.Titulo</h2>
+						<p class="text-muted">@Html.Raw(Model.DescripcionLarga)</p>
+						<hr />
+						<p><strong>Instructor:</strong></p>
+						<div class="d-flex align-items-center">
+							<span class="text-warning">
+								@for (int i = 0; i < Math.Round(Model.Resenas.Any() ? Model.Resenas.Average(r => r.Calificacion) : 0); i++)
+								{
+									<i class="fas fa-star"></i>
+								}
+								@for (int i = 0; i < 5 - Math.Round(Model.Resenas.Any() ? Model.Resenas.Average(r => r.Calificacion) : 0); i++)
+								{
+									<i class="far fa-star"></i>
+								}
+							</span>
+							<span class="ms-2">@(Model.Resenas.Any() ? Model.Resenas.Average(r => r.Calificacion).ToString("F1") : "0") de 5 estrellas (@Model.Resenas.Count() reseñas)</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
-        <div class="sidebar">
-            <div class="course-menu">
-                <h4>Contenido del Curso</h4>
-                <div class="accordion accordion-flush" id="courseAccordion">
-                    @foreach (var modulo in Model.Modulos)
-                    {
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@modulo.Id" aria-expanded="false">
-                                    <i class="fas fa-folder me-2"></i>
-                                    @modulo.Titulo
-                                </button>
-                            </h2>
-                            <div id="collapse-@modulo.Id" class="accordion-collapse collapse" data-bs-parent="#courseAccordion">
-                                <div class="accordion-body p-0">
-                                    <ul class="list-group list-group-flush">
-                                        @foreach (var leccion in modulo.Lecciones)
-                                        {
-                                            <li class="list-group-item">
-                                                @{
-                                                    var linkClass = leccion.CompletadaPorEstudiante ? "lesson-link completed" : "lesson-link";
-                                                    var iconClass = leccion.CompletadaPorEstudiante ? "fas fa-check-circle" : "fas fa-play-circle";
-                                                }
-                                                <a href="#" class="@linkClass" data-video-url="@leccion.UrlVideo" data-lesson-id="@leccion.Id">
-                                                    <i class="@iconClass me-2"></i> @leccion.Titulo
-                                                </a>
-                                            </li>
-                                        }
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
+		<div class="tab-pane fade" id="contenido-tab-pane" role="tabpanel" tabindex="0">
+			<div class="row">
+				<div class="col-lg-8">
+					<div class="content-container">
+						<div class="lesson-info-container">
+							<h3 id="lessonTitle">Selecciona una lección para empezar</h3>
+							<p class="text-muted" id="lessonContent">Usa la lista de lecciones a continuación para navegar por el contenido del curso.</p>
+						</div>
+						<div class="main-video-player">
+							<iframe class="video-frame d-none" id="mainVideoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+							<img class="course-image" id="mainCourseImage" src="@Model.UrlImagen" alt="Imagen de presentación del curso">
+						</div>
+					</div>
+				</div>
 
-    <div class="course-details-section">
-        <div class="container-fluid">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="descripcion-tab" data-bs-toggle="tab" data-bs-target="#descripcion-tab-pane" type="button" role="tab" aria-controls="descripcion-tab-pane" aria-selected="true">Descripción</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="preguntas-tab" data-bs-toggle="tab" data-bs-target="#preguntas-tab-pane" type="button" role="tab" aria-controls="preguntas-tab-pane" aria-selected="false">Preguntas</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="anuncios-tab" data-bs-toggle="tab" data-bs-target="#anuncios-tab-pane" type="button" role="tab" aria-controls="anuncios-tab-pane" aria-selected="false">Anuncios</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="resenas-tab" data-bs-toggle="tab" data-bs-target="#resenas-tab-pane" type="button" role="tab" aria-controls="resenas-tab-pane" aria-selected="false">Reseñas</button>
-                </li>
-            </ul>
+				<div class="col-lg-4">
+					<div class="accordion" id="courseAccordion">
+						@foreach (var modulo in Model.Modulos)
+						{
+							<div class="accordion-item">
+								<p class="accordion-header" id="heading_@modulo.Id">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
+										@modulo.Titulo
+									</button>
+								</p>
+								<div id="collapse_@modulo.Id" class="accordion-collapse collapse" aria-labelledby="heading_@modulo.Id" data-bs-parent="#courseAccordion">
+									<div class="accordion-body">
+										<ul class="list-group list-group-flush">
+											@foreach (var leccion in modulo.Lecciones)
+											{
+												<li class="list-group-item">
+													<a href="#" class="lesson-item @(leccion.CompletadaPorEstudiante ? "completed" : "")"
+																				   data-video-url="@leccion.UrlVideo"
+																				   data-lesson-id="@leccion.Id"
+																				   data-lesson-title="@leccion.Titulo"
+																				   data-lesson-content="@leccion.Contenido">
+														<i class="lesson-icon @(leccion.CompletadaPorEstudiante ? "fas fa-check-circle" : "fas fa-play-circle")"></i>
+														<span class="lesson-title">@leccion.Titulo</span>
+													</a>
+												</li>
+											}
+										</ul>
+									</div>
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
 
-            <div class="tab-content mt-3" id="myTabContent">
-                <div class="tab-pane fade show active" id="descripcion-tab-pane" role="tabpanel" aria-labelledby="descripcion-tab" tabindex="0">
-                    <p class="text-muted">@Html.Raw(Model.DescripcionLarga)</p>
-                </div>
-                <div class="tab-pane fade" id="preguntas-tab-pane" role="tabpanel" aria-labelledby="preguntas-tab" tabindex="0">
-                    <div class="card p-4 mb-4">
-                        <h5>Haz una pregunta</h5>
-                        <form asp-controller="Curso" asp-action="CrearPregunta" method="post">
-                            <input type="hidden" name="CursoId" value="@Model.Id" />
-                            <div class="mb-3">
-                                <textarea class="form-control" id="preguntaTexto" name="Pregunta" rows="4" placeholder="Escribe tu pregunta aquí..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-action">Enviar Pregunta</button>
-                        </form>
-                    </div>
+		<div class="tab-pane fade" id="comunidad-tab-pane" role="tabpanel" tabindex="0">
+			<div class="single-column-layout">
+				<div class="content-container">
+					<h3>Comunidad y Anuncios</h3>
+				</div>
+			</div>
+		</div>
 
-                    <h5 class="mt-5">Preguntas y respuestas del curso</h5>
-                    @if (Model.Preguntas != null && Model.Preguntas.Any())
-                    {
-                        @foreach (var qa in Model.Preguntas.OrderByDescending(q => q.FechaPregunta))
-                        {
-                            <div class="card p-3 my-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <small class="text-muted">Preguntado por <strong>@qa.NombreEstudiante</strong> el @qa.FechaPregunta.ToShortDateString()</small>
-                                </div>
-                                <p class="mb-2"><strong>Pregunta:</strong> @qa.Pregunta</p>
-                                @if (!string.IsNullOrEmpty(qa.Respuesta))
-                                {
-                                    <div class="mt-2 ps-3 border-start border-warning">
-                                        <small class="text-muted"><strong>@qa.NombreInstructor</strong> respondió:</small>
-                                        <p class="mb-0">@qa.Respuesta</p>
-                                        <small class="text-muted">el @qa.FechaRespuesta?.ToShortDateString()</small>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <p class="text-muted mt-2">El instructor aún no ha respondido a esta pregunta.</p>
-                                }
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <p class="text-muted">Sé el primero en hacer una pregunta sobre este curso.</p>
-                    }
-                </div>
-                <div class="tab-pane fade" id="anuncios-tab-pane" role="tabpanel" aria-labelledby="anuncios-tab" tabindex="0">
-                    @if (Model.Anuncios != null && Model.Anuncios.Any())
-                    {
-                        @foreach (var anuncio in Model.Anuncios.OrderByDescending(a => a.FechaPublicacion))
-                        {
-                            <div class="card p-4 my-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h6 class="mb-0 text-warning">@anuncio.Titulo</h6>
-                                    <small class="text-muted">Publicado el @anuncio.FechaPublicacion.ToShortDateString()</small>
-                                </div>
-                                <p class="mb-0">@anuncio.Contenido</p>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <p class="text-muted">Aún no hay anuncios publicados para este curso.</p>
-                    }
-                </div>
-                <div class="tab-pane fade" id="resenas-tab-pane" role="tabpanel" aria-labelledby="resenas-tab" tabindex="0">
-                    <div class="card p-4 mb-4">
-                        <h5>Deja tu reseña</h5>
-                        <form asp-controller="Curso" asp-action="CrearResena" method="post">
-                            <input type="hidden" name="CursoId" value="@Model.Id" />
-                            <div class="mb-3">
-                                <label for="calificacion" class="form-label">Calificación</label>
-                                <select class="form-select" id="calificacion" name="Calificacion">
-                                    <option value="5">⭐⭐⭐⭐⭐</option>
-                                    <option value="4">⭐⭐⭐⭐</option>
-                                    <option value="3">⭐⭐⭐</option>
-                                    <option value="2">⭐⭐</option>
-                                    <option value="1">⭐</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="comentario" class="form-label">Comentario</label>
-                                <textarea class="form-control" id="comentario" name="Comentario" rows="3" placeholder="Escribe tu comentario aquí..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-action">Enviar Reseña</button>
-                        </form>
-                    </div>
-
-                    <h5 class="mt-5">Reseñas de los estudiantes</h5>
-                    @if (Model.Resenas != null && Model.Resenas.Any())
-                    {
-                        @foreach (var resena in Model.Resenas)
-                        {
-                            <div class="card p-3 my-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <div class="me-2">
-                                            @* Aquí iría la imagen del usuario, si la tuvieras *@
-                                        </div>
-                                        <h6 class="mb-0">@resena.NombreUsuario</h6>
-                                    </div>
-                                    <small class="text-muted">@resena.Fecha.ToShortDateString()</small>
-                                </div>
-                                <div class="text-warning my-2">
-                                    @for (int i = 0; i < resena.Calificacion; i++)
-                                    {
-                                        <i class="fas fa-star"></i>
-                                    }
-                                </div>
-                                <p class="mb-0 text-muted">@resena.Comentario</p>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <p class="text-muted">Sé el primero en dejar una reseña para este curso.</p>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
+		<div class="tab-pane fade" id="proyectos-tab-pane" role="tabpanel" tabindex="0">
+			<div class="single-column-layout">
+				<div class="content-container">
+					<h3>Proyectos de Estudiantes</h3>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 @section Scripts {
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const videoFrame = document.getElementById('leccionVideo');
+	<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const mainVideoFrame = document.getElementById('mainVideoFrame');
+			const mainCourseImage = document.getElementById('mainCourseImage');
+			const lessonTitleEl = document.getElementById('lessonTitle');
+			const lessonContentEl = document.getElementById('lessonContent');
+			const progresoEndpoint = '@Url.Action("MarcarLeccionComoCompletada", "Curso")';
 
-            // Define el endpoint para la API de progreso
-            const progresoEndpoint = '@Url.Action("MarcarLeccionComoCompletada", "Curso")';
+			// Función para actualizar la vista de la lección
+			function updateLessonView(lessonLink) {
+				// Eliminar la clase 'active' de todas las lecciones y añadirla a la seleccionada
+				document.querySelectorAll('.lesson-item').forEach(l => l.classList.remove('active'));
+				lessonLink.classList.add('active');
 
-            document.querySelectorAll('.lesson-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
+				// Obtener los datos de la lección del dataset del enlace
+				const videoUrl = lessonLink.dataset.videoUrl;
+				const lessonId = lessonLink.dataset.lessonId;
+				const lessonTitle = lessonLink.dataset.lessonTitle;
+				const lessonContent = lessonLink.dataset.lessonContent;
 
-                    document.querySelectorAll('.lesson-link').forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
+				// Ocultar la imagen y mostrar el reproductor de video
+				mainCourseImage.classList.add('d-none');
+				mainVideoFrame.classList.remove('d-none');
 
-                    const videoUrl = this.getAttribute('data-video-url');
-                    const lessonId = this.getAttribute('data-lesson-id');
+				// Actualizar el video
+				const videoId = videoUrl.split('/').pop().split('?')[0];
+				const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+				mainVideoFrame.src = embedUrl;
 
-                    if (videoUrl) {
-                        const videoId = videoUrl.split('/').pop().split('?')[0];
-                        const embedUrl = `https://www.youtube.com/embed/${videoId}`;
-                        videoFrame.src = embedUrl;
+				// Actualizar el contenido de la lección
+				lessonTitleEl.textContent = lessonTitle;
+				lessonContentEl.innerHTML = lessonContent;
 
-                        // Llama a la API para marcar la lección como completada
-                        // Se puede optimizar para que se llame cuando el video termine o después de un tiempo
-                        if (lessonId) {
-                            fetch(`${progresoEndpoint}?leccionId=${lessonId}`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                }
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    console.log('Lección marcada como completada con éxito.');
-                                    // Actualiza la interfaz de usuario para reflejar el estado de completado
-                                    this.classList.add('completed');
-                                    const icon = this.querySelector('i');
-                                    if (icon) {
-                                        icon.classList.remove('fa-play-circle');
-                                        icon.classList.add('fa-check-circle');
-                                    }
-                                } else {
-                                    console.error('Error al marcar la lección:', data.message);
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Hubo un error en la solicitud:', error);
-                            });
-                        }
-                    }
-                });
-            });
-        });
-    </script>
+				// Llamada a la API para marcar como completada
+				if (lessonId && !lessonLink.classList.contains('completed')) {
+					fetch(`${progresoEndpoint}?leccionId=${lessonId}`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (data.success) {
+							console.log('Lección marcada como completada con éxito.');
+							lessonLink.classList.add('completed');
+							const icon = lessonLink.querySelector('.lesson-icon');
+							if (icon) {
+								icon.classList.remove('fa-play-circle');
+								icon.classList.add('fa-check-circle');
+							}
+						} else {
+							console.error('Error al marcar la lección:', data.message);
+						}
+					})
+					.catch(error => console.error('Hubo un error en la solicitud:', error));
+				}
+			}
+
+			// Delegación de eventos para manejar clics en las lecciones
+			document.getElementById('courseAccordion').addEventListener('click', function(e) {
+				const lessonLink = e.target.closest('.lesson-item');
+				if (!lessonLink) return;
+				e.preventDefault();
+				updateLessonView(lessonLink);
+			});
+
+			// Lógica para el cambio de tabs (mantener el estado inicial)
+			const contenidoTabButton = document.getElementById('contenido-tab');
+			contenidoTabButton.addEventListener('shown.bs.tab', function () {
+				// No se necesita ninguna acción predeterminada al mostrar el tab,
+				// el usuario debe seleccionar la lección.
+			});
+		});
+	</script>
 }

@@ -1,0 +1,118 @@
+﻿@model YSA.Web.Models.ViewModels.PortafolioViewModel
+
+@{
+    ViewData["Title"] = "Gestionar Portafolio";
+}
+
+<h1 class="text-center">Gestionar Portafolio</h1>
+<hr />
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h3>Subir nueva foto</h3>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="form-group mb-3">
+                    <label for="titulo" class="form-label">Título de la Foto (opcional)</label>
+                    <input type="text" class="form-control" id="titulo" name="titulo" maxlength="255">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="archivo" class="form-label">Selecciona una imagen</label>
+                    <input type="file" class="form-control" id="archivo" name="archivo" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Subir Foto</button>
+            </form>
+            <div id="uploadMessage" class="mt-3"></div>
+        </div>
+    </div>
+
+    <hr />
+
+    <h3 class="text-center">Tus fotos del portafolio</h3>
+    <div id="portafolio-container" class="row">
+        @if (Model.Fotos != null && Model.Fotos.Any())
+        {
+            @foreach (var foto in Model.Fotos)
+            {
+                <div class="col-md-4 mb-4 foto-item" data-id="@foto.Id">
+                    <div class="card shadow-sm">
+                        <img src="@Url.Content(foto.UrlImagen)" class="card-img-top img-fluid" alt="Imagen de portafolio">
+                        <div class="card-body">
+                            <h5 class="card-title">@foto.Titulo</h5>
+                            <form asp-controller="Artista" asp-action="EliminarFoto" method="post" class="eliminar-form">
+                                <input type="hidden" name="fotoId" value="@foto.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm w-100">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <p>Aún no tienes fotos en tu portafolio.</p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Manejo de la subida de fotos
+            $('#uploadForm').on('submit', function (e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: '@Url.Action("SubirFoto", "Artista")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        var messageDiv = $('#uploadMessage');
+                        if (response.success) {
+                            messageDiv.text(response.message).removeClass('text-danger').addClass('text-success');
+                            location.reload(); // Recarga la página para mostrar la nueva foto
+                        } else {
+                            var errorMsg = response.errors.imagenArchivo || "Error desconocido.";
+                            messageDiv.text(errorMsg).removeClass('text-success').addClass('text-danger');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        $('#uploadMessage').text("Ocurrió un error en el servidor.").removeClass('text-success').addClass('text-danger');
+                    }
+                });
+            });
+
+            // Manejo de la eliminación de fotos
+            $('#portafolio-container').on('submit', '.eliminar-form', function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var fotoId = form.find('input[name="fotoId"]').val();
+
+                if (confirm('¿Estás seguro de que quieres eliminar esta foto?')) {
+                    $.ajax({
+                        url: '@Url.Action("EliminarFoto", "Artista")',
+                        type: 'POST',
+                        data: form.serialize(),
+                        success: function (response) {
+                            form.closest('.foto-item').fadeOut('slow', function() {
+                                $(this).remove();
+                                if ($('#portafolio-container .foto-item').length === 0) {
+                                    $('#portafolio-container').html('<div class="col-12 text-center"><p>Aún no tienes fotos en tu portafolio.</p></div>');
+                                }
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            alert("Ocurrió un error al intentar eliminar la foto.");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

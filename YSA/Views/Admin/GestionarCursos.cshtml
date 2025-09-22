@@ -25,6 +25,7 @@
                 <th>Título</th>
                 <th>Descripción Corta</th>
                 <th>Nivel</th>
+                <th>Instructor</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -35,8 +36,16 @@
                     <td>@curso.Titulo</td>
                     <td>@Html.Raw(curso.DescripcionCorta)</td>
                     <td>@curso.Nivel</td>
+                    <td>@(curso.InstructorId.HasValue ? curso.Instructor.Usuario.Nombre + " " + curso.Instructor.Usuario.Apellido : "Sin Instructor")</td>
                     <td class="text-center">
                         <div class="d-inline-flex table-actions">
+                            <button type="button" class="btn btn-sm btn-dark asociar-artista-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#asociarArtistaModal"
+                                    data-cursoid="@curso.Id"
+                                    title="Asociar Artista">
+                                <i class="fas fa-user-plus"></i>
+                            </button>
                             <a asp-action="GestionarAnuncios" asp-route-cursoId="@curso.Id" class="btn btn-sm btn-dark" title="Anuncios">
                                 <i class="fas fa-bullhorn"></i>
                             </a>
@@ -102,7 +111,29 @@
         </tbody>
     </table>
 </div>
-
+<div class="modal fade" id="asociarArtistaModal" tabindex="-1" aria-labelledby="asociarArtistaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="asociarArtistaModalLabel">Asociar Artista al Curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="asociar-curso-id" name="CursoId" />
+                <div class="form-group mb-3">
+                    <label for="artista-select">Seleccionar Artista</label>
+                    <select id="artista-select" name="InstructorId" class="form-control">
+                        <option value="">-- Seleccione un Artista --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="guardarAsociacionBtn">Asociar</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="crearCursoModal" tabindex="-1" aria-labelledby="crearCursoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -261,12 +292,73 @@
             const editarModalEl = document.getElementById('editarCursoModal');
             const crearForm = document.getElementById('formCrearCurso');
             const editarForm = document.getElementById('formEditarCurso');
+            const asociarArtistaModalEl = document.getElementById('asociarArtistaModal'); // Nuevo
+            const guardarAsociacionBtn = document.getElementById('guardarAsociacionBtn'); // Nuevo
 
             function getAntiForgeryToken() {
                 const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
                 return tokenElement ? tokenElement.value : '';
             }
+                asociarArtistaModalEl.addEventListener('show.bs.modal', async function (event) {
+            const button = event.relatedTarget;
+            const cursoId = button.getAttribute('data-cursoid');
+            document.getElementById('asociar-curso-id').value = cursoId;
 
+            // Cargar la lista de artistas
+            const artistaSelect = document.getElementById('artista-select');
+            artistaSelect.innerHTML = '<option value="">-- Seleccione un Artista --</option>'; // Reinicia las opciones
+
+            try {
+                const response = await fetch('@Url.Action("ObtenerArtistas", "Admin")');
+                if (!response.ok) {
+                    throw new Error('No se pudieron cargar los artistas.');
+                }
+                const artistas = await response.json();
+                artistas.forEach(artista => {
+                    const option = document.createElement('option');
+                    option.value = artista.id;
+                    option.textContent = artista.nombreCompleto;
+                    artistaSelect.appendChild(option);
+                });
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            }
+        });
+
+        // Manejar el clic en el botón de "Asociar" del modal de artista
+        guardarAsociacionBtn.addEventListener('click', async function () {
+            const cursoId = document.getElementById('asociar-curso-id').value;
+            const instructorId = document.getElementById('artista-select').value;
+            const token = getAntiForgeryToken();
+
+            if (!instructorId) {
+                Swal.fire('Atención', 'Por favor, selecciona un artista.', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch('@Url.Action("AsociarArtistaACurso", "Admin")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({ cursoId, instructorId })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    const modal = bootstrap.Modal.getInstance(asociarArtistaModalEl);
+                    modal.hide();
+                    Swal.fire('Éxito', result.message, 'success');
+                    await recargarTabla();
+                } else {
+                    Swal.fire('Error', result.message, 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Hubo un problema al asociar el artista.', 'error');
+            }
+        });
             crearForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 // Asegura que el contenido del editor se actualice en el textarea antes del envío

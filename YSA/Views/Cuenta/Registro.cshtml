@@ -1,133 +1,183 @@
 ﻿@model YSA.Web.Models.ViewModels.RegistroViewModel
+
 @{
     ViewData["Title"] = "Registro de Estudiantes";
 }
 
 <style>
-    /* Estilos del contenedor principal, coherentes con la vista de Login */
-    .register-container {
+    /* Estilos generales del contenedor principal */
+    .main-content-udemy {
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
-        padding: 2rem 1rem;
+        background-color: #fff; /* Fondo blanco para coincidir con la imagen */
     }
 
-    /* Estilos de la tarjeta de registro */
-    .register-card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        padding: 2.5rem;
+    /* Sección de la ilustración */
+    .illustration-section-udemy {
+        flex: 0.6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-right: 5rem;
+    }
+
+    .illustration-udemy {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Sección del formulario de login */
+    .login-section-udemy {
+        flex: 0.4;
         max-width: 500px;
-        width: 100%;
-        transition: transform 0.3s ease-in-out;
+        padding: 2rem;
     }
 
-        .register-card:hover {
+    /* Nuevo: Estilos de la tarjeta del formulario */
+    .login-card-udemy {
+        border: 1px solid #e0e6ed;
+        border-radius: 8px;
+        padding: 2.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .login-card-udemy:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
         }
 
-        .register-card .card-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .register-card .text-muted {
-        }
+    .login-title-udemy {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 2rem;
+        color: #1c1d1f;
+        text-align: center;
+    }
 
     /* Estilos de los inputs */
-    .form-control {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: 1px solid black;
-        border-radius: 8px;
-        padding: 12px 15px;
-        transition: all 0.3s ease-in-out;
-    }
-
-        .form-control:focus {
-            background-color: rgba(255, 255, 255, 0.15);
-            border-color: #ffb800; /* Color de acento */
-            box-shadow: 0 0 0 0.25rem rgba(255, 184, 0, 0.25);
-        }
-
-        .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-    /* Estilos del botón de registro */
-    .btn-register {
-        background-color: #ffb800;
+    .form-control-udemy {
+        width: 100%;
+        padding: 12px 0;
         border: none;
-        color: #1a1a1a;
-        font-weight: 700;
-        border-radius: 8px;
-        padding: 12px;
-        transition: all 0.3s ease-in-out;
+        border-bottom: 2px solid #e0e6ed;
+        background-color: transparent;
+        font-size: 1rem;
+        transition: border-bottom-color 0.3s ease;
     }
 
-        .btn-register:hover {
-            background-color: #e0a400;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255, 184, 0, 0.4);
+        .form-control-udemy:focus {
+            outline: none;
+            border-bottom-color: #5624d0;
+            box-shadow: none;
         }
 
-    /* Mensajes de validación */
+    .form-group-udemy {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-label-udemy {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #1c1d1f;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
     .text-danger {
         color: #dc3545 !important;
-        font-size: 0.875em;
     }
+
+    /* Estilos para el botón principal de registro */
+    .btn-register-udemy {
+        width: 100%;
+        background-color: #5624d0;
+        color: #fff;
+        border: none;
+        border-radius: 0;
+        padding: 1rem 1.25rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        .btn-register-udemy:hover {
+            background-color: #401b9c;
+        }
+
+    .registration-links-udemy {
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+        .registration-links-udemy a {
+            color: #5624d0;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+            .registration-links-udemy a:hover {
+                text-decoration: underline;
+            }
 </style>
 
-<div class="register-container">
-    <div class="register-card">
-        <div class="text-center mb-4">
-            <h2 class="h4 card-title">Registro de Estudiantes</h2>
-            <p class="text-muted mt-2">Crea una cuenta para comenzar</p>
+<div class="main-content-udemy">
+    <div class="illustration-section-udemy">
+        <img src="~/diseño/login.webp" alt="Ilustración de personas interactuando con elementos de aprendizaje" class="illustration-udemy">
+    </div>
+
+    <div class="login-section-udemy">
+        <div class="login-card-udemy">
+            <h1 class="login-title-udemy">Crea tu cuenta</h1>
+            <p class="text-muted text-center mb-4">Regístrate para comenzar</p>
+
+            <form asp-action="Registro" asp-controller="Cuenta" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group-udemy">
+                        <label asp-for="Nombre" class="form-label-udemy">Nombre</label>
+                        <input type="text" asp-for="Nombre" class="form-control-udemy" placeholder="Introduce tu nombre" />
+                        <span asp-validation-for="Nombre" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 form-group-udemy">
+                        <label asp-for="Apellido" class="form-label-udemy">Apellido</label>
+                        <input type="text" asp-for="Apellido" class="form-control-udemy" placeholder="Introduce tu apellido" />
+                        <span asp-validation-for="Apellido" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="form-group-udemy">
+                    <label asp-for="Email" class="form-label-udemy">Correo Electrónico</label>
+                    <input type="email" asp-for="Email" class="form-control-udemy" placeholder="ejemplo@correo.com" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="form-group-udemy">
+                    <label asp-for="Contrasena" class="form-label-udemy">Contraseña</label>
+                    <input type="password" asp-for="Contrasena" class="form-control-udemy" placeholder="Crea una contraseña segura" />
+                    <span asp-validation-for="Contrasena" class="text-danger small"></span>
+                </div>
+
+                <div class="form-group-udemy">
+                    <label asp-for="ConfirmarContrasena" class="form-label-udemy">Confirmar Contraseña</label>
+                    <input type="password" asp-for="ConfirmarContrasena" class="form-control-udemy" placeholder="Repite la contraseña" />
+                    <span asp-validation-for="ConfirmarContrasena" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-register-udemy">Crear Cuenta</button>
+                </div>
+
+                <div class="registration-links-udemy">
+                    <span>¿Ya tienes una cuenta? <a href="~/Cuenta/Login">Iniciar Sesión</a></span>
+                </div>
+            </form>
         </div>
-
-        <form asp-action="Registro" asp-controller="Cuenta" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label asp-for="Nombre" class="form-label">Nombre</label>
-                    <input type="text" asp-for="Nombre" class="form-control" placeholder="Introduce tu nombre" />
-                    <span asp-validation-for="Nombre" class="text-danger"></span>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label asp-for="Apellido" class="form-label">Apellido</label>
-                    <input type="text" asp-for="Apellido" class="form-control" placeholder="Introduce tu apellido" />
-                    <span asp-validation-for="Apellido" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Email" class="form-label">Correo Electrónico</label>
-                <input type="email" asp-for="Email" class="form-control" placeholder="ejemplo@correo.com" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Contrasena" class="form-label">Contraseña</label>
-                <input type="password" asp-for="Contrasena" class="form-control" placeholder="Crea una contraseña segura" />
-                <span asp-validation-for="Contrasena" class="text-danger"></span>
-            </div>
-
-            <div class="mb-4">
-                <label asp-for="ConfirmarContrasena" class="form-label">Confirmar Contraseña</label>
-                <input type="password" asp-for="ConfirmarContrasena" class="form-control" placeholder="Repite la contraseña" />
-                <span asp-validation-for="ConfirmarContrasena" class="text-danger"></span>
-            </div>
-
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-register">Crear Cuenta</button>
-            </div>
-        </form>
     </div>
 </div>
 

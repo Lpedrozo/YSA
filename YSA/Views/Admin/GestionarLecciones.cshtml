@@ -4,6 +4,16 @@
     ViewData["Title"] = "Gestión de Lecciones - " + ViewBag.ModuloTitulo;
 }
 
+<style>
+    .table-actions .btn {
+        margin-right: 5px;
+    }
+
+    .modal-dialog {
+        max-width: 800px; /* Aumenta el ancho del modal para el editor */
+    }
+</style>
+
 <div class="container mt-4">
     <h1 class="text-center mb-4">Lecciones para el Módulo: @ViewBag.ModuloTitulo</h1>
     <hr />
@@ -33,7 +43,7 @@
                 <tr>
                     <td>@leccion.Orden</td>
                     <td>@leccion.Titulo</td>
-                    <td>@(leccion.Contenido?.Length > 50 ? leccion.Contenido.Substring(0, 50) + "..." : leccion.Contenido)</td>
+                    <td>@Html.Raw(leccion.Contenido?.Length > 50 ? leccion.Contenido.Substring(0, 50) + "..." : leccion.Contenido)</td>
                     <td class="text-center">
                         <button type="button" class="btn btn-sm btn-primary editar-btn"
                                 data-id="@leccion.Id"
@@ -55,7 +65,7 @@
 </div>
 
 <div class="modal fade" id="crearLeccionModal" tabindex="-1" aria-labelledby="crearLeccionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="crearLeccionModalLabel">Crear Lección</h5>
@@ -74,12 +84,12 @@
                         <input type="number" id="Crear_Orden" name="Orden" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Crear_Contenido" class="form-label">Contenido</label>
-                        <textarea id="Crear_Contenido" name="Contenido" class="form-control"></textarea>
-                    </div>
-                    <div class="form-group mb-3">
                         <label for="Crear_UrlVideo" class="form-label">URL del Video</label>
                         <input type="text" id="Crear_UrlVideo" name="UrlVideo" class="form-control" />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Crear_Contenido" class="form-label">Contenido</label>
+                        <textarea id="Crear_Contenido" name="Contenido" class="form-control" rows="5"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -92,7 +102,7 @@
 </div>
 
 <div class="modal fade" id="editarLeccionModal" tabindex="-1" aria-labelledby="editarLeccionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editarLeccionModalLabel">Editar Lección</h5>
@@ -112,12 +122,12 @@
                         <input type="number" id="Editar_Orden" name="Orden" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Editar_Contenido" class="form-label">Contenido</label>
-                        <textarea id="Editar_Contenido" name="Contenido" class="form-control"></textarea>
-                    </div>
-                    <div class="form-group mb-3">
                         <label for="Editar_UrlVideo" class="form-label">URL del Video</label>
                         <input type="text" id="Editar_UrlVideo" name="UrlVideo" class="form-control" />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Editar_Contenido" class="form-label">Contenido</label>
+                        <textarea id="Editar_Contenido" name="Contenido" class="form-control" rows="5"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -130,9 +140,19 @@
 </div>
 
 @section Scripts {
+    <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Inicializa TinyMCE para los campos de contenido
+            tinymce.init({
+                selector: '#Crear_Contenido, #Editar_Contenido',
+                plugins: 'anchor autolink charmap codesample emoticons link lists searchreplace table visualblocks wordcount',
+                toolbar: 'undo redo | blocks fontfamily fontsize | forecolor backcolor | bold italic underline strikethrough | link image | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                height: 300,
+                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }'
+            });
+
             const crearModalEl = document.getElementById('crearLeccionModal');
             const editarModalEl = document.getElementById('editarLeccionModal');
             const crearForm = document.getElementById('formCrearLeccion');
@@ -145,19 +165,43 @@
 
             function displayErrors(formId, errors) {
                 const errorDiv = document.getElementById(formId);
-                errorDiv.innerHTML = '';
+                let html = '<ul>';
                 for (const key in errors) {
                     if (errors.hasOwnProperty(key)) {
                         errors[key].forEach(error => {
-                            errorDiv.innerHTML += `<div>${error}</div>`;
+                            html += `<li>${error}</li>`;
                         });
                     }
                 }
+                html += '</ul>';
+                errorDiv.innerHTML = html;
                 errorDiv.classList.remove('d-none');
+            }
+
+            async function recargarTablaLecciones() {
+                try {
+                    // Obtiene la URL de la página actual para recargarla
+                    const url = window.location.href;
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error('No se pudieron cargar las lecciones.');
+                    }
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newTableBody = doc.getElementById('tablaLecciones').innerHTML;
+                    document.getElementById('tablaLecciones').innerHTML = newTableBody;
+                    attachEventListeners();
+                } catch (error) {
+                    Swal.fire('Error', error.message, 'error');
+                }
             }
 
             crearForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
+                // Asegura que el contenido del editor se actualice en el textarea antes del envío
+                tinymce.triggerSave();
+
                 const formData = new FormData(this);
                 const data = {
                     ModuloId: parseInt(formData.get('ModuloId')),
@@ -181,9 +225,10 @@
                         title: '¡Éxito!',
                         text: result.message,
                         icon: 'success',
-                        willClose: () => {
-                            window.location.reload();
-                        }
+                    }).then(() => {
+                        recargarTablaLecciones(); // Recarga la tabla de lecciones en lugar de la página completa
+                        bootstrap.Modal.getInstance(crearModalEl).hide();
+                        crearForm.reset();
                     });
                 } else {
                     displayErrors('crear-leccion-validation-errors', result.errors);
@@ -195,7 +240,7 @@
                 const leccionId = button.getAttribute('data-id');
 
                 try {
-                    const response = await fetch(`/Admin/ObtenerLeccionPorIdJson?id=${leccionId}`);
+                    const response = await fetch(`@Url.Action("ObtenerLeccionPorIdJson", "Admin")?id=${leccionId}`);
                     if (!response.ok) {
                         throw new Error('No se pudo cargar la información de la lección.');
                     }
@@ -206,8 +251,9 @@
                         document.getElementById('Editar_ModuloId').value = leccion.moduloId;
                         document.getElementById('Editar_Titulo').value = leccion.titulo;
                         document.getElementById('Editar_Orden').value = leccion.orden;
-                        document.getElementById('Editar_Contenido').value = leccion.contenido;
                         document.getElementById('Editar_UrlVideo').value = leccion.urlVideo;
+                        // Carga el contenido en el editor de TinyMCE
+                        tinymce.get('Editar_Contenido').setContent(leccion.contenido || '');
                         document.getElementById('editar-leccion-validation-errors').classList.add('d-none');
                     } else {
                         Swal.fire('Error', result.message, 'error');
@@ -219,6 +265,9 @@
 
             editarForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
+                // Asegura que el contenido del editor se actualice en el textarea antes del envío
+                tinymce.triggerSave();
+
                 const formData = new FormData(this);
                 const data = {
                     Id: parseInt(formData.get('Id')),
@@ -244,9 +293,9 @@
                         title: '¡Éxito!',
                         text: result.message,
                         icon: 'success',
-                        willClose: () => {
-                            window.location.reload();
-                        }
+                    }).then(() => {
+                        recargarTablaLecciones(); // Recarga la tabla de lecciones en lugar de la página completa
+                        bootstrap.Modal.getInstance(editarModalEl).hide();
                     });
                 } else {
                     displayErrors('editar-leccion-validation-errors', result.errors);

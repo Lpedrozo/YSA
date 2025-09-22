@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="HtmlSanitizer" Version="9.0.886" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
@@ -27,7 +28,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\eventos\galeria\" />
+    <Folder Include="wwwroot\eventos\portadas\" />
     <Folder Include="wwwroot\FotoPerfil\" />
+    <Folder Include="wwwroot\Artista\" />
+    <Folder Include="wwwroot\productos\archivos\" />
+    <Folder Include="wwwroot\productos\portadas\" />
   </ItemGroup>
 
 </Project>

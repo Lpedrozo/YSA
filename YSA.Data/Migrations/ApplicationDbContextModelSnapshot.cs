@@ -197,6 +197,34 @@ namespace YSA.Data.Migrations
                     b.ToTable("Artistas");
                 });
 
+            modelBuilder.Entity("YSA.Core.Entities.ArtistaFoto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ArtistaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("UrlImagen")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArtistaId");
+
+                    b.ToTable("ArtistaFotos");
+                });
+
             modelBuilder.Entity("YSA.Core.Entities.Categoria", b =>
                 {
                     b.Property<int>("Id")
@@ -306,6 +334,84 @@ namespace YSA.Data.Migrations
                     b.HasIndex("EstudianteId");
 
                     b.ToTable("EstudianteCursos");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.Evento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EsDestacado")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EstaActivo")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaEvento")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Lugar")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("TipoEventoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("UrlImagen")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TipoEventoId");
+
+                    b.ToTable("Eventos");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.EventoFotos", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EventoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaSubida")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("UrlImagen")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventoId");
+
+                    b.ToTable("EventoFotos");
                 });
 
             modelBuilder.Entity("YSA.Core.Entities.Leccion", b =>
@@ -712,6 +818,29 @@ namespace YSA.Data.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
+            modelBuilder.Entity("YSA.Core.Entities.TipoEvento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("NombreTipo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Plataforma")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TipoEventos");
+                });
+
             modelBuilder.Entity("YSA.Core.Entities.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -917,6 +1046,17 @@ namespace YSA.Data.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("YSA.Core.Entities.ArtistaFoto", b =>
+                {
+                    b.HasOne("YSA.Core.Entities.Artista", "Artista")
+                        .WithMany("Portafolio")
+                        .HasForeignKey("ArtistaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Artista");
+                });
+
             modelBuilder.Entity("YSA.Core.Entities.Curso", b =>
                 {
                     b.HasOne("YSA.Core.Entities.Artista", "Instructor")
@@ -963,6 +1103,28 @@ namespace YSA.Data.Migrations
                     b.Navigation("Curso");
 
                     b.Navigation("Estudiante");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.Evento", b =>
+                {
+                    b.HasOne("YSA.Core.Entities.TipoEvento", "TipoEvento")
+                        .WithMany("Eventos")
+                        .HasForeignKey("TipoEventoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("TipoEvento");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.EventoFotos", b =>
+                {
+                    b.HasOne("YSA.Core.Entities.Evento", "Evento")
+                        .WithMany("Fotos")
+                        .HasForeignKey("EventoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Evento");
                 });
 
             modelBuilder.Entity("YSA.Core.Entities.Leccion", b =>
@@ -1191,6 +1353,8 @@ namespace YSA.Data.Migrations
                 {
                     b.Navigation("Cursos");
 
+                    b.Navigation("Portafolio");
+
                     b.Navigation("PreguntasRespuestas");
 
                     b.Navigation("Productos");
@@ -1216,6 +1380,11 @@ namespace YSA.Data.Migrations
                     b.Navigation("Resenas");
                 });
 
+            modelBuilder.Entity("YSA.Core.Entities.Evento", b =>
+                {
+                    b.Navigation("Fotos");
+                });
+
             modelBuilder.Entity("YSA.Core.Entities.Modulo", b =>
                 {
                     b.Navigation("Lecciones");
@@ -1237,6 +1406,11 @@ namespace YSA.Data.Migrations
             modelBuilder.Entity("YSA.Core.Entities.Rol", b =>
                 {
                     b.Navigation("UsuarioRoles");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.TipoEvento", b =>
+                {
+                    b.Navigation("Eventos");
                 });
 
             modelBuilder.Entity("YSA.Core.Entities.Usuario", b =>

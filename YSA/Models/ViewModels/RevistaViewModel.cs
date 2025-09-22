@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using YSA.Core.Entities;
 namespace YSA.Web.Models.ViewModels
 {
     public class RevistaViewModel
@@ -14,5 +15,9 @@ namespace YSA.Web.Models.ViewModels
         public string Biografia { get; set; }
         public string EstiloPrincipal { get; set; }
         public string UrlImagenPerfil { get; set; } // URL de la imagen que quieres mostrar
+    }
+    public class RevistaIndexViewModel
+    {
+        public List<Artista> Artistas { get; set; }
     }
 }

@@ -1,0 +1,121 @@
+﻿@model YSA.Web.Models.ViewModels.GestionarProductosViewModel
+
+@{
+    ViewData["Title"] = "Gestión de Productos";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearProductoModal">
+        Crear Nuevo Producto
+    </button>
+</p>
+
+<table class="table table-striped table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Productos.FirstOrDefault().Titulo)</th>
+            <th>@Html.DisplayNameFor(model => model.Productos.FirstOrDefault().TipoProducto)</th>
+            <th>@Html.DisplayNameFor(model => model.Productos.FirstOrDefault().Precio)</th>
+            <th>@Html.DisplayNameFor(model => model.Productos.FirstOrDefault().AutorNombre)</th>
+            <th>@Html.DisplayNameFor(model => model.Productos.FirstOrDefault().Categorias)</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Productos)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Titulo)</td>
+                <td>@Html.DisplayFor(modelItem => item.TipoProducto)</td>
+                <td>@Html.DisplayFor(modelItem => item.Precio)</td>
+                <td>@Html.DisplayFor(modelItem => item.AutorNombre)</td>
+                <td>@Html.DisplayFor(modelItem => item.Categorias)</td>
+                <td>
+                    <a asp-action="EditarProducto" asp-route-id="@item.Id" class="btn btn-sm btn-info">Editar</a>
+                    <form asp-action="EliminarProducto" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="crearProductoModal" tabindex="-1" aria-labelledby="crearProductoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="crearProductoModalLabel">Crear Nuevo Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="CrearProducto" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="form-group mb-3">
+                        <label asp-for="NuevoProducto.Titulo" class="form-label">Título</label>
+                        <input asp-for="NuevoProducto.Titulo" class="form-control" required />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NuevoProducto.DescripcionCorta" class="form-label">Descripción Corta</label>
+                        <input asp-for="NuevoProducto.DescripcionCorta" class="form-control" />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NuevoProducto.DescripcionLarga" class="form-label">Descripción Larga</label>
+                        <textarea asp-for="NuevoProducto.DescripcionLarga" class="form-control"></textarea>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NuevoProducto.TipoProducto" class="form-label">Tipo de Producto</label>
+                        <select asp-for="NuevoProducto.TipoProducto" class="form-control" required>
+                            <option value="">-- Seleccionar --</option>
+                            <option value="pdf">PDF</option>
+                            <option value="revista">Revista</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NuevoProducto.Precio" class="form-label">Precio</label>
+                        <input asp-for="NuevoProducto.Precio" class="form-control" type="number" step="0.01" required />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NuevoProducto.ImagenPortada" class="form-label">Imagen de Portada</label>
+                        <input asp-for="NuevoProducto.ImagenPortada" type="file" class="form-control" />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NuevoProducto.ArchivoDigital" class="form-label">Archivo Digital (PDF)</label>
+                        <input asp-for="NuevoProducto.ArchivoDigital" type="file" class="form-control" required />
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NuevoProducto.AutorId" class="form-label">Autor</label>
+                        <select asp-for="NuevoProducto.AutorId" class="form-control" asp-items="@Model.AutoresDisponibles">
+                            <option value="">-- Seleccionar --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NuevoProducto.CategoriaIds" class="form-label">Categorías</label>
+                        <select asp-for="NuevoProducto.CategoriaIds" class="form-control" multiple asp-items="@Model.CategoriasDisponibles">
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear Producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

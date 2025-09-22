@@ -1,0 +1,97 @@
+﻿@model IEnumerable<YSA.Web.Models.ViewModels.EventoViewModel>
+
+@{
+    ViewData["Title"] = "Gestión de Eventos";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-action="CrearEvento" class="btn btn-primary">Crear Nuevo Evento</a>
+</p>
+
+<table class="table table-striped table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Titulo)</th>
+            <th>@Html.DisplayNameFor(model => model.FechaEvento)</th>
+            <th>@Html.DisplayNameFor(model => model.Lugar)</th>
+            <th>@Html.DisplayNameFor(model => model.TipoEvento)</th>
+            <th>@Html.DisplayNameFor(model => model.Plataforma)</th>
+            <th>@Html.DisplayNameFor(model => model.EstaActivo)</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Titulo)</td>
+                <td>@Html.DisplayFor(modelItem => item.FechaEvento)</td>
+                <td>@Html.DisplayFor(modelItem => item.Lugar)</td>
+                <td>@Html.DisplayFor(modelItem => item.TipoEvento)</td>
+                <td>@Html.DisplayFor(modelItem => item.Plataforma)</td>
+                <td>
+                    @if (item.EstaActivo)
+                    {
+                        <span class="badge bg-success">Activo</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Inactivo</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="EditarEvento" asp-route-id="@item.Id" class="btn btn-sm btn-info">Editar</a>
+                    <a asp-action="DetallesEvento" asp-route-id="@item.Id" class="btn btn-sm btn-secondary">Detalles</a>
+
+                    <button type="button" class="btn btn-sm btn-warning" onclick="openUploadModal('@item.Id')">
+                        Subir Foto
+                    </button>
+
+                    <form asp-action="EliminarEventoDirecto" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este evento?');">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="uploadImageModal" tabindex="-1" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadImageModalLabel">Subir Foto al Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="SubirFoto" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" name="EventoId" id="modalEventoId" />
+                    <div class="form-group">
+                        <label for="foto">Seleccionar Imagen</label>
+                        <input type="file" name="Foto" id="foto" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Subir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function openUploadModal(eventoId) {
+            document.getElementById('modalEventoId').value = eventoId;
+            var myModal = new bootstrap.Modal(document.getElementById('uploadImageModal'));
+            myModal.show();
+        }
+    </script>
+}

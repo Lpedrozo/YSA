@@ -18,12 +18,19 @@ namespace YSA.Data.Repositories
 
         public async Task<Producto> GetByIdAsync(int id)
         {
-            return await _context.Productos.FindAsync(id);
+            return await _context.Productos.Include(p => p.Autor)
+                                           .Include(p => p.ProductoCategorias)
+                                           .ThenInclude(pc => pc.Categoria)
+                                           .FirstOrDefaultAsync(p => p.Id == id);
+
         }
 
         public async Task<IEnumerable<Producto>> GetAllAsync()
         {
-            return await _context.Productos.ToListAsync();
+            return await _context.Productos.Include(p => p.Autor)
+                                           .Include(p => p.ProductoCategorias)
+                                           .ThenInclude(pc => pc.Categoria)
+                                           .ToListAsync();
         }
 
         public async Task<Producto> AddAsync(Producto producto)
@@ -55,6 +62,15 @@ namespace YSA.Data.Repositories
             _context.Productos.Remove(producto);
             await _context.SaveChangesAsync();
             return true;
+        }
+        public async Task<IEnumerable<Categoria>> GetCategoriasAsync()
+        {
+            return await _context.Categorias.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Artista>> GetAutoresAsync()
+        {
+            return await _context.Artistas.ToListAsync();
         }
     }
 }

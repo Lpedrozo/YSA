@@ -11,5 +11,7 @@ namespace YSA.Core.Interfaces
         Task<Producto> AddAsync(Producto producto);
         Task<bool> UpdateAsync(Producto producto);
         Task<bool> DeleteAsync(int id);
+        Task<IEnumerable<Categoria>> GetCategoriasAsync();
+        Task<IEnumerable<Artista>> GetAutoresAsync();
     }
 }

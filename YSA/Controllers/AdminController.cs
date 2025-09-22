@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using YSA.Core.Entities;
 using YSA.Core.Enums;
+using YSA.Core.Interfaces;
 using YSA.Core.Services;
 using YSA.Web.Models.ViewModels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace YSA.Web.Controllers
 {
@@ -22,8 +25,20 @@ namespace YSA.Web.Controllers
         private readonly IVentaItemService _ventaItemService;
         private readonly IArtistaService _artistaService;
         private readonly UserManager<Usuario> _userManager;
+        private readonly IEventoService _eventoService;
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IProductoService _productoService;
 
-        public AdminController(ICursoService cursoService, IModuloService moduloService, ILeccionService leccionService, IPedidoService pedidoService, UserManager<Usuario> userManager, IVentaItemService ventaItemService, IArtistaService artistaService)
+        public AdminController(ICursoService cursoService, 
+            IModuloService moduloService, 
+            ILeccionService leccionService, 
+            IPedidoService pedidoService,
+            UserManager<Usuario> userManager, 
+            IVentaItemService ventaItemService, 
+            IArtistaService artistaService, 
+            IEventoService eventoService, 
+            IWebHostEnvironment hostingEnvironment, 
+            IProductoService productoService)
         {
             _cursoService = cursoService;
             _moduloService = moduloService;
@@ -32,6 +47,9 @@ namespace YSA.Web.Controllers
             _userManager = userManager;
             _ventaItemService = ventaItemService;
             _artistaService = artistaService;
+            _eventoService = eventoService;
+            _hostingEnvironment = hostingEnvironment;
+            _productoService = productoService;
         }
 
         public IActionResult Panel()
@@ -135,6 +153,8 @@ namespace YSA.Web.Controllers
                 Precio = c.Precio,
                 UrlImagen = c.UrlImagen,
                 Nivel = c.Nivel,
+                InstructorId = c.InstructorId,
+                Instructor = c.Instructor,
                 CategoriasSeleccionadas = c.CursoCategorias.Select(cc => cc.CategoriaId).ToArray()
             }).ToList();
 
@@ -150,7 +170,40 @@ namespace YSA.Web.Controllers
 
             return View(viewModels);
         }
+        [HttpGet]
+        public async Task<IActionResult> ObtenerArtistas()
+        {
+            var artistas = await _artistaService.GetAllArtistasAsync();
+            var artistasJson = artistas.Select(a => new {
+                id = a.Id,
+                nombreCompleto = $"{a.Usuario.Nombre} {a.Usuario.Apellido}"
+            }).ToList();
 
+            return Json(artistasJson);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AsociarArtistaACurso([FromBody] AsociarArtistaViewModel dto)
+        {
+            if (dto == null || dto.CursoId <= 0 || dto.InstructorId <= 0)
+            {
+                return Json(new { success = false, message = "Datos de solicitud inválidos." });
+            }
+
+            try
+            {
+                await _cursoService.AsociarArtistaACursoAsync(dto.CursoId, dto.InstructorId);
+                return Json(new { success = true, message = "Artista asociado con éxito." });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false, message = "Ocurrió un error al asociar el artista." });
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> ObtenerCursosJson()
         {
@@ -592,6 +645,9 @@ namespace YSA.Web.Controllers
                 return Json(new { success = false, errors = ModelState.ToDictionary(k => k.Key, v => v.Value.Errors.Select(e => e.ErrorMessage).ToList()) });
             }
 
+            var sanitizer = new HtmlSanitizer();
+            model.Contenido = sanitizer.Sanitize(model.Contenido); // ¡Nuevo! Saneamiento del HTML
+
             var leccion = new Leccion
             {
                 ModuloId = model.ModuloId,
@@ -645,6 +701,9 @@ namespace YSA.Web.Controllers
             {
                 return NotFound(new { success = false, message = "Lección no encontrada." });
             }
+
+            var sanitizer = new HtmlSanitizer();
+            model.Contenido = sanitizer.Sanitize(model.Contenido); // ¡Nuevo! Saneamiento del HTML
 
             leccion.Titulo = model.Titulo;
             leccion.Contenido = model.Contenido;
@@ -1004,6 +1063,492 @@ namespace YSA.Web.Controllers
             {
                 System.IO.File.Delete(fullPath);
             }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GestionarEventos()
+        {
+            var eventos = await _eventoService.GetEventosAsync();
+
+            var viewModel = eventos.Select(e => new EventoViewModel
+            {
+                Id = e.Id,
+                Titulo = e.Titulo,
+                FechaEvento = e.FechaEvento,
+                Lugar = e.Lugar,
+                TipoEvento = e.TipoEvento?.NombreTipo, // Usamos la propiedad de navegación
+                Plataforma = e.TipoEvento?.Plataforma, // Usamos la propiedad de navegación
+                EstaActivo = e.EstaActivo
+            }).ToList();
+
+            return View(viewModel);
+        }
+        [HttpGet]
+        public async Task<IActionResult> CrearEvento()
+        {
+            var tiposEvento = await _eventoService.GetTiposEventosAsync();
+            var viewModel = new CrearEventoViewModel
+            {
+                TiposEventoDisponibles = tiposEvento.Select(t => new SelectListItem
+                {
+                    Value = t.Id.ToString(),
+                    Text = $"{t.NombreTipo} ({t.Plataforma})"
+                })
+            };
+            return View(viewModel);
+        }
+
+        // Método POST para procesar el formulario
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CrearEvento(CrearEventoViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                // Lógica para subir la imagen al servidor
+                string rutaImagen = string.Empty;
+                if (viewModel.ImagenPortada != null)
+                {
+                    string uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "eventos/portadas");
+                    string nombreArchivo = Guid.NewGuid().ToString() + Path.GetExtension(viewModel.ImagenPortada.FileName);
+                    string filePath = Path.Combine(uploadsFolder, nombreArchivo);
+
+                    // Asegura que el directorio exista
+                    Directory.CreateDirectory(uploadsFolder);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await viewModel.ImagenPortada.CopyToAsync(fileStream);
+                    }
+                    rutaImagen = "/eventos/portadas/" + nombreArchivo;
+                }
+
+                // Mapear el ViewModel a la entidad de dominio
+                var nuevoEvento = new Evento
+                {
+                    Titulo = viewModel.Titulo,
+                    Descripcion = viewModel.Descripcion,
+                    FechaEvento = viewModel.FechaEvento,
+                    Lugar = viewModel.Lugar,
+                    UrlImagen = rutaImagen,
+                    EsDestacado = viewModel.EsDestacado,
+                    EstaActivo = true,
+                    FechaCreacion = DateTime.Now,
+                    TipoEventoId = viewModel.TipoEventoId
+                };
+
+                await _eventoService.AddEventoAsync(nuevoEvento);
+                TempData["MensajeExito"] = "Evento creado exitosamente.";
+                return RedirectToAction(nameof(GestionarEventos));
+            }
+
+            // Si el modelo no es válido, vuelve a cargar la lista de tipos de evento
+            var tiposEvento = await _eventoService.GetTiposEventosAsync();
+            viewModel.TiposEventoDisponibles = tiposEvento.Select(t => new SelectListItem
+            {
+                Value = t.Id.ToString(),
+                Text = $"{t.NombreTipo} ({t.Plataforma})"
+            });
+
+            return View(viewModel);
+        }
+        [HttpGet]
+        public async Task<IActionResult> EditarEvento(int id)
+        {
+            var evento = await _eventoService.GetEventoByIdAsync(id);
+            if (evento == null)
+            {
+                return NotFound();
+            }
+
+            var tiposEvento = await _eventoService.GetTiposEventosAsync();
+
+            var viewModel = new CrearEventoViewModel
+            {
+                Id = evento.Id,
+                Titulo = evento.Titulo,
+                Descripcion = evento.Descripcion,
+                FechaEvento = evento.FechaEvento,
+                Lugar = evento.Lugar,
+                EsDestacado = evento.EsDestacado,
+                TipoEventoId = evento.TipoEventoId,
+                TiposEventoDisponibles = tiposEvento.Select(t => new SelectListItem
+                {
+                    Value = t.Id.ToString(),
+                    Text = $"{t.NombreTipo} ({t.Plataforma})"
+                })
+            };
+
+            // Guardamos la URL de la imagen existente en TempData para mostrarla en la vista
+            TempData["UrlImagenExistente"] = evento.UrlImagen;
+
+            return View(viewModel);
+        }
+
+        // Método POST para procesar el formulario de edición
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarEvento(int id, CrearEventoViewModel viewModel)
+        {
+            if (id != viewModel.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                var eventoAActualizar = await _eventoService.GetEventoByIdAsync(id);
+                if (eventoAActualizar == null)
+                {
+                    return NotFound();
+                }
+
+                // Lógica para subir una nueva imagen si se proporciona
+                if (viewModel.ImagenPortada != null)
+                {
+                    // Eliminar la imagen antigua si existe
+                    if (!string.IsNullOrEmpty(eventoAActualizar.UrlImagen))
+                    {
+                        var oldImagePath = Path.Combine(_hostingEnvironment.WebRootPath, eventoAActualizar.UrlImagen.TrimStart('/'));
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
+                    // Guardar la nueva imagen
+                    string uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "eventos/portadas");
+                    string nombreArchivo = Guid.NewGuid().ToString() + Path.GetExtension(viewModel.ImagenPortada.FileName);
+                    string filePath = Path.Combine(uploadsFolder, nombreArchivo);
+
+                    Directory.CreateDirectory(uploadsFolder);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await viewModel.ImagenPortada.CopyToAsync(fileStream);
+                    }
+                    eventoAActualizar.UrlImagen = "/eventos/portadas/" + nombreArchivo;
+                }
+
+                // Mapear los datos del ViewModel a la entidad de dominio
+                eventoAActualizar.Titulo = viewModel.Titulo;
+                eventoAActualizar.Descripcion = viewModel.Descripcion;
+                eventoAActualizar.FechaEvento = viewModel.FechaEvento;
+                eventoAActualizar.Lugar = viewModel.Lugar;
+                eventoAActualizar.EsDestacado = viewModel.EsDestacado;
+                eventoAActualizar.TipoEventoId = viewModel.TipoEventoId;
+
+                await _eventoService.UpdateEventoAsync(eventoAActualizar);
+
+                TempData["MensajeExito"] = "Evento actualizado exitosamente.";
+                return RedirectToAction(nameof(GestionarEventos));
+            }
+
+            // Si el modelo no es válido, vuelve a cargar la lista de tipos de evento
+            var tiposEvento = await _eventoService.GetTiposEventosAsync();
+            viewModel.TiposEventoDisponibles = tiposEvento.Select(t => new SelectListItem
+            {
+                Value = t.Id.ToString(),
+                Text = $"{t.NombreTipo} ({t.Plataforma})"
+            });
+
+            return View(viewModel);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarEventoDirecto(int id)
+        {
+            var eventoAEliminar = await _eventoService.GetEventoByIdAsync(id);
+
+            if (eventoAEliminar == null)
+            {
+                return NotFound();
+            }
+
+            // Lógica para eliminar la imagen física del servidor
+            if (!string.IsNullOrEmpty(eventoAEliminar.UrlImagen))
+            {
+                var imagePath = Path.Combine(_hostingEnvironment.WebRootPath, eventoAEliminar.UrlImagen.TrimStart('/'));
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
+            }
+
+            await _eventoService.DeleteEventoAsync(id);
+
+            TempData["MensajeExito"] = "Evento eliminado exitosamente.";
+            return RedirectToAction(nameof(GestionarEventos));
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubirFoto(SubirEventoFotosViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                // Lógica para guardar la imagen en el servidor
+                string uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "eventos/galeria");
+                string nombreArchivo = Guid.NewGuid().ToString() + Path.GetExtension(viewModel.Foto.FileName);
+                string filePath = Path.Combine(uploadsFolder, nombreArchivo);
+
+                Directory.CreateDirectory(uploadsFolder);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await viewModel.Foto.CopyToAsync(fileStream);
+                }
+
+                var nuevaFoto = new EventoFotos
+                {
+                    UrlImagen = "/eventos/galeria/" + nombreArchivo,
+                    FechaSubida = DateTime.Now,
+                    EventoId = viewModel.EventoId
+                };
+
+                await _eventoService.AddEventoFotoAsync(nuevaFoto); // Necesitas implementar este método en tu servicio y repositorio
+
+                TempData["MensajeExito"] = "Foto subida exitosamente.";
+            }
+
+            return RedirectToAction(nameof(GestionarEventos));
+        }
+        [HttpGet]
+        public async Task<IActionResult> GestionarProductos()
+        {
+            var productos = await _productoService.GetAllAsync();
+            var autores = await _productoService.GetAutoresAsync();
+            var categorias = await _productoService.GetCategoriasAsync();
+
+            var productosViewModel = productos.Select(p => new ProductoViewModel
+            {
+                Id = p.Id,
+                Titulo = p.Titulo,
+                TipoProducto = p.TipoProducto,
+                Precio = p.Precio,
+                AutorNombre = p.Autor?.NombreArtistico,
+                Categorias = string.Join(", ", p.ProductoCategorias.Select(pc => pc.Categoria.NombreCategoria))
+            }).ToList();
+
+            var autoresDisponibles = autores.Select(a => new SelectListItem
+            {
+                Value = a.Id.ToString(),
+                Text = a.NombreArtistico
+            });
+
+            var categoriasDisponibles = categorias.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.NombreCategoria
+            });
+
+            var viewModel = new GestionarProductosViewModel
+            {
+                Productos = productosViewModel,
+                NuevoProducto = new CrearProductoViewModel(), // Instancia para el formulario del modal
+                AutoresDisponibles = autoresDisponibles,
+                CategoriasDisponibles = categoriasDisponibles
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CrearProducto([Bind(Prefix = "NuevoProducto")] CrearProductoViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                string urlImagen = null;
+                if (viewModel.ImagenPortada != null)
+                {
+                    urlImagen = await GuardarArchivo(viewModel.ImagenPortada, "productos/portadas");
+                }
+
+                string urlArchivoDigital = null;
+                if (viewModel.ArchivoDigital != null)
+                {
+                    urlArchivoDigital = await GuardarArchivo(viewModel.ArchivoDigital, "productos/archivos");
+                }
+
+                var nuevoProducto = new Producto
+                {
+                    Titulo = viewModel.Titulo,
+                    DescripcionCorta = viewModel.DescripcionCorta,
+                    DescripcionLarga = viewModel.DescripcionLarga,
+                    TipoProducto = viewModel.TipoProducto,
+                    Precio = viewModel.Precio,
+                    UrlImagen = urlImagen,
+                    UrlArchivoDigital = urlArchivoDigital,
+                    FechaPublicacion = DateTime.UtcNow,
+                    AutorId = viewModel.AutorId
+                };
+
+                await _productoService.AddProductoAsync(nuevoProducto, viewModel.CategoriaIds);
+
+                TempData["MensajeExito"] = "Producto creado exitosamente.";
+                return RedirectToAction(nameof(GestionarProductos));
+            }
+
+            await CargarDatosViewModel(viewModel);
+
+            return RedirectToAction(nameof(GestionarProductos));
+        }
+
+        // Métodos auxiliares para la lógica de archivos y la carga de datos del ViewModel
+        private async Task<string> GuardarArchivo(IFormFile archivo, string carpetaDestino)
+        {
+            string uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, carpetaDestino);
+            string nombreArchivo = Guid.NewGuid().ToString() + Path.GetExtension(archivo.FileName);
+            string filePath = Path.Combine(uploadsFolder, nombreArchivo);
+
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await archivo.CopyToAsync(fileStream);
+            }
+
+            return $"/{carpetaDestino}/{nombreArchivo}";
+        }
+
+        private async Task CargarDatosViewModel(CrearProductoViewModel viewModel)
+        {
+            viewModel.TiposProductoDisponibles = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "pdf", Text = "PDF" },
+        new SelectListItem { Value = "revista", Text = "Revista" }
+    };
+
+            var autores = await _productoService.GetAutoresAsync();
+            viewModel.AutoresDisponibles = autores.Select(a => new SelectListItem
+            {
+                Value = a.Id.ToString(),
+                Text = a.NombreArtistico
+            });
+
+            var categorias = await _productoService.GetCategoriasAsync();
+            viewModel.CategoriasDisponibles = categorias.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.NombreCategoria
+            });
+        }
+        [HttpGet]
+        public async Task<IActionResult> EditarProducto(int id)
+        {
+            var producto = await _productoService.GetByIdAsync(id);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new CrearProductoViewModel
+            {
+                Id = producto.Id,
+                Titulo = producto.Titulo,
+                DescripcionCorta = producto.DescripcionCorta,
+                DescripcionLarga = producto.DescripcionLarga,
+                TipoProducto = producto.TipoProducto,
+                Precio = producto.Precio,
+                AutorId = producto.AutorId,
+                CategoriaIds = producto.ProductoCategorias.Select(pc => pc.CategoriaId).ToList()
+            };
+
+            await CargarDatosViewModel(viewModel);
+
+            // Guardamos las URLs existentes para mostrarlas en la vista y para la lógica de eliminación
+            TempData["UrlImagenExistente"] = producto.UrlImagen;
+            TempData["UrlArchivoExistente"] = producto.UrlArchivoDigital;
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarProducto(int id, CrearProductoViewModel viewModel)
+        {
+            if (id != viewModel.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                var productoAActualizar = await _productoService.GetByIdAsync(id);
+                if (productoAActualizar == null)
+                {
+                    return NotFound();
+                }
+
+                // Lógica para actualizar la imagen de portada
+                if (viewModel.ImagenPortada != null)
+                {
+                    EliminarArchivo(productoAActualizar.UrlImagen); // Elimina el archivo antiguo
+                    productoAActualizar.UrlImagen = await GuardarArchivo(viewModel.ImagenPortada, "productos/portadas");
+                }
+
+                // Lógica para actualizar el archivo digital
+                if (viewModel.ArchivoDigital != null)
+                {
+                    EliminarArchivo(productoAActualizar.UrlArchivoDigital); // Elimina el archivo antiguo
+                    productoAActualizar.UrlArchivoDigital = await GuardarArchivo(viewModel.ArchivoDigital, "productos/archivos");
+                }
+
+                // Actualizar las propiedades del producto
+                productoAActualizar.Titulo = viewModel.Titulo;
+                productoAActualizar.DescripcionCorta = viewModel.DescripcionCorta;
+                productoAActualizar.DescripcionLarga = viewModel.DescripcionLarga;
+                productoAActualizar.TipoProducto = viewModel.TipoProducto;
+                productoAActualizar.Precio = viewModel.Precio;
+                productoAActualizar.AutorId = viewModel.AutorId;
+
+                await _productoService.UpdateProductoAsync(productoAActualizar, viewModel.CategoriaIds);
+
+                TempData["MensajeExito"] = "Producto actualizado exitosamente.";
+                return RedirectToAction(nameof(GestionarProductos));
+            }
+
+            // Si la validación falla, recargamos las listas para la vista
+            await CargarDatosViewModel(viewModel);
+            return View(viewModel);
+        }
+        private void EliminarArchivo(string url)
+        {
+            if (!string.IsNullOrEmpty(url))
+            {
+                var path = Path.Combine(_hostingEnvironment.WebRootPath, url.TrimStart('/'));
+                if (System.IO.File.Exists(path))
+                {
+                    System.IO.File.Delete(path);
+                }
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarProducto(int id)
+        {
+            var productoAEliminar = await _productoService.GetByIdAsync(id);
+            if (productoAEliminar == null)
+            {
+                return NotFound();
+            }
+
+            // Elimina el archivo de imagen física si existe
+            if (!string.IsNullOrEmpty(productoAEliminar.UrlImagen))
+            {
+                EliminarArchivo(productoAEliminar.UrlImagen);
+            }
+
+            // Elimina el archivo digital (PDF) si existe
+            if (!string.IsNullOrEmpty(productoAEliminar.UrlArchivoDigital))
+            {
+                EliminarArchivo(productoAEliminar.UrlArchivoDigital);
+            }
+
+            await _productoService.DeleteProductoAsync(id);
+
+            TempData["MensajeExito"] = "Producto eliminado exitosamente.";
+            return RedirectToAction(nameof(GestionarProductos));
         }
     }
 }

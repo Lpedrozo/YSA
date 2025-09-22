@@ -25,14 +25,15 @@ namespace YSA.Data.Data
         public DbSet<Pago> Pagos { get; set; }
         public DbSet<EstudianteCurso> EstudianteCursos { get; set; }
         public DbSet<VentaItem> VentaItems { get; set; }
-        
-        // Nuevos DbSet
         public DbSet<PreguntaRespuesta> PreguntasRespuestas { get; set; }
         public DbSet<Anuncio> Anuncios { get; set; }
         public DbSet<Resena> Resenas { get; set; }
         public DbSet<MetodoPago> MetodosPago { get; set; }
         public DbSet<ProgresoLeccion> ProgresoLecciones { get; set; }
-
+        public DbSet<ArtistaFoto> ArtistaFotos { get; set; }
+        public DbSet<Evento> Eventos { get; set; }
+        public DbSet<EventoFotos> EventoFotos { get; set; }
+        public DbSet<TipoEvento> TipoEventos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -170,6 +171,22 @@ namespace YSA.Data.Data
                 .HasOne(pl => pl.Leccion)
                 .WithMany()
                 .HasForeignKey(pl => pl.LeccionId);
+            modelBuilder.Entity<ArtistaFoto>()
+                .HasOne(af => af.Artista)
+                .WithMany(a => a.Portafolio)
+                .HasForeignKey(af => af.ArtistaId);
+            modelBuilder.Entity<Evento>()
+                .HasOne(e => e.TipoEvento)
+                .WithMany(te => te.Eventos)
+                .HasForeignKey(e => e.TipoEventoId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<EventoFotos>()
+                .HasOne(ef => ef.Evento)
+                .WithMany(e => e.Fotos)
+                .HasForeignKey(ef => ef.EventoId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
         }
     }
 }
