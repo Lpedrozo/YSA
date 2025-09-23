@@ -1,113 +1,266 @@
 ﻿@model YSA.Web.Models.ViewModels.RevistaIndexViewModel
 @{
-    ViewData["Title"] = "Revista de Artistas";
+    ViewData["Title"] = "Revista de Arte y Cultura";
 }
 
 <style>
-    /* Estilos adaptados de la vista de Cursos */
+    :root {
+        --color-primary: #8e44ad; /* Morado */
+        --color-secondary: #2c3e50; /* Gris Oscuro */
+        --color-accent: #e74c3c; /* Rojo */
+        --color-background: #f4f7f6; /* Gris Claro */
+        --color-text-dark: #34495e; /* Texto Oscuro */
+        --color-text-light: #ecf0f1; /* Texto Claro */
+    }
+
     body {
-        font-family: 'Inter', sans-serif;
-        background-color: #EAF3F3;
-        color: #fff;
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--color-secondary);
+        border-bottom: 3px solid var(--color-primary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2rem;
+        display: inline-block;
+    }
+
+    .section-subtitle {
+        color: var(--color-text-dark);
+        margin-bottom: 2rem;
+        font-weight: 300;
+        font-size: 1.2rem;
+    }
+
+    .carousel-item {
+        padding: 0 1rem;
     }
 
     .card {
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        border-radius: 12px;
+        border-radius: 1rem;
         border: none;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
         overflow: hidden;
         background-color: #fff;
-        color: #000;
-        cursor: pointer;
+        height: 100%;
     }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.15) !important;
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
         }
 
     .card-img-top {
-        height: 200px; /* Tamaño fijo para la imagen del artista */
+        height: 250px;
         object-fit: cover;
+        width: 100%;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
     }
 
-    .portafolio-container {
+    .card-body {
         display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
+        flex-direction: column;
         justify-content: center;
+        align-items: center;
+        padding: 1.5rem;
     }
 
-    .portafolio-item {
-        width: 300px;
-        height: 300px;
-        border-radius: 8px;
+    .card-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--color-secondary);
+        text-align: center;
+    }
+
+    .card-text {
+        color: var(--color-text-dark);
+        font-size: 1rem;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 5%;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: var(--color-primary);
+        border-radius: 50%;
+        padding: 1.5rem;
+    }
+
+    /* Estilos para el portafolio */
+    .portfolio-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .portfolio-item {
+        border-radius: 1rem;
         overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
     }
 
-        .portafolio-item img {
+        .portfolio-item:hover {
+            transform: scale(1.05);
+        }
+
+        .portfolio-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
-
-    .no-portafolio-msg {
-        text-align: center;
-        margin-top: 50px;
-        color: #666;
-    }
 </style>
 
-<div class="container mt-5">
-    <h1 class="text-center text-black mb-4">Revista de Artistas</h1>
+<div class="container py-5">
 
+    @* Sección de Eventos de Elevarte *@
     <div class="row mb-5">
-        <h2 class="text-black">Explora a nuestros Artistas</h2>
-        <hr style="color:#000;" />
-        <div id="artistasCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                @{
-                    int itemsPerSlide = 4;
-                    int totalArtists = Model.Artistas.Count;
-                    int totalSlides = (int)Math.Ceiling(totalArtists / (double)itemsPerSlide);
-                }
-                @for (int i = 0; i < totalSlides; i++)
-                {
-                    <div class="carousel-item @(i == 0 ? "active" : "")">
-                        <div class="row row-cols-1 row-cols-md-4 g-4">
-                            @foreach (var artista in Model.Artistas.Skip(i * itemsPerSlide).Take(itemsPerSlide))
-                            {
-                                <div class="col">
-                                    <div class="card h-100 shadow-sm artista-card" data-artista-id="@artista.Id">
-                                        <img src="@(string.IsNullOrEmpty(artista.Usuario.UrlImagen) ? "https://via.placeholder.com/400x200.png?text=Sin+Foto" : Url.Content(artista.Usuario.UrlImagen))"
-                                             class="card-img-top" alt="Foto de perfil de @artista.Usuario.Nombre">
-                                        <div class="card-body text-center">
-                                            <h5 class="card-title">@artista.Usuario.Nombre @artista.Usuario.Apellido</h5>
+        <div class="col-12 text-center">
+            <h2 class="section-title">Próximos Eventos</h2>
+            <p class="section-subtitle">
+                Descubre los eventos más emocionantes y únete a nuestra comunidad.
+            </p>
+        </div>
+        <div class="col-12">
+            <div id="eventosCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @{
+                        int itemsPerSlide = 3;
+                        int totalEvents = Model.EventosElevarte?.Count() ?? 0;
+                        int totalSlidesEvents = (int)Math.Ceiling(totalEvents / (double)itemsPerSlide);
+                    }
+                    @if (totalEvents > 0)
+                    {
+                        @for (int i = 0; i < totalSlidesEvents; i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <div class="row g-4">
+                                    @foreach (var evento in Model.EventosElevarte.Skip(i * itemsPerSlide).Take(itemsPerSlide))
+                                    {
+                                        <div class="col">
+                                            <div class="card h-100 shadow-sm">
+                                                <img src="@Url.Content(evento.UrlImagen)" class="card-img-top" alt="@evento.Titulo">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">@evento.Titulo</h5>
+                                                    <p class="card-text">@evento.FechaEvento.ToString("dd MMMM yyyy")</p>
+                                                    <span class="badge rounded-pill bg-primary text-white">@evento.Lugar</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    }
                                 </div>
-                            }
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="carousel-item active">
+                            <div class="alert alert-info text-center" role="alert">
+                                No hay eventos próximos para mostrar.
+                            </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#eventosCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#eventosCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#artistasCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Anterior</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#artistasCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Siguiente</span>
-            </button>
         </div>
     </div>
 
-    <hr style="color:#000;" />
-    <h2 class="text-center text-black mb-4">Portafolio del Artista</h2>
-    <div id="portafolio-content">
-        <div class="alert alert-info text-center" role="alert">
-            Selecciona un artista para ver su portafolio.
+    <hr style="color:#e0e0e0;" class="my-5" />
+
+    @* Sección de Artistas *@
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h2 class="section-title">Explora a Nuestros Artistas</h2>
+            <p class="section-subtitle">
+                Conoce a los creadores detrás de las obras que te inspiran.
+            </p>
+        </div>
+        <div class="col-12">
+            <div id="artistasCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @{
+                        int itemsPerSlideArtistas = 4;
+                        int totalArtists = Model.Artistas?.Count ?? 0;
+                        int totalSlidesArtistas = (int)Math.Ceiling(totalArtists / (double)itemsPerSlideArtistas);
+                    }
+                    @if (totalArtists > 0)
+                    {
+                        @for (int i = 0; i < totalSlidesArtistas; i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <div class="row g-4">
+                                    @foreach (var artista in Model.Artistas.Skip(i * itemsPerSlideArtistas).Take(itemsPerSlideArtistas))
+                                    {
+                                        <div class="col">
+                                            <div class="card h-100 shadow-sm artista-card" data-artista-id="@artista.Id" style="cursor:pointer;">
+                                                <img src="@(string.IsNullOrEmpty(artista.Usuario.UrlImagen) ? "https://via.placeholder.com/400x200.png?text=Sin+Foto" : Url.Content(artista.Usuario.UrlImagen))"
+                                                     class="card-img-top" alt="Foto de perfil de @artista.Usuario.Nombre">
+                                                <div class="card-body text-center">
+                                                    <h5 class="card-title">@artista.Usuario.Nombre @artista.Usuario.Apellido</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="carousel-item active">
+                            <div class="alert alert-info text-center" role="alert">
+                                No hay artistas para mostrar.
+                            </div>
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#artistasCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#artistasCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <hr style="color:#e0e0e0;" class="my-5" />
+
+    @* Sección del Portafolio *@
+    <div class="row">
+        <div class="col-12 text-center">
+            <h2 class="section-title">Portafolio del Artista</h2>
+            <p class="section-subtitle">
+                Selecciona un artista para ver sus mejores obras.
+            </p>
+        </div>
+        <div class="col-12">
+            <div id="portafolio-content">
+                <div class="alert alert-info text-center" role="alert">
+                    Selecciona un artista para ver su portafolio.
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -133,13 +286,11 @@
 
                     let html = '';
                     if (fotos && fotos.length > 0) {
-                        html += '<div class="row g-3">';
+                        html += '<div class="portfolio-grid">';
                         fotos.forEach(foto => {
                             html += `
-                                <div class="col-md-4">
-                                    <div class="portafolio-item">
-                                        <img src="${foto.urlImagen}" alt="${foto.titulo || 'Foto de portafolio'}" class="img-fluid">
-                                    </div>
+                                <div class="portfolio-item">
+                                    <img src="${foto.urlImagen}" alt="${foto.titulo || 'Foto de portafolio'}" class="img-fluid">
                                 </div>
                             `;
                         });

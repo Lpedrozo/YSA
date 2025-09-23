@@ -62,5 +62,13 @@ namespace YSA.Data.Repositories
             _context.EventoFotos.Add(foto);
             await _context.SaveChangesAsync();
         }
+        public async Task<IEnumerable<Evento>> GetEventosByTipoIdAsync(int tipoEventoId)
+        {
+            return await _context.Eventos
+                                 .Where(e => e.TipoEventoId == tipoEventoId && e.EstaActivo)
+                                 .Include(e => e.TipoEvento)
+                                 .OrderByDescending(e => e.FechaEvento)
+                                 .ToListAsync();
+        }
     }
 }

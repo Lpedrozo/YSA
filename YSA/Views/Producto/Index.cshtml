@@ -1,0 +1,124 @@
+﻿@model YSA.Web.Models.ViewModels.ProductosIndexViewModel
+@{
+    ViewData["Title"] = "Catálogo de Productos";
+}
+
+<style>
+    /* Estilos de los carruseles anteriores para consistencia */
+    :root {
+        --color-primary: #8e44ad; /* Morado */
+        --color-secondary: #2c3e50; /* Gris Oscuro */
+        --color-accent: #e74c3c; /* Rojo */
+        --color-background: #f4f7f6; /* Gris Claro */
+        --color-text-dark: #34495e; /* Texto Oscuro */
+        --color-text-light: #ecf0f1; /* Texto Claro */
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--color-secondary);
+        border-bottom: 3px solid var(--color-primary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2rem;
+        display: inline-block;
+    }
+
+    .card {
+        border-radius: 1rem;
+        border: none;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+        overflow: hidden;
+        background-color: #fff;
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+    }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+    .card-img-top {
+        height: 250px;
+        object-fit: cover;
+        width: 100%;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1.5rem;
+    }
+
+    .card-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--color-secondary);
+        text-align: center;
+    }
+
+    .card-text {
+        color: var(--color-text-dark);
+        font-size: 1rem;
+    }
+
+    .price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-primary);
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="section-title">Catálogo de Productos Digitales</h1>
+            <p class="section-subtitle">
+                Explora nuestra colección de libros y revistas digitales para inspirar tu arte.
+            </p>
+        </div>
+    </div>
+
+    @if (Model.Productos != null && Model.Productos.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var producto in Model.Productos)
+            {
+                <div class="col">
+                    <a href="#" class="card h-100 shadow-sm">
+                        <img src="@Url.Content(producto.UrlImagen)" class="card-img-top" alt="@producto.Titulo">
+                        <div class="card-body">
+                            <h5 class="card-title">@producto.Titulo</h5>
+                            <p class="card-text text-center">@producto.DescripcionCorta</p>
+                            <span class="price">
+                                @string.Format("{0:C}", producto.Precio)
+                            </span>
+                            <small class="text-muted">Por @(producto.Autor?.Usuario?.Nombre ?? "Autor Desconocido")</small>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center mt-5" role="alert">
+            No hay productos disponibles en este momento.
+        </div>
+    }
+</div>

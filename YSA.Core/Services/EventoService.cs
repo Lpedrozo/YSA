@@ -47,5 +47,9 @@ namespace YSA.Core.Services
         {
             await _eventoRepository.AddEventoFotoAsync(foto);
         }
+        public async Task<IEnumerable<Evento>> GetEventosByTipoIdAsync(int tipoEventoId)
+        {
+            return await _eventoRepository.GetEventosByTipoIdAsync(tipoEventoId);
+        }
     }
 }

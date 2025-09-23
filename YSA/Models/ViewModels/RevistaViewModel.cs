@@ -19,5 +19,7 @@ namespace YSA.Web.Models.ViewModels
     public class RevistaIndexViewModel
     {
         public List<Artista> Artistas { get; set; }
+        public IEnumerable<Evento> EventosElevarte { get; set; } // Nueva propiedad
+
     }
 }

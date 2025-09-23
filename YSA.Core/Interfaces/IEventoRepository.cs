@@ -11,6 +11,6 @@ namespace YSA.Core.Interfaces
         Task DeleteAsync(int id);
         Task<IEnumerable<TipoEvento>> GetTiposEventosAsync();
         Task AddEventoFotoAsync(EventoFotos foto);
-
+        Task<IEnumerable<Evento>> GetEventosByTipoIdAsync(int tipoEventoId);
     }
 }

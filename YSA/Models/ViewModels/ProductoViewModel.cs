@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using YSA.Core.Entities;
 
 namespace YSA.Web.Models.ViewModels
 {
@@ -75,5 +76,9 @@ namespace YSA.Web.Models.ViewModels
         public IEnumerable<SelectListItem>? TiposProductoDisponibles { get; set; }
         public IEnumerable<SelectListItem>? AutoresDisponibles { get; set; }
         public IEnumerable<SelectListItem>? CategoriasDisponibles { get; set; }
+    }
+    public class ProductosIndexViewModel
+    {
+        public IEnumerable<Producto> Productos { get; set; }
     }
 }
