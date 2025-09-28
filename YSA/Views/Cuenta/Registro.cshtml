@@ -5,182 +5,329 @@
 }
 
 <style>
-    /* Estilos generales del contenedor principal */
-    .main-content-udemy {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    /* ------------------------------------- */
+    /* 1. Paleta Monocromática               */
+    /* ------------------------------------- */
+    :root {
+        --color-main-bg: #f8f8f8;
+        --color-card-bg: #ffffff;
+        --color-primary-action: #000000;
+        --color-text-dark: #212529;
+        --color-text-subtle: #6c757d;
+        --color-border: #ced4da;
+        --color-error: #dc3545;
+    }
+
+    /* Contenedor principal: Flexbox y altura mínima */
+    .main-container-triple { /* Renombramos la clase para triple columna */
         min-height: 100vh;
-        background-color: #fff; /* Fondo blanco para coincidir con la imagen */
-    }
-
-    /* Sección de la ilustración */
-    .illustration-section-udemy {
-        flex: 0.6;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding-right: 5rem;
+        background-color: var(--color-main-bg);
+        /* Mantenemos un padding general bajo */
+        padding: 1.5rem 1rem; /* Más compacto lateralmente */
+        font-family: Arial, sans-serif;
     }
 
-    .illustration-udemy {
+    /* Contenedor central de las tres tarjetas */
+    .triple-card-wrapper {
+        display: flex;
+        max-width: 1200px; /* Aumentamos el ancho máximo */
+        width: 100%;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ------------------------------------- */
+    /* 2. Paneles de Contenido (Izquierda y Derecha) */
+    /* ------------------------------------- */
+    .content-panel-mono {
+        flex: 1; /* Cada columna ocupa 1/3 del espacio */
+        background-color: var(--color-text-dark);
+        color: #ffffff;
+        padding: 1.8rem; /* Padding ajustado para altura */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        /* Aseguramos que la columna de la derecha no tenga border-radius */
+        border-radius: 0;
+    }
+
+        .content-panel-mono:first-child {
+            /* Borde redondeado solo en la esquina superior/inferior izquierda */
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+        }
+
+        .content-panel-mono:last-child {
+            /* Borde redondeado solo en la esquina superior/inferior derecha */
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+
+
+    .panel-title {
+        font-size: 1.6rem; /* Ajustado */
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        border-bottom: 2px solid #ffffff;
+        padding-bottom: 0.4rem;
+    }
+
+    .panel-text {
+        font-size: 0.9rem; /* Ligeramente más pequeño */
+        line-height: 1.4;
+        color: #e9ecef;
+        margin-bottom: 0.8rem;
+    }
+
+    /* ------------------------------------- */
+    /* 3. Tarjeta de Registro (Central)      */
+    /* ------------------------------------- */
+    .register-card-mono {
+        flex: 1; /* Ocupa 1/3 del espacio */
+        background-color: var(--color-card-bg);
+        padding: 1.8rem; /* Padding ajustado para altura */
+    }
+
+    /* Título, Imagen, y Elementos del Formulario (Mantenemos los ajustes de altura) */
+    .register-title-mono {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--color-text-dark);
+        margin-bottom: 0.6rem;
+    }
+
+    .register-header-image {
         max-width: 100%;
         height: auto;
-    }
-
-    /* Sección del formulario de login */
-    .login-section-udemy {
-        flex: 0.4;
-        max-width: 500px;
-        padding: 2rem;
-    }
-
-    /* Nuevo: Estilos de la tarjeta del formulario */
-    .login-card-udemy {
-        border: 1px solid #e0e6ed;
-        border-radius: 8px;
-        padding: 2.5rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-        .login-card-udemy:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-        }
-
-    .login-title-udemy {
-        font-size: 2.2rem;
-        font-weight: 700;
-        line-height: 1.2;
-        margin-bottom: 2rem;
-        color: #1c1d1f;
-        text-align: center;
-    }
-
-    /* Estilos de los inputs */
-    .form-control-udemy {
-        width: 100%;
-        padding: 12px 0;
-        border: none;
-        border-bottom: 2px solid #e0e6ed;
-        background-color: transparent;
-        font-size: 1rem;
-        transition: border-bottom-color 0.3s ease;
-    }
-
-        .form-control-udemy:focus {
-            outline: none;
-            border-bottom-color: #5624d0;
-            box-shadow: none;
-        }
-
-    .form-group-udemy {
-        margin-bottom: 1.5rem;
-        position: relative;
-    }
-
-    .form-label-udemy {
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: #1c1d1f;
+        border-radius: 6px;
+        margin-bottom: 1rem;
         display: block;
-        margin-bottom: 0.5rem;
+        border: 1px solid var(--color-border);
     }
 
-    .text-danger {
-        color: #dc3545 !important;
+    .form-group-vertical {
+        margin-bottom: 0.8rem;
     }
 
-    /* Estilos para el botón principal de registro */
-    .btn-register-udemy {
+    .form-label-mono {
+        display: block;
         width: 100%;
-        background-color: #5624d0;
-        color: #fff;
-        border: none;
-        border-radius: 0;
-        padding: 1rem 1.25rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: background-color 0.2s;
+        font-weight: 600;
+        color: var(--color-text-dark);
+        margin-bottom: 0.3rem;
+        font-size: 0.9rem;
     }
 
-        .btn-register-udemy:hover {
-            background-color: #401b9c;
+    .form-control-mono {
+        background-color: #ffffff;
+        border: 1px solid var(--color-border);
+        color: var(--color-text-dark);
+        border-radius: 6px;
+        height: 44px;
+        padding: 0.5rem 1rem;
+        width: 100%;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .form-control-mono:focus {
+            border-color: var(--color-text-dark);
+            box-shadow: 0 0 0 0.1rem rgba(0, 0, 0, 0.1);
+            outline: 0;
         }
 
-    .registration-links-udemy {
-        margin-top: 2rem;
+    .input-validation-error {
+        border-color: var(--color-error) !important;
+    }
+
+    .btn-mono-primary {
+        width: 100%;
+        background-color: var(--color-primary-action);
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 0.6rem 1.25rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: background-color 0.2s;
+        margin-top: 0.8rem;
+    }
+
+        .btn-mono-primary:hover {
+            background-color: #343a40;
+        }
+
+    .link-mono-subtle {
+        color: var(--color-text-subtle);
+        font-weight: 500;
+        text-decoration: none;
+        font-size: 0.8rem;
+        transition: color 0.2s;
+        display: block;
+        margin-top: 0.3rem;
+    }
+
+    .form-footer-separator {
+        margin-top: 0.8rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid var(--color-border);
         text-align: center;
     }
 
-        .registration-links-udemy a {
-            color: #5624d0;
-            font-weight: 700;
-            text-decoration: none;
+    /* Media Query para móvil: Apilar las tarjetas */
+    @@media (max-width: 992px) {
+        .triple-card-wrapper {
+            /* Ocultamos las columnas laterales en tabletas y móviles */
+            display: block;
+            max-width: 420px;
         }
 
-            .registration-links-udemy a:hover {
-                text-decoration: underline;
-            }
+        .content-panel-mono {
+            /* Aseguramos que solo se muestre el panel central en móvil */
+            display: none;
+        }
+
+        .register-card-mono {
+            width: 100%;
+            /* Restauramos los bordes redondeados en móvil */
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+    }
 </style>
 
-<div class="main-content-udemy">
-    <div class="illustration-section-udemy">
-        <img src="~/diseño/login.webp" alt="Ilustración de personas interactuando con elementos de aprendizaje" class="illustration-udemy">
-    </div>
+<div class="main-container-triple">
+    <div class="triple-card-wrapper">
 
-    <div class="login-section-udemy">
-        <div class="login-card-udemy">
-            <h1 class="login-title-udemy">Crea tu cuenta</h1>
-            <p class="text-muted text-center mb-4">Regístrate para comenzar</p>
+        <div class="content-panel-mono">
+            <h2 class="panel-title">Comienza tu transformación.</h2>
 
-            <form asp-action="Registro" asp-controller="Cuenta" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <p class="panel-text">
+                Registrarte es el primer paso hacia una comunidad que valora tu crecimiento. Accede a nuestra biblioteca de recursos, clases magistrales en vivo y únete a miles de estudiantes que están redefiniendo sus carreras.
+            </p>
+
+            <ul class="panel-text" style="list-style: disc; margin-left: 1.5rem;">
+                <li>Recursos Ilimitados: Acceso completo a todo el catálogo.</li>
+                <li>Mentoría Directa: Conexión con profesionales de la industria.</li>
+                <li>Certificación: Recibe certificados válidos al completar cada ruta.</li>
+            </ul>
+
+            <p class="panel-text" style="font-weight: bold; margin-bottom: 0;">
+                ¡Tu próxima gran oportunidad te espera. Regístrate ahora!
+            </p>
+        </div>
+
+        <div class="register-card-mono">
+            <div class="text-center">
+                <h1 class="register-title-mono">Crea tu Cuenta</h1>
+
+                <img src="~/diseño/InicioSesionImagen.jpg"
+                     alt="Ilustración de equipo de trabajo"
+                     class="register-header-image" />
+            </div>
+
+            <form asp-controller="Cuenta" asp-action="Registro" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-2 text-center"></div>
 
                 <div class="row">
-                    <div class="col-md-6 form-group-udemy">
-                        <label asp-for="Nombre" class="form-label-udemy">Nombre</label>
-                        <input type="text" asp-for="Nombre" class="form-control-udemy" placeholder="Introduce tu nombre" />
-                        <span asp-validation-for="Nombre" class="text-danger small"></span>
+                    <div class="col-md-6 form-group-vertical">
+                        <label asp-for="Nombre" class="form-label-mono">Nombre</label>
+                        <input type="text" asp-for="Nombre" class="form-control-mono" placeholder="Tu nombre" required />
+                        <span asp-validation-for="Nombre" class="text-danger small mt-1 d-block"></span>
                     </div>
-                    <div class="col-md-6 form-group-udemy">
-                        <label asp-for="Apellido" class="form-label-udemy">Apellido</label>
-                        <input type="text" asp-for="Apellido" class="form-control-udemy" placeholder="Introduce tu apellido" />
-                        <span asp-validation-for="Apellido" class="text-danger small"></span>
+                    <div class="col-md-6 form-group-vertical">
+                        <label asp-for="Apellido" class="form-label-mono">Apellido</label>
+                        <input type="text" asp-for="Apellido" class="form-control-mono" placeholder="Tu apellido" required />
+                        <span asp-validation-for="Apellido" class="text-danger small mt-1 d-block"></span>
                     </div>
                 </div>
 
-                <div class="form-group-udemy">
-                    <label asp-for="Email" class="form-label-udemy">Correo Electrónico</label>
-                    <input type="email" asp-for="Email" class="form-control-udemy" placeholder="ejemplo@correo.com" />
-                    <span asp-validation-for="Email" class="text-danger small"></span>
+                <div class="form-group-vertical">
+                    <label asp-for="Email" class="form-label-mono">Correo Electrónico</label>
+                    <input type="email" asp-for="Email" class="form-control-mono" placeholder="ejemplo@correo.com" required />
+                    <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
                 </div>
 
-                <div class="form-group-udemy">
-                    <label asp-for="Contrasena" class="form-label-udemy">Contraseña</label>
-                    <input type="password" asp-for="Contrasena" class="form-control-udemy" placeholder="Crea una contraseña segura" />
-                    <span asp-validation-for="Contrasena" class="text-danger small"></span>
+                <div class="form-group-vertical">
+                    <label asp-for="Contrasena" class="form-label-mono">Contraseña</label>
+                    <input type="password" asp-for="Contrasena" class="form-control-mono" placeholder="Crea una contraseña segura" required />
+                    <span asp-validation-for="Contrasena" class="text-danger small mt-1 d-block"></span>
                 </div>
 
-                <div class="form-group-udemy">
-                    <label asp-for="ConfirmarContrasena" class="form-label-udemy">Confirmar Contraseña</label>
-                    <input type="password" asp-for="ConfirmarContrasena" class="form-control-udemy" placeholder="Repite la contraseña" />
-                    <span asp-validation-for="ConfirmarContrasena" class="text-danger small"></span>
+                <div class="form-group-vertical">
+                    <label asp-for="ConfirmarContrasena" class="form-label-mono">Confirmar Contraseña</label>
+                    <input type="password" asp-for="ConfirmarContrasena" class="form-control-mono" placeholder="Repite la contraseña" required />
+                    <span asp-validation-for="ConfirmarContrasena" class="text-danger small mt-1 d-block"></span>
                 </div>
 
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-register-udemy">Crear Cuenta</button>
+                    <button type="submit" class="btn-mono-primary">
+                        CREAR CUENTA
+                    </button>
                 </div>
 
-                <div class="registration-links-udemy">
-                    <span>¿Ya tienes una cuenta? <a href="~/Cuenta/Login">Iniciar Sesión</a></span>
+                <div class="form-footer-separator">
+                    <span class="text-footer-subtle">¿Ya tienes una cuenta? </span>
+                    <a href="~/Cuenta/Login" class="link-mono-subtle">
+                        Iniciar Sesión
+                    </a>
                 </div>
             </form>
         </div>
+
+        <div class="content-panel-mono">
+            <h2 class="panel-title">Invierte en tu futuro hoy.</h2>
+
+            <p class="panel-text">
+                En YSA, estamos tan seguros de la calidad de nuestra educación que te garantizamos resultados. Nuestro modelo de aprendizaje se enfoca en proyectos reales que te hacen empleable desde el primer día.
+            </p>
+
+            <ul class="panel-text" style="list-style: disc; margin-left: 1.5rem;">
+                <li>Rutas de Carrera: Cursos alineados con las demandas del mercado.</li>
+                <li>Soporte 24/7: Asistencia técnica y de contenido cuando la necesitas.</li>
+                <li>Flexibilidad Total: Aprende a tu propio ritmo, desde cualquier dispositivo.</li>
+            </ul>
+
+            <p class="panel-text" style="font-weight: bold; margin-bottom: 0;">
+                Tu éxito es nuestra única meta. ¡Únete a la academia YSA!
+            </p>
+        </div>
+
     </div>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Script para aplicar el borde rojo al input en caso de error de validación.
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('[data-valmsg-for]').forEach(span => {
+                const inputId = span.getAttribute('data-valmsg-for');
+                const input = document.getElementById(inputId);
+
+                const observer = new MutationObserver(mutations => {
+                    mutations.forEach(mutation => {
+                        if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                            if (span.innerHTML.trim() !== "") {
+                                input.classList.add('input-validation-error');
+                            } else {
+                                input.classList.remove('input-validation-error');
+                            }
+                        }
+                    });
+                });
+
+                observer.observe(span, { childList: true, characterData: true, subtree: true });
+
+                if (span.innerHTML.trim() !== "") {
+                    input.classList.add('input-validation-error');
+                }
+            });
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

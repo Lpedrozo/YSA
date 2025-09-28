@@ -4,46 +4,197 @@
     ViewData["Title"] = "Gestión de Productos";
 }
 
-<h1>@ViewData["Title"]</h1>
+<style>
+    /* VARIABLES DE COLOR MONOCROMÁTICAS */
+    :root {
+        --color-primary: #000000; /* NEGRO PURO para botones primarios y títulos */
+        --color-secondary: #333333; /* Gris oscuro para texto y acentos */
+        --color-accent: #cccccc; /* Gris claro para bordes y separadores */
+        --color-background: #ffffff; /* Fondo Blanco */
+        --color-card-bg: #f8f8f8; /* Gris muy claro para el fondo de las tarjetas */
+        --color-text-dark: #212529; /* Texto principal */
+        --color-text-light: #ffffff; /* Texto Claro */
+        /* Colores de estado ajustados para B/N */
+        --color-success: #333333; /* Gris oscuro para éxito (Editar/Guardar) */
+        --color-danger: #a00000; /* Rojo oscuro para Eliminar (Necesita ser distintivo) */
+        --color-info: #666666; /* Gris medio para acciones de información/edición */
+    }
 
-<p>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearProductoModal">
-        Crear Nuevo Producto
-    </button>
-</p>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        padding: 2rem;
+    }
 
-<table class="table table-striped table-hover">
-    <thead class="thead-dark">
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Productos.FirstOrDefault().Titulo)</th>
-            <th>@Html.DisplayNameFor(model => model.Productos.FirstOrDefault().TipoProducto)</th>
-            <th>@Html.DisplayNameFor(model => model.Productos.FirstOrDefault().Precio)</th>
-            <th>@Html.DisplayNameFor(model => model.Productos.FirstOrDefault().AutorNombre)</th>
-            <th>@Html.DisplayNameFor(model => model.Productos.FirstOrDefault().Categorias)</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Productos)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.Titulo)</td>
-                <td>@Html.DisplayFor(modelItem => item.TipoProducto)</td>
-                <td>@Html.DisplayFor(modelItem => item.Precio)</td>
-                <td>@Html.DisplayFor(modelItem => item.AutorNombre)</td>
-                <td>@Html.DisplayFor(modelItem => item.Categorias)</td>
-                <td>
-                    <a asp-action="EditarProducto" asp-route-id="@item.Id" class="btn btn-sm btn-info">Editar</a>
-                    <form asp-action="EliminarProducto" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
+    h1 {
+        color: var(--color-primary);
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    /* ESTILO DE CARD DE GESTIÓN */
+    .product-card {
+        background-color: var(--color-card-bg); /* Fondo gris claro */
+        border: 1px solid var(--color-accent); /* Borde gris sutil */
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease-in-out;
+        height: 100%;
+    }
+
+        .product-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
         }
-    </tbody>
-</table>
 
+    .product-title {
+        color: var(--color-primary);
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .product-detail span {
+        font-weight: 500;
+        color: var(--color-secondary);
+    }
+
+    .product-image {
+        max-height: 150px;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 0.3rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+    }
+
+    .price-badge {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--color-primary);
+        border: 2px solid var(--color-primary);
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.5rem;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+
+    /* BOTONES MONOCROMÁTICOS */
+
+    /* Botón Crear/Primario (Negro) */
+    .btn-primary {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: var(--color-text-light) !important;
+        font-weight: 600;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* Botón Editar/Info (Gris Medio) */
+    .btn-info {
+        background-color: var(--color-info) !important;
+        border-color: var(--color-info) !important;
+        color: var(--color-text-light) !important;
+    }
+
+        .btn-info:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* Botón Eliminar/Danger (Rojo) - Se mantiene el rojo oscuro por seguridad */
+    .btn-danger {
+        background-color: var(--color-danger) !important;
+        border-color: var(--color-danger) !important;
+        color: var(--color-text-light) !important;
+    }
+
+        .btn-danger:hover {
+            background-color: #7b0000 !important;
+            border-color: #7b0000 !important;
+        }
+
+    /* Estilo del Modal para mantener la coherencia */
+    .modal-content {
+        border-radius: 0.75rem;
+        border: 1px solid var(--color-primary);
+    }
+
+    .modal-header {
+        background-color: var(--color-card-bg);
+        border-bottom: 1px solid var(--color-accent);
+    }
+
+</style>
+
+<div class="container mt-5 pt-5">
+
+    <h1 class="pt-5">@ViewData["Title"]</h1>
+
+    <p>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearProductoModal">
+            <i class="fas fa-plus-circle me-2"></i> Crear Nuevo Producto
+        </button>
+    </p>
+
+    @if (Model.Productos != null && Model.Productos.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3pb-5">
+            @foreach (var item in Model.Productos)
+            {
+                <div class="col">
+                    <div class="product-card d-flex flex-column justify-content-between pb-5">
+                        <div>
+                            @if (!string.IsNullOrEmpty(item.UrlImagen))
+                            {
+                                <img src="@Url.Content(item.UrlImagen)" class="product-image" alt="Portada de @item.Titulo">
+                            }
+                            else
+                            {
+                                <img src="https://via.placeholder.com/400x150.png?text=Sin+Imagen" class="product-image" alt="Sin imagen">
+                            }
+
+                            <div class="product-title">@item.Titulo</div>
+                            <div class="product-detail text-muted mb-2">Tipo: <span>@Html.DisplayFor(modelItem => item.TipoProducto)</span></div>
+                            <div class="product-detail text-muted mb-2">Autor: <span>@Html.DisplayFor(modelItem => item.AutorNombre)</span></div>
+                            <div class="product-detail text-muted mb-3">Categorías: <span>@Html.DisplayFor(modelItem => item.Categorias)</span></div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <span class="price-badge">@Html.DisplayFor(modelItem => item.Precio)</span>
+                            <div class="btn-group">
+                                <a asp-action="EditarProducto" asp-route-id="@item.Id" class="btn btn-sm btn-info me-2">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <form asp-action="EliminarProducto" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center mt-4" role="alert">
+            No hay productos registrados para gestionar.
+        </div>
+    }
+</div>
+
+@* El Modal de Creación se mantiene igual, ya que es funcional *@
 <div class="modal fade" id="crearProductoModal" tabindex="-1" aria-labelledby="crearProductoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">

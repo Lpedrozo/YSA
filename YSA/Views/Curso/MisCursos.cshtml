@@ -5,131 +5,134 @@
 }
 
 <style>
+    /* VARIABLES DE COLOR (Estricto Blanco/Negro/Gris) */
+    :root {
+        --color-primary: #333333; /* Gris Oscuro (Para botones, textos y acentos) */
+        --color-secondary: #000000; /* Negro Puro (Para títulos) */
+        --color-text-muted: #6a6a6a; /* Gris medio (Texto secundario) */
+        --color-background-light: #f7f7f7; /* Fondo muy claro para la página */
+        --color-background-white: #ffffff; /* Fondo blanco para las tarjetas */
+        --color-border-light: #eeeeee; /* Borde sutil */
+    }
+
     /* Estilos globales */
     body {
-        background-color: #EAF3F3;
-        color: #fff;
+        background-color: var(--color-background-light);
+        color: var(--color-primary);
+        font-family: 'Poppins', sans-serif;
     }
 
-    /* Estilos para la sección de bienvenida */
-    .bienvenida-section {
-        display: flex;
-        align-items: center;
-        padding-top: 10px;
-        background-color: #f7f7f7;
-        color: #000;
-        margin-bottom: 2rem;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .bienvenida-perfil {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .bienvenida-avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background-color: #333;
-        color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 2rem;
-        font-weight: bold;
-        margin-right: 20px;
-    }
-
-    .bienvenida-info h1 {
+    .container h2 {
+        color: var(--color-secondary) !important;
+        font-weight: 700;
         font-size: 2.5rem;
-        font-weight: bold;
-        margin: 0;
     }
 
-    .bienvenida-info p {
-        margin: 0;
-        color: #666;
+    hr {
+        border-top: 2px solid var(--color-border-light);
+        opacity: 1;
+        margin-bottom: 2rem;
     }
 
     /* Estilos para las tarjetas de curso */
     .card {
         transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         border-radius: 12px;
-        border: none;
-        overflow: hidden; /* Para que la imagen no se desborde del radio */
-        background-color: #fff;
-        color: #000;
+        border: 1px solid var(--color-border-light); /* Borde nítido */
+        overflow: hidden;
+        background-color: var(--color-background-white);
+        color: var(--color-primary);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
         .card:hover {
-            transform: translateY(-5px); /* Efecto de "levantar" la tarjeta */
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important; /* Sombra más pronunciada */
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
         }
 
     .card-img-top {
-        border-top-left-radius: 12px;
-        border-top-right-radius: 12px;
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+        /* No necesitamos border-radius aquí si el card ya lo tiene y está en overflow:hidden */
     }
 
     /* Contenido de la tarjeta */
     .card-body h5 {
         font-weight: 600;
-        color: #000;
+        color: var(--color-secondary);
+        font-size: 1.35rem;
     }
 
     .card-text {
-        font-size: 0.9em;
-        color: #666;
+        font-size: 0.95em;
+        color: var(--color-text-muted);
+        line-height: 1.5;
     }
 
+    /* Botón de Acción (Ver Curso) - Estilo B&N */
     .btn-primary {
-        background-color: #c49900;
-        border-color: #c49900;
+        background-color: var(--color-primary); /* Gris Oscuro */
+        border-color: var(--color-primary);
         color: white;
+        font-weight: 600;
+        padding: 10px 15px;
+        border-radius: 8px;
+        transition: background-color 0.2s, color 0.2s;
     }
 
         .btn-primary:hover {
-            background-color: #a38200;
-            border-color: #a38200;
-            color: #000;
+            background-color: var(--color-secondary); /* Negro puro al hacer hover */
+            border-color: var(--color-secondary);
+            color: white; /* Aseguramos texto blanco */
         }
+
+    .alert-info {
+        background-color: #f0f0f0;
+        color: var(--color-primary);
+        border-color: #cccccc;
+        border-radius: 8px;
+        margin-top: 3rem;
+    }
 </style>
 
-@if (Model == null || !Model.Any())
-{
-    <div class="alert alert-info text-center" role="alert">
-        Aún no te has inscrito en ningún curso.
-    </div>
-}
-    <div class="container mt-4 mb-5">
-        <h2 class="text-center mt-5 mb-4 text-black">Tus Cursos</h2>
-        <hr style="color:#000;" />
+<div class="container mt-5 mb-5">
+    <h2 class="text-center mb-4">Mis Cursos</h2>
+    <hr />
 
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center" role="alert">
+            Aún no te has inscrito en ningún curso. Explora nuestro catálogo y empieza a aprender.
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach (var curso in Model)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm">
+                    <div class="card h-100">
                         @if (!string.IsNullOrEmpty(curso.UrlImagen))
                         {
-                            <img src="@curso.UrlImagen" class="card-img-top" alt="Imagen del curso: @curso.Titulo" style="height: 200px; object-fit: cover;">
+                            <img src="@curso.UrlImagen" class="card-img-top" alt="Imagen del curso: @curso.Titulo">
                         }
                         else
                         {
-                            <img src="https://via.placeholder.com/400x200.png?text=Sin+Imagen" class="card-img-top" alt="Imagen de marcador de posición" style="height: 200px; object-fit: cover;">
+                            <img src="https://via.placeholder.com/400x200/F7F7F7/333333?text=Sin+Imagen" class="card-img-top" alt="Imagen de marcador de posición">
                         }
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">@curso.Titulo</h5>
-                            <p class="card-text text-muted flex-grow-1">@curso.DescripcionCorta</p>
-                            <div class="d-grid mt-auto">
-                                <a asp-action="VerCurso" asp-route-id="@curso.Id" class="btn btn-primary text-white">Ver Curso</a>
+                            <p class="card-text flex-grow-1">@Html.Raw(curso.DescripcionCorta)</p>
+                            <div class="d-grid mt-3">
+                                <a asp-controller="Curso" asp-action="VerCurso" asp-route-id="@curso.Id" class="btn btn-primary">
+                                    <i class="fas fa-chalkboard-teacher me-2"></i> Ir al Curso
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             }
         </div>
-    </div>
-}
+    }
+</div>

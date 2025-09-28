@@ -36,6 +36,16 @@ namespace YSA.Core.Services
                     return (false, $"Error al crear el usuario: {errores}");
                 }
 
+                var resultadoRol = await _userManager.AddToRoleAsync(usuario, "ARTISTA");
+
+                if (!resultadoRol.Succeeded)
+                {
+                    // Si falla la asignación del rol, se debe eliminar el usuario para evitar inconsistencias.
+                    await _userManager.DeleteAsync(usuario);
+                    var errores = string.Join(", ", resultadoRol.Errors.Select(e => e.Description));
+                    return (false, $"Usuario creado, pero falló la asignación del rol ARTISTA: {errores}");
+                }
+
                 // 2. Vincular el artista con el usuario recién creado.
                 artista.UsuarioId = usuario.Id;
                 await _artistaRepository.AddAsync(artista);
@@ -147,6 +157,19 @@ namespace YSA.Core.Services
         public async Task<Artista> ObtenerArtistaPorUsuarioIdAsync(string userId)
         {
             return await _artistaRepository.GetByUsuarioIdAsync(userId);
+        }
+        public async Task<(Artista Artista, List<ArtistaFoto> Fotos)> ObtenerArtistaYPortafolioAsync(int artistaId)
+        {
+            var artista = await _artistaRepository.GetByIdAsync(artistaId);
+
+            if (artista == null)
+            {
+                return (null, null);
+            }
+
+            var fotos = await _artistaFotoRepository.GetByArtistaIdAsync(artistaId);
+
+            return (artista, fotos);
         }
     }
 }

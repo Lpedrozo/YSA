@@ -3,20 +3,119 @@
     ViewData["Title"] = "Confirmar Pago";
 }
 
-<div class="container mt-4">
-    <h1 class="text-center">Confirmar tu Compra</h1>
-    <hr />
+<style>
+    /* VARIABLES DE COLOR MONOCROMÁTICAS */
+    :root {
+        --color-primary: #000000;
+        --color-secondary: #333333;
+        --color-accent: #cccccc;
+        --color-background: #ffffff;
+        --color-card-bg: #f8f8f8;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-success: #333333; /* Usado para texto de éxito en B/N */
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+    }
+
+    h1 {
+        color: var(--color-primary);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    /* ESTILO DE TARJETA Y CABECERAS */
+    .card {
+        border: 1px solid var(--color-accent);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        border-radius: 0.75rem;
+        background-color: var(--color-card-bg);
+    }
+
+    .card-header {
+        background-color: var(--color-secondary);
+        color: var(--color-text-light);
+        font-weight: 600;
+        border-radius: 0.7rem 0.7rem 0 0;
+    }
+
+    .list-group-item {
+        background-color: var(--color-background);
+        border-color: var(--color-accent);
+    }
+
+    .badge.bg-primary {
+        background-color: var(--color-primary) !important;
+    }
+
+    /* BOTONES */
+    .btn-primary {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: var(--color-text-light) !important;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* CAJA DE INFORMACIÓN BANCARIA DINÁMICA */
+    #payment-info-box {
+        border: 1px dashed var(--color-secondary); /* Borde punteado para destacar */
+        background-color: var(--color-background);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-top: 1rem;
+    }
+
+        #payment-info-box h5 {
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+
+    .info-item {
+        margin-bottom: 0.5rem;
+    }
+
+    .btn-whatsapp-assistance {
+        background-color: #25d366 !important; /* Verde WhatsApp */
+        border-color: #25d366 !important;
+        color: white !important;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-whatsapp-assistance:hover {
+            background-color: #1faa59 !important; /* Un verde un poco más oscuro al hacer hover */
+            border-color: #1faa59 !important;
+        }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 text-center mb-4">
+            <h1 class="text-center">Confirmar tu Compra</h1>
+            <p class="lead">Revisa tu pedido y registra tu pago para finalizar la compra.</p>
+        </div>
+    </div>
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger">
+        <div class="alert alert-danger mb-4">
             @TempData["Error"]
         </div>
     }
 
     <div class="row">
-        <div class="col-md-7">
-            <h3>Resumen del Pedido (#@Model.PedidoId)</h3>
+        <div class="col-md-6 mb-4">
+            <h3 class="h4">Resumen del Pedido (#@Model.PedidoId)</h3>
             <ul class="list-group mb-3">
                 @foreach (var articulo in Model.Articulos)
                 {
@@ -26,29 +125,48 @@
                     </li>
                 }
             </ul>
-            <h4>Total a pagar: <span class="text-success">@Model.Total.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</span></h4>
+            <h4 class="mt-4">Total a pagar: <span style="color:var(--color-primary); font-weight:700;">@Model.Total.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</span></h4>
+            @{
+                var whatsappNumber = "584241544523"; // Tu número (Cod. País + Número sin 0 inicial)
+                var whatsappMessage = $"Hola, necesito asistencia con el pago del Pedido #{Model.PedidoId}. ¿Me pueden ayudar?";
+                var encodedMessage = System.Web.HttpUtility.UrlEncode(whatsappMessage);
+                var whatsappLink = $"https://wa.me/{whatsappNumber}?text={encodedMessage}";
+            }
+            <div class="d-grid gap-2 mt-4">
+                <a href="@whatsappLink" target="_blank" class="btn btn-whatsapp-assistance btn-lg">
+                    <i class="fab fa-whatsapp me-2"></i> Pagar o Consultar por WhatsApp
+                </a>
+            </div>
         </div>
 
-        <div class="col-md-5">
-            <div class="card shadow-sm">
+        <div class="col-md-6 mb-4">
+            <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Información de Pago</h5>
+                    <h5 class="mb-0">Registrar Pago y Comprobante</h5>
                 </div>
                 <div class="card-body">
                     <form asp-controller="Pedido" asp-action="ProcesarPago" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="pedidoId" value="@Model.PedidoId" />
+
                         <div class="mb-3">
                             <label for="MetodoPago" class="form-label">Método de Pago</label>
-                            <select class="form-control" id="MetodoPago" name="MetodoPago" required>
+                            <select class="form-control" id="MetodoPago" name="metodoPago" required>
                                 <option value="" disabled selected>Seleccione un método</option>
                                 <option value="Transferencia Bancaria">Transferencia Bancaria</option>
                                 <option value="Pago Móvil">Pago Móvil</option>
                                 <option value="PayPal">PayPal</option>
                             </select>
                         </div>
-                        <div class="mb-3">
+
+                        <div id="payment-info-box" style="display:none;">
+                            <h5>Datos para Realizar el Pago</h5>
+                            <div id="payment-details-content">
+                            </div>
+                        </div>
+
+                        <div class="mb-3 mt-4">
                             <label for="ReferenciaPago" class="form-label">Referencia del Pago</label>
-                            <input type="text" class="form-control" id="ReferenciaPago" name="ReferenciaPago" required>
+                            <input type="text" class="form-control" id="ReferenciaPago" name="referenciaPago" placeholder="Ingrese N° de transacción o Hash" required>
                         </div>
                         <div class="mb-3">
                             <label for="comprobanteArchivo" class="form-label">Subir Comprobante (PDF, JPG, PNG)</label>
@@ -61,3 +179,52 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            // Objeto JSON con la información de pago
+            const PAYMENT_DETAILS = {
+                "Transferencia Bancaria": `
+                    <div class="info-item"><strong>Banco:</strong> Banco Universal Monocromático</div>
+                    <div class="info-item"><strong>RUC/C.I.:</strong> V-12.345.678</div>
+                    <div class="info-item"><strong>N° Cuenta:</strong> 0102-0304-0506-0708-0910</div>
+                    <div class="info-item"><strong>Correo:</strong> pagos@miempresa.com</div>
+                `,
+                "Pago Móvil": `
+                    <div class="info-item"><strong>Banco:</strong> Banco Móvil Digital</div>
+                    <div class="info-item"><strong>C.I.:</strong> V-8.765.432</div>
+                    <div class="info-item"><strong>Teléfono:</strong> 0412-1234567</div>
+                    <div class="info-item"><strong>Monto Exacto:</strong> @Model.Total.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</div>
+                `,
+                "PayPal": `
+                    <div class="info-item"><strong>Cuenta PayPal:</strong> miempresa@paypal.com</div>
+                    <div class="info-item"><strong>Instrucciones:</strong> Debe realizar el pago directamente. Adjunte el comprobante de PayPal.</div>
+                `
+            };
+
+            const $select = $('#MetodoPago');
+            const $infoBox = $('#payment-info-box');
+            const $content = $('#payment-details-content');
+
+            function updatePaymentInfo() {
+                const selectedMethod = $select.val();
+
+                if (selectedMethod && PAYMENT_DETAILS[selectedMethod]) {
+                    $content.html(PAYMENT_DETAILS[selectedMethod]);
+                    $infoBox.slideDown(200);
+                } else {
+                    $infoBox.slideUp(200);
+                }
+            }
+
+            // Manejar el cambio de selección
+            $select.on('change', updatePaymentInfo);
+
+            // Mostrar la información al cargar si hubo un error y el valor se mantuvo
+            updatePaymentInfo();
+        });
+    </script>
+}

@@ -33,6 +33,8 @@ namespace YSA.Web.Models.ViewModels
 
         [Display(Name = "Categorías")]
         public string Categorias { get; set; }
+        public string DescripcionCorta { get; set; }
+        public string UrlImagen { get; set; }
     }
     public class CrearProductoViewModel
     {
@@ -80,5 +82,11 @@ namespace YSA.Web.Models.ViewModels
     public class ProductosIndexViewModel
     {
         public IEnumerable<Producto> Productos { get; set; }
+        public List<int> ProductosCompradosIds { get; set; }
+        public IEnumerable<int> ProductosEnValidacionIds { get; set; } // <--- Nueva propiedad
+        public int PaginaActual { get; set; }
+        public int TotalPaginas { get; set; }
+
+
     }
 }

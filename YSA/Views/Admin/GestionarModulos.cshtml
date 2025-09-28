@@ -3,59 +3,227 @@
     ViewData["Title"] = "Gestión de Módulos - " + ViewBag.CursoTitulo;
 }
 
-<div class="container mt-4">
-    <h1 class="text-center mb-4">Módulos para el curso: @ViewBag.CursoTitulo</h1>
-    <hr />
+<style>
+    /* ------------------------------------- */
+    /* 1. Variables B&W y Estilos Generales  */
+    /* ------------------------------------- */
+    :root {
+        --color-secondary: #000000; /* Negro Puro (Título) */
+        --color-primary: #333333; /* Gris Oscuro (Botones, Acentos) */
+        --color-secondary-light: #5a5a5a; /* Gris Medio para acciones secundarias */
+        --color-text-muted: #6a6a6a; /* Gris medio (Descripción) */
+        --color-background-light: #f7f7f7; /* Fondo general de la página */
+        --color-background-white: #ffffff; /* Fondo para las tarjetas */
+        --color-border-light: #eeeeee; /* Borde sutil */
+        --color-danger: #cc0000; /* Rojo sutil para acciones peligrosas */
+    }
 
-    <a asp-action="GestionarCursos" class="btn btn-secondary mb-3">
-        <i class="fas fa-arrow-left"></i> Volver a Cursos
-    </a>
+    body {
+        background-color: var(--color-background-light);
+        color: var(--color-primary);
+    }
 
-    <div class="d-flex justify-content-end mb-3">
+    h1 {
+        color: var(--color-secondary);
+        font-weight: 700;
+        font-size: 2rem;
+    }
+
+    hr {
+        border-top: 2px solid var(--color-border-light);
+        opacity: 1;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Botón "Volver" */
+    .btn-secondary {
+        background-color: var(--color-text-muted) !important;
+        border-color: var(--color-text-muted) !important;
+        color: white !important;
+        transition: background-color 0.2s;
+        border-radius: 8px;
+    }
+
+        .btn-secondary:hover {
+            background-color: var(--color-primary) !important;
+            border-color: var(--color-primary) !important;
+        }
+
+    /* Botón "Nuevo Módulo" */
+    .btn-success {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        border-radius: 8px;
+    }
+
+        .btn-success:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* ------------------------------------- */
+    /* 2. Estilos de las Cards de Módulo     */
+    /* ------------------------------------- */
+    .modulo-card {
+        border: 1px solid var(--color-border-light);
+        border-radius: 12px;
+        background-color: var(--color-background-white);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+        transition: box-shadow 0.3s, transform 0.3s;
+    }
+
+        .modulo-card:hover {
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+    .modulo-order {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--color-primary);
+        line-height: 1;
+        margin-right: 15px;
+        padding-right: 15px;
+        border-right: 2px solid var(--color-border-light);
+    }
+
+    .card-title-modulo {
+        font-weight: 700;
+        color: var(--color-secondary);
+        font-size: 1.2rem;
+        margin: 0;
+    }
+
+    .card-body .text-muted {
+        font-size: 0.85rem;
+    }
+
+    /* Botón "Lecciones" (Ancho completo, más destacado) */
+    .btn-info {
+        background-color: var(--color-secondary-light) !important;
+        border-color: var(--color-secondary-light) !important;
+        color: white !important;
+        font-weight: 500;
+        transition: background-color 0.2s;
+    }
+
+        .btn-info:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* Botones de Icono (Editar y Eliminar) */
+    .btn-icon {
+        width: 36px; /* Ancho fijo para hacerlos cuadrados */
+        height: 36px; /* Alto fijo */
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0; /* Evita que se encojan */
+        border-radius: 6px;
+    }
+
+    /* Botón "Editar" (Icono) */
+    .btn-primary.btn-icon {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+    }
+
+        .btn-primary.btn-icon:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* Botón "Eliminar" (Icono) */
+    .btn-danger {
+        background-color: var(--color-danger) !important;
+        border-color: var(--color-danger) !important;
+        color: white !important;
+    }
+
+        .btn-danger:hover {
+            background-color: #a30000 !important; /* Tono más oscuro de rojo */
+            border-color: #a30000 !important;
+        }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-center" style="margin-right: 1.5rem;">Módulos para: @ViewBag.CursoTitulo</h1>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a asp-action="GestionarCursos" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i> Volver a Cursos
+        </a>
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearModuloModal">
-            <i class="fas fa-plus-circle"></i> Nuevo Módulo
+            <i class="fas fa-plus-circle me-2"></i> Nuevo Módulo
         </button>
     </div>
+    <hr style="margin-top: 0;" />
 
-    <table class="table table-bordered table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <th>Orden</th>
-                <th>Título</th>
-                <th class="text-center">Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="tablaModulos">
-            @foreach (var modulo in Model)
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center" role="alert" style="border-radius: 8px; margin-top: 3rem;">
+            Este curso no tiene módulos creados. ¡Empieza a estructurar tu contenido!
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="cardsModulos">
+            @foreach (var modulo in Model.OrderBy(m => m.Orden))
             {
-                <tr>
-                    <td>@modulo.Orden</td>
-                    <td>@modulo.Titulo</td>
-                    <td class="text-center">
-                        <a asp-action="GestionarLecciones" asp-route-moduloId="@modulo.Id" class="btn btn-sm btn-info">
-                            <i class="fas fa-list"></i> Lecciones
-                        </a>
-                        <button type="button" class="btn btn-sm btn-primary editar-btn" data-id="@modulo.Id" data-bs-toggle="modal" data-bs-target="#editarModuloModal">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <form asp-action="EliminarModulo" asp-route-id="@modulo.Id" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-danger eliminar-btn">
-                                <i class="fas fa-trash-alt"></i> Eliminar
-                            </button>
-                        </form>
-                    </td>
-                </tr>
+                <div class="col" data-id="@modulo.Id">
+                    <div class="card modulo-card h-100 p-3">
+                        <div class="card-body d-flex align-items-center justify-content-between p-0">
+
+                            <div class="d-flex align-items-center">
+                                <div class="modulo-order">@modulo.Orden</div>
+                                <div>
+                                    <h5 class="card-title-modulo">@modulo.Titulo</h5>
+                                    <p class="card-text text-muted mb-0">Total Lecciones: N/A</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-column align-items-end ms-3">
+
+                                <a asp-action="GestionarLecciones" asp-route-moduloId="@modulo.Id" class="btn btn-sm btn-info w-100 mb-2">
+                                    <i class="fas fa-list me-1"></i> Lecciones
+                                </a>
+
+                                <div class="d-flex">
+                                    <button type="button" class="btn btn-sm btn-primary btn-icon editar-btn me-2"
+                                            data-id="@modulo.Id"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editarModuloModal">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                    <form asp-action="EliminarModulo" asp-route-id="@modulo.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-danger btn-icon eliminar-btn">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
+        </div>
+    }
 </div>
 
 <div class="modal fade" id="crearModuloModal" tabindex="-1" aria-labelledby="crearModuloModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="crearModuloModalLabel">Crear Módulo</h5>
+                <h5 class="modal-title" id="crearModuloModalLabel" style="color:var(--color-secondary);">Crear Módulo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formCrearModulo" asp-action="CrearModulo" method="post">
@@ -63,11 +231,11 @@
                     <div id="crear-modulo-validation-errors" class="alert alert-danger d-none"></div>
                     <input type="hidden" name="CursoId" value="@ViewBag.CursoId" />
                     <div class="form-group mb-3">
-                        <label for="Crear_Titulo">Título</label>
+                        <label for="Crear_Titulo" style="color:var(--color-primary);">Título</label>
                         <input type="text" id="Crear_Titulo" name="Titulo" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Crear_Orden">Orden</label>
+                        <label for="Crear_Orden" style="color:var(--color-primary);">Orden</label>
                         <input type="number" id="Crear_Orden" name="Orden" class="form-control" required />
                     </div>
                 </div>
@@ -84,7 +252,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editarModuloModalLabel">Editar Módulo</h5>
+                <h5 class="modal-title" id="editarModuloModalLabel" style="color:var(--color-secondary);">Editar Módulo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formEditarModulo" asp-action="EditarModulo" method="post">
@@ -93,11 +261,11 @@
                     <input type="hidden" id="Editar_Id" name="Id" />
                     <input type="hidden" id="Editar_CursoId" name="CursoId" value="@ViewBag.CursoId" />
                     <div class="form-group mb-3">
-                        <label for="Editar_Titulo">Título</label>
+                        <label for="Editar_Titulo" style="color:var(--color-primary);">Título</label>
                         <input type="text" id="Editar_Titulo" name="Titulo" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Editar_Orden">Orden</label>
+                        <label for="Editar_Orden" style="color:var(--color-primary);">Orden</label>
                         <input type="number" id="Editar_Orden" name="Orden" class="form-control" required />
                     </div>
                 </div>
@@ -114,7 +282,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const tablaModulos = document.getElementById('tablaModulos');
+            // El selector de la cuadrícula de cards es ahora 'cardsModulos'
+            const cardsModulos = document.getElementById('cardsModulos');
             const crearModalEl = document.getElementById('crearModuloModal');
             const editarModalEl = document.getElementById('editarModuloModal');
             const crearForm = document.getElementById('formCrearModulo');
@@ -138,7 +307,8 @@
                 errorDiv.classList.remove('d-none');
             }
 
-            async function recargarTabla() {
+            // Función para recargar la cuadrícula de cards
+            async function recargarCards() {
                 const cursoId = @ViewBag.CursoId;
                 try {
                     const response = await fetch(`/Admin/ObtenerModulosPorCursoIdJson?cursoId=${cursoId}`);
@@ -146,33 +316,48 @@
                         throw new Error('No se pudieron cargar los módulos.');
                     }
                     const modulos = await response.json();
-                    tablaModulos.innerHTML = '';
-                    modulos.data.forEach(modulo => {
-                        const row = `
-                            <tr>
-                                <td>${modulo.orden}</td>
-                                <td>${modulo.titulo}</td>
-                                <td class="text-center">
-                                    <a href="/Admin/GestionarLecciones?moduloId=${modulo.id}" class="btn btn-sm btn-info">
-                                        <i class="fas fa-list"></i> Lecciones
-                                    </a>
-                                    <button type="button" class="btn btn-sm btn-primary editar-btn"
-                                            data-id="${modulo.id}"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#editarModuloModal">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </button>
-                                    <form action="/Admin/EliminarModulo?id=${modulo.id}" method="post" class="d-inline">
-                                        <input type="hidden" name="__RequestVerificationToken" value="${getAntiForgeryToken()}" />
-                                        <button type="submit" class="btn btn-sm btn-danger eliminar-btn">
-                                            <i class="fas fa-trash-alt"></i> Eliminar
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        `;
-                        tablaModulos.insertAdjacentHTML('beforeend', row);
-                    });
+                    cardsModulos.innerHTML = ''; // Limpiar la cuadrícula existente
+
+                    if (modulos.data && modulos.data.length > 0) {
+                        modulos.data.sort((a, b) => a.orden - b.orden); // Asegurar el orden
+                        modulos.data.forEach(modulo => {
+                            const cardHtml = `
+                                <div class="col" data-id="${modulo.id}">
+                                    <div class="card modulo-card h-100 p-3">
+                                        <div class="card-body d-flex align-items-center justify-content-between p-0">
+                                            <div class="d-flex align-items-center">
+                                                <div class="modulo-order">${modulo.orden}</div>
+                                                <div>
+                                                    <h5 class="card-title-modulo">${modulo.titulo}</h5>
+                                                    <p class="card-text text-muted mb-0">Total Lecciones: N/A</p>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex flex-column align-items-end ms-3">
+                                                <a href="/Admin/GestionarLecciones?moduloId=${modulo.id}" class="btn btn-sm btn-info w-100 mb-2">
+                                                    <i class="fas fa-list me-1"></i> Lecciones
+                                                </a>
+                                                <div class="d-flex">
+                                                    <button type="button" class="btn btn-sm btn-primary btn-icon editar-btn me-2"
+                                                            data-id="${modulo.id}"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#editarModuloModal">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <form action="/Admin/EliminarModulo?id=${modulo.id}" method="post" class="d-inline">
+                                                        <input type="hidden" name="__RequestVerificationToken" value="${getAntiForgeryToken()}" />
+                                                        <button type="submit" class="btn btn-sm btn-danger btn-icon eliminar-btn">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            cardsModulos.insertAdjacentHTML('beforeend', cardHtml);
+                        });
+                    }
                     attachEventListeners();
                 } catch (error) {
                     Swal.fire('Error', error.message, 'error');
@@ -202,7 +387,8 @@
                     modal.hide();
                     Swal.fire('Éxito', result.message, 'success');
                     crearForm.reset();
-                    await recargarTabla();
+                    document.getElementById('crear-modulo-validation-errors').classList.add('d-none');
+                    await recargarCards();
                 } else {
                     displayErrors('crear-modulo-validation-errors', result.errors);
                 }
@@ -211,6 +397,7 @@
             editarModalEl.addEventListener('show.bs.modal', async function (event) {
                 const button = event.relatedTarget;
                 const moduloId = button.getAttribute('data-id');
+                document.getElementById('editar-modulo-validation-errors').classList.add('d-none'); // Limpiar errores
 
                 try {
                     const response = await fetch(`/Admin/ObtenerModuloPorIdJson?id=${moduloId}`);
@@ -224,7 +411,6 @@
                         document.getElementById('Editar_CursoId').value = modulo.cursoId;
                         document.getElementById('Editar_Titulo').value = modulo.titulo;
                         document.getElementById('Editar_Orden').value = modulo.orden;
-                        document.getElementById('editar-modulo-validation-errors').classList.add('d-none');
                     } else {
                         Swal.fire('Error', result.message, 'error');
                     }
@@ -257,34 +443,40 @@
                     const modal = bootstrap.Modal.getInstance(editarModalEl);
                     modal.hide();
                     Swal.fire('Éxito', result.message, 'success');
-                    await recargarTabla();
+                    await recargarCards();
                 } else {
                     displayErrors('editar-modulo-validation-errors', result.errors);
                 }
             });
 
             function attachEventListeners() {
+                // Re-adjuntar listeners para los botones de eliminar en las nuevas cards
                 document.querySelectorAll('.eliminar-btn').forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        const form = this.closest('form');
-                        Swal.fire({
-                            title: '¿Estás seguro?',
-                            text: "¡No podrás revertir esto!",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Sí, ¡bórralo!',
-                            cancelButtonText: 'Cancelar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                form.submit();
-                            }
-                        });
-                    });
+                    button.removeEventListener('click', handleEliminarClick); // Remover antes de adjuntar
+                    button.addEventListener('click', handleEliminarClick);
                 });
             }
+
+            function handleEliminarClick(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¡Eliminarás este módulo y todas sus lecciones!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6a6a6a',
+                    confirmButtonText: 'Sí, ¡bórralo!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            }
+
+            // Llamar al adjuntar eventos al inicio
             attachEventListeners();
         });
     </script>

@@ -4,10 +4,21 @@
 }
 
 <style>
+    /* VARIABLES DE COLOR (Estricto Blanco/Negro/Gris) */
+    :root {
+        --color-primary: #333333; /* Gris Oscuro (Para botones, textos y acentos) */
+        --color-secondary: #000000; /* Negro Puro (Para títulos y texto de alto contraste) */
+        --color-text-muted: #6a6a6a; /* Gris medio (Texto secundario) */
+        --color-background-light: #f7f7f7; /* Fondo muy claro */
+        --color-background-white: #ffffff; /* Fondo blanco */
+        --color-border-light: #eeeeee; /* Borde sutil */
+    }
+
     /* Estilos base del diseño */
     body {
-        background-color: #f7f7f7;
-        color: #000;
+        background-color: var(--color-background-light);
+        color: var(--color-primary);
+        font-family: 'Poppins', sans-serif;
     }
 
     .main-container {
@@ -15,11 +26,10 @@
     }
 
     .profile-sidebar {
-        background-color: #ffffff;
+        background-color: var(--color-background-white);
         border-radius: 12px;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
         padding: 30px;
-        min-height: calc(100vh - 80px);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -33,7 +43,7 @@
         margin: 0 auto 20px;
         border-radius: 50%;
         overflow: hidden;
-        border: 3px solid #f0f0f0;
+        border: 3px solid var(--color-border-light);
         cursor: pointer;
     }
 
@@ -46,7 +56,7 @@
     .initials {
         width: 100%;
         height: 100%;
-        background-color: #c49900;
+        background-color: var(--color-primary); /* Gris oscuro para las iniciales */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -61,7 +71,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.6);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -79,6 +89,11 @@
         display: none;
     }
 
+    .text-muted-dark {
+        color: var(--color-text-muted) !important;
+    }
+
+    /* Sidebar Menu */
     .sidebar-menu {
         list-style: none;
         padding: 0;
@@ -86,31 +101,39 @@
         width: 100%;
     }
 
-    .sidebar-menu-item a {
+    .sidebar-menu-item a,
+    .sidebar-menu-item button {
         display: block;
         padding: 12px 15px;
         margin-bottom: 5px;
         border-radius: 8px;
-        color: #6a6a6a;
+        color: var(--color-text-muted);
         text-decoration: none;
         transition: background-color 0.2s, color 0.2s;
+        border: none;
     }
 
-        .sidebar-menu-item a.active,
-        .sidebar-menu-item a:hover {
-            background-color: #c49900;
-            color: #fff;
+        .sidebar-menu-item button.btn-link {
+            background-color: transparent;
+            cursor: pointer;
         }
 
+            .sidebar-menu-item a.active,
+            .sidebar-menu-item a:hover,
+            .sidebar-menu-item button.btn-link:hover {
+                background-color: var(--color-secondary); /* Negro para el estado activo/hover */
+                color: #fff;
+            }
+
     .profile-content {
-        background-color: #ffffff;
+        background-color: var(--color-background-white);
         border-radius: 12px;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
         padding: 40px;
     }
 
     .content-section {
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--color-border-light);
         padding-bottom: 20px;
         margin-bottom: 20px;
     }
@@ -121,55 +144,103 @@
         }
 
     .section-title {
-        font-size: 1.5rem;
-        font-weight: 600;
+        font-size: 1.8rem;
+        font-weight: 700;
         margin-bottom: 15px;
-        color: #000;
+        color: var(--color-secondary); /* Negro puro para los títulos */
     }
 
+    /* Formulario */
     .form-control {
         border-radius: 8px;
         border: 1px solid #ddd;
         padding: 12px;
-        background-color: #f7f7f7;
+        background-color: var(--color-background-light);
         width: 100%;
+        color: var(--color-primary);
     }
 
         .form-control:focus {
-            border-color: #c49900;
-            box-shadow: 0 0 0 0.25rem rgba(196, 153, 0, 0.25);
+            border-color: var(--color-primary); /* Borde de enfoque Gris Oscuro */
+            box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.1); /* Sombra de enfoque gris sutil */
+            background-color: var(--color-background-white);
         }
 
-    /* Estilos para las tarjetas de cursos */
+    /* Botones principales de acción (Guardar/Actualizar) */
+    .btn-primary {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: white !important;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: background-color 0.2s;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--color-secondary) !important; /* Negro al hacer hover */
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* Botón de Descargar/Acción Secundaria (Gris/Negro) */
+    .btn-success {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: white !important;
+        font-weight: 500;
+        padding: 8px 15px;
+        border-radius: 6px;
+        transition: background-color 0.2s;
+    }
+
+        .btn-success:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* Estilos para las tarjetas de cursos/productos */
     .curso-card {
         transition: transform 0.2s, box-shadow 0.2s;
         border-radius: 12px;
         overflow: hidden;
+        border: 1px solid var(--color-border-light);
+        background-color: var(--color-background-white);
     }
 
         .curso-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .curso-card img {
             height: 200px;
             object-fit: cover;
+            width: 100%;
         }
 
     .curso-title {
         font-weight: 600;
-        color: #000;
+        color: var(--color-secondary); /* Negro */
+        margin-top: 10px;
     }
 
     .curso-price {
         font-weight: 700;
-        color: #c49900;
+        color: var(--color-primary); /* Gris oscuro para el precio */
+        font-size: 1.2rem;
+    }
+
+    /* Alerta */
+    .alert-info {
+        background-color: #f0f0f0;
+        color: var(--color-primary);
+        border-color: #cccccc;
+        border-radius: 8px;
     }
 </style>
 
 <div class="container main-container">
-    <div class="row g-4">
+    <div class="row g-4 pb-5">
         <div class="col-md-4">
             <div class="profile-sidebar">
                 <form asp-action="UpdateProfileImage" method="post" enctype="multipart/form-data" id="imageUploadForm">
@@ -201,17 +272,18 @@
                     @Html.AntiForgeryToken()
                 </form>
 
-                <h4 class="mt-3">@Model.Nombre @Model.Apellido</h4>
+                <h4 class="mt-3" style="font-weight:600; color:var(--color-primary);">@Model.Nombre @Model.Apellido</h4>
                 <p class="text-muted-dark">@Model.Email</p>
 
                 <ul class="sidebar-menu">
-                    <li class="sidebar-menu-item"><a href="#" id="miPerfilLink" class="active"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
-                    <li class="sidebar-menu-item"><a href="#" id="seguridadLink"><i class="fas fa-lock"></i> Seguridad de la Cuenta</a></li>
-                    <li class="sidebar-menu-item"><a href="#" id="misCursosLink"><i class="fas fa-book-open"></i> Mis Cursos</a></li>
+                    <li class="sidebar-menu-item"><a href="#" id="miPerfilLink" class="active"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
+                    <li class="sidebar-menu-item"><a href="#" id="seguridadLink"><i class="fas fa-lock me-2"></i> Seguridad de la Cuenta</a></li>
+                    <li class="sidebar-menu-item"><a href="#" id="misCursosLink"><i class="fas fa-book-open me-2"></i> Mis Cursos</a></li>
+                    <li class="sidebar-menu-item"><a href="#" id="misProductosLink"><i class="fas fa-file-pdf me-2"></i> Mis Productos</a></li>
                     <li class="sidebar-menu-item">
                         <form asp-controller="Cuenta" asp-action="Logout" method="post" id="logoutForm">
-                            <button type="submit" class="btn btn-link" style="color: #6a6a6a; text-decoration: none; padding: 12px 15px; width: 100%; text-align: left; transition: background-color 0.2s, color 0.2s;">
-                                <i class="fas fa-power-off"></i> Cerrar Sesión
+                            <button type="submit" class="btn btn-link" style="color: var(--color-text-muted); text-decoration: none; padding: 12px 15px; width: 100%; text-align: left; transition: background-color 0.2s, color 0.2s;">
+                                <i class="fas fa-power-off me-2"></i> Cerrar Sesión
                             </button>
                             @Html.AntiForgeryToken()
                         </form>
@@ -225,7 +297,7 @@
                 <div id="profileSection" class="content-section">
                     <form asp-action="UpdateProfile" method="post">
                         <h2 class="section-title">Información del Perfil</h2>
-                        <p class="text-muted-dark">Establece la configuración de tu cuenta y cambia la contraseña aquí.</p>
+                        <p class="text-muted-dark">Establece la configuración de tu cuenta y actualiza tus datos personales.</p>
                         <div class="mb-3">
                             <label class="form-label">Correo electrónico</label>
                             <input type="text" class="form-control" value="@Model.Email" readonly />
@@ -238,12 +310,13 @@
                             <label for="apellido" class="form-label">Apellido</label>
                             <input type="text" id="apellido" name="Apellido" class="form-control" value="@Model.Apellido" />
                         </div>
-                        <button type="submit" class="btn btn-primary" style="background-color: #c49900; border-color: #c49900;">Guardar cambios</button>
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
                     </form>
                 </div>
 
                 <div id="securitySection" class="content-section" style="display: none;">
                     <h2 class="section-title">Cambiar Contraseña</h2>
+                    <p class="text-muted-dark">Mantén tu cuenta segura actualizando tu contraseña periódicamente.</p>
                     <form asp-action="ChangePassword" method="post">
                         <div class="mb-3">
                             <label for="currentPassword" class="form-label">Contraseña Actual</label>
@@ -260,12 +333,12 @@
                             <input type="password" id="confirmPassword" name="ConfirmPassword" class="form-control" />
                             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                         </div>
-                        <button type="submit" class="btn btn-primary" style="background-color: #c49900; border-color: #c49900;">Actualizar Contraseña</button>
+                        <button type="submit" class="btn btn-primary">Actualizar Contraseña</button>
                     </form>
                 </div>
 
                 <div id="coursesSection" class="content-section" style="display: none;">
-                    <h2 class="section-title">Mis Cursos</h2>
+                    <h2 class="section-title">Mis Cursos Adquiridos</h2>
                     @if (Model.CursosComprados != null && Model.CursosComprados.Any())
                     {
                         <div class="row row-cols-1 row-cols-md-2 g-4">
@@ -276,8 +349,11 @@
                                         <img src="@curso.UrlImagen" class="card-img-top" alt="@curso.Titulo" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFF/000?text=Sin+Imagen';" />
                                         <div class="card-body">
                                             <h5 class="card-title curso-title">@curso.Titulo</h5>
-                                            <p class="card-text text-muted-dark">@curso.DescripcionCorta</p>
+                                            <p class="card-text text-muted-dark">@Html.Raw(curso.DescripcionCorta)</p>
                                             <p class="card-text curso-price">@curso.Precio.ToString("C")</p>
+                                            <a asp-controller="Curso" asp-action="VerCurso" asp-route-id="@curso.Id" class="btn btn-primary mt-3">
+                                                <i class="fas fa-eye me-2"></i> Ver Detalles
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -287,7 +363,38 @@
                     else
                     {
                         <div class="alert alert-info text-center" role="alert">
-                            Aún no has comprado ningún curso.
+                            Aún no has comprado ningún curso. ¡Descubre nuestro catálogo!
+                        </div>
+                    }
+                </div>
+
+                <div id="productsSection" class="content-section" style="display: none;">
+                    <h2 class="section-title">Mis Productos Digitales</h2>
+                    @if (Model.ProductosComprados != null && Model.ProductosComprados.Any())
+                    {
+                        <div class="row row-cols-1 row-cols-md-2 g-4">
+                            @foreach (var producto in Model.ProductosComprados)
+                            {
+                                <div class="col">
+                                    <div class="card h-100 curso-card">
+                                        <img src="@producto.UrlImagen" class="card-img-top" alt="@producto.Titulo" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFF/000?text=Sin+Imagen';" />
+                                        <div class="card-body">
+                                            <h5 class="card-title curso-title">@producto.Titulo</h5>
+                                            <p class="card-text text-muted-dark">@producto.DescripcionCorta</p>
+                                            <p class="card-text curso-price">@producto.Precio.ToString("C")</p>
+                                            <a asp-controller="Producto" asp-action="Descargar" asp-route-id="@producto.Id" class="btn btn-success mt-3">
+                                                <i class="fas fa-download me-2"></i> Descargar
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info text-center" role="alert">
+                            Aún no has comprado ningún producto digital.
                         </div>
                     }
                 </div>
@@ -302,24 +409,31 @@
         const miPerfilLink = document.getElementById('miPerfilLink');
         const seguridadLink = document.getElementById('seguridadLink');
         const misCursosLink = document.getElementById('misCursosLink');
+        const misProductosLink = document.getElementById('misProductosLink');
         const profileSection = document.getElementById('profileSection');
         const securitySection = document.getElementById('securitySection');
         const coursesSection = document.getElementById('coursesSection');
+        const productsSection = document.getElementById('productsSection');
 
         function setActiveLink(activeLink) {
-            miPerfilLink.classList.remove('active');
-            seguridadLink.classList.remove('active');
-            misCursosLink.classList.remove('active');
+            // Eliminar 'active' de todos los enlaces
+            [miPerfilLink, seguridadLink, misCursosLink, misProductosLink].forEach(link => {
+                link.classList.remove('active');
+            });
+            // Añadir 'active' al enlace actual
             activeLink.classList.add('active');
         }
 
         function showSection(sectionToShow) {
-            profileSection.style.display = 'none';
-            securitySection.style.display = 'none';
-            coursesSection.style.display = 'none';
+            // Ocultar todas las secciones
+            [profileSection, securitySection, coursesSection, productsSection].forEach(section => {
+                section.style.display = 'none';
+            });
+            // Mostrar la sección requerida
             sectionToShow.style.display = 'block';
         }
 
+        // --- Event Listeners para la navegación ---
         miPerfilLink.addEventListener('click', function (e) {
             e.preventDefault();
             setActiveLink(this);
@@ -338,13 +452,20 @@
             showSection(coursesSection);
         });
 
+        misProductosLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            setActiveLink(this);
+            showSection(productsSection);
+        });
+
+        // --- Lógica de Subida de Imagen ---
         const imageUploadInput = document.getElementById('imageUpload');
         imageUploadInput.addEventListener('change', function () {
             // Envía el formulario de subida de imagen cuando se selecciona un archivo
             document.getElementById('imageUploadForm').submit();
         });
 
-        // Manejar la visibilidad de las secciones al cargar la página (útil para cuando se redirige)
+        // --- Manejar la visibilidad de las secciones al cargar la página ---
         const urlParams = new URLSearchParams(window.location.search);
         const section = urlParams.get('section');
         if (section === 'security') {
@@ -353,6 +474,13 @@
         } else if (section === 'courses') {
             setActiveLink(misCursosLink);
             showSection(coursesSection);
+        } else if (section === 'products') {
+            setActiveLink(misProductosLink);
+            showSection(productsSection);
+        } else {
+            // Por defecto, muestra la sección del perfil
+            setActiveLink(miPerfilLink);
+            showSection(profileSection);
         }
     });
 </script>

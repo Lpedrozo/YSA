@@ -4,6 +4,26 @@
     ViewData["Title"] = "Gestionar Categorías";
 }
 
+<style>
+    /* Estilo básico del Card para categorías */
+    .categoria-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        transition: box-shadow 0.2s;
+        height: 100%; /* Asegura que todos los cards en la fila tengan la misma altura */
+    }
+
+        .categoria-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #343a40;
+    }
+</style>
+
 <div class="container mt-4">
     <h1 class="text-center mb-4">Gestión de Categorías</h1>
     <hr />
@@ -14,47 +34,44 @@
         </button>
     </div>
 
-    <table class="table table-bordered table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th class="text-center">Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="tablaCategorias">
-            @foreach (var categoria in Model)
-            {
-                <tr>
-                    <td>@categoria.Id</td>
-                    <td>@categoria.NombreCategoria</td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-sm btn-primary editar-btn"
-                                data-id="@categoria.Id"
-                                data-nombre="@categoria.NombreCategoria"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editarCategoriaModal">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <form asp-action="EliminarCategoria" asp-route-id="@categoria.Id" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-danger eliminar-btn">
-                                <i class="fas fa-trash-alt"></i> Eliminar
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="tablaCategorias">
+        @foreach (var categoria in Model)
+        {
+            <div class="col">
+                <div class="card categoria-card">
+                    <div class="card-body d-flex flex-column">
+                        <span class="text-muted small mb-1">ID: @categoria.Id</span>
+                        <h5 class="card-title text-truncate">@categoria.NombreCategoria</h5>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center pt-2">
+                            <button type="button" class="btn btn-sm btn-primary editar-btn"
+                                    data-id="@categoria.Id"
+                                    data-nombre="@categoria.NombreCategoria"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editarCategoriaModal"
+                                    title="Editar Categoría">
+                                <i class="fas fa-edit"></i>
                             </button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                            <form asp-action="EliminarCategoria" asp-route-id="@categoria.Id" method="post" class="d-inline eliminar-form">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger eliminar-btn" title="Eliminar Categoría">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
 
 <div class="modal fade" id="crearCategoriaModal" tabindex="-1" aria-labelledby="crearCategoriaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-success text-white">
                 <h5 class="modal-title" id="crearCategoriaModalLabel">Crear Categoría</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formCrearCategoria" asp-action="CrearCategoria" method="post">
                 <div class="modal-body">
@@ -62,7 +79,7 @@
                     @Html.AntiForgeryToken()
                     <div class="form-group mb-3">
                         <label for="Crear_NombreCategoria" class="form-label">Nombre de la Categoría</label>
-                        <input type="text" id="Crear_NombreCategoria" name="NombreCategoria" class="form-control" required />
+                        <input type="text" id="Crear_NombreCategoria" name="NombreCategoria" class="form-control" required maxlength="100" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -77,9 +94,9 @@
 <div class="modal fade" id="editarCategoriaModal" tabindex="-1" aria-labelledby="editarCategoriaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="editarCategoriaModalLabel">Editar Categoría</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formEditarCategoria" asp-action="EditarCategoria" method="post">
                 <div class="modal-body">
@@ -88,7 +105,7 @@
                     <input type="hidden" id="Editar_Id" name="Id" />
                     <div class="form-group mb-3">
                         <label for="Editar_NombreCategoria" class="form-label">Nombre de la Categoría</label>
-                        <input type="text" id="Editar_NombreCategoria" name="NombreCategoria" class="form-control" required />
+                        <input type="text" id="Editar_NombreCategoria" name="NombreCategoria" class="form-control" required maxlength="100" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -104,105 +121,120 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const tablaCategorias = document.getElementById('tablaCategorias');
+            // El ID 'tablaCategorias' ahora apunta al contenedor de los cards
+            const cardContainer = document.getElementById('tablaCategorias');
             const crearModalEl = document.getElementById('crearCategoriaModal');
             const editarModalEl = document.getElementById('editarCategoriaModal');
             const crearForm = document.getElementById('formCrearCategoria');
             const editarForm = document.getElementById('formEditarCategoria');
 
-            // Función para recargar la tabla de categorías
-            async function recargarTabla() {
-                try {
-                    const response = await fetch('@Url.Action("ObtenerCategoriasJson", "Admin")');
-                    if (!response.ok) {
-                        throw new Error('No se pudo cargar las categorías.');
-                    }
-                    const categorias = await response.json();
-                    tablaCategorias.innerHTML = ''; // Limpiar la tabla
-
-                    categorias.forEach(categoria => {
-                        const row = `
-                            <tr>
-                                <td>${categoria.id}</td>
-                                <td>${categoria.nombreCategoria}</td>
-                                <td class="text-center">
-                                    <button type="button" class="btn btn-sm btn-primary editar-btn"
-                                            data-id="${categoria.id}"
-                                            data-nombre="${categoria.nombreCategoria}"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#editarCategoriaModal">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </button>
-                                    <form action="@Url.Action("EliminarCategoria", "Admin")?id=${categoria.id}" method="post" class="d-inline">
-                                        <input type="hidden" name="__RequestVerificationToken" value="${getAntiForgeryToken()}" />
-                                        <button type="submit" class="btn btn-sm btn-danger eliminar-btn">
-                                            <i class="fas fa-trash-alt"></i> Eliminar
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        `;
-                        tablaCategorias.insertAdjacentHTML('beforeend', row);
-                    });
-
-                    attachEventListeners();
-                } catch (error) {
-                    Swal.fire('Error', error.message, 'error');
-                }
-            }
-
-            // Función para obtener el token de validación
+            // --- Utilidades ---
             function getAntiForgeryToken() {
                 const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
                 return tokenElement ? tokenElement.value : '';
             }
 
-            // Función para mostrar errores de validación
             function showValidationErrors(errors, errorContainerId) {
                 const container = document.getElementById(errorContainerId);
-                let errorHtml = '';
+                let errorHtml = '<ul class="list-unstyled mb-0">';
                 for (const key in errors) {
                     if (Array.isArray(errors[key])) {
                         errors[key].forEach(msg => {
-                            errorHtml += `<div>${msg}</div>`;
+                            errorHtml += `<li><i class="fas fa-exclamation-triangle me-2"></i>${msg}</li>`;
                         });
-                    } else {
-                        errorHtml += `<div>${errors[key]}</div>`;
+                    } else if (typeof errors[key] === 'string') {
+                        errorHtml += `<li><i class="fas fa-exclamation-triangle me-2"></i>${errors[key]}</li>`;
                     }
                 }
+                errorHtml += '</ul>';
                 container.innerHTML = errorHtml;
                 container.classList.remove('d-none');
             }
 
-            // Envío del formulario de creación
+            // --- Recarga y Renderizado de los Cards (Adaptado de la tabla) ---
+            async function recargarVista() {
+                try {
+                    // Endpoint para obtener los datos actualizados
+                    const response = await fetch('@Url.Action("ObtenerCategoriasJson", "Admin")');
+                    if (!response.ok) {
+                        throw new Error('No se pudo cargar las categorías.');
+                    }
+                    const categorias = await response.json();
+                    cardContainer.innerHTML = ''; // Limpiar el contenedor de cards
+
+                    categorias.forEach(categoria => {
+                        const cardHtml = `
+                            <div class="col">
+                                <div class="card categoria-card">
+                                    <div class="card-body d-flex flex-column">
+                                        <span class="text-muted small mb-1">ID: ${categoria.id}</span>
+                                        <h5 class="card-title text-truncate">${categoria.nombreCategoria}</h5>
+
+                                        <div class="mt-auto d-flex justify-content-between align-items-center pt-2">
+                                            <button type="button" class="btn btn-sm btn-primary editar-btn"
+                                                    data-id="${categoria.id}"
+                                                    data-nombre="${categoria.nombreCategoria}"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editarCategoriaModal"
+                                                    title="Editar Categoría">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <form action="@Url.Action("EliminarCategoria", "Admin")" method="post" class="d-inline eliminar-form">
+                                                <input type="hidden" name="id" value="${categoria.id}" />
+                                                <input type="hidden" name="__RequestVerificationToken" value="${getAntiForgeryToken()}" />
+                                                <button type="submit" class="btn btn-sm btn-danger eliminar-btn" title="Eliminar Categoría">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        cardContainer.insertAdjacentHTML('beforeend', cardHtml);
+                    });
+
+                    attachEventListeners(); // Re-adjuntar eventos a los nuevos botones
+                } catch (error) {
+                    Swal.fire('Error', error.message, 'error');
+                }
+            }
+
+
+            // --- Eventos de Formularios Modales ---
+
+            // 1. Crear Categoría
             crearForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
+                document.getElementById('crear-validation-errors').classList.add('d-none');
+
                 const formData = new FormData(this);
-                const data = Object.fromEntries(formData.entries()); // <-- Convertir a objeto
+                const data = {
+                    NombreCategoria: formData.get('NombreCategoria')
+                };
 
                 const response = await fetch(this.action, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json', // <-- Nuevo header
-                        'RequestVerificationToken': getAntiForgeryToken() // <-- Token en el header
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': getAntiForgeryToken()
                     },
-                    body: JSON.stringify(data) // <-- Enviar como JSON
+                    body: JSON.stringify(data)
                 });
 
-                // Si la respuesta es JSON, la procesamos
                 const result = await response.json();
                 if (result.success) {
                     const modal = bootstrap.Modal.getInstance(crearModalEl);
                     modal.hide();
                     Swal.fire('Éxito', result.message, 'success');
                     crearForm.reset();
-                    await recargarTabla();
+                    await recargarVista(); // Llama a la nueva función de recarga
                 } else {
                     showValidationErrors(result.errors, 'crear-validation-errors');
                 }
             });
 
-            // Llenar el modal de edición
+            // 2. Llenar el modal de Edición
             editarModalEl.addEventListener('show.bs.modal', function(event) {
                 const button = event.relatedTarget;
                 const id = button.getAttribute('data-id');
@@ -210,14 +242,20 @@
 
                 editarModalEl.querySelector('#Editar_Id').value = id;
                 editarModalEl.querySelector('#Editar_NombreCategoria').value = nombre;
+
                 document.getElementById('editar-validation-errors').classList.add('d-none');
             });
 
-            // Envío del formulario de edición
+            // 3. Enviar el formulario de Edición
             editarForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
+                document.getElementById('editar-validation-errors').classList.add('d-none');
+
                 const formData = new FormData(this);
-                const data = Object.fromEntries(formData.entries());
+                const data = {
+                    Id: parseInt(formData.get('Id')),
+                    NombreCategoria: formData.get('NombreCategoria')
+                };
 
                 const response = await fetch(this.action, {
                     method: 'POST',
@@ -233,36 +271,41 @@
                     const modal = bootstrap.Modal.getInstance(editarModalEl);
                     modal.hide();
                     Swal.fire('Éxito', result.message, 'success');
-                    await recargarTabla();
+                    await recargarVista(); // Llama a la nueva función de recarga
                 } else {
                     showValidationErrors(result.errors, 'editar-validation-errors');
                 }
             });
 
-            // Lógica para confirmar la eliminación con SweetAlert2
+            // --- Lógica para confirmar la eliminación con SweetAlert2 ---
             function attachEventListeners() {
+                // Adjuntar evento al botón de eliminar (que está dentro de un <form>)
                 document.querySelectorAll('.eliminar-btn').forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        const form = this.closest('form');
-                        Swal.fire({
-                            title: '¿Estás seguro?',
-                            text: "¡No podrás revertir esto!",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Sí, ¡bórralo!',
-                            cancelButtonText: 'Cancelar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                form.submit();
-                            }
-                        });
-                    });
+                    button.removeEventListener('click', handleEliminarClick); // Evitar duplicados
+                    button.addEventListener('click', handleEliminarClick);
                 });
             }
 
+            function handleEliminarClick(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¡Eliminar esta categoría podría afectar a los cursos asociados! No podrás revertir esto.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, ¡bórralo!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            }
+
+            // Inicializar eventos al cargar la página
             attachEventListeners();
         });
     </script>

@@ -2,15 +2,37 @@
 @{
     ViewData["Title"] = "Gestión de Cursos";
 }
+
 <style>
-    .table-actions .btn {
-        margin-right: 5px;
+    /* Estilos del card */
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-radius: 10px; /* Bordes redondeados para un look moderno */
+        overflow: hidden; /* Para que la imagen respete el borde */
     }
 
+        .card:hover {
+            transform: translateY(-5px); /* Pequeño efecto 3D al hacer hover */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+        }
+
+    /* Asegura que la imagen tenga un tamaño fijo */
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    /* Estilos para los botones de acción dentro del card */
+    .card-body .btn {
+        padding: 5px 8px; /* Haz los botones un poco más compactos */
+    }
+
+    /* Ajuste para los modales */
     .modal-dialog {
         max-width: 800px;
     }
 </style>
+
 <div class="container mt-4">
     <h1 class="text-center mb-4">Gestión de Cursos</h1>
     <hr />
@@ -19,26 +41,44 @@
             <i class="fas fa-plus-circle"></i> Nuevo Curso
         </button>
     </div>
-    <table class="table table-bordered table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <th>Título</th>
-                <th>Descripción Corta</th>
-                <th>Nivel</th>
-                <th>Instructor</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="tablaCursos">
-            @foreach (var curso in Model)
-            {
-                <tr>
-                    <td>@curso.Titulo</td>
-                    <td>@Html.Raw(curso.DescripcionCorta)</td>
-                    <td>@curso.Nivel</td>
-                    <td>@(curso.InstructorId.HasValue ? curso.Instructor.Usuario.Nombre + " " + curso.Instructor.Usuario.Apellido : "Sin Instructor")</td>
-                    <td class="text-center">
-                        <div class="d-inline-flex table-actions">
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 pb-5" id="tablaCursos">
+        @foreach (var curso in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 position-relative pb-5">
+                    @if (curso.EsDestacado)
+                    {
+                        <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2" style="z-index: 1;">
+                            <i class="fas fa-star me-1"></i> Destacado
+                        </span>
+                    }
+                    else if (curso.EsRecomendado)
+                    {
+                        <span class="badge bg-info position-absolute top-0 start-0 m-2" style="z-index: 1;">
+                            <i class="fas fa-thumbs-up me-1"></i> Recomendado
+                        </span>
+                    }
+
+                    <img src="@curso.UrlImagen" class="card-img-top" alt="@curso.Titulo" style="height: 200px; object-fit: cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title mb-1">@curso.Titulo</h5>
+                        <p class="card-text text-muted small mb-2">
+                            <i class="fas fa-chalkboard-teacher me-1"></i>
+                            @(curso.InstructorId.HasValue ? curso.Instructor.Usuario.Nombre + " " + curso.Instructor.Usuario.Apellido : "Sin Instructor")
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-secondary">@curso.Nivel</span>
+                            <span class="fs-5 fw-bold text-success">@curso.Precio.ToString("C")</span>
+                        </div>
+
+                        <div class="card-text text-truncate mb-3" style="font-size: 0.9rem;">
+                            @Html.Raw(curso.DescripcionCorta)
+                        </div>
+
+                        <div class="mt-auto d-flex flex-wrap gap-1">
+
                             <button type="button" class="btn btn-sm btn-dark asociar-artista-btn"
                                     data-bs-toggle="modal"
                                     data-bs-target="#asociarArtistaModal"
@@ -46,12 +86,14 @@
                                     title="Asociar Artista">
                                 <i class="fas fa-user-plus"></i>
                             </button>
+
                             <a asp-action="GestionarAnuncios" asp-route-cursoId="@curso.Id" class="btn btn-sm btn-dark" title="Anuncios">
                                 <i class="fas fa-bullhorn"></i>
                             </a>
                             <a asp-action="GestionarModulos" asp-route-cursoId="@curso.Id" class="btn btn-sm btn-info" title="Módulos">
                                 <i class="fas fa-cubes"></i>
                             </a>
+
                             <button type="button" class="btn btn-sm btn-primary editar-btn"
                                     data-id="@curso.Id"
                                     data-bs-toggle="modal"
@@ -65,52 +107,56 @@
                                     data-categorias="@string.Join(",", curso.CategoriasSeleccionadas)" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <form asp-action="EliminarCurso" asp-route-id="@curso.Id" method="post" class="d-inline">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-danger eliminar-btn" title="Eliminar">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </form>
-                            @if (curso.EsDestacado)
-                            {
-                                <form asp-action="QuitarDestacado" asp-route-id="@curso.Id" method="post" class="d-inline">
+
+                            <div class="ms-auto d-flex gap-1">
+                                @if (curso.EsDestacado)
+                                {
+                                    <form asp-action="QuitarDestacado" asp-route-id="@curso.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-warning" title="Quitar Destacado">
+                                            <i class="fas fa-star-half-alt"></i>
+                                        </button>
+                                    </form>
+                                }
+                                else if (curso.EsRecomendado)
+                                {
+                                    <form asp-action="QuitarRecomendado" asp-route-id="@curso.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-info" title="Quitar Recomendado">
+                                            <i class="fas fa-thumbs-down"></i>
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="DestacarCurso" asp-route-id="@curso.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-warning" title="Destacar">
+                                            <i class="fas fa-star"></i>
+                                        </button>
+                                    </form>
+                                    <form asp-action="RecomendarCurso" asp-route-id="@curso.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-info" title="Recomendar">
+                                            <i class="fas fa-thumbs-up"></i>
+                                        </button>
+                                    </form>
+                                }
+                                <form asp-action="EliminarCurso" asp-route-id="@curso.Id" method="post" class="d-inline">
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-warning" title="Quitar Destacado">
-                                        <i class="fas fa-star-half-alt"></i>
+                                    <button type="submit" class="btn btn-sm btn-danger eliminar-btn" title="Eliminar">
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>
-                            }
-                            else if (curso.EsRecomendado)
-                            {
-                                <form asp-action="QuitarRecomendado" asp-route-id="@curso.Id" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-info" title="Quitar Recomendado">
-                                        <i class="fas fa-thumbs-down"></i>
-                                    </button>
-                                </form>
-                            }
-                            else
-                            {
-                                <form asp-action="DestacarCurso" asp-route-id="@curso.Id" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-warning" title="Destacar">
-                                        <i class="fas fa-star"></i>
-                                    </button>
-                                </form>
-                                <form asp-action="RecomendarCurso" asp-route-id="@curso.Id" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-info" title="Recomendar">
-                                        <i class="fas fa-thumbs-up"></i>
-                                    </button>
-                                </form>
-                            }
+                            </div>
                         </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
+
 <div class="modal fade" id="asociarArtistaModal" tabindex="-1" aria-labelledby="asociarArtistaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -134,6 +180,7 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="crearCursoModal" tabindex="-1" aria-labelledby="crearCursoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -287,86 +334,88 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             inicializarTinyMCE();
-            const tablaCursos = document.getElementById('tablaCursos');
+            // El ID 'tablaCursos' ahora apunta al div de los cards
+            const cardContainer = document.getElementById('tablaCursos');
             const crearModalEl = document.getElementById('crearCursoModal');
             const editarModalEl = document.getElementById('editarCursoModal');
             const crearForm = document.getElementById('formCrearCurso');
             const editarForm = document.getElementById('formEditarCurso');
-            const asociarArtistaModalEl = document.getElementById('asociarArtistaModal'); // Nuevo
-            const guardarAsociacionBtn = document.getElementById('guardarAsociacionBtn'); // Nuevo
+            const asociarArtistaModalEl = document.getElementById('asociarArtistaModal');
+            const guardarAsociacionBtn = document.getElementById('guardarAsociacionBtn');
 
             function getAntiForgeryToken() {
                 const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
                 return tokenElement ? tokenElement.value : '';
             }
-                asociarArtistaModalEl.addEventListener('show.bs.modal', async function (event) {
-            const button = event.relatedTarget;
-            const cursoId = button.getAttribute('data-cursoid');
-            document.getElementById('asociar-curso-id').value = cursoId;
 
-            // Cargar la lista de artistas
-            const artistaSelect = document.getElementById('artista-select');
-            artistaSelect.innerHTML = '<option value="">-- Seleccione un Artista --</option>'; // Reinicia las opciones
+            asociarArtistaModalEl.addEventListener('show.bs.modal', async function (event) {
+                const button = event.relatedTarget;
+                const cursoId = button.getAttribute('data-cursoid');
+                document.getElementById('asociar-curso-id').value = cursoId;
 
-            try {
-                const response = await fetch('@Url.Action("ObtenerArtistas", "Admin")');
-                if (!response.ok) {
-                    throw new Error('No se pudieron cargar los artistas.');
+                const artistaSelect = document.getElementById('artista-select');
+                artistaSelect.innerHTML = '<option value="">-- Seleccione un Artista --</option>'; // Reinicia las opciones
+
+                try {
+                    const response = await fetch('@Url.Action("ObtenerArtistas", "Admin")');
+                    if (!response.ok) {
+                        throw new Error('No se pudieron cargar los artistas.');
+                    }
+                    const artistas = await response.json();
+                    artistas.forEach(artista => {
+                        const option = document.createElement('option');
+                        option.value = artista.id;
+                        option.textContent = artista.nombreCompleto;
+                        artistaSelect.appendChild(option);
+                    });
+                } catch (error) {
+                    Swal.fire('Error', error.message, 'error');
                 }
-                const artistas = await response.json();
-                artistas.forEach(artista => {
-                    const option = document.createElement('option');
-                    option.value = artista.id;
-                    option.textContent = artista.nombreCompleto;
-                    artistaSelect.appendChild(option);
-                });
-            } catch (error) {
-                Swal.fire('Error', error.message, 'error');
-            }
-        });
+            });
 
-        // Manejar el clic en el botón de "Asociar" del modal de artista
-        guardarAsociacionBtn.addEventListener('click', async function () {
-            const cursoId = document.getElementById('asociar-curso-id').value;
-            const instructorId = document.getElementById('artista-select').value;
-            const token = getAntiForgeryToken();
+            // Manejar el clic en el botón de "Asociar" del modal de artista
+            guardarAsociacionBtn.addEventListener('click', async function () {
+                const cursoId = document.getElementById('asociar-curso-id').value;
+                const instructorId = document.getElementById('artista-select').value;
+                const token = getAntiForgeryToken();
 
-            if (!instructorId) {
-                Swal.fire('Atención', 'Por favor, selecciona un artista.', 'warning');
-                return;
-            }
-
-            try {
-                const response = await fetch('@Url.Action("AsociarArtistaACurso", "Admin")', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': token
-                    },
-                    body: JSON.stringify({ cursoId, instructorId })
-                });
-
-                const result = await response.json();
-                if (result.success) {
-                    const modal = bootstrap.Modal.getInstance(asociarArtistaModalEl);
-                    modal.hide();
-                    Swal.fire('Éxito', result.message, 'success');
-                    await recargarTabla();
-                } else {
-                    Swal.fire('Error', result.message, 'error');
+                if (!instructorId) {
+                    Swal.fire('Atención', 'Por favor, selecciona un artista.', 'warning');
+                    return;
                 }
-            } catch (error) {
-                Swal.fire('Error', 'Hubo un problema al asociar el artista.', 'error');
-            }
-        });
+
+                try {
+                    const response = await fetch('@Url.Action("AsociarArtistaACurso", "Admin")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': token
+                        },
+                        body: JSON.stringify({ cursoId, instructorId })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        const modal = bootstrap.Modal.getInstance(asociarArtistaModalEl);
+                        modal.hide();
+                        Swal.fire('Éxito', result.message, 'success');
+                        await recargarVista(); // Cambiado de recargarTabla a recargarVista
+                    } else {
+                        Swal.fire('Error', result.message, 'error');
+                    }
+                } catch (error) {
+                    Swal.fire('Error', 'Hubo un problema al asociar el artista.', 'error');
+                }
+            });
+
             crearForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
-                // Asegura que el contenido del editor se actualice en el textarea antes del envío
                 tinymce.triggerSave();
 
                 const formData = new FormData(this);
                 formData.append('__RequestVerificationToken', getAntiForgeryToken());
 
+                // Asegurar que las categorías se incluyan en el FormData
                 const categoriasSeleccionadas = Array.from(document.querySelectorAll('#crear-categorias-checkboxes input:checked')).map(cb => cb.value);
                 categoriasSeleccionadas.forEach(val => formData.append('CategoriasSeleccionadas', val));
 
@@ -380,7 +429,7 @@
                     modal.hide();
                     Swal.fire('Éxito', 'Curso creado con éxito.', 'success');
                     crearForm.reset();
-                    await recargarTabla();
+                    await recargarVista(); // Cambiado de recargarTabla a recargarVista
                 } else {
                     Swal.fire('Error', 'Hubo un problema al crear el curso.', 'error');
                 }
@@ -402,7 +451,6 @@
                 document.getElementById('Editar_Precio').value = precio;
                 document.getElementById('Editar_Nivel').value = nivel;
 
-                // Carga el contenido en los editores TinyMCE
                 tinymce.get('Editar_DescripcionCorta').setContent(descripcionCorta);
                 tinymce.get('Editar_DescripcionLarga').setContent(descripcionLarga);
 
@@ -423,12 +471,12 @@
 
             editarForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
-                // Asegura que el contenido del editor se actualice en el textarea antes del envío
                 tinymce.triggerSave();
 
                 const formData = new FormData(this);
                 formData.append('__RequestVerificationToken', getAntiForgeryToken());
 
+                // Asegurar que las categorías se incluyan en el FormData
                 const categoriasSeleccionadas = Array.from(document.querySelectorAll('#editar-categorias-checkboxes input:checked')).map(cb => cb.value);
                 categoriasSeleccionadas.forEach(val => formData.append('CategoriasSeleccionadas', val));
 
@@ -442,7 +490,7 @@
                     const modal = bootstrap.Modal.getInstance(editarModalEl);
                     modal.hide();
                     Swal.fire('Éxito', result.message, 'success');
-                    await recargarTabla();
+                    await recargarVista(); // Cambiado de recargarTabla a recargarVista
                 } else {
                     Swal.fire({
                         title: 'Error de validación',
@@ -465,7 +513,8 @@
                 return html;
             }
 
-            async function recargarTabla() {
+            // FUNCIÓN DE RECARGA ADAPTADA PARA CARDS
+            async function recargarVista() {
                 try {
                     const response = await fetch('@Url.Action("GestionarCursos", "Admin")');
                     if (!response.ok) {
@@ -474,14 +523,18 @@
                     const html = await response.text();
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
-                    const newTableBody = doc.getElementById('tablaCursos').innerHTML;
-                    tablaCursos.innerHTML = newTableBody;
+
+                    // Extraer solo el contenido del nuevo contenedor de cards
+                    const newCardContainer = doc.getElementById('tablaCursos').innerHTML;
+                    cardContainer.innerHTML = newCardContainer;
+
                     attachEventListeners();
                 } catch (error) {
                     Swal.fire('Error', error.message, 'error');
                 }
             }
 
+            // Event Listeners para el botón de eliminar (necesitan ser re-adjuntados después de la recarga)
             function attachEventListeners() {
                 document.querySelectorAll('.eliminar-btn').forEach(button => {
                     button.addEventListener('click', function (e) {

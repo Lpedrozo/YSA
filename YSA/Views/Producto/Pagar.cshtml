@@ -1,0 +1,219 @@
+﻿@model YSA.Web.Models.ViewModels.PagoViewModel
+@{
+    ViewData["Title"] = "Procesar Pago";
+}
+
+<style>
+    /* VARIABLES DE COLOR MONOCROMÁTICAS (Ajustadas para la vista de pago) */
+    :root {
+        --color-primary: #000000; /* NEGRO PURO para acentos y botones */
+        --color-secondary: #333333; /* Gris oscuro para títulos y texto */
+        --color-accent: #cccccc; /* Gris claro para bordes */
+        --color-background: #ffffff; /* Fondo Blanco */
+        --color-card-bg: #f8f8f8; /* Gris muy claro para la tarjeta */
+        --color-text-dark: #212529; /* Texto principal */
+        --color-text-light: #ffffff; /* Texto Claro */
+    }
+
+    /* Estilos base para la tarjeta y el cuerpo */
+    body {
+        background-color: var(--color-background);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .card {
+        border: 1px solid var(--color-accent);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        border-radius: 0.75rem;
+        background-color: var(--color-card-bg);
+    }
+
+    .card-header {
+        background-color: var(--color-primary) !important;
+        color: var(--color-text-light) !important;
+        border-bottom: 1px solid var(--color-primary);
+        font-weight: 700;
+        border-radius: 0.7rem 0.7rem 0 0;
+    }
+
+    .lead strong {
+        color: var(--color-primary);
+        font-size: 1.5rem;
+    }
+
+    /* BOTONES */
+    .btn-primary {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: var(--color-text-light) !important;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* Estilo para la caja de información bancaria */
+    #payment-info-box {
+        border: 1px solid var(--color-accent);
+        background-color: var(--color-background);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-top: 1rem;
+    }
+
+        #payment-info-box h5 {
+            color: var(--color-secondary);
+            font-weight: 600;
+            border-bottom: 1px solid var(--color-accent);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+    .instruction-note {
+        padding: 1rem;
+        background-color: #ffffe0; /* Amarillo suave para alerta */
+        border: 1px solid #e6db55;
+        color: #333;
+        border-radius: 0.5rem;
+        margin-top: 1.5rem;
+        font-weight: 500;
+    }
+
+    .btn-whatsapp-assistance {
+        background-color: #25d366 !important; /* Verde WhatsApp */
+        border-color: #25d366 !important;
+        color: white !important;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-whatsapp-assistance:hover {
+            background-color: #1faa59 !important; /* Un verde un poco más oscuro al hacer hover */
+            border-color: #1faa59 !important;
+        }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center pb-5">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>Procesar Pago del Pedido #@Model.PedidoId</h3>
+                </div>
+                <div class="card-body p-4">
+                    <p class="lead text-center">Total a pagar: <strong>@Model.Total.ToString("C")</strong></p>
+
+                    <div class="instruction-note text-center">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Su pedido será validado por un administrador. Una vez confirmado, ¡tendrá acceso!
+                    </div>
+                    @{
+                        var whatsappNumber = "584241544523"; // Tu número (Cod. País + Número sin 0 inicial)
+                        var whatsappMessage = $"Hola, necesito asistencia con el pago del Pedido #{Model.PedidoId}. No me siento seguro de hacerlo por la página. ¿Me pueden ayudar?";
+                        var encodedMessage = System.Web.HttpUtility.UrlEncode(whatsappMessage);
+                        var whatsappLink = $"https://wa.me/{whatsappNumber}?text={encodedMessage}";
+                    }
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="@whatsappLink" target="_blank" class="btn btn-whatsapp-assistance btn-lg">
+                            <i class="fab fa-whatsapp me-2"></i> Consultar/Pagar por WhatsApp
+                        </a>
+                    </div>
+                    <form asp-action="ProcesarPago" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="PedidoId" />
+
+                        <div class="mb-4 mt-4">
+                            <label asp-for="MetodoPago" class="form-label">Método de Pago</label>
+                            <select asp-for="MetodoPago" class="form-control" id="MetodoPagoSelect" required>
+                                <option value="" disabled selected>-- Seleccione un método --</option>
+                                <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+                                <option value="Pago Móvil">Pago Móvil</option>
+                                <option value="PayPal">PayPal</option>
+                            </select>
+                            <span asp-validation-for="MetodoPago" class="text-danger"></span>
+                        </div>
+
+                        <div id="payment-info-container">
+                            <div id="payment-info-box" style="display:none;">
+                                <h5>Datos de Pago</h5>
+                                <div id="payment-details-content">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ReferenciaPago" class="form-label">Referencia / Tracking ID / Hash</label>
+                            <input asp-for="ReferenciaPago" class="form-control" placeholder="Ingrese el número de referencia/transacción" required />
+                            <span asp-validation-for="ReferenciaPago" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ComprobanteArchivo" class="form-label">Adjuntar Comprobante (Requerido)</label>
+                            <input asp-for="ComprobanteArchivo" type="file" class="form-control" required />
+                            <span asp-validation-for="ComprobanteArchivo" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-upload me-2"></i> Registrar Pago
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            // Objeto JSON con la información de pago
+            const PAYMENT_DETAILS = {
+                "Transferencia Bancaria": `
+                    <p><strong>Banco:</strong> Banco Universal Negro</p>
+                    <p><strong>RUC/C.I.:</strong> V-12.345.678</p>
+                    <p><strong>Cuenta:</strong> 0102-0304-0506-0708-0910</p>
+                    <p><strong>Correo:</strong> pagos@miempresa.com</p>
+                    <p class="text-danger">Asegúrese de transferir el monto exacto antes de continuar.</p>
+                `,
+                "Pago Móvil": `
+                    <p><strong>Banco:</strong> Banco Móvil</p>
+                    <p><strong>C.I.:</strong> V-8.765.432</p>
+                    <p><strong>Teléfono:</strong> 0412-1234567</p>
+                    <p class="text-danger">El monto total es <strong>@Model.Total.ToString("C")</strong>. Use el campo Referencia para el Hash/N° de la transacción.</p>
+                `,
+                "PayPal": `
+                    <p><strong>Cuenta PayPal:</strong> miempresa@paypal.com</p>
+                    <p><strong>Instrucciones:</strong> Debe realizar el pago directamente a nuestra cuenta de PayPal por <strong>@Model.Total.ToString("C")</strong>.</p>
+                    <p class="text-danger">Use el campo Referencia para su N° de transacción o Hash de PayPal.</p>
+                `
+            };
+
+            const $select = $('#MetodoPagoSelect');
+            const $infoBox = $('#payment-info-box');
+            const $content = $('#payment-details-content');
+
+            function updatePaymentInfo() {
+                const selectedMethod = $select.val();
+
+                if (selectedMethod && PAYMENT_DETAILS[selectedMethod]) {
+                    $content.html(PAYMENT_DETAILS[selectedMethod]);
+                    $infoBox.slideDown();
+                } else {
+                    $infoBox.slideUp();
+                }
+            }
+
+            // Manejar el cambio de selección
+            $select.on('change', updatePaymentInfo);
+
+            // Cargar información inicial si ya hay un valor seleccionado (en caso de error de validación)
+            updatePaymentInfo();
+        });
+    </script>
+}

@@ -1077,7 +1077,8 @@ namespace YSA.Web.Controllers
                 Lugar = e.Lugar,
                 TipoEvento = e.TipoEvento?.NombreTipo, // Usamos la propiedad de navegación
                 Plataforma = e.TipoEvento?.Plataforma, // Usamos la propiedad de navegación
-                EstaActivo = e.EstaActivo
+                EstaActivo = e.EstaActivo,
+                UrlImagen = e.UrlImagen
             }).ToList();
 
             return View(viewModel);
@@ -1175,7 +1176,8 @@ namespace YSA.Web.Controllers
                 {
                     Value = t.Id.ToString(),
                     Text = $"{t.NombreTipo} ({t.Plataforma})"
-                })
+                }),
+                UrlImagenExistente = evento.UrlImagen,
             };
 
             // Guardamos la URL de la imagen existente en TempData para mostrarla en la vista
@@ -1323,7 +1325,8 @@ namespace YSA.Web.Controllers
                 TipoProducto = p.TipoProducto,
                 Precio = p.Precio,
                 AutorNombre = p.Autor?.NombreArtistico,
-                Categorias = string.Join(", ", p.ProductoCategorias.Select(pc => pc.Categoria.NombreCategoria))
+                Categorias = string.Join(", ", p.ProductoCategorias.Select(pc => pc.Categoria.NombreCategoria)),
+                UrlImagen = p.UrlImagen,
             }).ToList();
 
             var autoresDisponibles = autores.Select(a => new SelectListItem

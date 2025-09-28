@@ -4,140 +4,204 @@
 }
 
 <style>
-    /* CSS Mínimo y de alto valor */
+    /* ------------------------------------- */
+    /* 1. Variables B&W y Estilos Generales  */
+    /* ------------------------------------- */
     :root {
-        --color-accent: #3b82f6;
+        --color-secondary: #000000; /* Negro Puro (Título, Hover) */
+        --color-primary: #333333; /* Gris Oscuro (Botones, Acentos) */
+        --color-text-muted: #6a6a6a; /* Gris medio (Descripción) */
+        --color-background-light: #f7f7f7; /* Fondo general de la página */
+        --color-background-white: #ffffff; /* Fondo para las tarjetas */
+        --color-border-light: #eeeeee; /* Borde sutil */
     }
 
-    .stat-card-icon {
-        font-size: 2.5rem;
-        color: var(--color-accent);
-        transition: transform 0.3s ease;
+    body {
+        background-color: var(--color-background-light);
     }
 
-    .stat-card-text {
-        font-size: 2rem;
+    h1, h2 {
+        color: var(--color-secondary) !important;
         font-weight: 700;
-        transition: color 0.3s ease;
     }
 
-    .btn-management-icon {
-        font-size: 1.5rem;
-        margin-right: 1.5rem;
-        transition: color 0.3s ease, transform 0.3s ease;
+    /* ------------------------------------- */
+    /* 2. Tarjetas de Métricas Clave (Top)  */
+    /* ------------------------------------- */
+    .metric-card {
+        background-color: var(--color-background-white);
+        border: 1px solid var(--color-border-light);
+        border-radius: 12px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        height: 100%;
+        text-decoration: none; /* Asegura que el enlace no tenga línea */
+        color: inherit;
     }
 
-    /* Efectos de Hover para las tarjetas de estadísticas */
-    .card:hover {
-        transform: translateY(-5px) !important;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.5) !important;
-    }
-
-        .card:hover .stat-card-icon {
-            transform: scale(1.2);
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--color-primary); /* Resalta el borde al hacer hover */
         }
 
-    /* Efectos de Hover para los enlaces de gestión */
-    .list-group-item:hover {
-        background-color: var(--color-accent) !important;
-        color: #fff !important;
-        transform: translateX(10px);
+    .metric-value {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--color-secondary); /* Negro */
+        line-height: 1;
     }
 
-        .list-group-item:hover .btn-management-icon {
-            color: #fff !important;
-            transform: scale(1.1);
+    .metric-label {
+        font-weight: 600;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+
+    .metric-icon {
+        font-size: 3rem;
+        color: var(--color-primary); /* Gris oscuro */
+        opacity: 0.7;
+    }
+
+    /* Estilo especial para Pedidos Pendientes (Rojo/Negro) */
+    .metric-pending .metric-value,
+    .metric-pending .metric-icon {
+        color: #dc3545; /* Rojo de advertencia */
+    }
+
+    .metric-pending:hover {
+        border-color: #dc3545;
+    }
+
+
+    /* ------------------------------------- */
+    /* 3. Tarjetas de Gestión Rápida (Grid)  */
+    /* ------------------------------------- */
+    .action-card {
+        background-color: var(--color-background-white);
+        border: 1px solid var(--color-border-light);
+        height: 100%;
+        transition: background-color 0.2s, color 0.2s, transform 0.2s;
+        border-radius: 8px;
+        text-decoration: none;
+        color: var(--color-primary);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+        .action-card:hover {
+            background-color: var(--color-secondary); /* Negro Puro */
+            border-color: var(--color-secondary);
+            color: #ffffff;
+            transform: translateY(-2px);
         }
+
+    .action-card-icon {
+        font-size: 2.8rem;
+        margin-bottom: 0.5rem;
+        color: var(--color-primary);
+        transition: color 0.2s;
+    }
+
+    .action-card:hover .action-card-icon {
+        color: #ffffff;
+    }
+
+    .action-card-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .action-card:hover .card-text {
+        color: #ddd !important; /* Texto claro en hover */
+    }
+
+    /* ------------------------------------- */
+    /* 4. Centralización y Contenedor */
+    /* ------------------------------------- */
+    .dashboard-container {
+        max-width: 1200px; /* Ancho máximo para el dashboard */
+        margin: 0 auto; /* Centraliza el contenido */
+    }
 </style>
 
-<div class="container-fluid py-5">
-    <div class="row g-4">
-        <div class="col-lg-4">
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-12">
-                    <div class="card bg-dark text-white shadow-lg border-secondary h-100 transition-all">
-                        <div class="card-body d-flex flex-column align-items-center text-center">
-                            <i class="fas fa-graduation-cap stat-card-icon mb-3"></i>
-                            <h5 class="card-title text-muted mb-1">Total de Cursos</h5>
-                            <p class="card-text stat-card-text text-white">@Model.TotalCursos</p>
-                        </div>
-                    </div>
+<div class="dashboard-container py-5 px-3 pb-5">
+
+    <h1 class="mb-5 mt-3">Panel de Administración</h1>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 pb-5">
+
+        <div class="col">
+            <a href="@Url.Action("GestionarCursos", "Admin")" class="card action-card text-center p-4">
+                <div class="card-body">
+                    <i class="fas fa-graduation-cap action-card-icon"></i>
+                    <div class="action-card-title">Gestionar Cursos</div>
+                    <p class="card-text small text-muted mt-1">Crear, editar o administrar la estructura de los cursos.</p>
                 </div>
-                <div class="col-md-6 col-lg-12">
-                    <div class="card bg-dark text-white shadow-lg border-secondary h-100 transition-all">
-                        <div class="card-body d-flex flex-column align-items-center text-center">
-                            <i class="fas fa-users stat-card-icon mb-3"></i>
-                            <h5 class="card-title text-muted mb-1">Total de Estudiantes</h5>
-                            <p class="card-text stat-card-text text-white">@Model.TotalEstudiantes</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-12">
-                    <div class="card bg-dark text-white shadow-lg border-secondary h-100 transition-all">
-                        <div class="card-body d-flex flex-column align-items-center text-center">
-                            <i class="fas fa-box-open stat-card-icon mb-3"></i>
-                            <h5 class="card-title text-muted mb-1">Pedidos Pendientes</h5>
-                            <p class="card-text stat-card-text text-white">@Model.PedidosPendientes</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </a>
         </div>
 
-        <div class="col-lg-8">
-            <div class="card bg-dark text-white shadow-lg border-secondary h-100">
+        <div class="col">
+            <a href="@Url.Action("GestionarArtistas", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
-                    <h3 class="text-center mb-4">Herramientas de Gestión</h3>
-                    <div class="list-group list-group-flush">
-                        <a href="@Url.Action("GestionarCursos", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-edit btn-management-icon text-white-50"></i>
-                                <span>Gestionar Cursos</span>
-                            </div>
-                        </a>
-                        <a href="@Url.Action("GestionarEstudiantes", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-user-friends btn-management-icon text-white-50"></i>
-                                <span>Gestionar Estudiantes</span>
-                            </div>
-                        </a>
-                        <a href="@Url.Action("GestionarModulos", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-folder-open btn-management-icon text-white-50"></i>
-                                <span>Gestionar Módulos</span>
-                            </div>
-                        </a>
-                        <a href="@Url.Action("GestionarLecciones", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-video btn-management-icon text-white-50"></i>
-                                <span>Gestionar Lecciones</span>
-                            </div>
-                        </a>
-                        <a href="@Url.Action("GestionarCategorias", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-tags btn-management-icon text-white-50"></i>
-                                <span>Gestionar Categorías</span>
-                            </div>
-                        </a>
-                        <a href="@Url.Action("GestionarAnuncios", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-bullhorn btn-management-icon text-white-50"></i>
-                                <span>Gestionar Anuncios</span>
-                            </div>
-                        </a>
-                        <a href="@Url.Action("PedidosPendientes", "Admin")" class="list-group-item list-group-item-action bg-secondary text-white py-3 mb-2 rounded transition-all">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-truck btn-management-icon text-white-50"></i>
-                                <span>Ver Pedidos Pendientes</span>
-                            </div>
-                        </a>
-                    </div>
+                    <i class="fas fa-paint-brush action-card-icon"></i>
+                    <div class="action-card-title">Gestionar Artistas</div>
+                    <p class="card-text small text-muted mt-1">Administrar perfiles de profesores y colaboradores.</p>
                 </div>
-            </div>
+            </a>
         </div>
+
+        <div class="col">
+            <a href="@Url.Action("GestionarProductos", "Admin")" class="card action-card text-center p-4">
+                <div class="card-body">
+                    <i class="fas fa-file-pdf action-card-icon"></i>
+                    <div class="action-card-title">Gestionar Productos Digitales</div>
+                    <p class="card-text small text-muted mt-1">Administrar la librería de recursos descargables (PDFs).</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col">
+            <a href="@Url.Action("GestionarEventos", "Admin")" class="card action-card text-center p-4">
+                <div class="card-body">
+                    <i class="fas fa-calendar-alt action-card-icon"></i>
+                    <div class="action-card-title">Gestionar Eventos</div>
+                    <p class="card-text small text-muted mt-1">Crear y actualizar clases en vivo, talleres o webinars.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col">
+            <a href="@Url.Action("GestionarEstudiantes", "Admin")" class="card action-card text-center p-4">
+                <div class="card-body">
+                    <i class="fas fa-user-friends action-card-icon"></i>
+                    <div class="action-card-title">Gestionar Estudiantes</div>
+                    <p class="card-text small text-muted mt-1">Ver perfiles, permisos y actividad de usuarios.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col">
+            <a href="@Url.Action("GestionarCategorias", "Admin")" class="card action-card text-center p-4">
+                <div class="card-body">
+                    <i class="fas fa-folder action-card-icon"></i>
+                    <div class="action-card-title">Gestionar Categorías</div>
+                    <p class="card-text small text-muted mt-1">Organizar y clasificar el contenido de la plataforma (cursos, productos).</p>
+                </div>
+            </a>
+        </div>
+
+
+        <div class="col">
+            <a href="@Url.Action("PedidosPendientes", "Admin")" class="card action-card text-center p-4">
+                <div class="card-body">
+                    <i class="fas fa-receipt action-card-icon"></i>
+                    <div class="action-card-title">Historial y Pagos</div>
+                    <p class="card-text small text-muted mt-1">Revisar el estado y detalle de todas las transacciones.</p>
+                </div>
+            </a>
+        </div>
+
     </div>
 </div>
-
-@section Scripts {
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-}

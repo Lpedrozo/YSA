@@ -131,10 +131,10 @@ public class PedidoController : Controller
             await _pedidoService.RegistrarPagoAsync(pago);
 
             await _pedidoService.ActualizarEstadoPedidoAsync(pedido.Id, "Validando");
+            TempData["PagoRegistrado"] = true;
 
-            TempData["Success"] = "Comprobante de pago enviado. Su pedido está en proceso de validación.";
+            return RedirectToAction("Index", "Curso");
 
-            return RedirectToAction("Index", "Home");
         }
         catch (Exception ex)
         {

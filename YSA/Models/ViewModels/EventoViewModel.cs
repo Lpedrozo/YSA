@@ -24,6 +24,7 @@ namespace YSA.Web.Models.ViewModels
 
         [Display(Name = "Activo")]
         public bool EstaActivo { get; set; }
+        public string UrlImagen { get; set; }
     }
     public class CrearEventoViewModel
     {
@@ -55,6 +56,7 @@ namespace YSA.Web.Models.ViewModels
         [Required(ErrorMessage = "Debe seleccionar un tipo de evento.")]
         [Display(Name = "Tipo de Evento")]
         public int TipoEventoId { get; set; }
+        public string UrlImagenExistente { get; set; }
 
         public IEnumerable<SelectListItem>? TiposEventoDisponibles { get; set; }
     }

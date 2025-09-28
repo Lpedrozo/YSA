@@ -5,70 +5,203 @@
 }
 
 <style>
-    .table-actions .btn {
-        margin-right: 5px;
+    /* ------------------------------------- */
+    /* 1. Variables B&W y Estilos Generales  */
+    /* ------------------------------------- */
+    :root {
+        --color-secondary: #000000; /* Negro Puro (Título) */
+        --color-primary: #333333; /* Gris Oscuro (Botones, Acentos) */
+        --color-secondary-light: #5a5a5a; /* Gris Medio para acciones secundarias */
+        --color-text-muted: #6a6a6a; /* Gris medio (Descripción) */
+        --color-background-light: #f7f7f7; /* Fondo general de la página */
+        --color-background-white: #ffffff; /* Fondo para las tarjetas */
+        --color-border-light: #e0e0e0; /* Borde sutil */
+        --color-danger: #cc0000; /* Rojo sutil para acciones peligrosas */
     }
 
+    /* Botón "Volver" */
+    .btn-secondary {
+        background-color: var(--color-text-muted) !important;
+        border-color: var(--color-text-muted) !important;
+        color: white !important;
+        transition: background-color 0.2s;
+        border-radius: 8px;
+    }
+
+        .btn-secondary:hover {
+            background-color: var(--color-primary) !important;
+            border-color: var(--color-primary) !important;
+        }
+
+    /* Botón "Nueva Lección" */
+    .btn-success {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        border-radius: 8px;
+    }
+
+        .btn-success:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* Botón "Editar" (Icono) */
+    .btn-primary {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: white !important;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* Botón "Eliminar" (Icono) */
+    .btn-danger {
+        background-color: var(--color-danger) !important;
+        border-color: var(--color-danger) !important;
+        color: white !important;
+    }
+
+        .btn-danger:hover {
+            background-color: #a30000 !important; /* Tono más oscuro de rojo */
+            border-color: #a30000 !important;
+        }
+
+    /* Botones de Icono (Para hacerlos cuadrados y compactos) */
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+        border-radius: 6px;
+    }
+
+    /* -------------------------- */
+    /* 2. Estilos de Cards        */
+    /* -------------------------- */
+    .card-style {
+        border: 1px solid var(--color-border-light);
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+        margin-bottom: 20px; /* Espacio entre las tarjetas */
+    }
+
+        .card-style:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    .card-title-custom {
+        color: var(--color-primary);
+        font-weight: 600;
+        font-size: 1.25rem;
+        margin-bottom: 5px;
+    }
+
+    .leccion-orden {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--color-secondary);
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+    }
+
+    /* -------------------------- */
+    /* 3. Estilos de Modal y Título */
+    /* -------------------------- */
     .modal-dialog {
         max-width: 800px; /* Aumenta el ancho del modal para el editor */
     }
+
+    h1 {
+        color: var(--color-secondary);
+        font-weight: 700;
+        font-size: 2rem;
+    }
+
+    hr {
+        border-top: 2px solid var(--color-border-light);
+        opacity: 1;
+        margin-bottom: 1.5rem;
+    }
 </style>
 
-<div class="container mt-4">
-    <h1 class="text-center mb-4">Lecciones para el Módulo: @ViewBag.ModuloTitulo</h1>
-    <hr />
-
-    <a asp-action="GestionarModulos" asp-route-cursoId="@ViewBag.CursoId" class="btn btn-secondary mb-3">
-        <i class="fas fa-arrow-left"></i> Volver a Módulos
-    </a>
-
-    <div class="d-flex justify-content-end mb-3">
+<div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-center" style="margin-right: 1.5rem;">Lecciones para el Módulo: @ViewBag.ModuloTitulo</h1>
+    </div><div class="d-flex justify-content-between align-items-center mb-4">
+        <a asp-action="GestionarModulos" asp-route-cursoId="@ViewBag.CursoId" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i> Volver a Módulos
+        </a>
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearLeccionModal">
-            <i class="fas fa-plus-circle"></i> Nueva Lección
+            <i class="fas fa-plus-circle me-2"></i> Nueva Lección
         </button>
     </div>
+    <hr style="margin-top: 0;" />
 
-    <table class="table table-bordered table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <th>Orden</th>
-                <th>Título</th>
-                <th>Contenido</th>
-                <th class="text-center">Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="tablaLecciones">
-            @foreach (var leccion in Model)
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center" role="alert" style="border-radius: 8px; margin-top: 3rem;">
+            Este módulo no tiene lecciones creadas. ¡Empieza a añadir contenido!
+        </div>
+    }
+    else
+    {
+        <div class="row" id="contenedorLecciones">
+            @foreach (var leccion in Model.OrderBy(l => l.Orden))
             {
-                <tr>
-                    <td>@leccion.Orden</td>
-                    <td>@leccion.Titulo</td>
-                    <td>@Html.Raw(leccion.Contenido?.Length > 50 ? leccion.Contenido.Substring(0, 50) + "..." : leccion.Contenido)</td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-sm btn-primary editar-btn"
-                                data-id="@leccion.Id"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editarLeccionModal">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <form asp-action="EliminarLeccion" asp-route-id="@leccion.Id" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-danger eliminar-btn">
-                                <i class="fas fa-trash-alt"></i> Eliminar
-                            </button>
-                        </form>
-                    </td>
-                </tr>
+                <div class="col-md-6">
+                    <div class="card card-style p-3">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <span class="leccion-orden">@leccion.Orden.</span>
+                                <div>
+                                    <h5 class="card-title-custom mb-0">@leccion.Titulo</h5>
+                                    <p class="card-text text-muted small mb-0">
+                                        @Html.Raw(leccion.Contenido?.Length > 70 ? leccion.Contenido.Substring(0, 70) + "..." : leccion.Contenido)
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center">
+                                <button type="button" class="btn btn-sm btn-primary btn-icon editar-btn me-2"
+                                        data-id="@leccion.Id"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editarLeccionModal"
+                                        title="Editar Lección">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <form asp-action="EliminarLeccion" asp-route-id="@leccion.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-danger btn-icon eliminar-btn" title="Eliminar Lección">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
+        </div>
+    }
 </div>
 
 <div class="modal fade" id="crearLeccionModal" tabindex="-1" aria-labelledby="crearLeccionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="crearLeccionModalLabel">Crear Lección</h5>
+                <h5 class="modal-title" id="crearLeccionModalLabel" style="color:var(--color-secondary);">Crear Lección</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formCrearLeccion" asp-action="CrearLeccion" method="post">
@@ -76,19 +209,19 @@
                     <div id="crear-leccion-validation-errors" class="alert alert-danger d-none"></div>
                     <input type="hidden" name="ModuloId" value="@ViewBag.ModuloId" />
                     <div class="form-group mb-3">
-                        <label for="Crear_Titulo" class="form-label">Título</label>
+                        <label for="Crear_Titulo" class="form-label" style="color:var(--color-primary);">Título</label>
                         <input type="text" id="Crear_Titulo" name="Titulo" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Crear_Orden" class="form-label">Orden</label>
+                        <label for="Crear_Orden" class="form-label" style="color:var(--color-primary);">Orden</label>
                         <input type="number" id="Crear_Orden" name="Orden" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Crear_UrlVideo" class="form-label">URL del Video</label>
+                        <label for="Crear_UrlVideo" class="form-label" style="color:var(--color-primary);">URL del Video</label>
                         <input type="text" id="Crear_UrlVideo" name="UrlVideo" class="form-control" />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Crear_Contenido" class="form-label">Contenido</label>
+                        <label for="Crear_Contenido" class="form-label" style="color:var(--color-primary);">Contenido</label>
                         <textarea id="Crear_Contenido" name="Contenido" class="form-control" rows="5"></textarea>
                     </div>
                 </div>
@@ -105,7 +238,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editarLeccionModalLabel">Editar Lección</h5>
+                <h5 class="modal-title" id="editarLeccionModalLabel" style="color:var(--color-secondary);">Editar Lección</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formEditarLeccion" asp-action="EditarLeccion" method="post">
@@ -114,19 +247,19 @@
                     <input type="hidden" id="Editar_Id" name="Id" />
                     <input type="hidden" id="Editar_ModuloId" name="ModuloId" value="@ViewBag.ModuloId" />
                     <div class="form-group mb-3">
-                        <label for="Editar_Titulo" class="form-label">Título</label>
+                        <label for="Editar_Titulo" class="form-label" style="color:var(--color-primary);">Título</label>
                         <input type="text" id="Editar_Titulo" name="Titulo" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Editar_Orden" class="form-label">Orden</label>
+                        <label for="Editar_Orden" class="form-label" style="color:var(--color-primary);">Orden</label>
                         <input type="number" id="Editar_Orden" name="Orden" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Editar_UrlVideo" class="form-label">URL del Video</label>
+                        <label for="Editar_UrlVideo" class="form-label" style="color:var(--color-primary);">URL del Video</label>
                         <input type="text" id="Editar_UrlVideo" name="UrlVideo" class="form-control" />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Editar_Contenido" class="form-label">Contenido</label>
+                        <label for="Editar_Contenido" class="form-label" style="color:var(--color-primary);">Contenido</label>
                         <textarea id="Editar_Contenido" name="Contenido" class="form-control" rows="5"></textarea>
                     </div>
                 </div>
@@ -178,20 +311,32 @@
                 errorDiv.classList.remove('d-none');
             }
 
-            async function recargarTablaLecciones() {
+            // Función para recargar el listado de lecciones con el nuevo HTML
+            async function recargarContenedorLecciones() {
+                const moduloId = @ViewBag.ModuloId;
                 try {
-                    // Obtiene la URL de la página actual para recargarla
-                    const url = window.location.href;
-                    const response = await fetch(url);
+                    // Carga la página completa
+                    const response = await fetch(`@Url.Action("GestionarLecciones", "Admin", new { moduloId = ViewBag.ModuloId })`);
                     if (!response.ok) {
                         throw new Error('No se pudieron cargar las lecciones.');
                     }
                     const html = await response.text();
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
-                    const newTableBody = doc.getElementById('tablaLecciones').innerHTML;
-                    document.getElementById('tablaLecciones').innerHTML = newTableBody;
-                    attachEventListeners();
+
+                    // Reemplaza el contenido del contenedor de cards (Lecciones)
+                    const newContainerContent = doc.getElementById('contenedorLecciones')?.outerHTML || '';
+                    const oldContainer = document.getElementById('contenedorLecciones');
+
+                    if (oldContainer) {
+                         oldContainer.outerHTML = newContainerContent;
+                    } else {
+                        // Si el contenedor no existe (porque estaba vacío), recarga la página completamente o inserta el nuevo HTML
+                        window.location.reload();
+                        return;
+                    }
+
+                    attachEventListeners(); // Re-adjunta los eventos a los nuevos botones
                 } catch (error) {
                     Swal.fire('Error', error.message, 'error');
                 }
@@ -226,7 +371,7 @@
                         text: result.message,
                         icon: 'success',
                     }).then(() => {
-                        recargarTablaLecciones(); // Recarga la tabla de lecciones en lugar de la página completa
+                        recargarContenedorLecciones(); // Recarga el contenedor de cards
                         bootstrap.Modal.getInstance(crearModalEl).hide();
                         crearForm.reset();
                     });
@@ -251,7 +396,7 @@
                         document.getElementById('Editar_ModuloId').value = leccion.moduloId;
                         document.getElementById('Editar_Titulo').value = leccion.titulo;
                         document.getElementById('Editar_Orden').value = leccion.orden;
-                        document.getElementById('Editar_UrlVideo').value = leccion.urlVideo;
+                        document.getElementById('Editar_UrlVideo').value = leccion.urlVideo || '';
                         // Carga el contenido en el editor de TinyMCE
                         tinymce.get('Editar_Contenido').setContent(leccion.contenido || '');
                         document.getElementById('editar-leccion-validation-errors').classList.add('d-none');
@@ -294,7 +439,7 @@
                         text: result.message,
                         icon: 'success',
                     }).then(() => {
-                        recargarTablaLecciones(); // Recarga la tabla de lecciones en lugar de la página completa
+                        recargarContenedorLecciones(); // Recarga el contenedor de cards
                         bootstrap.Modal.getInstance(editarModalEl).hide();
                     });
                 } else {
@@ -303,27 +448,48 @@
             });
 
             function attachEventListeners() {
+                // Re-adjunta los listeners para los botones de eliminar después de recargar el contenedor
                 document.querySelectorAll('.eliminar-btn').forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        const form = this.closest('form');
-                        Swal.fire({
-                            title: '¿Estás seguro?',
-                            text: "¡No podrás revertir esto!",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Sí, ¡bórralo!',
-                            cancelButtonText: 'Cancelar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                form.submit();
-                            }
-                        });
-                    });
+                    button.removeEventListener('click', handleEliminarClick); // Remueve el listener previo
+                    button.addEventListener('click', handleEliminarClick); // Adjunta el nuevo listener
+                });
+
+                 // Re-adjunta los listeners para los botones de editar después de recargar el contenedor
+                document.querySelectorAll('.editar-btn').forEach(button => {
+                    button.removeEventListener('click', handleEditarClick); // Remueve el listener previo
+                    button.addEventListener('click', handleEditarClick); // Adjunta el nuevo listener
                 });
             }
+
+            function handleEliminarClick(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¡No podrás revertir esto!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6a6a6a',
+                    confirmButtonText: 'Sí, ¡bórralo!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            }
+
+            // Nota: El listener para 'show.bs.modal' en el modal de edición se mantiene porque usa delegación de eventos de Bootstrap,
+            // pero para los botones que no están en el DOM al inicio (como los de eliminar después de recargar),
+            // es mejor re-adjuntar el evento de forma explícita, o delegarlo si es posible.
+            // Para fines de este código, re-adjuntamos tanto 'eliminar' como 'editar' para seguridad.
+            function handleEditarClick(e) {
+                // No hace falta añadir lógica aquí si solo abre el modal.
+                // La lógica principal de carga de datos está en el listener de `show.bs.modal` de Bootstrap.
+            }
+
+            // Llamar al adjuntar eventos al inicio
             attachEventListeners();
         });
     </script>

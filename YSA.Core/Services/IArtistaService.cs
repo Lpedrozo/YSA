@@ -19,6 +19,7 @@ namespace YSA.Core.Services
         Task AgregarFotoPortafolioAsync(int artistaId, Stream fileStream, string fileName, string titulo);
         Task<string> EliminarFotoPortafolioAsync(int fotoId);
         Task<Artista> ObtenerArtistaPorUsuarioIdAsync(string userId);
+        Task<(Artista Artista, List<ArtistaFoto> Fotos)> ObtenerArtistaYPortafolioAsync(int artistaId);
 
     }
 }

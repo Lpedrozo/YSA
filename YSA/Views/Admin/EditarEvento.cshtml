@@ -2,67 +2,135 @@
 
 @{
     ViewData["Title"] = "Editar Evento";
+    // Si usas TempData para la URL existente, es mejor moverla al ViewModel o
+    // usar un Input Hidden aquí para la URL, para evitar perder el valor en recargas.
+    // Asumo que tienes una propiedad UrlImagenExistente en tu ViewModel para esto.
+    string currentImageUrl = Model.UrlImagenExistente ?? TempData["UrlImagenExistente"]?.ToString();
 }
 
-<h1>Editar Evento</h1>
-<hr />
-<div class="row">
-    <div class="col-md-6">
+<style>
+    .form-container {
+        max-width: 800px; /* Limita el ancho del formulario */
+        margin: 0 auto; /* Centra el contenedor */
+        padding: 2rem;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-group label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control:focus {
+        border-color: #000;
+        box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+    }
+
+    .main-btn {
+        background-color: black;
+        border-color: black;
+        transition: background-color 0.3s;
+    }
+
+        .main-btn:hover {
+            background-color: #333;
+            border-color: #333;
+        }
+
+    .current-image-preview {
+        max-height: 200px; /* Altura máxima para la imagen de previsualización */
+        width: auto;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="container py-4">
+    <h1 class="fw-bold mb-4 text-center">
+        <i class="fas fa-edit me-2 text-primary"></i> @ViewData["Title"]
+    </h1>
+    <hr class="mb-5" />
+
+    <div class="form-container pb-5">
         <form asp-action="EditarEvento" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
             <input type="hidden" asp-for="Id" />
 
-            <div class="form-group mb-3">
-                <label asp-for="Titulo" class="control-label"></label>
-                <input asp-for="Titulo" class="form-control" />
-                <span asp-validation-for="Titulo" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-6">
+
+                    <div class="form-group mb-4">
+                        <label asp-for="Titulo" class="control-label"></label>
+                        <input asp-for="Titulo" class="form-control form-control-lg" placeholder="Ej: Webinar de Acuarelas Pro" />
+                        <span asp-validation-for="Titulo" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="TipoEventoId" class="control-label"></label>
+                        <select asp-for="TipoEventoId" class="form-select" asp-items="@Model.TiposEventoDisponibles">
+                            <option value="">-- Seleccione un tipo --</option>
+                        </select>
+                        <span asp-validation-for="TipoEventoId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="Lugar" class="control-label"></label>
+                        <input asp-for="Lugar" class="form-control" placeholder="Ej: Enlace de Zoom, o Dirección Física" />
+                        <span asp-validation-for="Lugar" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-check form-switch mb-4 mt-4">
+                        <input class="form-check-input" type="checkbox" role="switch" asp-for="EsDestacado" id="EsDestacadoSwitch" />
+                        <label class="form-check-label" for="EsDestacadoSwitch">
+                            <i class="fas fa-star text-warning me-1"></i> @Html.DisplayNameFor(model => model.EsDestacado)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="form-group mb-4">
+                        <label asp-for="FechaEvento" class="control-label"></label>
+                        <input asp-for="FechaEvento" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="FechaEvento" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="ImagenPortada" class="control-label">Cambiar Imagen de Portada</label>
+                        <input asp-for="ImagenPortada" type="file" class="form-control" accept="image/*" />
+                        <span asp-validation-for="ImagenPortada" class="text-danger"></span>
+
+                        @if (!string.IsNullOrEmpty(currentImageUrl))
+                        {
+                            <p class="text-muted small mt-2 mb-1">Imagen actual:</p>
+                            <img src="@currentImageUrl" alt="Imagen del evento" class="img-fluid current-image-preview" />
+                            <small class="form-text text-muted">Sube un nuevo archivo para reemplazar la imagen actual.</small>
+                        }
+                    </div>
+
+                </div>
             </div>
 
-            <div class="form-group mb-3">
+            <div class="form-group mb-4">
                 <label asp-for="Descripcion" class="control-label"></label>
-                <textarea asp-for="Descripcion" class="form-control"></textarea>
+                <textarea asp-for="Descripcion" class="form-control" rows="5" id="DescripcionTextarea" maxlength="500" placeholder="Describe brevemente de qué tratará el evento, quién lo imparte y los objetivos."></textarea>
+                <div class="text-end text-muted small mt-1">
+                    <span id="charCount">@Model.Descripcion?.Length ?? 0</span>/500 caracteres
+                </div>
                 <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="FechaEvento" class="control-label"></label>
-                <input asp-for="FechaEvento" class="form-control" />
-                <span asp-validation-for="FechaEvento" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Lugar" class="control-label"></label>
-                <input asp-for="Lugar" class="form-control" />
-                <span asp-validation-for="Lugar" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="TipoEventoId" class="control-label"></label>
-                <select asp-for="TipoEventoId" class="form-control" asp-items="@Model.TiposEventoDisponibles">
-                    <option value="">-- Seleccione un tipo --</option>
-                </select>
-                <span asp-validation-for="TipoEventoId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="ImagenPortada" class="control-label"></label>
-                <input asp-for="ImagenPortada" type="file" class="form-control" />
-                <span asp-validation-for="ImagenPortada" class="text-danger"></span>
-                @if (TempData["UrlImagenExistente"] != null)
-                {
-                    <p class="text-muted mt-2">Imagen actual:</p>
-                    <img src="@TempData["UrlImagenExistente"]" alt="Imagen del evento" class="img-thumbnail" style="max-height: 150px;" />
-                }
-            </div>
-
-            <div class="form-group form-check mb-3">
-                <input class="form-check-input" asp-for="EsDestacado" />
-                <label class="form-check-label" asp-for="EsDestacado"></label>
-            </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                <a asp-action="GestionarEventos" class="btn btn-secondary">Cancelar</a>
+            <div class="form-group text-center mt-5">
+                <button type="submit" class="btn main-btn text-white btn-lg shadow-sm me-3">
+                    <i class="fas fa-save me-2"></i> Guardar Cambios
+                </button>
+                <a asp-action="GestionarEventos" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-arrow-left me-2"></i> Volver a la Lista
+                </a>
             </div>
         </form>
     </div>
@@ -72,4 +140,41 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        // Script para contador de caracteres en la descripción
+        document.addEventListener('DOMContentLoaded', function () {
+            var textarea = document.getElementById('DescripcionTextarea');
+            var charCount = document.getElementById('charCount');
+
+            if (textarea && charCount) {
+                // Función para actualizar el contador
+                function updateCharCount() {
+                    charCount.textContent = textarea.value.length;
+                }
+
+                // Escuchar cambios
+                textarea.addEventListener('input', updateCharCount);
+            }
+
+            // Forzar el input de FechaEvento a tipo datetime-local y asegurar el formato
+            var fechaEventoInput = document.getElementById('@Html.IdFor(model => model.FechaEvento)');
+            if (fechaEventoInput) {
+                fechaEventoInput.type = 'datetime-local';
+                // Si el modelo tiene valor, intentar formatearlo correctamente para el input
+                if (fechaEventoInput.value && !fechaEventoInput.value.includes('T')) {
+                    // Si viene en formato solo fecha o algo distinto, lo intentamos corregir al formato local-datetime
+                    var date = new Date(fechaEventoInput.value);
+                    if (!isNaN(date)) {
+                        const pad = (num) => num.toString().padStart(2, '0');
+                        const year = date.getFullYear();
+                        const month = pad(date.getMonth() + 1);
+                        const day = pad(date.getDate());
+                        const hours = pad(date.getHours());
+                        const minutes = pad(date.getMinutes());
+                        fechaEventoInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+                    }
+                }
+            }
+        });
+    </script>
 }

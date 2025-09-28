@@ -4,148 +4,174 @@
 }
 
 <style>
+    /* ------------------------------------- */
+    /* 1. Paleta Monocromática               */
+    /* ------------------------------------- */
     :root {
-        --color-primary: #8e44ad;
-        --color-secondary: #2c3e50;
-        --color-accent: #e74c3c;
-        --color-background: #f4f7f6;
-        --color-text-dark: #34495e;
-        --color-text-light: #ecf0f1;
+        --color-primary-action: #000000; /* Negro para acentos y CTA */
+        --color-secondary: #343a40; /* Gris oscuro para títulos */
+        --color-accent: #666666; /* Nuevo: Gris medio para bordes o detalles de cards */
+        --color-background: #f8f8f8; /* Fondo muy claro */
+        --color-card-bg: #ffffff; /* Blanco para tarjetas */
+        --color-text-dark: #212529; /* Texto principal */
+        --color-text-light: #ffffff; /* Texto sobre fondo oscuro */
+        --color-border: #ced4da; /* Borde y separadores */
+        --color-alert: #dc3545; /* Rojo para errores/alertas */
     }
 
     body {
-        font-family: 'Poppins', sans-serif;
+        font-family: 'Poppins', sans-serif; /* Usamos Poppins para mantener consistencia si vienes de la otra vista */
         background-color: var(--color-background);
         color: var(--color-text-dark);
     }
 
+    /* ------------------------------------- */
+    /* 2. Hero Section                       */
+    /* ------------------------------------- */
     .hero-section {
-        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/diseño/grupotatuajes.jpg');
+        /* Toma el 100% del ancho por defecto */
+        background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/diseño/HeaderAcademia.jpg');
         background-size: cover;
         background-position: center;
         height: 50vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        color: var(--color-text-light);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
     }
 
     .hero-title {
-        font-size: 3rem;
+        font-size: 3.5rem;
         font-weight: 700;
         text-align: center;
     }
 
+    /* ------------------------------------- */
+    /* 3. Títulos de Sección                 */
+    /* ------------------------------------- */
     .section-title {
         font-size: 2.5rem;
         font-weight: 700;
         color: var(--color-secondary);
-        border-bottom: 3px solid var(--color-primary);
+        border-bottom: 3px solid var(--color-primary-action);
         padding-bottom: 0.5rem;
         margin-bottom: 2rem;
         display: inline-block;
     }
 
+    /* ------------------------------------- */
+    /* 4. Tarjetas de Contenido (Comunes)    */
+    /* ------------------------------------- */
     .card {
         border-radius: 1rem;
-        border: none;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e0e0e0; /* Borde sutil, similar a la revista */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05); /* Sombra suave */
         transition: all 0.3s ease-in-out;
         overflow: hidden;
-        background-color: #fff;
+        background-color: var(--color-card-bg);
         height: 100%;
         text-decoration: none;
         color: inherit;
     }
 
         .card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px) scale(1.01); /* Movimiento más sutil */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
     .card-img-top {
-        height: 250px;
+        height: 250px; /* Incrementamos la altura para un mejor aspecto */
         object-fit: cover;
         width: 100%;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .card-body .badge {
+        background-color: var(--color-primary-action) !important;
+        color: var(--color-text-light) !important;
+        font-weight: 600;
+    }
+
+    /* ------------------------------------- */
+    /* 5. Carrusel                           */
+    /* ------------------------------------- */
+    .carousel-item {
+        padding: 0 1rem; /* Añade padding a los lados dentro del carrusel */
     }
 
     .carousel-control-prev-icon,
     .carousel-control-next-icon {
-        background-color: var(--color-primary);
+        background-color: var(--color-primary-action);
         border-radius: 50%;
         padding: 1.5rem;
     }
 
-    .about-us-section {
-        background-color: var(--color-background);
-        width: 100%;
-        padding: 4rem 0;
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 5%;
+    }
+
+
+    /* ------------------------------------- */
+    /* 6. Bloque de Contexto (Nuevo Estilo)  */
+    /* ------------------------------------- */
+    .context-block {
+        padding: 1.5rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border: 1px solid #ddd;
         border-radius: 1rem;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+        background-color: #f7f7f7; /* Un gris muy claro para diferenciar el bloque */
     }
 
-    .icon-card {
-        border: none;
-        background: none;
-    }
-
-        .icon-card .card-body {
-            padding: 2rem;
-            border: 2px solid var(--color-primary);
-            border-radius: 1rem;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .icon-card:hover .card-body {
-            background-color: var(--color-primary);
-            color: var(--color-text-light);
-        }
-
-        .icon-card:hover .fa-3x, .icon-card:hover .h5 {
-            color: var(--color-text-light) !important;
-        }
-
-        .icon-card .h5 {
+        .context-block h3 {
+            font-weight: 700;
             color: var(--color-secondary);
-            transition: color 0.3s ease-in-out;
+            margin-bottom: 1rem;
         }
 
-    .history-section {
-        background-color: #f0f0f5;
-        border-radius: 1rem;
-        padding: 3rem;
-    }
+        .context-block p {
+            color: var(--color-text-dark);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
 
+    /* ------------------------------------- */
+    /* 7. Artistas (Ajuste para carrusel)    */
+    /* ------------------------------------- */
     .artist-card-img {
-        width: 100%;
-        height: 200px;
+        height: 250px; /* Igual que card-img-top */
         object-fit: cover;
+        width: 100%;
         border-top-left-radius: 1rem;
         border-top-right-radius: 1rem;
     }
 
-    .artist-card {
-        position: relative;
-        overflow: hidden;
-    }
-
+    /* Eliminar el artist-overlay original si ya no se usa, o ajustarlo si es necesario */
     .artist-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
-        color: white;
-        padding: 1rem;
-        text-align: center;
-        opacity: 1;
-        transition: opacity 0.3s ease-in-out;
+        display: none; /* Ocultamos el overlay ya que la información irá en el body */
     }
 
-    .artist-card:hover .artist-overlay {
-        opacity: 0;
+    /* Estilo para que la tarjeta de artista sea clickable */
+    .artist-card:hover {
+        cursor: pointer;
     }
+
+    .social-icons-home a {
+        color: var(--color-secondary); /* Gris oscuro/negro para que combine con el texto de la tarjeta */
+        font-size: 1.5rem;
+        margin: 0 0.5rem;
+        transition: color 0.3s;
+    }
+
+        .social-icons-home a:hover {
+            color: var(--color-primary-action); /* Negro puro al hacer hover */
+        }
+
 </style>
 
 <div class="hero-section">
@@ -153,12 +179,25 @@
 </div>
 
 <div class="container py-5">
-    <div class="row mb-5">
-        <div class="col-12 text-center">
+
+    <div class="row mb-5 align-items-center">
+        <div class="col-12 text-center mb-4">
             <h2 class="section-title">Eventos de la Academia</h2>
-            <p class="lead text-muted">Webinars, talleres y encuentros exclusivos para nuestra comunidad.</p>
         </div>
-        <div class="col-12">
+
+        <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+            <div class="context-block">
+                <h3 class="text-center">Aprende y Conéctate</h3>
+                <p class="text-center">
+                    Mantente al día con nuestros webinars, talleres y encuentros exclusivos** diseñados para potenciar tus habilidades artísticas. Es la oportunidad perfecta para interactuar con expertos y otros miembros de la comunidad.
+                </p>
+                <p class="small text-muted mt-2 text-center">
+                    ¡No te pierdas el próximo encuentro!
+                </p>
+            </div>
+        </div>
+
+        <div class="col-lg-9 col-md-8">
             <div id="eventosCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     @{
@@ -174,12 +213,12 @@
                                 <div class="row g-4">
                                     @foreach (var evento in Model.EventosAcademia.Skip(i * itemsPerSlide).Take(itemsPerSlide))
                                     {
-                                        <div class="col">
+                                        <div class="col-lg-4 col-md-6">
                                             <a href="#" class="card h-100 shadow-sm">
                                                 <img src="@Url.Content(evento.UrlImagen)" class="card-img-top" alt="@evento.Titulo">
                                                 <div class="card-body">
                                                     <h5 class="card-title">@evento.Titulo</h5>
-                                                    <p class="card-text">@evento.FechaEvento.ToString("dd MMMM yyyy")</p>
+                                                    <p class="card-text text-muted">@evento.FechaEvento.ToString("dd MMMM yyyy")</p>
                                                     <span class="badge bg-primary text-white">@evento.Lugar</span>
                                                 </div>
                                             </a>
@@ -198,71 +237,110 @@
                         </div>
                     }
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#eventosCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#eventosCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Siguiente</span>
-                </button>
+                @if (totalSlidesEvents > 1)
+                {
+                    <button class="carousel-control-prev" type="button" data-bs-target="#eventosCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#eventosCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Siguiente</span>
+                    </button>
+                }
             </div>
         </div>
     </div>
 
-    <hr class="my-5" />
+    <hr class="my-5" style="border-top: 1px solid var(--color-border);" />
 
-    <div class="row mb-5">
-        <div class="col-12 text-center">
+    <div class="row mb-5 align-items-center">
+        <div class="col-12 text-center mb-4">
             <h2 class="section-title">Nuestros Artistas</h2>
-            <p class="lead text-muted">Conoce a los talentosos creadores que forman parte de nuestra comunidad.</p>
         </div>
-        <div class="col-12">
-            <div class="row g-4">
-                @if (Model.Artistas != null && Model.Artistas.Any())
-                {
-                    @foreach (var artista in Model.Artistas)
+
+        <div class="col-lg-9 col-md-8 order-md-1">
+            <div id="artistasCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @{
+                        int itemsPerSlideArtistas = 4;
+                        int totalArtists = Model.Artistas?.Count() ?? 0;
+                        int totalSlidesArtistas = (int)Math.Ceiling(totalArtists / (double)itemsPerSlideArtistas);
+                    }
+                    @if (totalArtists > 0)
                     {
-                        <div class="col-md-3">
-                            <a href="#" class="card artist-card h-100 shadow-sm">
-                                <img src="@(string.IsNullOrEmpty(artista.Usuario?.UrlImagen) ? "https://via.placeholder.com/400x400?text=Sin+Foto" : Url.Content(artista.Usuario.UrlImagen))" class="artist-card-img" alt="Foto de @artista.Usuario.Nombre" />
-                                <div class="artist-overlay">
-                                    <h5 class="card-title">@artista.Usuario.Nombre @artista.Usuario.Apellido</h5>
+                        @for (int i = 0; i < totalSlidesArtistas; i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <div class="row g-4">
+                                    @foreach (var artista in Model.Artistas.Skip(i * itemsPerSlideArtistas).Take(itemsPerSlideArtistas))
+                                    {
+                                        <div class="col-lg-3 col-md-6">
+                                            <a class="card artist-card h-100 shadow-sm" data-artista-id="@artista.Id">
+                                                <img src="@(string.IsNullOrEmpty(artista.Usuario?.UrlImagen) ? "https://via.placeholder.com/400x400?text=Sin+Foto" : Url.Content(artista.Usuario.UrlImagen))"
+                                                     class="card-img-top" alt="Foto de @artista.Usuario.Nombre" />
+                                                <div class="card-body text-center">
+                                                    <h5 class="card-title">@artista.Usuario.Nombre @artista.Usuario.Apellido</h5>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    }
                                 </div>
-                            </a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="carousel-item active">
+                            <div class="alert alert-info text-center" role="alert">
+                                No hay artistas destacados para mostrar.
+                            </div>
                         </div>
                     }
-                }
-                else
+                </div>
+                @if (totalSlidesArtistas > 1)
                 {
-                    <div class="col-12">
-                        <div class="alert alert-info text-center" role="alert">
-                            No hay artistas destacados para mostrar.
-                        </div>
-                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#artistasCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#artistasCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Siguiente</span>
+                    </button>
                 }
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 order-md-2 mt-4 mt-md-0">
+            <div class="context-block text-center">
+                <h3>Talento y Perfiles</h3>
+                <p>
+                    Explora los portafolios de los creadores más brillantes de nuestra comunidad. Cada artista es una fuente de inspiración y creatividad única. Conoce sus obras y sus historias.
+                </p>
             </div>
         </div>
     </div>
 
-    <hr class="my-5" />
+</div>
 
-    <div class="about-us-section text-center">
+<div class="about-us-section text-center pb-5">
+    <div class="container-fluid">
         <h2 class="section-title">Quiénes Somos</h2>
         <div class="row g-4 justify-content-center">
-            <div class="col-md-3">
+            <div class="col-lg-3 col-md-6">
                 <div class="card icon-card h-100">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                        <i class="fas fa-bullseye fa-3x text-primary mb-3"></i>
+                        <i class="fas fa-bullseye fa-3x mb-3"></i>
                         <h3 class="h5">Nuestra Misión</h3>
                         <p>Facilitar el aprendizaje y la expresión artística, conectando a creadores y entusiastas en una comunidad vibrante y colaborativa.</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-lg-3 col-md-6">
                 <div class="card icon-card h-100">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                        <i class="fas fa-gem fa-3x text-primary mb-3"></i>
+                        <i class="fas fa-gem fa-3x mb-3"></i>
                         <h3 class="h5">Nuestros Valores</h3>
                         <ul class="list-unstyled mb-0">
                             <li>Pasión por el Arte</li>
@@ -273,20 +351,25 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-lg-3 col-md-6">
                 <div class="card icon-card h-100">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                        <i class="fas fa-map-marker-alt fa-3x text-primary mb-3"></i>
+                        <i class="fas fa-map-marker-alt fa-3x mb-3"></i>
                         <h3 class="h5">Ubicación y Contacto</h3>
                         <p>Av. Principal #123, Ciudad Creativa, País Imaginario</p>
                         <p>Email: contacto@yosoyarte.com</p>
                         <p class="mb-0">Tel: +58 123 456 7890</p>
+                        <div class="social-icons-home mt-2">
+                            <a href="URL_TU_INSTAGRAM" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="URL_TU_FACEBOOK" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="URL_TU_TWITTER" target="_blank" title="Twitter/X"><i class="fab fa-twitter"></i></a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="mt-5 history-section">
+        <div class="mt-5 history-section pb-5">
             <h3 class="section-title">Nuestra Historia</h3>
             <div class="row justify-content-center">
                 <div class="col-lg-8">
@@ -301,3 +384,22 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Lógica de Redirección para las tarjetas de Artistas
+            $('.artist-card').on('click', function (e) {
+                // Evita que el enlace de la etiqueta <a> se siga, si lo hubiere
+                e.preventDefault();
+                const artistaId = $(this).data('artista-id');
+                if (artistaId) {
+                    // Redirige al path Artista/Portafolio/{artistaId}
+                    // Asume que tienes un controlador llamado 'Artista' con una acción 'Portafolio'
+                    window.location.href = `@Url.Action("Detalles", "Artista", new { id = "" })/` + artistaId;
+                }
+            });
+        });
+    </script>
+}

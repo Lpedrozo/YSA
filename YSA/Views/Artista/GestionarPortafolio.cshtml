@@ -4,44 +4,129 @@
     ViewData["Title"] = "Gestionar Portafolio";
 }
 
-<h1 class="text-center">Gestionar Portafolio</h1>
-<hr />
+<style>
+    /* ---------------------------------- */
+    /* Estilos Generales y Contenedor */
+    /* ---------------------------------- */
+    .portafolio-manager {
+        max-width: 900px; /* Limita el ancho para centrar y ordenar */
+        margin: 0 auto;
+        padding-top: 2rem;
+    }
 
-<div class="container mt-5">
-    <div class="row mb-4">
-        <div class="col-12 text-center">
-            <h3>Subir nueva foto</h3>
-            <form id="uploadForm" enctype="multipart/form-data">
-                <div class="form-group mb-3">
-                    <label for="titulo" class="form-label">Título de la Foto (opcional)</label>
-                    <input type="text" class="form-control" id="titulo" name="titulo" maxlength="255">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="archivo" class="form-label">Selecciona una imagen</label>
-                    <input type="file" class="form-control" id="archivo" name="archivo" accept="image/*" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Subir Foto</button>
-            </form>
-            <div id="uploadMessage" class="mt-3"></div>
+    /* ---------------------------------- */
+    /* Sección de Subida */
+    /* ---------------------------------- */
+    .upload-section {
+        background-color: #f8f9fa; /* Gris claro sutil */
+        border: 1px dashed #ced4da; /* Borde punteado para el área de carga */
+        border-radius: 12px;
+        padding: 30px;
+        transition: border-color 0.3s;
+    }
+
+        .upload-section:hover {
+            border-color: #000; /* Borde oscuro al pasar el ratón */
+        }
+
+    .upload-btn {
+        background-color: black;
+        border-color: black;
+        transition: background-color 0.3s;
+    }
+
+        .upload-btn:hover {
+            background-color: #333;
+            border-color: #333;
+        }
+
+    /* ---------------------------------- */
+    /* Galería de Fotos (Cards) */
+    /* ---------------------------------- */
+    .foto-card {
+        border: none;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+        .foto-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .foto-card img {
+            height: 250px; /* Altura fija para todas las imágenes */
+            object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
+            width: 100%;
+            transition: transform 0.3s;
+        }
+
+        .foto-card:hover img {
+            transform: scale(1.05); /* Zoom ligero al pasar el ratón */
+        }
+
+    .card-title-portafolio {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #333;
+    }
+</style>
+
+
+<div class="portafolio-manager">
+    <h1 class="text-center fw-bold mb-4">Gestionar mi Portafolio</h1>
+    <hr class="mb-5" />
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="h4 mb-4 fw-bold text-center">
+                <i class="fas fa-upload me-2"></i>Subir nueva Obra
+            </h2>
+            <div class="upload-section text-center">
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6 form-group mb-3">
+                            <label for="titulo" class="form-label fw-semibold">Título de la Obra</label>
+                            <input type="text" class="form-control" id="titulo" name="titulo" maxlength="100" placeholder="Ej: Retrato en Carboncillo">
+                        </div>
+                        <div class="col-md-6 form-group mb-3">
+                            <label for="archivo" class="form-label fw-semibold">Selecciona una imagen (PNG o JPG)</label>
+                            <input type="file" class="form-control" id="archivo" name="archivo" accept="image/png, image/jpeg, image/jpg" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn upload-btn text-white mt-3">
+                        <i class="fas fa-plus-circle me-2"></i> Subir al Portafolio
+                    </button>
+                </form>
+                <div id="uploadMessage" class="mt-3 fw-semibold"></div>
+            </div>
         </div>
     </div>
 
-    <hr />
+    <h2 class="h4 mb-4 fw-bold text-center">
+        <i class="fas fa-images me-2"></i> Mi Portafolio Actual
+    </h2>
 
-    <h3 class="text-center">Tus fotos del portafolio</h3>
-    <div id="portafolio-container" class="row">
+    <div id="portafolio-container" class="row g-4 pb-5">
         @if (Model.Fotos != null && Model.Fotos.Any())
         {
             @foreach (var foto in Model.Fotos)
             {
-                <div class="col-md-4 mb-4 foto-item" data-id="@foto.Id">
-                    <div class="card shadow-sm">
-                        <img src="@Url.Content(foto.UrlImagen)" class="card-img-top img-fluid" alt="Imagen de portafolio">
-                        <div class="card-body">
-                            <h5 class="card-title">@foto.Titulo</h5>
+                <div class="col-md-6 col-lg-4 foto-item pb-5" data-id="@foto.Id">
+                    <div class="card foto-card shadow-sm h-100">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#fotoModal" data-foto-url="@Url.Content(foto.UrlImagen)" data-foto-titulo="@foto.Titulo" class="d-block">
+                            <img src="@Url.Content(foto.UrlImagen)" class="card-img-top" alt="@foto.Titulo">
+                        </a>
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <h5 class="card-title card-title-portafolio mb-3">@foto.Titulo</h5>
+
                             <form asp-controller="Artista" asp-action="EliminarFoto" method="post" class="eliminar-form">
                                 <input type="hidden" name="fotoId" value="@foto.Id" />
-                                <button type="submit" class="btn btn-danger btn-sm w-100">Eliminar</button>
+                                <button type="submit" class="btn btn-outline-danger btn-sm w-100 delete-btn">
+                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -50,21 +135,62 @@
         }
         else
         {
-            <div class="col-12 text-center">
-                <p>Aún no tienes fotos en tu portafolio.</p>
+            <div class="col-12 text-center alert alert-secondary p-4">
+                <i class="fas fa-info-circle me-2"></i>
+                Aún no tienes ninguna obra en tu portafolio. ¡Sube la primera ahora!
             </div>
         }
     </div>
 </div>
 
+<div class="modal fade" id="fotoModal" tabindex="-1" aria-labelledby="fotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fotoModalLabel">Título de la Obra</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-0">
+                <img id="modalImage" src="" class="img-fluid" alt="Vista ampliada" style="max-height: 80vh; width: auto;">
+            </div>
+            <div class="modal-footer justify-content-start">
+                <p class="mb-0 text-muted">Haga clic en la imagen para cerrarla o use el botón de cierre.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-            // Manejo de la subida de fotos
+
+            // ----------------------------------------------------
+            // 1. Manejo del Modal/Carrusel (para ver imagen grande)
+            // ----------------------------------------------------
+            var fotoModal = document.getElementById('fotoModal');
+            fotoModal.addEventListener('show.bs.modal', function (event) {
+                // Botón que disparó el modal
+                var button = event.relatedTarget;
+                var titulo = button.getAttribute('data-foto-titulo');
+                var url = button.getAttribute('data-foto-url');
+
+                var modalTitle = fotoModal.querySelector('.modal-title');
+                var modalImage = fotoModal.querySelector('#modalImage');
+
+                modalTitle.textContent = titulo;
+                modalImage.src = url;
+            });
+
+            // ----------------------------------------------------
+            // 2. Manejo de la subida de fotos (AJAX)
+            // ----------------------------------------------------
             $('#uploadForm').on('submit', function (e) {
                 e.preventDefault();
                 var formData = new FormData(this);
+                var $btn = $(this).find('button[type="submit"]');
+                $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i> Subiendo...');
 
                 $.ajax({
                     url: '@Url.Action("SubirFoto", "Artista")',
@@ -74,43 +200,90 @@
                     contentType: false,
                     success: function (response) {
                         var messageDiv = $('#uploadMessage');
+                        $btn.prop('disabled', false).html('<i class="fas fa-plus-circle me-2"></i> Subir al Portafolio');
+
                         if (response.success) {
-                            messageDiv.text(response.message).removeClass('text-danger').addClass('text-success');
-                            location.reload(); // Recarga la página para mostrar la nueva foto
+                            // Usamos SweetAlert2 (si está cargado en _Layout) para mejor UX
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire('¡Éxito!', 'La foto se subió con éxito.', 'success').then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                messageDiv.text("Foto subida con éxito.").removeClass('text-danger').addClass('text-success');
+                                location.reload();
+                            }
                         } else {
-                            var errorMsg = response.errors.imagenArchivo || "Error desconocido.";
+                            var errorMsg = response.errors.imagenArchivo || "Error desconocido al subir.";
                             messageDiv.text(errorMsg).removeClass('text-success').addClass('text-danger');
                         }
                     },
                     error: function (xhr, status, error) {
+                        $btn.prop('disabled', false).html('<i class="fas fa-plus-circle me-2"></i> Subir al Portafolio');
                         $('#uploadMessage').text("Ocurrió un error en el servidor.").removeClass('text-success').addClass('text-danger');
                     }
                 });
             });
 
-            // Manejo de la eliminación de fotos
+            // ----------------------------------------------------
+            // 3. Manejo de la eliminación de fotos (AJAX con confirmación)
+            // ----------------------------------------------------
             $('#portafolio-container').on('submit', '.eliminar-form', function (e) {
                 e.preventDefault();
                 var form = $(this);
-                var fotoId = form.find('input[name="fotoId"]').val();
 
-                if (confirm('¿Estás seguro de que quieres eliminar esta foto?')) {
-                    $.ajax({
-                        url: '@Url.Action("EliminarFoto", "Artista")',
-                        type: 'POST',
-                        data: form.serialize(),
-                        success: function (response) {
-                            form.closest('.foto-item').fadeOut('slow', function() {
-                                $(this).remove();
-                                if ($('#portafolio-container .foto-item').length === 0) {
-                                    $('#portafolio-container').html('<div class="col-12 text-center"><p>Aún no tienes fotos en tu portafolio.</p></div>');
+                // Usamos SweetAlert2 para una mejor confirmación visual
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "¡Esta acción es irreversible y la foto se eliminará permanentemente!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Sí, ¡Eliminar!',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: '@Url.Action("EliminarFoto", "Artista")',
+                                type: 'POST',
+                                data: form.serialize(),
+                                success: function (response) {
+                                    form.closest('.foto-item').fadeOut('slow', function() {
+                                        $(this).remove();
+                                        Swal.fire('¡Eliminada!', 'La obra ha sido eliminada de tu portafolio.', 'success');
+                                        // Comprueba si quedan fotos y actualiza el mensaje si es necesario
+                                        if ($('#portafolio-container .foto-item').length === 0) {
+                                            $('#portafolio-container').html('<div class="col-12 text-center alert alert-secondary p-4"><i class="fas fa-info-circle me-2"></i> Aún no tienes ninguna obra en tu portafolio. ¡Sube la primera ahora!</div>');
+                                        }
+                                    });
+                                },
+                                error: function (xhr, status, error) {
+                                    Swal.fire('Error', 'Ocurrió un error al intentar eliminar la foto.', 'error');
                                 }
                             });
-                        },
-                        error: function (xhr, status, error) {
-                            alert("Ocurrió un error al intentar eliminar la foto.");
                         }
-                    });
+                    })
+                } else {
+                    // Fallback a confirmación nativa si Swal no está disponible
+                    if (confirm('¿Estás seguro de que quieres eliminar esta foto?')) {
+                         $.ajax({
+                            url: '@Url.Action("EliminarFoto", "Artista")',
+                            type: 'POST',
+                            data: form.serialize(),
+                            success: function (response) {
+                                form.closest('.foto-item').fadeOut('slow', function() {
+                                    $(this).remove();
+                                    if ($('#portafolio-container .foto-item').length === 0) {
+                                        $('#portafolio-container').html('<div class="col-12 text-center"><p>Aún no tienes fotos en tu portafolio.</p></div>');
+                                    }
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                alert("Ocurrió un error al intentar eliminar la foto.");
+                            }
+                        });
+                    }
                 }
             });
         });

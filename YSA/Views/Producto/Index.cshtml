@@ -1,17 +1,28 @@
 ﻿@model YSA.Web.Models.ViewModels.ProductosIndexViewModel
 @{
     ViewData["Title"] = "Catálogo de Productos";
+
+    // Asumo que el ViewModel ahora tendrá propiedades para Paginación/Filtros
+    var totalPaginas = Model.TotalPaginas;
+    var paginaActual = Model.PaginaActual;
+    var currentSearch = Context.Request.Query["searchString"];
 }
 
 <style>
-    /* Estilos de los carruseles anteriores para consistencia */
+    /* VARIABLES DE COLOR */
+    /* ... (Tus estilos CSS se mantienen sin cambios) ... */
     :root {
-        --color-primary: #8e44ad; /* Morado */
-        --color-secondary: #2c3e50; /* Gris Oscuro */
-        --color-accent: #e74c3c; /* Rojo */
-        --color-background: #f4f7f6; /* Gris Claro */
-        --color-text-dark: #34495e; /* Texto Oscuro */
-        --color-text-light: #ecf0f1; /* Texto Claro */
+        --color-primary: #000000; /* NEGRO PURO para acentos y CTA */
+        --color-secondary: #333333; /* Gris oscuro para títulos */
+        --color-accent: #666666; /* Gris medio para bordes o detalles */
+        --color-background: #ffffff; /* Fondo Blanco */
+        --color-card-bg: #f8f8f8; /* Gris muy claro para fondos de bloque */
+        --color-text-dark: #212529; /* Texto principal (negro) */
+        --color-text-muted: #999999; /* Texto sutil */
+        --color-text-light: #ffffff; /* Texto Claro */
+        /* Colores de estado ajustados para B/N */
+        --color-success: #333333;
+        --color-warning: #999999;
     }
 
     body {
@@ -20,73 +31,138 @@
         color: var(--color-text-dark);
     }
 
+    /* TÍTULOS */
     .section-title {
         font-size: 2.5rem;
         font-weight: 700;
-        color: var(--color-secondary);
-        border-bottom: 3px solid var(--color-primary);
+        color: var(--color-primary);
         padding-bottom: 0.5rem;
-        margin-bottom: 2rem;
+        margin-bottom: 0.5rem;
         display: inline-block;
     }
 
+    .section-subtitle {
+        color: var(--color-secondary);
+        margin-bottom: 2rem;
+        font-weight: 400;
+        font-size: 1.1rem;
+    }
+
+    /* TARJETAS DE PRODUCTO AJUSTE CRÍTICO DEL BORDE */
     .card {
-        border-radius: 1rem;
-        border: none;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        border-radius: 0.5rem;
+        border: 1px solid var(--color-accent);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease-in-out;
         overflow: hidden;
-        background-color: #fff;
+        background-color: var(--color-background);
         height: 100%;
         text-decoration: none;
         color: inherit;
     }
 
         .card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+            border-color: var(--color-primary);
         }
 
     .card-img-top {
-        height: 250px;
+        height: 300px;
         object-fit: cover;
         width: 100%;
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
     }
 
     .card-body {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
         padding: 1.5rem;
     }
 
     .card-title {
-        font-size: 1.4rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: var(--color-secondary);
-        text-align: center;
-    }
-
-    .card-text {
-        color: var(--color-text-dark);
-        font-size: 1rem;
+        font-weight: 700;
+        color: var(--color-primary);
     }
 
     .price {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         font-weight: 700;
         color: var(--color-primary);
-        margin-top: 1rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
     }
+
+    .text-muted {
+        color: var(--color-text-muted) !important;
+    }
+
+    /* BOTONES MONOCROMÁTICOS */
+    .btn {
+        font-weight: 600;
+        border-radius: 0.3rem;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+
+    .btn-primary {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: var(--color-text-light) !important;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    .btn-success {
+        background-color: var(--color-success) !important;
+        border-color: var(--color-success) !important;
+        color: var(--color-text-light) !important;
+    }
+
+        .btn-success:hover {
+            background-color: #000000 !important;
+            border-color: #000000 !important;
+        }
+
+    .btn-warning {
+        background-color: var(--color-warning) !important;
+        border-color: var(--color-warning) !important;
+        color: var(--color-text-light) !important;
+        cursor: not-allowed;
+    }
+
+    /* Alerta de no productos */
+    .alert-warning {
+        background-color: var(--color-card-bg);
+        color: var(--color-text-dark);
+        border-color: var(--color-accent);
+    }
+
+    /* Estilos de Paginación para B/N */
+    .pagination .page-item .page-link {
+        color: var(--color-secondary);
+        border: 1px solid var(--color-accent);
+        background-color: var(--color-background);
+        transition: all 0.2s;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: var(--color-primary);
+        border-color: var(--color-primary);
+        color: var(--color-text-light);
+    }
+
+    .pagination .page-item .page-link:hover {
+        background-color: var(--color-card-bg);
+        border-color: var(--color-secondary);
+        color: var(--color-primary);
+    }
+
 </style>
 
 <div class="container py-5">
     <div class="row">
-        <div class="col-12 text-center mb-5">
+        <div class="col-12 text-center mb-4">
             <h1 class="section-title">Catálogo de Productos Digitales</h1>
             <p class="section-subtitle">
                 Explora nuestra colección de libros y revistas digitales para inspirar tu arte.
@@ -94,31 +170,135 @@
         </div>
     </div>
 
+    <div class="row mb-5 justify-content-center">
+        <div class="col-lg-8">
+            <form asp-action="Index" method="get">
+                <div class="input-group">
+                    <input type="text" name="searchString" class="form-control" placeholder="Busca por título o descripción..." value="@currentSearch">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search me-2"></i> Buscar
+                    </button>
+                    @if (!string.IsNullOrEmpty(currentSearch))
+                    {
+                        <a asp-action="Index" class="btn btn-secondary" title="Limpiar Búsqueda">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    }
+                </div>
+                <input type="hidden" name="page" value="1" />
+            </form>
+        </div>
+    </div>
     @if (Model.Productos != null && Model.Productos.Any())
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach (var producto in Model.Productos)
             {
                 <div class="col">
-                    <a href="#" class="card h-100 shadow-sm">
+                    <div class="card h-100 shadow-sm">
                         <img src="@Url.Content(producto.UrlImagen)" class="card-img-top" alt="@producto.Titulo">
                         <div class="card-body">
                             <h5 class="card-title">@producto.Titulo</h5>
-                            <p class="card-text text-center">@producto.DescripcionCorta</p>
-                            <span class="price">
-                                @string.Format("{0:C}", producto.Precio)
-                            </span>
+                            <p class="card-text text-center text-secondary">@producto.DescripcionCorta</p>
+                            <span class="price">@string.Format("{0:C}", producto.Precio)</span>
                             <small class="text-muted">Por @(producto.Autor?.Usuario?.Nombre ?? "Autor Desconocido")</small>
+
+                            @if (User.Identity.IsAuthenticated && Model.ProductosCompradosIds.Contains(producto.Id))
+                            {
+                                <a asp-action="Descargar" asp-route-id="@producto.Id" class="btn btn-success w-75 mt-3">
+                                    <i class="fas fa-download me-2"></i> Descargar
+                                </a>
+                            }
+                            else if (Model.ProductosEnValidacionIds.Contains(producto.Id))
+                            {
+                                <button class="btn btn-warning w-75 mt-3" disabled>
+                                    <i class="fas fa-hourglass-half me-2"></i> En Validación
+                                </button>
+                            }
+                            else
+                            {
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <form asp-controller="Producto" asp-action="ComprarProducto" method="post" class="mt-3 w-75">
+                                        <input type="hidden" name="productoId" value="@producto.Id" />
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-shopping-cart me-2"></i> Comprar
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary w-75 mt-3">Iniciar Sesión para Comprar</a>
+                                }
+
+                            }
                         </div>
-                    </a>
+                    </div>
                 </div>
             }
         </div>
+
+        @if (totalPaginas > 1)
+        {
+            <div class="row mt-5 pb-5">
+                <div class="col-12 d-flex justify-content-center">
+                    <nav aria-label="Navegación de Productos">
+                        <ul class="pagination">
+                            <li class="page-item @(paginaActual == 1 ? "disabled" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(paginaActual - 1)" asp-route-searchString="@currentSearch" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+
+                            @for (int i = 1; i <= totalPaginas; i++)
+                            {
+                                <li class="page-item @(i == paginaActual ? "active" : "")">
+                                    <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@currentSearch">@i</a>
+                                </li>
+                            }
+
+                            <li class="page-item @(paginaActual == totalPaginas ? "disabled" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(paginaActual + 1)" asp-route-searchString="@currentSearch" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        }
+
     }
     else
     {
         <div class="alert alert-warning text-center mt-5" role="alert">
-            No hay productos disponibles en este momento.
+            No hay productos disponibles en este momento que coincidan con la búsqueda.
         </div>
     }
 </div>
+@section Scripts {
+    @{
+        // Esto asume que tienes la librería SweetAlert2 (Swal.fire) accesible globalmente
+
+        // Verifica si el indicador de éxito existe en TempData
+        var pagoRegistrado = TempData["PagoRegistrado"] as bool?;
+    }
+
+    @if (pagoRegistrado.HasValue && pagoRegistrado.Value)
+    {
+        <script>
+            // Usar un temporizador para asegurar que el DOM y las librerías se cargaron
+            $(document).ready(function() {
+                Swal.fire({
+                    title: '¡Pago Registrado!',
+                    html: 'Su comprobante ha sido subido con éxito.<br>Un administrador lo validará pronto. Le notificaremos cuando tenga acceso a sus productos.',
+                    icon: 'success',
+                    confirmButtonText: 'Entendido',
+                    customClass: {
+                        confirmButton: 'btn-primary' // Puedes usar tu clase CSS si es necesario
+                    }
+                });
+            });
+        </script>
+    }
+}

@@ -144,5 +144,34 @@ namespace YSA.Web.Controllers
             var fotos = await _artistaService.ObtenerFotosPortafolioAsync(artistaId);
             return Json(fotos);
         }
+        [HttpGet]
+        public async Task<IActionResult> Detalles(int id)
+        {
+            var (artista, fotos) = await _artistaService.ObtenerArtistaYPortafolioAsync(id);
+
+            if (artista == null)
+            {
+                return NotFound(); // Artista no encontrado
+            }
+
+            var usuario = await _userManager.FindByIdAsync(artista.UsuarioId.ToString());
+            if (usuario == null)
+            {
+                return NotFound("Usuario asociado al artista no encontrado.");
+            }
+
+            // 2. Mapear Entidades a ViewModel
+            var viewModel = new ArtistaDetallesViewModel
+            {
+                Id = artista.Id,
+                NombreCompleto = $"{usuario.Nombre} {usuario.Apellido}",
+                Biografia = artista.Biografia,
+                UrlFotoPerfil = usuario.UrlImagen,
+                Portafolio = fotos ?? new List<ArtistaFoto>(), 
+
+            };
+
+            return View(viewModel);
+        }
     }
 }

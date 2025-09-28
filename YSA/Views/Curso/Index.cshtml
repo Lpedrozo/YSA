@@ -4,53 +4,22 @@
 }
 
 <style>
-    /* Estilos globales */
+    /* Estilos globales: Esquema Claro (Light Mode) con Blanco y Negro/Gris */
     body {
         font-family: 'Inter', sans-serif;
-        background-color: #EAF3F3;
-        color: #fff;
+        background-color: #ffffff; /* Fondo blanco */
+        color: #333333; /* Texto principal gris oscuro */
     }
 
-    /* Estilos para la sección de bienvenida */
+    /* Estilos para la sección de bienvenida (MANTENIDOS, PERO NO SE USAN EN EL HTML) */
     .bienvenida-section {
-        display: flex;
-        align-items: center;
-        padding-top: 10px;
-        background-color: #f7f7f7;
+        background-color: #f7f7f7; /* Gris muy claro para el fondo de bienvenida */
         color: #000;
-        margin-bottom: 2rem;
         border-bottom: 1px solid #ddd;
     }
 
-    .bienvenida-perfil {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .bienvenida-avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background-color: #333;
-        color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 2rem;
-        font-weight: bold;
-        margin-right: 20px;
-    }
-
-    .bienvenida-info h1 {
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin: 0;
-    }
-
     .bienvenida-info p {
-        margin: 0;
-        color: #666;
+        color: white;
     }
 
     /* Estilos para el carrusel de cursos */
@@ -59,12 +28,12 @@
         height: 500px; /* Ajusta la altura del carrusel */
         background-size: cover;
         background-position: center;
-        color: #fff;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        color: #fff; /* Texto blanco sobre la imagen del carrusel */
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Sombra más fuerte para contraste */
     }
 
     .carousel-overlay {
-        background-color: rgba(0, 0, 0, 0.4); /* Fondo semi-transparente */
+        background-color: rgba(0, 0, 0, 0.4); /* Fondo semi-transparente oscuro */
         position: absolute;
         top: 0;
         left: 0;
@@ -79,15 +48,15 @@
     .card {
         transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         border-radius: 12px;
-        border: none;
-        overflow: hidden; /* Para que la imagen no se desborde del radio */
-        background-color: #fff;
-        color: #000;
+        border: 1px solid #e0e0e0; /* Borde muy sutil para tarjetas */
+        overflow: hidden;
+        background-color: #fff; /* Tarjeta blanca */
+        color: #000; /* Texto negro */
     }
 
         .card:hover {
-            transform: translateY(-5px); /* Efecto de "levantar" la tarjeta */
-            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.15) !important; /* Sombra más pronunciada */
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra visible en fondo blanco */
         }
 
     .card-img-top {
@@ -98,12 +67,12 @@
     /* Contenido de la tarjeta */
     .card-body h5 {
         font-weight: 600;
-        color: #000;
+        color: #000; /* Título negro */
     }
 
     .card-text {
         font-size: 0.9em;
-        color: #666;
+        color: #666; /* Descripción gris oscuro */
     }
 
     .card-categories {
@@ -115,20 +84,32 @@
         .card-categories .badge {
             padding: 5px 10px;
             margin-right: 5px;
-            background-color: #c49900 !important;
-            color: #000 !important;
+            background-color: #e0e0e0 !important; /* Categoría gris claro */
+            color: #333 !important;
         }
 
+    /* Títulos de sección */
+    h2 {
+        color: #333333 !important; /* Títulos en gris oscuro para el fondo blanco */
+    }
+
+    /* Líneas divisorias */
+    hr {
+        border-top: 1px solid #cccccc; /* Línea gris */
+        opacity: 1; /* Asegura que sea visible */
+    }
+
+    /* Botón de acción principal (Black/White style) */
     .btn-primary {
-        background-color: #c49900;
-        border-color: #c49900;
+        background-color: #333333; /* Gris oscuro para botón principal */
+        border-color: #333333;
         color: white;
     }
 
         .btn-primary:hover {
-            background-color: #a38200;
-            border-color: #a38200;
-            color: #000;
+            background-color: #000000; /* Negro en hover */
+            border-color: #000000;
+            color: #fff;
         }
 
     .filtro-menu {
@@ -143,21 +124,46 @@
         padding: 8px 15px;
         margin: 5px;
         text-decoration: none;
-        color: #000;
-        background-color: #fff;
+        color: #333333; /* Texto gris oscuro por defecto */
+        background-color: #f0f0f0; /* Fondo gris muy claro */
         border-radius: 20px;
         transition: background-color 0.2s, color 0.2s;
-        border: 1px solid #ddd;
+        border: 1px solid #cccccc;
     }
 
         .filtro-item a.active {
-            background-color: #c49900;
-            color: #fff;
-            border-color: #c49900;
+            background-color: #333333; /* Activo en gris oscuro */
+            color: #fff; /* Texto blanco */
+            border-color: #333333;
         }
 
-    .pagination a {
-        color: #000;
+    /* Paginación */
+    .pagination .page-link {
+        color: #333333; /* Enlaces de paginación gris oscuro */
+        border: 1px solid #cccccc;
+        background-color: #ffffff;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #333333;
+        border-color: #333333;
+        color: #fff;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #999999;
+        background-color: #f0f0f0;
+        border-color: #e0e0e0;
+    }
+    /* Placeholder para el input de búsqueda */
+    .form-control::placeholder {
+        color: #999999;
+        opacity: 1; /* Firefox */
+    }
+
+    .form-control {
+        border-color: #cccccc;
+        color: #333333;
     }
 </style>
 
@@ -180,8 +186,8 @@ else
                     <div class="carousel-item @(i == 0 ? "active" : "") carousel-item-custom" style="background-image: url('@curso.UrlImagen');">
                         <div class="carousel-overlay">
                             <div class="container text-start">
-                                <h2 class="display-4 fw-bold">@curso.Titulo</h2>
-                                <p class="lead">@curso.DescripcionCorta</p>
+                                <h2 class="display-4 fw-bold text-white">@curso.Titulo</h2>
+                                <p class="lead">@Html.Raw(curso.DescripcionCorta)</p>
                                 <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary btn-lg mt-3">Ver Curso</a>
                             </div>
                         </div>
@@ -203,8 +209,8 @@ else
     @if (Model.CursosRecomendados.Any())
     {
         <div class="container mt-5 mb-5">
-            <h2 class="mb-4 text-black">Cursos Recomendados para ti</h2>
-            <hr style="color:#000;" />
+            <h2 class="mb-4">Cursos Recomendados para ti</h2>
+            <hr />
             <div id="recomendadosCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     @{
@@ -243,7 +249,7 @@ else
                                             }
                                             <div class="card-body d-flex flex-column">
                                                 <h5 class="card-title">@curso.Titulo</h5>
-                                                <p class="card-text text-muted flex-grow-1">@curso.DescripcionCorta</p>
+                                                <p class="card-text text-muted flex-grow-1">@Html.Raw(curso.DescripcionCorta)</p>
 
                                                 @if (curso.ListaCategorias != null && curso.ListaCategorias.Any())
                                                 {
@@ -281,8 +287,8 @@ else
 
     @* Seccion para todos los cursos (con filtros y paginación) - Se carga con JSON *@
     <div class="container mt-4 mb-5">
-        <h2 class="text-center mt-5 mb-4 text-black">Explora todos los cursos</h2>
-        <hr style="color:#000;" />
+        <h2 class="text-center mt-5 mb-4">Explora todos los cursos</h2>
+        <hr />
 
         <div class="row justify-content-center mb-4">
             <div class="col-md-6">
@@ -320,13 +326,36 @@ else
 }
 
 @section Scripts {
+    @{
+        // Verifica si el indicador de éxito existe en TempData
+        var pagoRegistrado = TempData["PagoRegistrado"] as bool?;
+    }
+
+    @if (pagoRegistrado.HasValue && pagoRegistrado.Value)
+    {
+        <script>
+            // Usar un temporizador para asegurar que el DOM y las librerías se cargaron
+            $(document).ready(function() {
+                Swal.fire({
+                    title: '¡Pago Registrado!',
+                    html: 'Su comprobante ha sido subido con éxito.<br>Su pedido está en validación por parte de nuestro equipo. Le notificaremos cuando tenga acceso a sus cursos.',
+                    icon: 'success',
+                    confirmButtonText: 'Entendido',
+                    customClass: {
+                        confirmButton: 'btn-primary' // Si tienes una clase de estilo para botones primarios
+                    }
+                });
+            });
+        </script>
+    }
+
     <script>
         // Lógica de carga asíncrona de cursos desde JSON
         async function cargarCursos(page, categoria, nivel, searchString) {
             const container = document.getElementById('cursos-list-container');
 
             // Muestra un indicador de carga
-            container.innerHTML = `<div class="text-center mt-5 mb-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>`;
+            container.innerHTML = `<div class="text-center mt-5 mb-5"><div class="spinner-border text-dark" role="status"><span class="visually-hidden">Cargando...</span></div></div>`;
 
             const url = `@Url.Action("ObtenerCursosJson", "Curso")?page=${page}&categoria=${categoria}&nivel=${nivel}&searchString=${searchString}`;
 
@@ -378,6 +407,7 @@ else
                     });
                     html += `</div>`;
 
+                    // Paginación
                     html += `<nav aria-label="Paginación de cursos" class="mt-5 pb-5">
                         <ul class="pagination justify-content-center">
                             <li class="page-item ${data.paginaActual <= 1 ? 'disabled' : ''}">
@@ -385,8 +415,8 @@ else
                             </li>`;
                     for (let i = 1; i <= data.totalPaginas; i++) {
                         html += `<li class="page-item ${i === data.paginaActual ? 'active' : ''}">
-                                    <a href="#" class="page-link" data-page="${i}">${i}</a>
-                                </li>`;
+                                        <a href="#" class="page-link" data-page="${i}">${i}</a>
+                                    </li>`;
                     }
                     html += `<li class="page-item ${data.paginaActual >= data.totalPaginas ? 'disabled' : ''}">
                                 <a href="#" class="page-link" data-page="${data.paginaActual + 1}">Siguiente</a>
@@ -397,9 +427,36 @@ else
 
                 container.innerHTML = html;
 
+                // Re-inicializar popovers
                 var popoverTriggerList = [].slice.call(container.querySelectorAll('[data-bs-toggle="popover"]'))
                 popoverTriggerList.map(function (popoverTriggerEl) {
-                    return new bootstrap.Popover(popoverTriggerEl)
+                    const popover = new bootstrap.Popover(popoverTriggerEl, {
+                        content: function () {
+                            const dataElement = this.querySelector('.popover-course-data');
+                            const cursoId = dataElement.querySelector('[data-course-id]').getAttribute('data-course-id');
+                            const titulo = dataElement.querySelector('[data-course-title]').getAttribute('data-course-title');
+                            const descripcion = dataElement.querySelector('[data-course-description]').getAttribute('data-course-description');
+                            const imagenUrl = dataElement.querySelector('[data-course-image]').getAttribute('data-course-image');
+
+                            return `
+                                <div class="popover-content" style="color: #333;">
+                                    <div class="d-flex mb-3 align-items-center">
+                                        <img src="${imagenUrl || 'https://via.placeholder.com/80x80.png?text=Sin+Imagen'}" class="me-3 rounded" style="width: 80px; height: 80px; object-fit: cover;" alt="Imagen del curso">
+                                        <div>
+                                            <h6 class="popover-title mb-0">${titulo}</h6>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small">${descripcion}</p>
+                                    <div class="d-grid gap-2">
+                                        <a href="/Curso/Detalles?id=${cursoId}" class="btn btn-primary btn-sm">Ver Detalles</a>
+                                    </div>
+                                </div>
+                            `;
+                        },
+                        html: true,
+                        sanitize: false
+                    });
+                    return popover;
                 });
 
             } catch (error) {
@@ -418,14 +475,24 @@ else
         document.querySelector('.filtro-menu').addEventListener('click', function(e) {
             if (e.target.classList.contains('filtro-btn')) {
                 e.preventDefault();
-                document.querySelectorAll('.filtro-btn').forEach(btn => btn.classList.remove('active'));
-                e.target.classList.add('active');
 
                 const searchString = document.getElementById('searchStringInput').value;
-                const categoria = e.target.dataset.filtroCategoria || '';
-                const nivel = e.target.dataset.filtroNivel || '';
+                const categoria = e.target.dataset.filtroCategoria !== undefined ? e.target.dataset.filtroCategoria : null;
+                const nivel = e.target.dataset.filtroNivel !== undefined ? e.target.dataset.filtroNivel : null;
 
-                cargarCursos(1, categoria, nivel, searchString);
+                if (categoria !== null) {
+                    document.querySelectorAll('.filtro-btn[data-filtro-categoria]').forEach(btn => btn.classList.remove('active'));
+                }
+                if (nivel !== null) {
+                    document.querySelectorAll('.filtro-btn[data-filtro-nivel]').forEach(btn => btn.classList.remove('active'));
+                }
+
+                e.target.classList.add('active');
+
+                const categoriaFinal = document.querySelector('.filtro-btn.active[data-filtro-categoria]')?.dataset.filtroCategoria || '';
+                const nivelFinal = document.querySelector('.filtro-btn.active[data-filtro-nivel]')?.dataset.filtroNivel || '';
+
+                cargarCursos(1, categoriaFinal, nivelFinal, searchString);
             }
         });
 
@@ -444,30 +511,33 @@ else
             cargarCursos(1, '', '', '');
         });
 
+        // Inicializar popovers de los cursos recomendados (código inicial de Razor)
         document.querySelectorAll('[data-bs-toggle="popover"]').forEach(popoverEl => {
-            popoverEl.addEventListener('show.bs.popover', function (e) {
-                const popoverInstance = bootstrap.Popover.getInstance(this);
-                const dataElement = this.querySelector('.popover-course-data');
-                const cursoId = dataElement.querySelector('[data-course-id]').getAttribute('data-course-id');
-                const titulo = dataElement.querySelector('[data-course-title]').getAttribute('data-course-title');
-                const descripcion = dataElement.querySelector('[data-course-description]').getAttribute('data-course-description');
-                const imagenUrl = dataElement.querySelector('[data-course-image]').getAttribute('data-course-image');
+            const popoverInstance = new bootstrap.Popover(popoverEl, {
+                content: function () {
+                    const dataElement = this.querySelector('.popover-course-data');
+                    const cursoId = dataElement.querySelector('[data-course-id]').getAttribute('data-course-id');
+                    const titulo = dataElement.querySelector('[data-course-title]').getAttribute('data-course-title');
+                    const descripcion = dataElement.querySelector('[data-course-description]').getAttribute('data-course-description');
+                    const imagenUrl = dataElement.querySelector('[data-course-image]').getAttribute('data-course-image');
 
-                let contentHtml = `
-                    <div class="popover-content">
-                        <div class="d-flex mb-3">
-                            <img src="${imagenUrl || 'https://via.placeholder.com/80x80.png?text=Sin+Imagen'}" class="me-3 rounded" style="width: 80px; height: 80px; object-fit: cover;" alt="Imagen del curso">
-                            <div>
-                                <h5 class="popover-title">${titulo}</h5>
-                                <p class="text-muted">${descripcion}</p>
+                    return `
+                        <div class="popover-content" style="color: #333;">
+                            <div class="d-flex mb-3 align-items-center">
+                                <img src="${imagenUrl || 'https://via.placeholder.com/80x80.png?text=Sin+Imagen'}" class="me-3 rounded" style="width: 80px; height: 80px; object-fit: cover;" alt="Imagen del curso">
+                                <div>
+                                    <h6 class="popover-title mb-0">${titulo}</h6>
+                                </div>
+                            </div>
+                            <p class="text-muted small">${descripcion}</p>
+                            <div class="d-grid gap-2">
+                                <a href="/Curso/Detalles?id=${cursoId}" class="btn btn-primary btn-sm">Ver Detalles</a>
                             </div>
                         </div>
-                        <div class="d-grid gap-2">
-                            <a href="/Curso/Detalles?id=${cursoId}" class="btn btn-primary">Ver Detalles</a>
-                        </div>
-                    </div>
-                `;
-                popoverInstance.setContent({ '.popover-body': contentHtml });
+                    `;
+                },
+                html: true,
+                sanitize: false
             });
         });
     </script>

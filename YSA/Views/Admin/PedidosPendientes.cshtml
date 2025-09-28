@@ -3,44 +3,137 @@
     ViewData["Title"] = "Pedidos Pendientes";
 }
 
-<div class="container mt-4">
+<style>
+    /* ------------------------------------- */
+    /* 1. Variables B&W y Estilos Generales  */
+    /* ------------------------------------- */
+    :root {
+        --color-secondary: #000000; /* Negro Puro (Título) */
+        --color-primary: #333333; /* Gris Oscuro (Botones, Acentos) */
+        --color-secondary-light: #5a5a5a; /* Gris Medio para acciones secundarias */
+        --color-text-muted: #6a6a6a; /* Gris medio (Descripción) */
+        --color-background-light: #f7f7f7; /* Fondo general de la página */
+        --color-background-white: #ffffff; /* Fondo para las tarjetas */
+        --color-border-light: #e0e0e0; /* Borde sutil */
+        --color-danger: #cc0000; /* Rojo sutil para acciones peligrosas */
+    }
+
+    h1 {
+        color: var(--color-secondary);
+        font-weight: 700;
+        font-size: 2rem;
+    }
+
+    /* Botón "Aprobar Pago" (similar a btn-success/primary) */
+    .btn-aprobar {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        border-radius: 6px;
+    }
+
+        .btn-aprobar:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* -------------------------- */
+    /* 2. Estilos de Cards        */
+    /* -------------------------- */
+    .pedido-card {
+        border: 1px solid var(--color-border-light);
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+        margin-bottom: 20px;
+        background-color: var(--color-background-white);
+    }
+
+        .pedido-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    .card-title-lg {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-secondary);
+        margin-bottom: 0.25rem;
+    }
+
+    .card-info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        border-bottom: 1px dashed var(--color-border-light);
+    }
+
+        .card-info-item:last-child {
+            border-bottom: none;
+        }
+
+    .card-info-label {
+        font-weight: 600;
+        color: var(--color-text-muted);
+    }
+
+    .card-info-value {
+        color: var(--color-primary);
+        font-weight: 500;
+    }
+</style>
+
+<div class="container mt-5 mb-5">
     <h1 class="mb-4">Pedidos Pendientes de Aprobación</h1>
+    <hr style="border-top: 2px solid var(--color-border-light); opacity: 1; margin-bottom: 2rem;" />
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info" role="alert">
-            No hay pedidos pendientes en este momento.
+        <div class="alert alert-info text-center" role="alert" style="border-radius: 8px;">
+            <i class="fas fa-info-circle me-2"></i> No hay pedidos pendientes en este momento.
         </div>
     }
     else
     {
-        <table class="table table-hover table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>ID del Pedido</th>
-                    <th>Estudiante</th>
-                    <th>Fecha del Pedido</th>
-                    <th>Total</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var pedido in Model)
-                {
-                    <tr>
-                        <td>@pedido.PedidoId</td>
-                        <td>@pedido.NombreEstudiante</td>
-                        <td>@pedido.FechaPedido.ToShortDateString()</td>
-                        <td>@pedido.Total.ToString("C", new System.Globalization.CultureInfo("es-VE"))</td>
-                        <td>
+        <div class="row">
+            @foreach (var pedido in Model)
+            {
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card pedido-card p-4">
+                        <div class="card-header border-0 bg-transparent p-0 mb-3">
+                            <span class="card-title-lg">Pedido #@pedido.PedidoId</span>
+                        </div>
+
+                        <div class="card-body p-0 mb-3">
+                            <div class="card-info-item">
+                                <span class="card-info-label">Estudiante:</span>
+                                <span class="card-info-value">@pedido.NombreEstudiante</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-label">Fecha:</span>
+                                <span class="card-info-value">@pedido.FechaPedido.ToShortDateString()</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-label">Total:</span>
+                                <span class="card-info-value" style="color:var(--color-secondary); font-weight: 700;">
+                                    @pedido.Total.ToString("C", new System.Globalization.CultureInfo("es-VE"))
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-transparent border-0 p-0 d-grid">
                             <form asp-controller="Admin" asp-action="AprobarPedido" method="post">
                                 <input type="hidden" name="pedidoId" value="@pedido.PedidoId" />
-                                <button type="submit" class="btn btn-success btn-sm">Aprobar Pago</button>
+                                <button type="submit" class="btn btn-aprobar w-100">
+                                    <i class="fas fa-check-circle me-2"></i> Aprobar Pago
+                                </button>
                             </form>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
     }
 </div>

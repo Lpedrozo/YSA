@@ -24,6 +24,7 @@ namespace YSA.Web.Models.ViewModels
         public string? UrlImagen { get; set; }
         public IFormFile? File { get; set; }
 
+        public IEnumerable<ProductoViewModel> ProductosComprados { get; set; } // <--- Nueva propiedad
 
     }
     public class PerfilViewModel
@@ -117,5 +118,14 @@ namespace YSA.Web.Models.ViewModels
     {
         public int ArtistaId { get; set; }
         public List<ArtistaFoto> Fotos { get; set; }
+    }
+    public class ArtistaDetallesViewModel
+    {
+        public int Id { get; set; }
+        public string NombreCompleto { get; set; }
+        public string Biografia { get; set; }
+        public string? UrlFotoPerfil { get; set; }
+        public IEnumerable<ArtistaFoto> Portafolio { get; set; } = new List<ArtistaFoto>();
+        // Si tienes cursos, los agregas aquí
     }
 }

@@ -5,189 +5,238 @@
 }
 
 <style>
-    /* Estilos generales del contenedor principal */
-    .main-content-udemy {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    /* ------------------------------------- */
+    /* 1. Paleta Monocromática               */
+    /* ------------------------------------- */
+    :root {
+        --color-main-bg: #f8f8f8;
+        --color-card-bg: #ffffff;
+        --color-primary-action: #000000;
+        --color-text-dark: #212529;
+        --color-text-subtle: #6c757d;
+        --color-border: #ced4da;
+        --color-error: #dc3545;
+    }
+
+    /* Contenedor principal: Flexbox y altura mínima */
+    .main-container-dual {
         min-height: 100vh;
-        background-color: #fff; /* Fondo blanco para coincidir con la imagen */
-    }
-
-    /* Sección de la ilustración */
-    .illustration-section-udemy {
-        flex: 0.6;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding-right: 5rem;
+        background-color: var(--color-main-bg);
+        /* Reducimos el padding vertical general de 3rem a 2rem */
+        padding: 2rem;
+        font-family: Arial, sans-serif;
     }
 
-    .illustration-udemy {
-        max-width: 100%;
-        height: auto;
+    /* Contenedor central de las dos tarjetas */
+    .dual-card-wrapper {
+        display: flex;
+        max-width: 1000px;
+        width: 100%;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
     }
 
-    /* Sección del formulario de login */
-    .login-section-udemy {
-        flex: 0.4;
-        max-width: 500px;
+    /* ------------------------------------- */
+    /* 2. Panel de Contenido (Izquierda)     */
+    /* ------------------------------------- */
+    .content-panel-mono {
+        flex: 1;
+        background-color: var(--color-text-dark);
+        color: #ffffff;
+        /* Reducimos el padding interno de 3rem a 2rem */
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .panel-title {
+        font-size: 2rem; /* Ligeramente más pequeño */
+        font-weight: 700;
+        margin-bottom: 1rem; /* Menos margen */
+        border-bottom: 2px solid #ffffff;
+        padding-bottom: 0.5rem;
+    }
+
+    .panel-text {
+        font-size: 1rem; /* Ligeramente más pequeño para ahorrar espacio */
+        line-height: 1.5;
+        color: #e9ecef;
+        margin-bottom: 1rem; /* Menos margen entre párrafos */
+    }
+
+    /* ------------------------------------- */
+    /* 3. Tarjeta de Login (Derecha)         */
+    /* ------------------------------------- */
+    .login-card-mono {
+        flex: 1;
+        background-color: var(--color-card-bg);
+        /* Reducimos el padding interno de 3rem a 2rem */
         padding: 2rem;
     }
 
-    /* Nuevo: Estilos de la tarjeta del formulario */
-    .login-card-udemy {
-        border: 1px solid #e0e6ed;
-        border-radius: 8px;
-        padding: 2.5rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-        .login-card-udemy:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-        }
-
-    .login-title-udemy {
-        font-size: 2.2rem;
+    /* Título del Login */
+    .login-title-mono {
+        font-size: 1.8rem; /* Reducción para ahorrar espacio */
         font-weight: 700;
-        line-height: 1.2;
-        margin-bottom: 2rem;
-        color: #1c1d1f;
-        text-align: center;
+        color: var(--color-text-dark);
+        margin-bottom: 0.8rem; /* Menos margen */
     }
 
-    /* Nuevo: Estilos de los inputs modernos */
-    .form-control-udemy {
-        width: 100%;
-        padding: 12px 0;
-        border: none;
-        border-bottom: 2px solid #e0e6ed;
-        background-color: transparent;
-        font-size: 1rem;
-        transition: border-bottom-color 0.3s ease;
-    }
-
-        .form-control-udemy:focus {
-            outline: none;
-            border-bottom-color: #5624d0;
-            box-shadow: none;
-        }
-
-    .form-group-udemy {
-        margin-bottom: 1.5rem; /* Ajuste para dar más espacio */
-        position: relative; /* Para los íconos */
-    }
-
-    .form-label-udemy {
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: #1c1d1f;
+    .login-header-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
+        margin-bottom: 1.5rem; /* Menos margen vertical */
         display: block;
-        margin-bottom: 0.5rem;
+        border: 1px solid var(--color-border);
     }
 
-    /* Estilos del botón principal */
-    .btn-primary-udemy {
+    /* Inputs y Botón */
+    .form-group-vertical {
+        margin-bottom: 1rem; /* Reducción de 1.5rem a 1rem */
+    }
+
+    .form-label-mono {
+        display: block;
         width: 100%;
-        background-color: #5624d0;
-        color: #fff;
+        font-weight: 600;
+        color: var(--color-text-dark);
+        margin-bottom: 0.3rem; /* Reducción de 0.4rem a 0.3rem */
+        font-size: 0.9rem; /* Ligeramente más pequeño */
+    }
+
+    .form-control-mono {
+        background-color: #ffffff;
+        border: 1px solid var(--color-border);
+        color: var(--color-text-dark);
+        border-radius: 6px;
+        height: 44px; /* Ligeramente más corto de 48px */
+        padding: 0.5rem 1rem;
+        width: 100%;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-mono-primary {
+        width: 100%;
+        background-color: var(--color-primary-action);
+        color: #ffffff;
         border: none;
-        border-radius: 0;
-        padding: 1rem 1.25rem;
+        border-radius: 6px;
+        padding: 0.7rem 1.25rem; /* Menos padding */
         font-weight: 700;
-        cursor: pointer;
+        letter-spacing: 0.5px;
         transition: background-color 0.2s;
+        margin-top: 1rem; /* Menos margen superior */
     }
 
-        .btn-primary-udemy:hover {
-            background-color: #401b9c;
-        }
-
-    /* Nuevo: Estilos del separador */
-    .divider-udemy {
-        text-align: center;
-        position: relative;
-        margin: 2rem 0;
-        font-size: 0.9rem;
-        color: #6a6f73;
+    .link-mono-subtle {
+        color: var(--color-text-subtle);
+        font-weight: 500;
+        text-decoration: none;
+        font-size: 0.85rem; /* Más pequeño */
+        transition: color 0.2s;
+        display: block;
+        margin-top: 0.4rem;
     }
 
-        .divider-udemy::before,
-        .divider-udemy::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 40%;
-            height: 1px;
-            background-color: #e0e6ed;
-        }
-
-        .divider-udemy::before {
-            left: 0;
-        }
-
-        .divider-udemy::after {
-            right: 0;
-        }
-
-    .text-danger {
-        color: #dc3545 !important;
-    }
-
-    .registration-links-udemy {
-        margin-top: 2rem;
+    .form-footer-separator {
+        margin-top: 1rem; /* Reducción de 2rem a 1rem */
+        padding-top: 1rem; /* Reducción de 1.5rem a 1rem */
+        border-top: 1px solid var(--color-border);
         text-align: center;
     }
 
-        .registration-links-udemy a {
-            color: #5624d0;
-            font-weight: 700;
-            text-decoration: none;
+    /* Media Query para móvil se mantiene */
+    @@media (max-width: 768px) {
+        .dual-card-wrapper {
+            flex-direction: column;
+            max-width: 420px;
         }
 
-            .registration-links-udemy a:hover {
-                text-decoration: underline;
-            }
+        .content-panel-mono {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .login-card-mono {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            padding: 1.5rem;
+        }
+
+        .panel-title {
+            font-size: 1.8rem;
+        }
+
+        .panel-text {
+            font-size: 0.95rem;
+        }
+    }
 </style>
 
-<div class="main-content-udemy">
-    <div class="illustration-section-udemy">
-        <img src="~/diseño/login.webp" alt="Ilustración de personas interactuando con elementos de aprendizaje" class="illustration-udemy">
-    </div>
+<div class="main-container-dual">
+    <div class="dual-card-wrapper">
 
-    <div class="login-section-udemy">
-        <div class="login-card-udemy">
-            <h1 class="login-title-udemy">Continua tu aprendizaje</h1>
+        <div class="content-panel-mono">
+            <h2 class="panel-title">Tu futuro, tu aprendizaje.</h2>
 
-            <form asp-controller="Cuenta" asp-action="Login" method="post" class="login-form-udemy">
-                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+            <p class="panel-text">
+                En YSA, no solo ofrecemos cursos; creamos caminos. Nuestra academia está diseñada para impulsarte desde cero hasta la maestría en tecnologías y habilidades blandas, asegurando que cada sesión te acerque a tus metas profesionales.
+            </p>
 
-                <div class="form-group-udemy">
-                    <label asp-for="Email" class="form-label-udemy">Correo electrónico</label>
-                    <input asp-for="Email" type="email" class="form-control-udemy">
-                    <span asp-validation-for="Email" class="text-danger small"></span>
+            <p class="panel-text">
+                Accede a recursos exclusivos, clases en vivo y una comunidad de mentores apasionados. Inicia sesión para retomar tu progreso, o regístrate para transformar tu potencial en éxito.
+            </p>
+
+            <p class="panel-text" style="font-weight: bold; margin-bottom: 0;">
+                ¡La educación es la llave, y YSA es tu puerta!
+            </p>
+        </div>
+
+        <div class="login-card-mono">
+            <div class="text-center">
+                <h1 class="login-title-mono">Inicia Sesión</h1>
+
+                <img src="~/diseño/InicioSesionImagen.jpg"
+                     alt="Imagen descriptiva del inicio de sesión"
+                     class="login-header-image" />
+            </div>
+
+            <form asp-controller="Cuenta" asp-action="Login" method="post" class="login-form-custom">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-4 text-center"></div>
+
+                <div class="form-group-vertical">
+                    <label asp-for="Email" class="form-label-mono">Correo electrónico</label>
+                    <input asp-for="Email" type="email" class="form-control-mono" placeholder="ejemplo@correo.com" required>
+                    <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
                 </div>
 
-                <div class="form-group-udemy">
-                    <label asp-for="Contrasena" class="form-label-udemy">Contraseña</label>
-                    <input asp-for="Contrasena" type="password" class="form-control-udemy">
-                    <span asp-validation-for="Contrasena" class="text-danger small"></span>
+                <div class="form-group-vertical">
+                    <label asp-for="Contrasena" class="form-label-mono">Contraseña</label>
+                    <input asp-for="Contrasena" type="password" class="form-control-mono" placeholder="Tu contraseña" required>
+                    <span asp-validation-for="Contrasena" class="text-danger small mt-1 d-block"></span>
                 </div>
 
-                <div class="d-grid-udemy">
-                    <button type="submit" class="btn-primary-udemy">
-                        Continuar
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn-mono-primary">
+                        ACCEDER
                     </button>
                 </div>
 
-                <div class="divider-udemy">
-                    <span>o</span>
+                <div class="text-center mt-3">
+                    <a href="#" class="link-mono-subtle">¿Olvidaste tu contraseña?</a>
                 </div>
 
-                <div class="registration-links-udemy">
-                    <span>¿No tienes una cuenta? <a href="~/Cuenta/Registro">Regístrate</a></span>
+                <div class="form-footer-separator">
+                    <span class="text-footer-subtle">¿No eres miembro? </span>
+                    <a href="~/Cuenta/Registro" class="link-mono-subtle">
+                        Regístrate ahora
+                    </a>
                 </div>
             </form>
         </div>
@@ -195,6 +244,32 @@
 </div>
 
 @section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('[data-valmsg-for]').forEach(span => {
+                const inputId = span.getAttribute('data-valmsg-for');
+                const input = document.getElementById(inputId);
+
+                const observer = new MutationObserver(mutations => {
+                    mutations.forEach(mutation => {
+                        if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                            if (span.innerHTML.trim() !== "") {
+                                input.classList.add('input-validation-error');
+                            } else {
+                                input.classList.remove('input-validation-error');
+                            }
+                        }
+                    });
+                });
+
+                observer.observe(span, { childList: true, characterData: true, subtree: true });
+
+                if (span.innerHTML.trim() !== "") {
+                    input.classList.add('input-validation-error');
+                }
+            });
+        });
+    </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

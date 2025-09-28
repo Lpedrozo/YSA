@@ -134,20 +134,22 @@ namespace YSA.Web.Controllers
                     return NotFound();
                 }
 
-                // Aquí obtenemos los pedidos completados y sus cursos asociados.
-                var pedidosCompletados = await _context.Pedidos
-                    .Where(p => p.EstudianteId == usuario.Id && p.Estado == "Completado")
-                    .Include(p => p.PedidoItems)
-                        .ThenInclude(pi => pi.VentaItem)
-                            .ThenInclude(vi => vi.Curso)
+                // Obtener todos los PedidoItems completados para el usuario, incluyendo VentaItem y sus relaciones de Curso y Producto.
+                var pedidoItemsCompletados = await _context.PedidoItems
+                    .Where(pi => pi.Pedido.EstudianteId == usuario.Id && pi.Pedido.Estado == "Completado")
+                    .Include(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Curso)
+                    .Include(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Producto)
                     .ToListAsync();
 
                 var cursosComprados = new List<CursoViewModel>();
-                foreach (var pedido in pedidosCompletados)
+                var productosComprados = new List<ProductoViewModel>();
+
+                foreach (var item in pedidoItemsCompletados)
                 {
-                    foreach (var item in pedido.PedidoItems)
+                    if (item.VentaItem.Curso != null)
                     {
-                        // Mapear la entidad Curso al ViewModel de Curso
                         cursosComprados.Add(new CursoViewModel
                         {
                             Id = item.VentaItem.Curso.Id,
@@ -155,6 +157,17 @@ namespace YSA.Web.Controllers
                             DescripcionCorta = item.VentaItem.Curso.DescripcionCorta,
                             Precio = item.VentaItem.Curso.Precio,
                             UrlImagen = item.VentaItem.Curso.UrlImagen
+                        });
+                    }
+                    else if (item.VentaItem.Producto != null)
+                    {
+                        productosComprados.Add(new ProductoViewModel
+                        {
+                            Id = item.VentaItem.Producto.Id,
+                            Titulo = item.VentaItem.Producto.Titulo,
+                            DescripcionCorta = item.VentaItem.Producto.DescripcionCorta,
+                            Precio = item.VentaItem.Producto.Precio,
+                            UrlImagen = item.VentaItem.Producto.UrlImagen
                         });
                     }
                 }
@@ -165,13 +178,13 @@ namespace YSA.Web.Controllers
                     Apellido = usuario.Apellido,
                     Email = usuario.Email,
                     CursosComprados = cursosComprados,
+                    ProductosComprados = productosComprados,
                     UrlImagen = usuario.UrlImagen
                 };
 
                 return View("MiPerfil", viewModel);
             }
 
-            // Si el usuario no está autenticado, redirigir al login
             return RedirectToAction("Login", "Cuenta");
         }
         [HttpPost]

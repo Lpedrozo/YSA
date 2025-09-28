@@ -4,59 +4,112 @@
     ViewData["Title"] = "Crear Nuevo Evento";
 }
 
-<h1>Crear Nuevo Evento</h1>
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="CrearEvento" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<style>
+    .form-container {
+        max-width: 800px; /* Limita el ancho del formulario */
+        margin: 0 auto; /* Centra el contenedor */
+        padding: 2rem;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
 
-            <div class="form-group mb-3">
-                <label asp-for="Titulo" class="control-label"></label>
-                <input asp-for="Titulo" class="form-control" />
-                <span asp-validation-for="Titulo" class="text-danger"></span>
+    .form-group label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control:focus {
+        border-color: #000;
+        box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+    }
+
+    .main-btn {
+        background-color: black;
+        border-color: black;
+        transition: background-color 0.3s;
+    }
+
+        .main-btn:hover {
+            background-color: #333;
+            border-color: #333;
+        }
+</style>
+
+<div class="container py-4 pb-5">
+    <h1 class="fw-bold mb-4 text-center">
+        <i class="fas fa-calendar-plus me-2 text-primary"></i> @ViewData["Title"]
+    </h1>
+    <hr class="mb-5" />
+
+    <div class="form-container pb-5">
+        <form asp-action="CrearEvento" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+
+                    <div class="form-group mb-4">
+                        <label asp-for="Titulo" class="control-label"></label>
+                        <input asp-for="Titulo" class="form-control form-control-lg" placeholder="Ej: Webinar de Acuarelas Pro" />
+                        <span asp-validation-for="Titulo" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="TipoEventoId" class="control-label"></label>
+                        <select asp-for="TipoEventoId" class="form-select" asp-items="@Model.TiposEventoDisponibles">
+                            <option value="">-- Seleccione un tipo --</option>
+                        </select>
+                        <span asp-validation-for="TipoEventoId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="Lugar" class="control-label"></label>
+                        <input asp-for="Lugar" class="form-control" placeholder="Ej: Enlace de Zoom, o Dirección Física" />
+                        <span asp-validation-for="Lugar" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="form-group mb-4">
+                        <label asp-for="FechaEvento" class="control-label"></label>
+                        <input asp-for="FechaEvento" type="datetime-local" class="form-control" />
+                        <span asp-validation-for="FechaEvento" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="ImagenPortada" class="control-label"></label>
+                        <input asp-for="ImagenPortada" type="file" class="form-control" accept="image/*" />
+                        <span asp-validation-for="ImagenPortada" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-check form-switch mb-4 mt-4">
+                        <input class="form-check-input" type="checkbox" role="switch" asp-for="EsDestacado" id="EsDestacadoSwitch" />
+                        <label class="form-check-label" for="EsDestacadoSwitch">
+                            <i class="fas fa-star text-warning me-1"></i> @Html.DisplayNameFor(model => model.EsDestacado)
+                        </label>
+                    </div>
+
+                </div>
             </div>
 
-            <div class="form-group mb-3">
+            <div class="form-group mb-4">
                 <label asp-for="Descripcion" class="control-label"></label>
-                <textarea asp-for="Descripcion" class="form-control"></textarea>
+                <textarea asp-for="Descripcion" class="form-control" rows="5" id="DescripcionTextarea" maxlength="500" placeholder="Describe brevemente de qué tratará el evento, quién lo imparte y los objetivos."></textarea>
+                <div class="text-end text-muted small mt-1">
+                    <span id="charCount">0</span>/500 caracteres
+                </div>
                 <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="FechaEvento" class="control-label"></label>
-                <input asp-for="FechaEvento" class="form-control" />
-                <span asp-validation-for="FechaEvento" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Lugar" class="control-label"></label>
-                <input asp-for="Lugar" class="form-control" />
-                <span asp-validation-for="Lugar" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="TipoEventoId" class="control-label"></label>
-                <select asp-for="TipoEventoId" class="form-control" asp-items="@Model.TiposEventoDisponibles">
-                    <option value="">-- Seleccione un tipo --</option>
-                </select>
-                <span asp-validation-for="TipoEventoId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="ImagenPortada" class="control-label"></label>
-                <input asp-for="ImagenPortada" type="file" class="form-control" />
-                <span asp-validation-for="ImagenPortada" class="text-danger"></span>
-            </div>
-
-            <div class="form-group form-check mb-3">
-                <input class="form-check-input" asp-for="EsDestacado" />
-                <label class="form-check-label" asp-for="EsDestacado"></label>
-            </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Crear</button>
-                <a asp-action="GestionarEventos" class="btn btn-secondary">Cancelar</a>
+            <div class="form-group text-center mt-5">
+                <button type="submit" class="btn main-btn text-white btn-lg shadow-sm me-3">
+                    <i class="fas fa-save me-2"></i> Guardar y Publicar Evento
+                </button>
+                <a asp-action="GestionarEventos" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-times me-2"></i> Cancelar
+                </a>
             </div>
         </form>
     </div>
@@ -66,4 +119,28 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        // Script para contador de caracteres en la descripción
+        document.addEventListener('DOMContentLoaded', function () {
+            var textarea = document.getElementById('DescripcionTextarea');
+            var charCount = document.getElementById('charCount');
+
+            if (textarea && charCount) {
+                // Función para actualizar el contador
+                function updateCharCount() {
+                    charCount.textContent = textarea.value.length;
+                }
+
+                // Inicializar y escuchar cambios
+                updateCharCount();
+                textarea.addEventListener('input', updateCharCount);
+            }
+
+            // Forzar el input de FechaEvento a tipo datetime-local
+            var fechaEventoInput = document.getElementById('@Html.IdFor(model => model.FechaEvento)');
+            if (fechaEventoInput) {
+                fechaEventoInput.type = 'datetime-local';
+            }
+        });
+    </script>
 }

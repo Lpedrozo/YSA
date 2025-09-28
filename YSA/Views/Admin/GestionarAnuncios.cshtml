@@ -3,68 +3,179 @@
     ViewData["Title"] = "Gestión de Anuncios";
 }
 
-<div class="container mt-4">
-    <h1 class="text-center mb-4">Gestión de Anuncios</h1>
-    <hr />
+<style>
+    /* ------------------------------------- */
+    /* 1. Variables B&W y Estilos Generales  */
+    /* ------------------------------------- */
+    :root {
+        --color-secondary: #000000; /* Negro Puro (Título) */
+        --color-primary: #333333; /* Gris Oscuro (Botones, Acentos) */
+        --color-text-muted: #6a6a6a; /* Gris medio (Descripción) */
+        --color-background-light: #f7f7f7; /* Fondo general de la página */
+        --color-background-white: #ffffff; /* Fondo para las tarjetas */
+        --color-border-light: #eeeeee; /* Borde sutil */
+    }
 
-    <div class="d-flex justify-content-end mb-3">
+    body {
+        background-color: var(--color-background-light);
+        color: var(--color-primary);
+    }
+
+    h1 {
+        color: var(--color-secondary);
+        font-weight: 700;
+    }
+
+    hr {
+        border-top: 2px solid var(--color-border-light);
+        opacity: 1;
+    }
+
+    /* Estilos del botón de "Nuevo Anuncio" (Green -> B&W) */
+    .btn-success {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        border-radius: 8px;
+    }
+
+        .btn-success:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* ------------------------------------- */
+    /* 2. Estilos de las Cards de Anuncio    */
+    /* ------------------------------------- */
+    .anuncio-card {
+        border: 1px solid var(--color-border-light);
+        border-radius: 12px;
+        background-color: var(--color-background-white);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.3s;
+    }
+
+        .anuncio-card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+    .card-title {
+        font-weight: 700;
+        color: var(--color-secondary);
+        font-size: 1.25rem;
+    }
+
+    .card-subtitle {
+        color: var(--color-text-muted);
+        font-size: 0.85rem;
+    }
+
+    .card-text-content {
+        color: var(--color-primary);
+        font-size: 0.9rem;
+        /* Limitar el contenido para que no sea muy largo */
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* Mostrar máximo 3 líneas */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 10px;
+    }
+
+    /* Estilos de Botones de Acción dentro de la card (B&W) */
+    .btn-primary {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: white !important;
+        transition: background-color 0.2s;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    .btn-danger {
+        /* Mantenemos el rojo para eliminar por seguridad, pero con estilo limpio */
+        border-radius: 6px;
+    }
+
+</style>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Gestión de Anuncios</h1>
+
+    <div class="d-flex justify-content-end mb-4">
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearAnuncioModal">
-            <i class="fas fa-plus-circle"></i> Nuevo Anuncio
+            <i class="fas fa-plus-circle me-2"></i> Nuevo Anuncio
         </button>
     </div>
 
-    <table class="table table-bordered table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <th>Título</th>
-                <th>Fecha de Publicación</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center" role="alert" style="border-radius: 8px;">
+            No hay anuncios creados aún. Haz clic en **Nuevo Anuncio** para empezar.
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach (var anuncio in Model)
             {
-                <tr>
-                    <td>@anuncio.Titulo</td>
-                    <td>@anuncio.FechaPublicacion.ToShortDateString()</td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-sm btn-primary editar-anuncio-btn"
-                                data-id="@anuncio.Id"
-                                data-titulo="@anuncio.Titulo"
-                                data-contenido="@anuncio.Contenido"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editarAnuncioModal">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <form asp-action="EliminarAnuncio" asp-route-id="@anuncio.Id" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-danger eliminar-anuncio-btn">
-                                <i class="fas fa-trash-alt"></i> Eliminar
-                            </button>
-                        </form>
-                    </td>
-                </tr>
+                <div class="col">
+                    <div class="card anuncio-card h-100 p-3">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@anuncio.Titulo</h5>
+                            <h6 class="card-subtitle mb-2">Publicado: @anuncio.FechaPublicacion.ToShortDateString()</h6>
+
+                            <p class="card-text card-text-content flex-grow-1">
+                                @anuncio.Contenido
+                            </p>
+
+                            <div class="mt-3 pt-2 border-top d-flex justify-content-end">
+
+                                <button type="button" class="btn btn-sm btn-primary editar-anuncio-btn me-2"
+                                        data-id="@anuncio.Id"
+                                        data-titulo="@anuncio.Titulo"
+                                        data-contenido="@anuncio.Contenido"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editarAnuncioModal">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+
+                                <form asp-action="EliminarAnuncio" asp-route-id="@anuncio.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-danger eliminar-anuncio-btn">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
+        </div>
+    }
 </div>
 
 <div class="modal fade" id="crearAnuncioModal" tabindex="-1" aria-labelledby="crearAnuncioModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="crearAnuncioModalLabel">Crear Anuncio</h5>
+                <h5 class="modal-title" id="crearAnuncioModalLabel" style="color:var(--color-secondary);">Crear Anuncio</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form asp-action="CrearAnuncio" method="post">
                 <div class="modal-body">
                     <input type="hidden" name="CursoId" value="@ViewBag.CursoId" />
                     <div class="form-group mb-3">
-                        <label for="Titulo">Título</label>
+                        <label for="Titulo" style="color:var(--color-primary);">Título</label>
                         <input type="text" name="Titulo" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Contenido">Contenido</label>
+                        <label for="Contenido" style="color:var(--color-primary);">Contenido</label>
                         <textarea name="Contenido" class="form-control" rows="5" required></textarea>
                     </div>
                 </div>
@@ -81,7 +192,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editarAnuncioModalLabel">Editar Anuncio</h5>
+                <h5 class="modal-title" id="editarAnuncioModalLabel" style="color:var(--color-secondary);">Editar Anuncio</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form asp-action="EditarAnuncio" method="post">
@@ -89,11 +200,11 @@
                     <input type="hidden" name="Id" id="editar-anuncio-id" />
                     <input type="hidden" name="CursoId" value="@ViewBag.CursoId" />
                     <div class="form-group mb-3">
-                        <label for="Titulo">Título</label>
+                        <label for="Titulo" style="color:var(--color-primary);">Título</label>
                         <input type="text" name="Titulo" id="editar-anuncio-titulo" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Contenido">Contenido</label>
+                        <label for="Contenido" style="color:var(--color-primary);">Contenido</label>
                         <textarea name="Contenido" id="editar-anuncio-contenido" class="form-control" rows="5" required></textarea>
                     </div>
                 </div>
@@ -128,13 +239,15 @@
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
                     const form = this.closest('form');
+
+                    // Modificar colores de SweetAlert2 para mantener el tema B&W
                     Swal.fire({
                         title: '¿Estás seguro?',
                         text: "¡No podrás revertir esto!",
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
+                        confirmButtonColor: '#dc3545', // Mantener rojo para la acción de eliminar
+                        cancelButtonColor: '#6a6a6a', // Gris para cancelar
                         confirmButtonText: 'Sí, ¡bórralo!',
                         cancelButtonText: 'Cancelar'
                     }).then((result) => {

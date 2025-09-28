@@ -4,26 +4,41 @@
 }
 
 <style>
+    /* ------------------------------------- */
+    /* 1. Paleta Monocromática (B/W)        */
+    /* ------------------------------------- */
+    :root {
+        --color-primary: #000000; /* Negro para acentos y CTA */
+        --color-secondary: #343a40; /* Gris oscuro para títulos */
+        --color-background: #ffffff; /* Fondo blanco */
+        --color-card-bg: #f8f8f8; /* Gris muy claro para tarjetas */
+        --color-text-dark: #212529; /* Texto principal (negro) */
+        --color-border: #dee2e6; /* Gris claro para bordes */
+    }
+
     /* Estilos generales */
     body {
-        background-color: #EAF3F3;
-        color: #fff;
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
     }
 
     /* Contenedor principal para centrar el contenido */
     .course-details-container {
-        max-width: 900px;
+        max-width: 1200px; /* Hacemos el contenedor un poco más ancho */
+        padding-top: 40px;
     }
 
-    /* Estilos para la sección de imagen principal */
+    /* ------------------------------------- */
+    /* 2. Sección Principal (Imagen y Título)*/
+    /* ------------------------------------- */
     .course-hero {
         position: relative;
         width: 100%;
-        padding-top: 56.25%; /* Ratio 16:9 para la imagen */
-        border-radius: 12px;
+        padding-top: 56.25%; /* Ratio 16:9 */
+        border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-        margin-bottom: 40px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        /* Quitamos el margen inferior para que se integre mejor con las columnas */
     }
 
         .course-hero img {
@@ -35,192 +50,175 @@
             object-fit: cover;
         }
 
-    .hero-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        padding: 20px;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-        color: #fff;
+    .hero-title-block {
+        padding: 20px 0;
+        border-bottom: 2px solid var(--color-primary);
+        margin-bottom: 20px;
     }
 
-        .hero-overlay h1 {
+        .hero-title-block h1 {
             font-weight: 700;
-            margin-bottom: 5px;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
         }
 
-        .hero-overlay p {
-            font-weight: 300;
-        }
-
-    /* Estilos para la tarjeta de precio */
+    /* ------------------------------------- */
+    /* 3. Tarjeta de Precio (Compra)         */
+    /* ------------------------------------- */
     .price-card {
-        border-radius: 12px;
-        border: none;
-        background-color: #1c1c1c;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        border: 1px solid var(--color-border);
+        background-color: var(--color-card-bg); /* Fondo gris claro */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        color: var(--color-text-dark);
     }
 
-    /* Estilos para el botón de acción */
     .btn-action {
-        padding: 12px 24px;
-        font-size: 1em;
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: #ffffff !important;
+        padding: 10px 20px;
+        font-size: 1.1em;
         font-weight: 600;
-        border-radius: 8px;
-        transition: transform 0.2s, box-shadow 0.2s;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        background-color: #c49900;
-        border-color: #c49900;
-        color: #000;
+        border-radius: 6px;
+        transition: background-color 0.3s, transform 0.2s;
     }
 
         .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            background-color: #a38200;
-            border-color: #a38200;
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+            transform: translateY(-1px);
         }
 
-    /* Estilos para el acordeón de módulos */
+    /* ------------------------------------- */
+    /* 4. Acordeón (Índice - Solo Títulos)   */
+    /* ------------------------------------- */
     .accordion-item {
-        border: 1px solid #333333;
-        border-radius: 8px;
-        margin-bottom: 12px;
+        border: 1px solid var(--color-border);
+        margin-bottom: 8px;
+        border-radius: 6px;
         overflow: hidden;
-        background-color: #1c1c1c;
     }
 
     .accordion-button {
-        background-color: #333333;
+        background-color: var(--color-card-bg);
+        color: var(--color-text-dark);
         font-weight: 600;
-        color: #ffffff;
     }
 
         .accordion-button:not(.collapsed) {
-            background-color: #c49900;
-            color: #000000;
-            box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+            background-color: var(--color-primary);
+            color: #ffffff;
+            box-shadow: none;
         }
 
     .list-group-item {
-        border: none;
-        padding: 15px 20px;
-        background-color: #1c1c1c;
-        border-bottom: 1px solid #333333;
+        background-color: var(--color-background);
+        border-bottom: 1px dotted var(--color-border);
+        color: var(--color-secondary);
     }
 
-        .list-group-item:last-child {
-            border-bottom: none;
+        /* Ocultamos el ícono de video, solo mostramos el texto */
+        .list-group-item i.fa-play-circle {
+            display: none;
         }
-
-    /* Responsive styles */
-    @@media (max-width: 768px) {
-        .course-hero {
-            border-radius: 0; /* Remove rounded corners on small screens */
-            box-shadow: none;
-        }
-    }
 </style>
 
-<div class="container course-details-container">
-    <div class="course-hero">
-        <img src="@Model.UrlImagen" alt="Imagen del curso: @Model.Titulo" />
-        <div class="hero-overlay d-flex flex-column justify-content-end">
-            <h1 class="text-white">@Model.Titulo</h1>
-            <p class="lead text-white">@Model.DescripcionCorta</p>
-        </div>
+<div class="container course-details-container pb-5">
+
+    <div class="hero-title-block">
+        <h1 class="">@Model.Titulo</h1>
+        <p class="lead text-secondary">@Html.Raw(Model.DescripcionCorta)</p>
     </div>
 
-    <div class="row g-4">
-        <div class="col-12">
-            <div class="card price-card text-center p-3 mb-4">
-                <h5 class="fw-bold text-white">Precio del Curso:</h5>
-                <h2 class="text-white display-5 fw-bold mb-3">@Model.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</h2>
-                <p style="color:white" class="text-white mb-4"><i class="fas fa-check-circle text-success me-2"></i>Acceso de por vida</p>
+    <div class="row g-5 pb-5">
 
-                @if (Model.TieneAcceso)
-                {
-                    <a asp-action="VerCurso" asp-controller="Curso" asp-route-id="@Model.Id" class="btn btn-action w-100" style="color:white">Ver Curso</a>
+        <div class="col-lg-8">
+            <div class="course-hero mb-4">
+                <img src="@Model.UrlImagen" alt="Imagen del curso: @Model.Titulo" />
+            </div>
 
-                    <div class="alert alert-success d-flex align-items-center justify-content-center mt-3" role="alert">
-                        <i class="fas fa-check-circle me-2"></i>Ya tienes acceso a este curso.
-                    </div>
-                }
-                else if (Model.EstaEnValidacion)
+            <h2 class="mb-3 text-secondary">Acerca de este curso</h2>
+            <div class="mb-5 text-dark">
+                @Html.Raw(Model.DescripcionLarga)
+            </div>
+
+            <h2 class="mb-3 text-secondary">Contenido del Curso</h2>
+            <div class="accordion" id="acordeonModulos">
+                @if (Model.Modulos != null && Model.Modulos.Any())
                 {
-                    <div class="alert alert-info d-flex align-items-center justify-content-center" role="alert">
-                        <i class="fas fa-hourglass-half me-2"></i>Su pago está en proceso de validación.
-                    </div>
+                    @foreach (var modulo in Model.Modulos)
+                    {
+                        <div class="accordion-item shadow-sm">
+                            <h2 class="accordion-header" id="heading_@modulo.Id">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
+                                    @modulo.Titulo
+                                </button>
+                            </h2>
+                            <div id="collapse_@modulo.Id" class="accordion-collapse collapse" aria-labelledby="heading_@modulo.Id" data-bs-parent="#acordeonModulos">
+                                <div class="accordion-body p-0">
+                                    <ul class="list-group list-group-flush">
+                                        @if (modulo.Lecciones != null && modulo.Lecciones.Any())
+                                        {
+                                            @foreach (var leccion in modulo.Lecciones)
+                                            {
+                                                <li class="list-group-item">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas @(Model.TieneAcceso ? "fa-check-circle text-success" : "fa-lock text-secondary") me-2"></i>
+                                                        <span class="fw-normal">@leccion.Titulo</span>
+                                                    </div>
+                                                </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li class="list-group-item text-muted">No hay lecciones en este módulo.</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 }
                 else
                 {
-                    <form asp-controller="Pedido" asp-action="IniciarCompra" method="post">
-                        <input type="hidden" name="cursoId" value="@Model.Id" />
-                        <button type="submit" class="btn btn-action w-100" style="color:white">Inscribirse ahora</button>
-                    </form>
+                    <div class="alert alert-warning text-center">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Este curso no contiene módulos ni lecciones.
+                    </div>
                 }
             </div>
         </div>
 
-        <div class="col-12">
-            <h2 class="mb-4 text-black">Acerca de este curso</h2>
-            <p class="mb-5 text-black">@Html.Raw(Model.DescripcionLarga)</p>
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 20px;">
+                <div class="card price-card text-center p-4">
+                    <h5 class="fw-bold text-secondary">Precio del Curso:</h5>
+                    <h2 class="display-6 fw-bold mb-3" style="color: var(--color-primary);">@Model.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</h2>
+                    <p class="text-secondary mb-4"><i class="fas fa-check-circle text-success me-2"></i>Acceso de por vida</p>
 
-            @if (Model.TieneAcceso)
-            {
-                <h2 class="mb-4">Contenido del Curso</h2>
-                <div class="accordion" id="acordeonModulos">
-                    @if (Model.Modulos != null && Model.Modulos.Any())
+                    @if (Model.TieneAcceso)
                     {
-                        @foreach (var modulo in Model.Modulos)
-                        {
-                            <div class="accordion-item shadow-sm">
-                                <h2 class="accordion-header" id="heading_@modulo.Id">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
-                                        @modulo.Titulo
-                                    </button>
-                                </h2>
-                                <div id="collapse_@modulo.Id" class="accordion-collapse collapse" aria-labelledby="heading_@modulo.Id" data-bs-parent="#acordeonModulos">
-                                    <div class="accordion-body p-0">
-                                        <ul class="list-group list-group-flush">
-                                            @if (modulo.Lecciones != null && modulo.Lecciones.Any())
-                                            {
-                                                @foreach (var leccion in modulo.Lecciones)
-                                                {
-                                                    <li class="list-group-item">
-                                                        <div class="d-flex align-items-center mb-2">
-                                                            <i class="fas fa-play-circle text-primary me-2"></i>
-                                                            <h5 class="mb-0">@leccion.Titulo</h5>
-                                                        </div>
-                                                        @if (!string.IsNullOrEmpty(leccion.UrlVideo))
-                                                        {
-                                                            <div class="ratio ratio-16x9 my-3">
-                                                                <iframe src="@leccion.UrlVideo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                                            </div>
-                                                        }
-                                                        <p>@Html.Raw(leccion.Contenido)</p>
-                                                    </li>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <li class="list-group-item text-muted">No hay lecciones en este módulo.</li>
-                                            }
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        }
+                        <a asp-action="VerCurso" asp-controller="Curso" asp-route-id="@Model.Id" class="btn btn-action w-100">Ver Contenido</a>
+
+                        <div class="alert alert-success d-flex align-items-center justify-content-center mt-3" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>Ya tienes acceso a este curso.
+                        </div>
+                    }
+                    else if (Model.EstaEnValidacion)
+                    {
+                        <div class="alert alert-info d-flex align-items-center justify-content-center" role="alert">
+                            <i class="fas fa-hourglass-half me-2"></i>Su pago está en proceso de validación.
+                        </div>
                     }
                     else
                     {
-                        <div class="alert alert-warning text-center">
-                            <i class="fas fa-exclamation-triangle me-2"></i>Este curso no contiene módulos ni lecciones.
-                        </div>
+                        <form asp-controller="Pedido" asp-action="IniciarCompra" method="post">
+                            <input type="hidden" name="cursoId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-action w-100">Inscribirse ahora</button>
+                        </form>
                     }
                 </div>
-            }
+            </div>
         </div>
     </div>
 </div>
