@@ -5,7 +5,7 @@
     ViewData["Title"] = "Gestión de Estudiantes";
 }
 
-<div class="container-fluid pt-5">
+<div class="container-fluid pt-5 mb-5">
     <div class="row">
         <div class="col-12 text-center">
             <h2 class="display-4">Gestión de Estudiantes y Cursos</h2>
@@ -13,7 +13,7 @@
         </div>
     </div>
 
-    <div class="row mt-4">
+    <div class="row mt-4 mb-5">
         @if (Model != null && Model.Any())
         {
             @foreach (var estudiante in Model)

@@ -103,7 +103,7 @@ namespace YSA.Web.Models.ViewModels
         public List<PreguntaRespuestaViewModel> Preguntas { get; set; }
         public List<AnuncioViewModel> Anuncios { get; set; }
         public List<Curso> CursosDestacados { get; set; }
-
+        public List<RecursoActividadViewModel> Actividades { get; set; } = new List<RecursoActividadViewModel>();
 
     }
 
@@ -113,6 +113,7 @@ namespace YSA.Web.Models.ViewModels
         public int Calificacion { get; set; } // Ejemplo: 1 a 5
         public string Comentario { get; set; }
         public DateTime Fecha { get; set; }
+        public int EstudianteId { get; set; }
     }
     public class CursosIndexViewModel
     {
@@ -129,6 +130,7 @@ namespace YSA.Web.Models.ViewModels
         public int Id { get; set; }
         public string Pregunta { get; set; }
         public string NombreEstudiante { get; set; }
+        public int EstudianteId { get; set; }
         public DateTime FechaPregunta { get; set; }
 
         // Propiedades de la respuesta
@@ -155,5 +157,13 @@ namespace YSA.Web.Models.ViewModels
     {
         public int CursoId { get; set; }
         public int InstructorId { get; set; }
+    }
+    public class PreguntaPendienteViewModel
+    {
+        public int Id { get; set; }
+        public string CursoTitulo { get; set; }
+        public string EstudianteNombre { get; set; }
+        public string Pregunta { get; set; }
+        public DateTime FechaPregunta { get; set; }
     }
 }

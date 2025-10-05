@@ -17,11 +17,16 @@
     .form-group label {
         font-weight: 600;
         margin-bottom: 0.5rem;
+        color: #333; /* Color de etiqueta más oscuro */
     }
 
     .form-control:focus {
         border-color: #000;
         box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control-lg {
+        height: calc(1.5em + 1rem + 2px); /* Ajuste de altura para campos clave */
     }
 
     .main-btn {
@@ -34,15 +39,65 @@
             background-color: #333;
             border-color: #333;
         }
+
+    .form-switch .form-check-input:checked {
+        background-color: black;
+        border-color: black;
+    }
+
+    /* ------------------------------------- */
+    /* MEDIA QUERY RESPONSIVE (MÓVIL)        */
+    /* ------------------------------------- */
+    @@media (max-width: 767.98px) {
+        .form-container {
+            /* Reduce el padding interno en móvil */
+            padding: 1rem;
+            /* Elimina el max-width efectivo en pantallas pequeñas para que ocupe todo el ancho disponible del container padre */
+            max-width: 100%;
+        }
+
+        .container {
+            /* Reduce el padding del contenedor principal */
+            padding: 1rem 0.5rem !important;
+        }
+
+        .fw-bold {
+            font-size: 1.75rem; /* Título ligeramente más pequeño */
+            margin-bottom: 1rem !important;
+        }
+
+        .form-group-vertical {
+            margin-bottom: 1rem; /* Menos espacio entre grupos */
+        }
+
+        .form-group .row > div {
+            /* Asegura un poco de espacio si hay columnas anidadas en el row */
+            padding-bottom: 0.5rem;
+        }
+
+        .btn-lg {
+            /* Hace que los botones sean de ancho completo y más fáciles de pulsar */
+            width: 100%;
+            margin-bottom: 0.5rem;
+            margin-right: 0 !important; /* Elimina el margen derecho del botón Guardar */
+        }
+
+        .form-group.text-center.mt-5 {
+            /* Asegura que los botones se apilen y ocupen el ancho total */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    }
 </style>
 
-<div class="container py-4 pb-5">
+<div class="container py-4 pb-5 mb-5">
     <h1 class="fw-bold mb-4 text-center">
         <i class="fas fa-calendar-plus me-2 text-primary"></i> @ViewData["Title"]
     </h1>
     <hr class="mb-5" />
 
-    <div class="form-container pb-5">
+    <div class="form-container pb-5 mb-5">
         <form asp-action="CrearEvento" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
@@ -136,7 +191,7 @@
                 textarea.addEventListener('input', updateCharCount);
             }
 
-            // Forzar el input de FechaEvento a tipo datetime-local
+            // Forzar el input de FechaEvento a tipo datetime-local (para asegurar la UI correcta en navegadores)
             var fechaEventoInput = document.getElementById('@Html.IdFor(model => model.FechaEvento)');
             if (fechaEventoInput) {
                 fechaEventoInput.type = 'datetime-local';

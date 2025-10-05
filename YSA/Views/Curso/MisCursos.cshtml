@@ -25,7 +25,15 @@
     .container h2 {
         color: var(--color-secondary) !important;
         font-weight: 700;
-        font-size: 2.5rem;
+        /* MEJORA RESPONSIVE: Ajuste de tamaño de fuente del título principal */
+        font-size: 2rem; /* Tamaño base para móvil */
+    }
+
+    /* MEJORA RESPONSIVE: Media Query para el título en pantallas grandes */
+    @@media (min-width: 768px) {
+        .container h2 {
+            font-size: 2.5rem;
+        }
     }
 
     hr {
@@ -51,24 +59,43 @@
         }
 
     .card-img-top {
-        height: 200px;
+        /* MEJORA RESPONSIVE: Ajuste de altura para móvil (un poco menos dominante) */
+        height: 180px;
         object-fit: cover;
         width: 100%;
-        /* No necesitamos border-radius aquí si el card ya lo tiene y está en overflow:hidden */
     }
 
     /* Contenido de la tarjeta */
     .card-body h5 {
         font-weight: 600;
         color: var(--color-secondary);
-        font-size: 1.35rem;
+        /* MEJORA RESPONSIVE: Ajuste de tamaño del título de la tarjeta para móvil */
+        font-size: 1.25rem;
     }
 
     .card-text {
-        font-size: 0.95em;
+        font-size: 0.9em; /* Ligeramente más pequeño para mejor lectura en móviles */
         color: var(--color-text-muted);
         line-height: 1.5;
+        /* MEJORA RESPONSIVE: Limitar la descripción a 3 líneas para tarjetas uniformes */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
+
+    /* MEJORA RESPONSIVE: Media Query para títulos de tarjeta en pantallas grandes */
+    @@media (min-width: 768px) {
+        .card-img-top {
+            height: 200px; /* Vuelve a la altura original en desktop */
+        }
+
+        .card-body h5 {
+            font-size: 1.35rem; /* Vuelve al tamaño original en desktop */
+        }
+    }
+
 
     /* Botón de Acción (Ver Curso) - Estilo B&N */
     .btn-primary {
@@ -96,7 +123,7 @@
     }
 </style>
 
-<div class="container mt-5 mb-5">
+<div class="container mt-5 mb-5 pb-5">
     <h2 class="text-center mb-4">Mis Cursos</h2>
     <hr />
 
@@ -108,7 +135,7 @@
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 pb-5 mb-5">
             @foreach (var curso in Model)
             {
                 <div class="col">

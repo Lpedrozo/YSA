@@ -34,6 +34,8 @@ namespace YSA.Data.Data
         public DbSet<Evento> Eventos { get; set; }
         public DbSet<EventoFotos> EventoFotos { get; set; }
         public DbSet<TipoEvento> TipoEventos { get; set; }
+        public DbSet<RecursoActividad> RecursosActividades { get; set; }
+        public DbSet<EntregaActividad> EntregasActividades { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -185,8 +187,21 @@ namespace YSA.Data.Data
                 .HasOne(ef => ef.Evento)
                 .WithMany(e => e.Fotos)
                 .HasForeignKey(ef => ef.EventoId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<RecursoActividad>()
+                .HasMany(ra => ra.Entregas)
+                .WithOne(ea => ea.RecursoActividad)
+                .HasForeignKey(ea => ea.RecursoActividadId); 
 
+            modelBuilder.Entity<EntregaActividad>()
+                .HasOne(ea => ea.Estudiante)
+                .WithMany()
+                .HasForeignKey(ea => ea.EstudianteId);
+
+            modelBuilder.Entity<EntregaActividad>()
+                .HasOne(ea => ea.Instructor)
+                .WithMany()
+                .HasForeignKey(ea => ea.InstructorId);
         }
     }
 }

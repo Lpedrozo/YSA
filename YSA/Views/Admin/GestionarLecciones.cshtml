@@ -19,6 +19,23 @@
         --color-danger: #cc0000; /* Rojo sutil para acciones peligrosas */
     }
 
+    body {
+        background-color: var(--color-background-light);
+        color: var(--color-primary);
+    }
+
+    h1 {
+        color: var(--color-secondary);
+        font-weight: 700;
+        font-size: 2rem;
+    }
+
+    hr {
+        border-top: 2px solid var(--color-border-light);
+        opacity: 1;
+        margin-bottom: 1.5rem;
+    }
+
     /* Botón "Volver" */
     .btn-secondary {
         background-color: var(--color-text-muted) !important;
@@ -85,7 +102,7 @@
     }
 
     /* -------------------------- */
-    /* 2. Estilos de Cards        */
+    /* 2. Estilos de Cards        */
     /* -------------------------- */
     .card-style {
         border: 1px solid var(--color-border-light);
@@ -119,9 +136,7 @@
     /* -------------------------- */
     /* 3. Estilos de Modal y Título */
     /* -------------------------- */
-    .modal-dialog {
-        max-width: 800px; /* Aumenta el ancho del modal para el editor */
-    }
+    /* Se cambió el max-width en el HTML del modal a modal-lg (800px) */
 
     h1 {
         color: var(--color-secondary);
@@ -136,16 +151,22 @@
     }
 </style>
 
-<div class="container mt-5 mb-5">
+<div class="container mt-5 mb-5 pb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="text-center" style="margin-right: 1.5rem;">Lecciones para el Módulo: @ViewBag.ModuloTitulo</h1>
-    </div><div class="d-flex justify-content-between align-items-center mb-4">
-        <a asp-action="GestionarModulos" asp-route-cursoId="@ViewBag.CursoId" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-2"></i> Volver a Módulos
-        </a>
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearLeccionModal">
-            <i class="fas fa-plus-circle me-2"></i> Nueva Lección
-        </button>
+    </div>
+
+    <div class="row mb-4 g-2">
+        <div class="col-12 col-sm-6">
+            <a asp-action="GestionarModulos" asp-route-cursoId="@ViewBag.CursoId" class="btn btn-secondary w-100">
+                <i class="fas fa-arrow-left me-2"></i> Volver a Módulos
+            </a>
+        </div>
+        <div class="col-12 col-sm-6">
+            <button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#crearLeccionModal">
+                <i class="fas fa-plus-circle me-2"></i> Nueva Lección
+            </button>
+        </div>
     </div>
     <hr style="margin-top: 0;" />
 
@@ -158,10 +179,10 @@
     }
     else
     {
-        <div class="row" id="contenedorLecciones">
+        <div class="row mb-5" id="contenedorLecciones">
             @foreach (var leccion in Model.OrderBy(l => l.Orden))
             {
-                <div class="col-md-6">
+                <div class="col-12 col-md-6">
                     <div class="card card-style p-3">
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="d-flex align-items-center">
@@ -174,7 +195,15 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center flex-shrink-0 ms-3">
+                                <a asp-action="GestionarRecursosActividades"
+                                   asp-route-tipoEntidad="Leccion"
+                                   asp-route-entidadId="@leccion.Id"
+                                   class="btn btn-sm btn-icon me-2"
+                                   style="background-color: #008CBA !important; border-color: #008CBA !important; color: white;"
+                                   title="Gestionar Recursos y Actividades">
+                                    <i class="fas fa-paperclip"></i>
+                                </a>
                                 <button type="button" class="btn btn-sm btn-primary btn-icon editar-btn me-2"
                                         data-id="@leccion.Id"
                                         data-bs-toggle="modal"
@@ -374,6 +403,8 @@
                         recargarContenedorLecciones(); // Recarga el contenedor de cards
                         bootstrap.Modal.getInstance(crearModalEl).hide();
                         crearForm.reset();
+                        // Limpiar TinyMCE
+                        tinymce.get('Crear_Contenido').setContent('');
                     });
                 } else {
                     displayErrors('crear-leccion-validation-errors', result.errors);
@@ -453,12 +484,6 @@
                     button.removeEventListener('click', handleEliminarClick); // Remueve el listener previo
                     button.addEventListener('click', handleEliminarClick); // Adjunta el nuevo listener
                 });
-
-                 // Re-adjunta los listeners para los botones de editar después de recargar el contenedor
-                document.querySelectorAll('.editar-btn').forEach(button => {
-                    button.removeEventListener('click', handleEditarClick); // Remueve el listener previo
-                    button.addEventListener('click', handleEditarClick); // Adjunta el nuevo listener
-                });
             }
 
             function handleEliminarClick(e) {
@@ -478,15 +503,6 @@
                         form.submit();
                     }
                 });
-            }
-
-            // Nota: El listener para 'show.bs.modal' en el modal de edición se mantiene porque usa delegación de eventos de Bootstrap,
-            // pero para los botones que no están en el DOM al inicio (como los de eliminar después de recargar),
-            // es mejor re-adjuntar el evento de forma explícita, o delegarlo si es posible.
-            // Para fines de este código, re-adjuntamos tanto 'eliminar' como 'editar' para seguridad.
-            function handleEditarClick(e) {
-                // No hace falta añadir lógica aquí si solo abre el modal.
-                // La lógica principal de carga de datos está en el listener de `show.bs.modal` de Bootstrap.
             }
 
             // Llamar al adjuntar eventos al inicio

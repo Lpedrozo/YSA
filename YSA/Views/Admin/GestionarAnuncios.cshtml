@@ -5,7 +5,7 @@
 
 <style>
     /* ------------------------------------- */
-    /* 1. Variables B&W y Estilos Generales  */
+    /* 1. Variables B&W y Estilos Generales  */
     /* ------------------------------------- */
     :root {
         --color-secondary: #000000; /* Negro Puro (Título) */
@@ -47,7 +47,7 @@
         }
 
     /* ------------------------------------- */
-    /* 2. Estilos de las Cards de Anuncio    */
+    /* 2. Estilos de las Cards de Anuncio    */
     /* ------------------------------------- */
     .anuncio-card {
         border: 1px solid var(--color-border-light);
@@ -102,13 +102,44 @@
         border-radius: 6px;
     }
 
+    /* ------------------------------------- */
+    /* 3. MEDIA QUERY RESPONSIVE (MÓVIL)     */
+    /* ------------------------------------- */
+    @@media (max-width: 575.98px) { /* Pantallas extra pequeñas (móvil) */
+        .container.mt-5 {
+            /* Reduce el margen superior y lateral en móvil */
+            margin-top: 1.5rem !important;
+            padding: 0 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem !important;
+        }
+
+        .d-flex.justify-content-end.mb-4 {
+            /* Centra el botón y le da ancho completo en móvil */
+            justify-content: center !important;
+        }
+
+        .btn-success {
+            /* Botón de 'Nuevo Anuncio' de ancho completo para fácil pulsación */
+            width: 100%;
+            max-width: 300px; /* Limita el ancho máximo para que no se vea ridículo en pantallas muy anchas, aunque estemos en el media query de móvil */
+        }
+
+        .row-cols-1 .col {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+    }
 </style>
 
-<div class="container mt-5">
+<div class="container mt-5 mb-5 pb-5">
     <h1 class="text-center mb-5">Gestión de Anuncios</h1>
 
     <div class="d-flex justify-content-end mb-4">
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearAnuncioModal">
+        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#crearAnuncioModal">
             <i class="fas fa-plus-circle me-2"></i> Nuevo Anuncio
         </button>
     </div>
@@ -121,7 +152,7 @@
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5 pb-5">
             @foreach (var anuncio in Model)
             {
                 <div class="col">
@@ -181,7 +212,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
             </form>
         </div>

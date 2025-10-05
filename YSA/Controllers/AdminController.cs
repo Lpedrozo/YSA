@@ -28,6 +28,7 @@ namespace YSA.Web.Controllers
         private readonly IEventoService _eventoService;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IProductoService _productoService;
+        private readonly IRecursoActividadService _recursoActividadService;
 
         public AdminController(ICursoService cursoService, 
             IModuloService moduloService, 
@@ -38,7 +39,8 @@ namespace YSA.Web.Controllers
             IArtistaService artistaService, 
             IEventoService eventoService, 
             IWebHostEnvironment hostingEnvironment, 
-            IProductoService productoService)
+            IProductoService productoService,
+            IRecursoActividadService recursoActividadService)
         {
             _cursoService = cursoService;
             _moduloService = moduloService;
@@ -50,6 +52,7 @@ namespace YSA.Web.Controllers
             _eventoService = eventoService;
             _hostingEnvironment = hostingEnvironment;
             _productoService = productoService;
+            _recursoActividadService = recursoActividadService;
         }
 
         public IActionResult Panel()
@@ -1552,6 +1555,356 @@ namespace YSA.Web.Controllers
 
             TempData["MensajeExito"] = "Producto eliminado exitosamente.";
             return RedirectToAction(nameof(GestionarProductos));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GestionarRecursosActividades(string tipoEntidad, int entidadId)
+        {
+            if (string.IsNullOrEmpty(tipoEntidad) || entidadId <= 0)
+            {
+                return BadRequest("Tipo de entidad o ID inválido.");
+            }
+
+            // 1. Obtener la información de la entidad para el contexto de la vista (Título)
+            string entidadNombre = string.Empty;
+            int? cursoId = null;
+
+            if (tipoEntidad.Equals("Curso", StringComparison.OrdinalIgnoreCase))
+            {
+                var curso = await _cursoService.ObtenerCursoPorIdAsync(entidadId);
+                entidadNombre = curso?.Titulo ?? "Curso Desconocido";
+                cursoId = entidadId;
+            }
+            else if (tipoEntidad.Equals("Modulo", StringComparison.OrdinalIgnoreCase))
+            {
+                var modulo = await _moduloService.ObtenerModuloPorIdAsync(entidadId);
+                entidadNombre = modulo?.Titulo ?? "Módulo Desconocido";
+                cursoId = modulo?.CursoId;
+            }
+            else if (tipoEntidad.Equals("Leccion", StringComparison.OrdinalIgnoreCase))
+            {
+                var leccion = await _leccionService.ObtenerLeccionPorIdAsync(entidadId);
+                entidadNombre = leccion?.Titulo ?? "Lección Desconocida";
+                var modulo = await _moduloService.ObtenerModuloPorIdAsync(leccion.ModuloId);
+                cursoId = modulo?.CursoId;
+            }
+
+            if (string.IsNullOrEmpty(entidadNombre) || cursoId == null)
+            {
+                return NotFound($"No se encontró la entidad de tipo {tipoEntidad} con ID {entidadId}.");
+            }
+
+            // 2. Obtener los recursos/actividades existentes
+            var recursos = await _recursoActividadService.ObtenerRecursosDeEntidadAsync(tipoEntidad, entidadId);
+
+            // 3. Preparar ViewBags para el formulario de creación
+            ViewBag.TipoEntidad = tipoEntidad;
+            ViewBag.EntidadId = entidadId;
+            ViewBag.EntidadNombre = entidadNombre;
+            ViewBag.CursoId = cursoId;
+
+            // Opciones para TipoRecurso
+            ViewBag.TiposRecurso = new SelectList(new List<string> { "Actividad", "PDF", "Enlace", "ArchivoDescargable" });
+
+            return View(recursos.Select(r => new RecursoActividadViewModel
+            {
+                Id = r.Id,
+                Titulo = r.Titulo,
+                TipoRecurso = r.TipoRecurso,
+                Descripcion = r.Descripcion,
+                Url = r.Url,
+                RequiereEntrega = r.RequiereEntrega,
+                EntidadNombre = entidadNombre // Para la lista
+            }).ToList());
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CrearRecursoActividad([FromForm] RecursoActividadViewModel model)
+        {
+            // --- 1. Validación de Archivo/URL específica ---
+            // Si no es una Actividad y no tiene URL ni Archivo, agregamos un error.
+            if (model.TipoRecurso != "Actividad")
+            {
+                if (string.IsNullOrEmpty(model.Url) && (model.Archivo == null || model.Archivo.Length == 0))
+                {
+                    ModelState.AddModelError("Url", "Debe proporcionar una URL o subir un archivo para este tipo de recurso.");
+                }
+            }
+
+            // --- 2. Manejo de Errores de Validación del Modelo ---
+            if (!ModelState.IsValid)
+            {
+                // Mapea todos los errores de validación a un diccionario para devolverlos en JSON
+                var errors = ModelState.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                );
+                // Devuelve una respuesta JSON indicando el fallo y los errores.
+                return Json(new
+                {
+                    success = false,
+                    errors = errors,
+                    message = "Error de validación al crear el recurso. Revise los campos."
+                });
+            }
+
+            // --- 3. Saneamiento de datos y Preparación de URL ---
+            var sanitizer = new Ganss.Xss.HtmlSanitizer(); // Asegúrate de que esta librería esté instalada
+            model.Descripcion = sanitizer.Sanitize(model.Descripcion ?? string.Empty);
+
+            string finalUrl = model.Url;
+
+            // --- 4. Manejo de Subida de Archivos (si aplica) ---
+            if (model.Archivo != null && model.Archivo.Length > 0)
+            {
+                try
+                {
+                    // Define la ruta de subida: wwwroot/recursos/{TipoEntidad}/{EntidadId}/
+                    var uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "recursos", model.TipoEntidad, model.EntidadId.ToString());
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+
+                    var extension = Path.GetExtension(model.Archivo.FileName);
+                    // Usar un GUID para garantizar un nombre de archivo único
+                    var fileName = $"{Guid.NewGuid()}{extension}";
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.Archivo.CopyToAsync(stream);
+                    }
+
+                    // La URL final que se guarda en la DB es relativa a wwwroot
+                    finalUrl = $"/recursos/{model.TipoEntidad}/{model.EntidadId}/{fileName}";
+                }
+                catch (Exception ex)
+                {
+                    // Error durante la subida del archivo al disco
+                    return Json(new
+                    {
+                        success = false,
+                        message = $"Error al subir el archivo: {ex.Message}"
+                    });
+                }
+            }
+
+            // --- 5. Mapeo a entidad y Creación ---
+            var recursoActividad = new RecursoActividad
+            {
+                TipoEntidad = model.TipoEntidad,
+                EntidadId = model.EntidadId,
+                Titulo = model.Titulo,
+                Descripcion = model.Descripcion ?? string.Empty,
+                TipoRecurso = model.TipoRecurso,
+                Url = finalUrl,
+                RequiereEntrega = model.RequiereEntrega,
+                FechaCreacion = DateTime.UtcNow
+            };
+
+            var resultado = await _recursoActividadService.CrearRecursoActividadAsync(recursoActividad);
+
+            if (resultado != null)
+            {
+                // Éxito: Devuelve JSON. El JavaScript se encargará de mostrar SweetAlert.
+                return Json(new
+                {
+                    success = true,
+                    message = $"Recurso/Actividad '{recursoActividad.Titulo}' creado con éxito."
+                });
+            }
+            else
+            {
+                // Error en el servicio o la base de datos: Devuelve JSON.
+                return Json(new
+                {
+                    success = false,
+                    message = "Error al crear el recurso/actividad en la base de datos."
+                });
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ObtenerRecursoParaEdicion(int id)
+        {
+            var recurso = await _recursoActividadService.ObtenerRecursoPorIdAsync(id);
+
+            if (recurso == null)
+            {
+                return NotFound(new { message = "Recurso no encontrado." });
+            }
+
+            // Mapeo a ViewModel para la edición
+            var viewModel = new RecursoActividadViewModel
+            {
+                Id = recurso.Id,
+                TipoEntidad = recurso.TipoEntidad,
+                EntidadId = recurso.EntidadId,
+                Titulo = recurso.Titulo,
+                Descripcion = recurso.Descripcion,
+                TipoRecurso = recurso.TipoRecurso,
+                Url = recurso.Url,
+                RequiereEntrega = recurso.RequiereEntrega
+                // No se mapea Archivo aquí.
+            };
+
+            // Devuelve el JSON que el JavaScript usará para llenar el modal de edición
+            return Json(new { success = true, data = viewModel });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarRecursoActividad([FromForm] RecursoActividadViewModel model)
+        {
+            // 1. Obtención y Validación del ID
+            if (model.Id <= 0)
+            {
+                return Json(new { success = false, message = "ID de recurso inválido para edición." });
+            }
+
+            // --- 2. Validación de Archivo/URL específica ---
+            // Si no es una Actividad y no tiene URL ni Archivo, agregamos un error.
+            // Esto es crítico si el usuario borra la URL existente y no sube un archivo nuevo.
+            if (model.TipoRecurso != "Actividad")
+            {
+                if (string.IsNullOrEmpty(model.Url) && (model.Archivo == null || model.Archivo.Length == 0))
+                {
+                    ModelState.AddModelError("Url", "Debe proporcionar una URL o subir/reemplazar un archivo para este tipo de recurso.");
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                );
+                return Json(new { success = false, errors = errors, message = "Error de validación al actualizar el recurso. Revise los campos." });
+            }
+
+            // 3. Obtener el recurso existente para ver el archivo/URL anterior
+            var recursoExistente = await _recursoActividadService.ObtenerRecursoPorIdAsync(model.Id);
+            if (recursoExistente == null)
+            {
+                return Json(new { success = false, message = "El recurso a editar no existe." });
+            }
+
+            // **NOTA:** Aquí debes obtener el instructorId del usuario logueado.
+            // Usaremos el valor existente en tu código para seguir la estructura.
+            int instructorId = 1;
+
+            // 4. Manejo de Archivo: Reemplazo o Conservación de URL
+            string finalUrl = model.Url;
+
+            if (model.Archivo != null && model.Archivo.Length > 0)
+            {
+                // a. ELIMINAR archivo anterior (si existe y no es una URL externa)
+                if (!string.IsNullOrEmpty(recursoExistente.Url) && !recursoExistente.Url.StartsWith("http"))
+                {
+                    var oldFilePath = Path.Combine(_hostingEnvironment.WebRootPath, recursoExistente.Url.TrimStart('/'));
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+                }
+
+                // b. SUBIR nuevo archivo (reutilizando la lógica de CrearRecursoActividad)
+                try
+                {
+                    var uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "recursos", model.TipoEntidad, model.EntidadId.ToString());
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+
+                    var extension = Path.GetExtension(model.Archivo.FileName);
+                    var fileName = $"{Guid.NewGuid()}{extension}";
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.Archivo.CopyToAsync(stream);
+                    }
+
+                    // La URL final que se guarda es la del nuevo archivo
+                    finalUrl = $"/recursos/{model.TipoEntidad}/{model.EntidadId}/{fileName}";
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = $"Error al subir el nuevo archivo: {ex.Message}" });
+                }
+            }
+            // Si no se sube un nuevo archivo, finalUrl conserva el valor del formulario (model.Url),
+            // que puede ser el URL anterior o vacío. Esto es correcto si no era un archivo físico.
+
+            // 5. Saneamiento de datos
+            var sanitizer = new Ganss.Xss.HtmlSanitizer();
+            model.Descripcion = sanitizer.Sanitize(model.Descripcion ?? string.Empty);
+
+            // 6. Mapeo a entidad
+            var recursoActividad = new RecursoActividad
+            {
+                Id = model.Id,
+                // Usamos los valores del modelo, o el existente si son nulos (aunque los hidden fields deberían enviarlos)
+                TipoEntidad = model.TipoEntidad,
+                EntidadId = model.EntidadId,
+                Titulo = model.Titulo,
+                Descripcion = model.Descripcion,
+                TipoRecurso = model.TipoRecurso,
+                Url = finalUrl, // <-- Usamos la URL actualizada
+                RequiereEntrega = model.RequiereEntrega
+            };
+
+            var resultado = await _recursoActividadService.ActualizarRecursoActividadAsync(recursoActividad, model.Id, instructorId);
+
+            if (resultado)
+            {
+                return Json(new { success = true, message = $"Recurso/Actividad '{model.Titulo}' actualizado con éxito." });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Error al actualizar el recurso/actividad. Verifique permisos o si el ID existe." });
+            }
+        }
+
+        // =================================
+        // 3.3. ENDPOINT PARA ELIMINACIÓN (POST)
+        // =================================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarRecursoActividad(int id)
+        {
+            // **NOTA:** Aquí debes obtener el instructorId del usuario logueado.
+            // int instructorId = ObtenerInstructorIdLogueado(); 
+            int instructorId = 1; // AJUSTAR ESTO
+
+            if (id <= 0)
+            {
+                return Json(new { success = false, message = "ID de recurso inválido para eliminación." });
+            }
+
+            var recurso = await _recursoActividadService.ObtenerRecursoPorIdAsync(id);
+            if (recurso == null)
+            {
+                return Json(new { success = false, message = "El recurso no existe." });
+            }
+
+            // Opcional: Lógica para ELIMINAR el archivo físico (si existe)
+            if (!string.IsNullOrEmpty(recurso.Url) && !recurso.Url.StartsWith("http"))
+            {
+                Path.Combine(_hostingEnvironment.WebRootPath, recurso.Url);
+            }
+
+            var resultado = await _recursoActividadService.EliminarRecursoActividadAsync(id, instructorId);
+
+            if (resultado)
+            {
+                return Json(new { success = true, message = $"Recurso '{recurso.Titulo}' eliminado con éxito." });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Error al eliminar el recurso. Verifique permisos o restricciones de la base de datos." });
+            }
         }
     }
 }

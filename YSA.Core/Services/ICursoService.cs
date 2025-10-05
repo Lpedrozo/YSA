@@ -31,5 +31,7 @@ namespace YSA.Core.Services
         Task EliminarAnuncioAsync(int id);
         Task<List<Curso>> ObtenerCursosDelEstudianteAsync(int estudianteId);
         Task AsociarArtistaACursoAsync(int cursoId, int instructorId);
+        Task<bool> ResponderPreguntaAsync(int preguntaId, string respuesta, int instructorId);
+        Task<List<PreguntaRespuesta>> ObtenerPreguntasPendientesParaInstructorAsync(int instructorId);
     }
 }

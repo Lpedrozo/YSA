@@ -185,5 +185,46 @@ namespace YSA.Data.Repositories
                                        .ToListAsync();
             return cursos;
         }
+        public async Task<bool> ResponderPreguntaAsync(int preguntaId, string respuesta, int instructorId)
+        {
+            var artistaId = await _context.Artistas.Where(a => a.UsuarioId == instructorId).Select(a => a.Id).FirstOrDefaultAsync();
+
+            var pregunta = await _context.PreguntasRespuestas
+                .FirstOrDefaultAsync(pr => pr.Id == preguntaId && pr.Respuesta == "Gracias por preguntar. Ahora, espera la respuesta de tus instructores, ellos no tardan en responder.");
+
+            if (pregunta == null)
+            {
+                return false; // La pregunta no existe o ya fue respondida
+            }
+
+            // 1. Actualiza los campos de respuesta
+            pregunta.Respuesta = respuesta;
+            pregunta.InstructorId = artistaId;
+            pregunta.FechaRespuesta = DateTime.UtcNow; // O DateTime.Now, según tu estándar
+
+            // 2. Marca la entidad como modificada y guarda los cambios
+            _context.PreguntasRespuestas.Update(pregunta);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<List<PreguntaRespuesta>> ObtenerPreguntasPendientesPorInstructorAsync(int instructorId)
+        {
+            var artistaId = await _context.Artistas.Where(a => a.UsuarioId == instructorId).Select(a => a.Id).FirstOrDefaultAsync();
+            // 1. Encuentra los IDs de los cursos que imparte este instructor
+            var cursosIds = await _context.Cursos
+                .Where(c => c.InstructorId == artistaId)
+                .Select(c => c.Id)
+                .ToListAsync();
+
+            // 2. Obtiene las preguntas asociadas a esos cursos que NO tienen respuesta.
+            return await _context.PreguntasRespuestas
+                .Where(pr => cursosIds.Contains(pr.CursoId) && pr.Respuesta == "Gracias por preguntar. Ahora, espera la respuesta de tus instructores, ellos no tardan en responder.")
+                .Include(pr => pr.Curso)         // Incluye el curso para contexto
+                .Include(pr => pr.Estudiante)    // Incluye el estudiante que preguntó
+                .OrderBy(pr => pr.FechaPregunta)
+                .ToListAsync();
+        }
     }
 }

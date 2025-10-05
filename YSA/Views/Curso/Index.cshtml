@@ -4,166 +4,216 @@
 }
 
 <style>
+
     /* Estilos globales: Esquema Claro (Light Mode) con Blanco y Negro/Gris */
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: #ffffff; /* Fondo blanco */
-        color: #333333; /* Texto principal gris oscuro */
+        body {
+                font-family: 'Inter', sans-serif;
+                background-color: #ffffff; /* Fondo blanco */
+                color: #333333; /* Texto principal gris oscuro */
+
     }
+
 
     /* Estilos para la sección de bienvenida (MANTENIDOS, PERO NO SE USAN EN EL HTML) */
-    .bienvenida-section {
-        background-color: #f7f7f7; /* Gris muy claro para el fondo de bienvenida */
-        color: #000;
-        border-bottom: 1px solid #ddd;
+        .bienvenida-section {
+                background-color: #f7f7f7; /* Gris muy claro para el fondo de bienvenida */
+                color: #000;
+                border-bottom: 1px solid #ddd;
+
     }
 
-    .bienvenida-info p {
-        color: white;
+        .bienvenida-info p {
+                color: white;
+
     }
+
 
     /* Estilos para el carrusel de cursos */
-    .carousel-item-custom {
-        position: relative;
-        height: 500px; /* Ajusta la altura del carrusel */
-        background-size: cover;
-        background-position: center;
-        color: #fff; /* Texto blanco sobre la imagen del carrusel */
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Sombra más fuerte para contraste */
+        .carousel-item-custom {
+                position: relative;
+                height: 500px; /* Ajusta la altura del carrusel */
+                background-size: cover;
+                background-position: center;
+                color: #fff; /* Texto blanco sobre la imagen del carrusel */
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Sombra más fuerte para contraste */
+
     }
 
-    .carousel-overlay {
-        background-color: rgba(0, 0, 0, 0.4); /* Fondo semi-transparente oscuro */
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        padding: 20px;
+        .carousel-overlay {
+                background-color: rgba(0, 0, 0, 0.4); /* Fondo semi-transparente oscuro */
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                padding: 20px;
+
     }
+
 
     /* Estilos para las tarjetas de curso */
-    .card {
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        border-radius: 12px;
-        border: 1px solid #e0e0e0; /* Borde muy sutil para tarjetas */
-        overflow: hidden;
-        background-color: #fff; /* Tarjeta blanca */
-        color: #000; /* Texto negro */
+        .card {
+                transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+                border-radius: 12px;
+                border: 1px solid #e0e0e0; /* Borde muy sutil para tarjetas */
+                overflow: hidden;
+                background-color: #fff; /* Tarjeta blanca */
+                color: #000; /* Texto negro */
+
     }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra visible en fondo blanco */
+                .card:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra visible en fondo blanco */
+
         }
 
-    .card-img-top {
-        border-top-left-radius: 12px;
-        border-top-right-radius: 12px;
+        .card-img-top {
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
+
     }
+
 
     /* Contenido de la tarjeta */
-    .card-body h5 {
-        font-weight: 600;
-        color: #000; /* Título negro */
+        .card-body h5 {
+                font-weight: 600;
+                color: #000; /* Título negro */
+
     }
 
-    .card-text {
-        font-size: 0.9em;
-        color: #666; /* Descripción gris oscuro */
+        .card-text {
+                font-size: 0.9em;
+                color: #666; /* Descripción gris oscuro */
+
     }
 
-    .card-categories {
-        font-size: 0.8em;
-        color: #999;
-        margin-bottom: 10px;
+        .card-categories {
+                font-size: 0.8em;
+                color: #999;
+                margin-bottom: 10px;
+
     }
 
-        .card-categories .badge {
-            padding: 5px 10px;
-            margin-right: 5px;
-            background-color: #e0e0e0 !important; /* Categoría gris claro */
-            color: #333 !important;
-        }
+            .card-categories .badge {
+                    padding: 5px 10px;
+                    margin-right: 5px;
+                    background-color: #e0e0e0 !important; /* Categoría gris claro */
+                    color: #333 !important;
+
+    }
+
 
     /* Títulos de sección */
-    h2 {
-        color: #333333 !important; /* Títulos en gris oscuro para el fondo blanco */
+        h2 {
+                color: #333333 !important; /* Títulos en gris oscuro para el fondo blanco */
+
     }
+
 
     /* Líneas divisorias */
-    hr {
-        border-top: 1px solid #cccccc; /* Línea gris */
-        opacity: 1; /* Asegura que sea visible */
+        hr {
+                border-top: 1px solid #cccccc; /* Línea gris */
+                opacity: 1; /* Asegura que sea visible */
+
     }
+
 
     /* Botón de acción principal (Black/White style) */
-    .btn-primary {
-        background-color: #333333; /* Gris oscuro para botón principal */
-        border-color: #333333;
-        color: white;
+        .btn-primary {
+                background-color: #333333; /* Gris oscuro para botón principal */
+                border-color: #333333;
+                color: white;
+
     }
 
-        .btn-primary:hover {
-            background-color: #000000; /* Negro en hover */
-            border-color: #000000;
-            color: #fff;
+                .btn-primary:hover {
+                        background-color: #000000; /* Negro en hover */
+                        border-color: #000000;
+                        color: #fff;
+
         }
 
-    .filtro-menu {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 20px;
-        margin-bottom: 30px;
+
+    /* --- CORRECCIÓN 1: Filtros con mejor espaciado --- */
+        .filtro-menu {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                margin-top: 20px;
+                margin-bottom: 30px;
+        /* Usa gap para un espaciado consistente entre elementos */
+        gap: 10px;
+
     }
 
-    .filtro-item a {
-        padding: 8px 15px;
-        margin: 5px;
-        text-decoration: none;
-        color: #333333; /* Texto gris oscuro por defecto */
-        background-color: #f0f0f0; /* Fondo gris muy claro */
-        border-radius: 20px;
-        transition: background-color 0.2s, color 0.2s;
-        border: 1px solid #cccccc;
+        .filtro-item {
+        /* Eliminar el margin-bottom para evitar duplicación, pero se mantiene la estructura */
+        /* Puede que no sea necesario un margin aquí si usamos gap en el padre, pero se mantiene para consistencia */
+        margin: 0;
     }
 
-        .filtro-item a.active {
-            background-color: #333333; /* Activo en gris oscuro */
-            color: #fff; /* Texto blanco */
-            border-color: #333333;
+            .filtro-item a {
+                    padding: 8px 15px;
+            /* Eliminar el margin en 'a' para que 'gap' en .filtro-menu maneje el espaciado */
+
+            /* margin: 5px; */
+                    text-decoration: none;
+                    color: #333333; /* Texto gris oscuro por defecto */
+                    background-color: #f0f0f0; /* Fondo gris muy claro */
+                    border-radius: 20px;
+                    transition: background-color 0.2s, color 0.2s;
+                    border: 1px solid #cccccc;
+                    display: block; /* Asegura que el padding funcione bien */
+
         }
+
+            .filtro-item a.active {
+                    background-color: #333333; /* Activo en gris oscuro */
+                    color: #fff; /* Texto blanco */
+                    border-color: #333333;
+
+    }
+
+
+    /* Fin Corrección 1 */
 
     /* Paginación */
-    .pagination .page-link {
-        color: #333333; /* Enlaces de paginación gris oscuro */
-        border: 1px solid #cccccc;
-        background-color: #ffffff;
+        .pagination .page-link {
+                color: #333333; /* Enlaces de paginación gris oscuro */
+                border: 1px solid #cccccc;
+                background-color: #ffffff;
+
     }
 
-    .pagination .page-item.active .page-link {
-        background-color: #333333;
-        border-color: #333333;
-        color: #fff;
+        .pagination .page-item.active .page-link {
+                background-color: #333333;
+                border-color: #333333;
+                color: #fff;
+
     }
 
-    .pagination .page-item.disabled .page-link {
-        color: #999999;
-        background-color: #f0f0f0;
-        border-color: #e0e0e0;
+        .pagination .page-item.disabled .page-link {
+                color: #999999;
+                background-color: #f0f0f0;
+                border-color: #e0e0e0;
+
     }
+
+
     /* Placeholder para el input de búsqueda */
-    .form-control::placeholder {
-        color: #999999;
-        opacity: 1; /* Firefox */
+        .form-control::placeholder {
+                color: #999999;
+                opacity: 1; /* Firefox */
+
     }
 
-    .form-control {
-        border-color: #cccccc;
-        color: #333333;
+        .form-control {
+                border-color: #cccccc;
+                color: #333333;
+
     }
 </style>
 
@@ -214,6 +264,11 @@ else
             <div id="recomendadosCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     @{
+                        // CORRECCIÓN 2: Se debe calcular el número de elementos a mostrar en base al tamaño de la pantalla
+                        // Sin embargo, esta lógica de Razor no tiene acceso al tamaño de la pantalla.
+                        // La corrección se hará en el HTML usando clases responsivas de Bootstrap.
+                        // Mantendremos itemsPorGiro=3 para el cálculo de los slides.
+
                         int itemsPorGiro = 3;
                         int totalCursosRecomendados = Model.CursosRecomendados.Count;
                         int totalGiro = (int)Math.Ceiling(totalCursosRecomendados / (double)itemsPorGiro);
@@ -221,15 +276,16 @@ else
                     @for (int i = 0; i < totalGiro; i++)
                     {
                         <div class="carousel-item @(i == 0 ? "active" : "")">
+                            @* CORRECCIÓN 2: Se cambia row-cols-1 row-cols-md-3 para 1 tarjeta en móvil y 3 en desktop *@
                             <div class="row row-cols-1 row-cols-md-3 g-4">
                                 @foreach (var curso in Model.CursosRecomendados.Skip(i * itemsPorGiro).Take(itemsPorGiro))
                                 {
                                     <div class="col">
                                         <div class="card h-100 shadow-sm"
-                                             data-bs-toggle="popover"
-                                             data-bs-trigger="hover focus"
-                                             data-bs-placement="right"
-                                             data-bs-html="true">
+                                                                    data-bs-toggle="popover"
+                                                                    data-bs-trigger="hover focus"
+                                                                    data-bs-placement="right"
+                                                                    data-bs-html="true">
 
                                             <div style="display: none;" class="popover-course-data">
                                                 <span data-course-id="@curso.Id"></span>
@@ -286,7 +342,7 @@ else
     }
 
     @* Seccion para todos los cursos (con filtros y paginación) - Se carga con JSON *@
-    <div class="container mt-4 mb-5">
+    <div class="container mt-4 mb-5 pb-5">
         <h2 class="text-center mt-5 mb-4">Explora todos los cursos</h2>
         <hr />
 
@@ -367,6 +423,7 @@ else
                 if (data.cursos.length === 0) {
                     html = `<div class="alert alert-warning text-center" role="alert">No se encontraron cursos con los filtros aplicados.</div>`;
                 } else {
+                    // El contenedor de cursos cargados asíncronamente ya tiene clases responsivas
                     html += `<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">`;
                     data.cursos.forEach(curso => {
                         html += `

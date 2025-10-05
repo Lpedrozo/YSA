@@ -1,0 +1,365 @@
+﻿@model IEnumerable<YSA.Web.Models.ViewModels.EntregaActividadPendienteViewModel>
+
+@{
+    ViewData["Title"] = "Entregas Pendientes de Calificación";
+    int totalPendientes = Model.Count();
+}
+
+<div class="container-fluid pt-4 mb-5 pb-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-5 fw-bold text-dark">
+            <i class="bi bi-journal-check me-2 text-primary"></i> @ViewData["Title"]
+        </h1>
+    </div>
+
+    @* --- Resumen Estadístico (Card) --- *@
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 bg-light-subtle">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <span class="p-3 rounded-circle bg-warning-subtle text-warning fs-3">
+                                <i class="bi bi-hourglass-split"></i>
+                            </span>
+                        </div>
+                        <div>
+                            <p class="card-title text-muted mb-1">Entregas por Revisar</p>
+                            <h2 class="card-text fw-bold">@totalPendientes</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Mostrar mensajes temporales de éxito o error *@
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-x-octagon-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <hr class="mb-4" />
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info border-0 shadow-sm p-4 text-center" role="alert">
+            <h4 class="alert-heading">¡Todo al día!</h4>
+            <p>🎉 Actualmente no tienes actividades de estudiantes pendientes de calificación.</p>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm pb-5 mb-5">
+            <div class="card-header bg-white p-0">
+                @* --- NAVEGACIÓN POR PESTAÑAS (TABS) --- *@
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="total-tab" data-bs-toggle="tab" data-bs-target="#total-tab-pane" type="button" role="tab" aria-controls="total-tab-pane" aria-selected="true">
+                            Todas <span class="badge bg-secondary">@Model.Count()</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="curso-tab" data-bs-toggle="tab" data-bs-target="#curso-tab-pane" type="button" role="tab" aria-controls="curso-tab-pane" aria-selected="false">
+                            Por Curso <span class="badge bg-primary">@Model.Count(m => m.TipoEntidad == "Curso")</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="modulo-tab" data-bs-toggle="tab" data-bs-target="#modulo-tab-pane" type="button" role="tab" aria-controls="modulo-tab-pane" aria-selected="false">
+                            Por Módulo <span class="badge bg-info">@Model.Count(m => m.TipoEntidad == "Modulo")</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="leccion-tab" data-bs-toggle="tab" data-bs-target="#leccion-tab-pane" type="button" role="tab" aria-controls="leccion-tab-pane" aria-selected="false">
+                            Por Lección <span class="badge bg-warning">@Model.Count(m => m.TipoEntidad == "Leccion")</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="tab-content" id="myTabContent">
+
+                    @* ============================================= *@
+                    @* --- PESTAÑA 1: TODAS LAS ENTREGAS --- *@
+                    @* ============================================= *@
+                    <div class="tab-pane fade show active" id="total-tab-pane" role="tabpanel" aria-labelledby="total-tab" tabindex="0">
+                        @if (!Model.Any())
+                        {
+                            <div class="alert alert-light text-center m-4" role="alert">
+                                No hay entregas pendientes.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="d-none d-md-table-cell" style="width: 20%;">Curso</th>
+                                            <th style="width: 25%;">Actividad</th>
+                                            <th style="width: 20%;">Estudiante</th>
+                                            <th class="d-none d-lg-table-cell" style="width: 15%;">Entregado</th>
+                                            <th style="width: 20%;">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td class="d-none d-md-table-cell"><span class="badge bg-primary-subtle text-primary">@item.CursoTitulo</span></td>
+                                                <td><strong class="text-dark">@item.ActividadTitulo</strong><small class="text-muted d-block">(@item.TipoEntidad)</small></td>
+                                                <td>@item.EstudianteNombre</td>
+                                                <td class="d-none d-lg-table-cell">@item.FechaEntrega.ToString("dd MMM yyyy HH:mm")</td>
+                                                <td>
+                                                    <a href="@item.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Descargar Entrega"><i class="bi bi-file-earmark-arrow"></i>Ver actividad</a>
+                                                    <button type="button" class="btn btn-sm btn-success btn-calificar" data-bs-toggle="modal" data-bs-target="#calificarModal" data-entrega-id="@item.EntregaId" data-actividad-nombre="@item.ActividadTitulo" data-comentario-estudiante="@item.ComentarioEstudiante"><i class="bi bi-star"></i> Calificar</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+
+                    @* ============================================= *@
+                    @* --- PESTAÑA 2: POR CURSO --- *@
+                    @* ============================================= *@
+                    <div class="tab-pane fade" id="curso-tab-pane" role="tabpanel" aria-labelledby="curso-tab" tabindex="0">
+                        @{
+                            var entregasCurso = Model.Where(m => m.TipoEntidad == "Curso");
+                        }
+                        @if (!entregasCurso.Any())
+                        {
+                            <div class="alert alert-light text-center m-4" role="alert">
+                                No hay entregas pendientes en esta categoría.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="d-none d-md-table-cell" style="width: 20%;">Curso</th>
+                                            <th style="width: 25%;">Actividad</th>
+                                            <th style="width: 20%;">Estudiante</th>
+                                            <th class="d-none d-lg-table-cell" style="width: 15%;">Entregado</th>
+                                            <th style="width: 20%;">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in entregasCurso)
+                                        {
+                                            <tr>
+                                                <td class="d-none d-md-table-cell"><span class="badge bg-primary-subtle text-primary">@item.CursoTitulo</span></td>
+                                                <td><strong class="text-dark">@item.ActividadTitulo</strong><small class="text-muted d-block">(@item.TipoEntidad)</small></td>
+                                                <td>@item.EstudianteNombre</td>
+                                                <td class="d-none d-lg-table-cell">@item.FechaEntrega.ToString("dd MMM yyyy HH:mm")</td>
+                                                <td>
+                                                    <a href="@item.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Descargar Entrega"><i class="bi bi-file-earmark-arrow-down"></i>Ver actividad</a>
+                                                    <button type="button" class="btn btn-sm btn-success btn-calificar" data-bs-toggle="modal" data-bs-target="#calificarModal" data-entrega-id="@item.EntregaId" data-actividad-nombre="@item.ActividadTitulo" data-comentario-estudiante="@item.ComentarioEstudiante"><i class="bi bi-star"></i> Calificar</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+
+                    @* ============================================= *@
+                    @* --- PESTAÑA 3: POR MÓDULO --- *@
+                    @* ============================================= *@
+                    <div class="tab-pane fade" id="modulo-tab-pane" role="tabpanel" aria-labelledby="modulo-tab" tabindex="0">
+                        @{
+                            var entregasModulo = Model.Where(m => m.TipoEntidad == "Modulo");
+                        }
+                        @if (!entregasModulo.Any())
+                        {
+                            <div class="alert alert-light text-center m-4" role="alert">
+                                No hay entregas pendientes en esta categoría.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="d-none d-md-table-cell" style="width: 20%;">Curso</th>
+                                            <th style="width: 25%;">Actividad</th>
+                                            <th style="width: 20%;">Estudiante</th>
+                                            <th class="d-none d-lg-table-cell" style="width: 15%;">Entregado</th>
+                                            <th style="width: 20%;">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in entregasModulo)
+                                        {
+                                            <tr>
+                                                <td class="d-none d-md-table-cell"><span class="badge bg-primary-subtle text-primary">@item.CursoTitulo</span></td>
+                                                <td><strong class="text-dark">@item.ActividadTitulo</strong><small class="text-muted d-block">(@item.TipoEntidad)</small></td>
+                                                <td>@item.EstudianteNombre</td>
+                                                <td class="d-none d-lg-table-cell">@item.FechaEntrega.ToString("dd MMM yyyy HH:mm")</td>
+                                                <td>
+                                                    <a href="@item.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Descargar Entrega"><i class="bi bi-file-earmark-arrow-down"></i>Ver actividad</a>
+                                                    <button type="button" class="btn btn-sm btn-success btn-calificar" data-bs-toggle="modal" data-bs-target="#calificarModal" data-entrega-id="@item.EntregaId" data-actividad-nombre="@item.ActividadTitulo" data-comentario-estudiante="@item.ComentarioEstudiante"><i class="bi bi-star"></i> Calificar</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+
+                    @* ============================================= *@
+                    @* --- PESTAÑA 4: POR LECCIÓN --- *@
+                    @* ============================================= *@
+                    <div class="tab-pane fade" id="leccion-tab-pane" role="tabpanel" aria-labelledby="leccion-tab" tabindex="0">
+                        @{
+                            var entregasLeccion = Model.Where(m => m.TipoEntidad == "Leccion");
+                        }
+                        @if (!entregasLeccion.Any())
+                        {
+                            <div class="alert alert-light text-center m-4" role="alert">
+                                No hay entregas pendientes en esta categoría.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="d-none d-md-table-cell" style="width: 20%;">Curso</th>
+                                            <th style="width: 25%;">Actividad</th>
+                                            <th style="width: 20%;">Estudiante</th>
+                                            <th class="d-none d-lg-table-cell" style="width: 15%;">Entregado</th>
+                                            <th style="width: 20%;">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in entregasLeccion)
+                                        {
+                                            <tr>
+                                                <td class="d-none d-md-table-cell"><span class="badge bg-primary-subtle text-primary">@item.CursoTitulo</span></td>
+                                                <td><strong class="text-dark">@item.ActividadTitulo</strong><small class="text-muted d-block">(@item.TipoEntidad)</small></td>
+                                                <td>@item.EstudianteNombre</td>
+                                                <td class="d-none d-lg-table-cell">@item.FechaEntrega.ToString("dd MMM yyyy HH:mm")</td>
+                                                <td>
+                                                    <a href="@item.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Descargar Entrega"><i class="bi bi-file-earmark-arrow-down"></i>Ver actividad</a>
+                                                    <button type="button" class="btn btn-sm btn-success btn-calificar" data-bs-toggle="modal" data-bs-target="#calificarModal" data-entrega-id="@item.EntregaId" data-actividad-nombre="@item.ActividadTitulo" data-comentario-estudiante="@item.ComentarioEstudiante"><i class="bi bi-star"></i> Calificar</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@* --------------------------------------------- *@
+@* --- MODAL DE CALIFICACIÓN (Sin cambios) --- *@
+@* --------------------------------------------- *@
+<div class="modal fade" id="calificarModal" tabindex="-1" aria-labelledby="calificarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="calificarModalLabel"><i class="bi bi-pencil-square me-2"></i> Calificar Entrega</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form asp-controller="Artista" asp-action="CalificarEntrega" method="post" id="calificarForm">
+                <input type="hidden" name="entregaId" id="entregaIdInput" />
+                @Html.AntiForgeryToken()
+
+                <div class="modal-body">
+                    <div class="mb-3 p-3 border-start border-4 border-success bg-light rounded">
+                        <p class="mb-0">Actividad: <strong id="actividadNombrePlaceholder" class="text-success"></strong></p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h6 class="mt-2 text-primary">Comentario del Estudiante:</h6>
+                            <blockquote class="blockquote border-start border-3 ps-3 alert-light p-2" id="comentarioEstudiantePlaceholder">
+                                <p class="mb-0 fst-italic text-muted"></p>
+                            </blockquote>
+                        </div>
+                    </div>
+
+                    <h5 class="mt-4 border-bottom pb-2">Tu Calificación y Retroalimentación</h5>
+
+                    <div class="mb-3">
+                        <label for="calificacionInput" class="form-label fw-bold">Puntuación Final (0-100)</label>
+                        <input type="number" class="form-control form-control-lg text-center" id="calificacionInput" name="calificacion" required min="0" max="100" placeholder="Ej: 85">
+                        <div class="form-text">Asigna un valor de 0 a 100 para esta entrega.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="observacionInput" class="form-label fw-bold">Observaciones/Retroalimentación</label>
+                        <textarea class="form-control" id="observacionInput" name="observacion" rows="6" required placeholder="Describe por qué asignaste esa calificación. Sé constructivo y específico."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success"><i class="bi bi-send-fill me-1"></i> Enviar Calificación</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calificarModal = document.getElementById('calificarModal');
+            if (calificarModal) {
+                calificarModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+
+                    // Extraer información
+                    var entregaId = button.getAttribute('data-entrega-id');
+                    var actividadNombre = button.getAttribute('data-actividad-nombre');
+                    var comentarioEstudiante = button.getAttribute('data-comentario-estudiante');
+
+                    // Elementos a actualizar
+                    var entregaIdInput = calificarModal.querySelector('#entregaIdInput');
+                    var actividadNombrePlaceholder = calificarModal.querySelector('#actividadNombrePlaceholder');
+                    var comentarioEstudiantePlaceholder = calificarModal.querySelector('#comentarioEstudiantePlaceholder p');
+
+                    // Asignar valores
+                    entregaIdInput.value = entregaId;
+                    actividadNombrePlaceholder.textContent = actividadNombre;
+
+                    // Comentario del estudiante
+                    comentarioEstudiantePlaceholder.textContent = comentarioEstudiante || 'El estudiante no dejó un comentario específico al momento de la entrega.';
+
+                    // Limpiar campos del formulario
+                    calificarModal.querySelector('#calificacionInput').value = '';
+                    calificarModal.querySelector('#observacionInput').value = '';
+                });
+            }
+        });
+    </script>
+}

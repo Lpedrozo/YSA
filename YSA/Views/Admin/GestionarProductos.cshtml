@@ -24,7 +24,7 @@
         font-family: 'Poppins', sans-serif;
         background-color: var(--color-background);
         color: var(--color-text-dark);
-        padding: 2rem;
+        /* Reduje el padding general, es mejor usarlo en el container */
     }
 
     h1 {
@@ -134,9 +134,9 @@
 
 </style>
 
-<div class="container mt-5 pt-5">
+<div class="container mt-5 pt-5 pb-5 mb-5">
 
-    <h1 class="pt-5">@ViewData["Title"]</h1>
+    <h1>@ViewData["Title"]</h1>
 
     <p>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearProductoModal">
@@ -146,11 +146,11 @@
 
     @if (Model.Productos != null && Model.Productos.Any())
     {
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3pb-5">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 pb-5 mb-5">
             @foreach (var item in Model.Productos)
             {
                 <div class="col">
-                    <div class="product-card d-flex flex-column justify-content-between pb-5">
+                    <div class="product-card d-flex flex-column justify-content-between">
                         <div>
                             @if (!string.IsNullOrEmpty(item.UrlImagen))
                             {
@@ -167,10 +167,10 @@
                             <div class="product-detail text-muted mb-3">Categorías: <span>@Html.DisplayFor(modelItem => item.Categorias)</span></div>
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                        <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
                             <span class="price-badge">@Html.DisplayFor(modelItem => item.Precio)</span>
                             <div class="btn-group">
-                                <a asp-action="EditarProducto" asp-route-id="@item.Id" class="btn btn-sm btn-info me-2">
+                                <a asp-action="EditarProducto" asp-route-id="@item.Id" class="btn btn-sm btn-info me-1">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
                                 <form asp-action="EliminarProducto" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">

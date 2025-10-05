@@ -21,5 +21,8 @@ namespace YSA.Core.Interfaces
         Task UpdateAnuncioAsync(Anuncio anuncio);
         Task DeleteAnuncioAsync(int id);
         Task<List<Curso>> GetCursosByEstudianteIdAsync(int estudianteId);
+        Task<bool> ResponderPreguntaAsync(int preguntaId, string respuesta, int instructorId);
+        Task<List<PreguntaRespuesta>> ObtenerPreguntasPendientesPorInstructorAsync(int instructorId);
+
     }
 }

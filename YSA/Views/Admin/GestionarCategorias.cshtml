@@ -24,7 +24,7 @@
     }
 </style>
 
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
     <h1 class="text-center mb-4">Gestión de Categorías</h1>
     <hr />
 
@@ -34,7 +34,7 @@
         </button>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="tablaCategorias">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5" id="tablaCategorias">
         @foreach (var categoria in Model)
         {
             <div class="col">
@@ -137,13 +137,18 @@
             function showValidationErrors(errors, errorContainerId) {
                 const container = document.getElementById(errorContainerId);
                 let errorHtml = '<ul class="list-unstyled mb-0">';
-                for (const key in errors) {
-                    if (Array.isArray(errors[key])) {
-                        errors[key].forEach(msg => {
-                            errorHtml += `<li><i class="fas fa-exclamation-triangle me-2"></i>${msg}</li>`;
-                        });
-                    } else if (typeof errors[key] === 'string') {
-                        errorHtml += `<li><i class="fas fa-exclamation-triangle me-2"></i>${errors[key]}</li>`;
+                // Maneja el objeto de errores, que puede ser { prop: ['msg'] } o un mensaje simple
+                if (typeof errors === 'string') {
+                     errorHtml += `<li><i class="fas fa-exclamation-triangle me-2"></i>${errors}</li>`;
+                } else {
+                    for (const key in errors) {
+                        if (Array.isArray(errors[key])) {
+                            errors[key].forEach(msg => {
+                                errorHtml += `<li><i class="fas fa-exclamation-triangle me-2"></i>${msg}</li>`;
+                            });
+                        } else if (typeof errors[key] === 'string') {
+                            errorHtml += `<li><i class="fas fa-exclamation-triangle me-2"></i>${errors[key]}</li>`;
+                        }
                     }
                 }
                 errorHtml += '</ul>';
@@ -151,16 +156,22 @@
                 container.classList.remove('d-none');
             }
 
-            // --- Recarga y Renderizado de los Cards (Adaptado de la tabla) ---
+            // --- Recarga y Renderizado de los Cards ---
             async function recargarVista() {
                 try {
-                    // Endpoint para obtener los datos actualizados
+                    // Nota: Asume que tienes un ActionResult que devuelve List<CategoriaViewModel> en JSON.
                     const response = await fetch('@Url.Action("ObtenerCategoriasJson", "Admin")');
                     if (!response.ok) {
                         throw new Error('No se pudo cargar las categorías.');
                     }
                     const categorias = await response.json();
                     cardContainer.innerHTML = ''; // Limpiar el contenedor de cards
+
+                    if (categorias.length === 0) {
+                         cardContainer.innerHTML = '<div class="col-12"><div class="alert alert-info text-center" role="alert" style="border-radius: 8px;">No hay categorías registradas.</div></div>';
+                         attachEventListeners();
+                         return;
+                    }
 
                     categorias.forEach(categoria => {
                         const cardHtml = `
@@ -172,11 +183,11 @@
 
                                         <div class="mt-auto d-flex justify-content-between align-items-center pt-2">
                                             <button type="button" class="btn btn-sm btn-primary editar-btn"
-                                                    data-id="${categoria.id}"
-                                                    data-nombre="${categoria.nombreCategoria}"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#editarCategoriaModal"
-                                                    title="Editar Categoría">
+                                                     data-id="${categoria.id}"
+                                                     data-nombre="${categoria.nombreCategoria}"
+                                                     data-bs-toggle="modal"
+                                                     data-bs-target="#editarCategoriaModal"
+                                                     title="Editar Categoría">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                             <form action="@Url.Action("EliminarCategoria", "Admin")" method="post" class="d-inline eliminar-form">
@@ -228,9 +239,10 @@
                     modal.hide();
                     Swal.fire('Éxito', result.message, 'success');
                     crearForm.reset();
-                    await recargarVista(); // Llama a la nueva función de recarga
+                    await recargarVista();
                 } else {
-                    showValidationErrors(result.errors, 'crear-validation-errors');
+                    const errorMsg = result.message || result.errors;
+                    showValidationErrors(errorMsg, 'crear-validation-errors');
                 }
             });
 
@@ -271,24 +283,29 @@
                     const modal = bootstrap.Modal.getInstance(editarModalEl);
                     modal.hide();
                     Swal.fire('Éxito', result.message, 'success');
-                    await recargarVista(); // Llama a la nueva función de recarga
+                    await recargarVista();
                 } else {
-                    showValidationErrors(result.errors, 'editar-validation-errors');
+                    const errorMsg = result.message || result.errors;
+                    showValidationErrors(errorMsg, 'editar-validation-errors');
                 }
             });
 
-            // --- Lógica para confirmar la eliminación con SweetAlert2 ---
+            // --- Lógica para confirmar la eliminación con SweetAlert2 y AJAX ---
             function attachEventListeners() {
-                // Adjuntar evento al botón de eliminar (que está dentro de un <form>)
+                // Se eliminan los listener antes de adjuntar para evitar duplicados en la recarga
                 document.querySelectorAll('.eliminar-btn').forEach(button => {
-                    button.removeEventListener('click', handleEliminarClick); // Evitar duplicados
+                    button.removeEventListener('click', handleEliminarClick);
                     button.addEventListener('click', handleEliminarClick);
                 });
             }
 
-            function handleEliminarClick(e) {
+            async function handleEliminarClick(e) {
                 e.preventDefault();
                 const form = this.closest('form');
+
+                // Extraer el ID de la categoría (asume que está en un campo oculto 'id')
+                const categoriaId = form.querySelector('input[name="id"]').value;
+
                 Swal.fire({
                     title: '¿Estás seguro?',
                     text: "¡Eliminar esta categoría podría afectar a los cursos asociados! No podrás revertir esto.",
@@ -298,9 +315,30 @@
                     cancelButtonColor: '#3085d6',
                     confirmButtonText: 'Sí, ¡bórralo!',
                     cancelButtonText: 'Cancelar'
-                }).then((result) => {
+                }).then(async (result) => {
                     if (result.isConfirmed) {
-                        form.submit();
+                        try {
+                            const response = await fetch(form.action, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'RequestVerificationToken': getAntiForgeryToken()
+                                },
+                                // Envía el ID directamente en el cuerpo JSON
+                                body: JSON.stringify(categoriaId)
+                            });
+
+                            const resultJson = await response.json();
+
+                            if (resultJson.success) {
+                                Swal.fire('Eliminado!', resultJson.message, 'success');
+                                await recargarVista(); // Recarga dinámica de la lista
+                            } else {
+                                Swal.fire('Error', resultJson.message || 'Error al eliminar la categoría.', 'error');
+                            }
+                        } catch (error) {
+                            Swal.fire('Error de conexión', 'No se pudo conectar con el servidor.', 'error');
+                        }
                     }
                 });
             }

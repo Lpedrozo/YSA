@@ -218,5 +218,20 @@ namespace YSA.Core.Services
             curso.InstructorId = instructorId;
             await _cursoRepository.UpdateAsync(curso);
         }
+        public async Task<bool> ResponderPreguntaAsync(int preguntaId, string respuesta, int instructorId)
+        {
+            // Puedes agregar aquí validaciones de negocio adicionales si fueran necesarias
+            if (string.IsNullOrWhiteSpace(respuesta))
+            {
+                return false; // No se puede enviar una respuesta vacía
+            }
+
+            return await _cursoRepository.ResponderPreguntaAsync(preguntaId, respuesta, instructorId);
+        }
+
+        public async Task<List<PreguntaRespuesta>> ObtenerPreguntasPendientesParaInstructorAsync(int instructorId)
+        {
+            return await _cursoRepository.ObtenerPreguntasPendientesPorInstructorAsync(instructorId);
+        }
     }
 }

@@ -5,7 +5,7 @@
 
 <style>
     /* ------------------------------------- */
-    /* 1. Paleta Monocromática (B/W)        */
+    /* 1. Paleta Monocromática (B/W)         */
     /* ------------------------------------- */
     :root {
         --color-primary: #000000; /* Negro para acentos y CTA */
@@ -34,21 +34,32 @@
     .course-hero {
         position: relative;
         width: 100%;
+        /* Ajuste: Usaremos un padding vertical más sutil para que no sea tan grande en móviles */
         padding-top: 56.25%; /* Ratio 16:9 */
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        /* Quitamos el margen inferior para que se integre mejor con las columnas */
     }
 
-        .course-hero img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    @@media (max-width: 991.98px) {
+        /* En dispositivos pequeños, hacemos la imagen más compacta para que el contenido sea visible antes */
+        .course-hero
+
+    {
+        padding-top: 75%; /* Ratio 4:3 en móviles, o simplemente un valor fijo si se prefiere */
+        margin-bottom: 20px !important;
+    }
+
+    }
+
+    .course-hero img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
     .hero-title-block {
         padding: 20px 0;
@@ -72,6 +83,47 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         color: var(--color-text-dark);
     }
+
+    /* Nuevo: Estilo Flotante para Móviles */
+    @@media (max-width: 991.98px) {
+        .mobile-buy-bar
+
+    {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1030; /* Alto para estar sobre casi todo */
+        padding: 10px;
+        background-color: var(--color-card-bg);
+        border-top: 1px solid var(--color-border);
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Oculta la tarjeta completa en la columna lateral en móviles, ya que usaremos el flotante */
+    .price-card-lg {
+        display: none !important;
+    }
+
+    }
+
+    /* Muestra la tarjeta completa en el layout de columna grande */
+    @@media (min-width: 992px) {
+        .price-card-lg
+
+    {
+        display: block !important;
+    }
+
+    .mobile-buy-bar {
+        display: none !important;
+    }
+
+    }
+
 
     .btn-action {
         background-color: var(--color-primary) !important;
@@ -124,14 +176,14 @@
         }
 </style>
 
-<div class="container course-details-container pb-5">
+<div class="container course-details-container pb-5 mb-5">
 
     <div class="hero-title-block">
         <h1 class="">@Model.Titulo</h1>
         <p class="lead text-secondary">@Html.Raw(Model.DescripcionCorta)</p>
     </div>
 
-    <div class="row g-5 pb-5">
+    <div class="row g-5 pb-5 mb-5">
 
         <div class="col-lg-8">
             <div class="course-hero mb-4">
@@ -165,7 +217,7 @@
                                                 <li class="list-group-item">
                                                     <div class="d-flex align-items-center">
                                                         <i class="fas @(Model.TieneAcceso ? "fa-check-circle text-success" : "fa-lock text-secondary") me-2"></i>
-                                                        <span class="fw-normal">@leccion.Titulo</span>
+                                                        <span class="fw-normal flex-grow-1">@leccion.Titulo</span>
                                                     </div>
                                                 </li>
                                             }
@@ -189,9 +241,9 @@
             </div>
         </div>
 
-        <div class="col-lg-4">
+        <div class="col-lg-4 d-none d-lg-block">
             <div class="sticky-top" style="top: 20px;">
-                <div class="card price-card text-center p-4">
+                <div class="card price-card price-card-lg text-center p-4">
                     <h5 class="fw-bold text-secondary">Precio del Curso:</h5>
                     <h2 class="display-6 fw-bold mb-3" style="color: var(--color-primary);">@Model.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</h2>
                     <p class="text-secondary mb-4"><i class="fas fa-check-circle text-success me-2"></i>Acceso de por vida</p>
@@ -220,5 +272,29 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="mobile-buy-bar d-lg-none">
+    <div class="d-flex align-items-center">
+        <h5 class="fw-bold mb-0 me-3">Precio:</h5>
+        <h4 class="fw-bold mb-0" style="color: var(--color-primary);">@Model.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</h4>
+    </div>
+    <div class="flex-grow-1 ms-3 text-end">
+        @if (Model.TieneAcceso)
+        {
+            <a asp-action="VerCurso" asp-controller="Curso" asp-route-id="@Model.Id" class="btn btn-action btn-sm">Ver Contenido</a>
+        }
+        else if (Model.EstaEnValidacion)
+        {
+            <span class="text-info fw-semibold"><i class="fas fa-hourglass-half me-1"></i>En Validación</span>
+        }
+        else
+        {
+            <form asp-controller="Pedido" asp-action="IniciarCompra" method="post" class="d-inline">
+                <input type="hidden" name="cursoId" value="@Model.Id" />
+                <button type="submit" class="btn btn-action btn-sm">Comprar Ahora</button>
+            </form>
+        }
     </div>
 </div>

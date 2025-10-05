@@ -23,6 +23,7 @@
     .form-group label {
         font-weight: 600;
         margin-bottom: 0.5rem;
+        color: #333;
     }
 
     .form-control:focus {
@@ -44,10 +45,12 @@
     .current-image-preview {
         max-height: 150px;
         width: auto;
+        max-width: 100%; /* Asegura que la imagen no exceda el ancho en pantallas grandes */
         border: 1px solid #ddd;
         border-radius: 8px;
         margin-top: 10px;
         object-fit: contain;
+        display: block; /* Ocupa su propia línea */
     }
 
     .card-section {
@@ -57,15 +60,63 @@
         margin-bottom: 2rem;
         background-color: #fcfcfc;
     }
+
+    /* ------------------------------------- */
+    /* MEDIA QUERY RESPONSIVE (MÓVIL)        */
+    /* ------------------------------------- */
+    @@media (max-width: 767.98px) {
+        .form-container {
+            /* Reduce el padding interno y usa todo el ancho disponible */
+            padding: 1rem;
+            max-width: 100%;
+        }
+
+        .container {
+            /* Reduce el padding del contenedor principal */
+            padding: 1rem 0.5rem !important;
+        }
+
+        .fw-bold {
+            font-size: 1.75rem; /* Título ligeramente más pequeño */
+            margin-bottom: 1rem !important;
+        }
+
+        .card-section {
+            padding: 1rem; /* Reduce el padding interno de las secciones */
+            margin-bottom: 1.5rem; /* Reduce el margen entre secciones */
+        }
+
+            .card-section h5 {
+                font-size: 1.25rem;
+            }
+
+        .current-image-preview {
+            width: 100%; /* La imagen ocupa todo el ancho en móvil */
+            height: auto;
+            max-height: 200px; /* Podemos darle más altura si es necesario */
+        }
+        /* Botones de acción (Apilados) */
+        .btn-lg {
+            width: 100%;
+            margin-bottom: 0.5rem;
+            margin-right: 0 !important;
+        }
+
+        .form-group.text-center.mt-5 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    }
 </style>
 
-<div class="container py-4">
+<div class="container py-4 mb-5">
     <h1 class="fw-bold mb-4 text-center">
         <i class="fas fa-box-open me-2 text-primary"></i> @ViewData["Title"]
     </h1>
     <hr class="mb-5" />
 
-    <div class="form-container pb-5">
+    <div class="form-container mb-5 pb-5">
         <form asp-action="EditarProducto" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
@@ -166,7 +217,7 @@
                             @if (!string.IsNullOrEmpty(currentImageUrl))
                             {
                                 <p class="text-muted small mt-2 mb-1">Imagen actual:</p>
-                                <img src="@currentImageUrl" alt="Imagen del producto" class="img-fluid current-image-preview" />
+                                <img src="@currentImageUrl" alt="Imagen del producto" class="current-image-preview" />
                                 <small class="form-text text-muted">Sube un nuevo archivo para reemplazarla.</small>
                             }
                         </div>

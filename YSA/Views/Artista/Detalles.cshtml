@@ -5,6 +5,10 @@
 }
 
 <style>
+    /* ------------------------------------- */
+    /* 1. Estilos Base */
+    /* ------------------------------------- */
+
     /* Estilo para la imagen de perfil del artista */
     .perfil-img {
         width: 200px;
@@ -13,17 +17,23 @@
         border: 5px solid #fff;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
+
     /* Estilo para las imágenes del portafolio */
     .portafolio-img {
         height: 300px; /* Altura fija para uniformidad */
+        width: 100%; /* Asegura que ocupe todo el ancho de su contenedor */
         object-fit: cover;
     }
 
-    .card-portafolio:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
-        transition: all 0.3s ease;
+    .card-portafolio {
+        cursor: pointer; /* Indica que es clickeable, aunque la lógica no esté en esta vista */
     }
+
+        .card-portafolio:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+            transition: all 0.3s ease;
+        }
 
     .biografia-text {
         white-space: pre-wrap; /* Mantiene saltos de línea y espacios del texto */
@@ -31,27 +41,43 @@
         line-height: 1.8;
         color: #555;
     }
+
+    @@media (max-width: 767.98px) {
+        /* Encabezado: Reducir tamaño de imagen y asegurar centrado */
+        .perfil-img {
+            width: 150px;
+            height: 150px;
+            /* El text-center del padre ya centra la imagen en móvil */
+        }
+        /* Encabezado: Reducir el tamaño del título principal para que no sea abrumador */
+        .display-4 {
+            font-size: 2.5rem;
+        }
+        /* Portafolio: Reducir la altura de las imágenes para que no ocupen toda la pantalla verticalmente */
+        .portafolio-img {
+            height: 200px;
+        }
+    }
 </style>
 
-<div class="container py-5">
+<div class="container py-5 mb-5 pb-5">
 
     <div class="row mb-5 align-items-center bg-light p-4 rounded-3 shadow-sm">
-        <div class="col-md-3 text-center">
+
+        <div class="col-12 col-md-3 text-center">
             @if (!string.IsNullOrEmpty(Model.UrlFotoPerfil))
             {
                 <img src="@Model.UrlFotoPerfil" alt="Foto de Perfil" class="img-fluid rounded-circle perfil-img">
             }
             else
             {
-                <i class="fas fa-user-circle fa-7x text-secondary"></i>
+                <i class="fas fa-user-circle fa-8x text-secondary"></i>
             }
         </div>
-        <div class="col-md-9 mt-3 mt-md-0">
+
+        <div class="col-12 col-md-9 mt-3 mt-md-0 text-center text-md-start">
             <h1 class="display-4 fw-bold mb-0">@Model.NombreCompleto</h1>
             <p class="lead text-primary fw-semibold">Artista en YoSoyArte</p>
-
-            @* Opcional: Agregar Botón de Contacto Rápido (Si lo necesitas)*@
-            @* <a href="#" class="btn btn-success mt-2"><i class="fas fa-envelope me-2"></i> Contactar por Correo</a> *@
         </div>
     </div>
 
@@ -71,7 +97,7 @@
         </div>
     </div>
 
-    <div class="row mb-5">
+    <div class="row mb-5 pb-5">
         <div class="col-12">
             <h2 class="h3 mb-4 fw-bold border-bottom pb-2">Portafolio de Arte (@Model.Portafolio.Count() Obras)</h2>
 
@@ -80,7 +106,7 @@
                 <div class="row g-4">
                     @foreach (var foto in Model.Portafolio)
                     {
-                        <div class="col-lg-4 col-md-6 col-sm-12">
+                        <div class="col-12 col-sm-6 col-lg-4">
                             <div class="card h-100 shadow-sm border-0 card-portafolio">
                                 <img src="@foto.UrlImagen" class="card-img-top portafolio-img" alt="@foto.Titulo">
                                 <div class="card-body">
@@ -102,6 +128,7 @@
         </div>
     </div>
 
+    @* Se mantiene la sección de Cursos Impartidos comentada *@
     @* @if (Model.CursosImpartidos.Any())
     {
         <div class="row mb-5">

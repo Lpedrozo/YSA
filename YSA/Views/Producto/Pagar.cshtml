@@ -21,6 +21,12 @@
         font-family: 'Poppins', sans-serif;
     }
 
+    /* MEJORA RESPONSIVE: Reducir padding vertical en móvil */
+    .container {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+
     .card {
         border: 1px solid var(--color-accent);
         box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
@@ -36,9 +42,27 @@
         border-radius: 0.7rem 0.7rem 0 0;
     }
 
+        /* MEJORA RESPONSIVE: Título del encabezado de la tarjeta */
+        .card-header h3 {
+            font-size: 1.25rem; /* Base size for mobile */
+            margin-bottom: 0;
+        }
+
     .lead strong {
         color: var(--color-primary);
-        font-size: 1.5rem;
+        /* MEJORA RESPONSIVE: Tamaño del total a pagar */
+        font-size: 1.35rem;
+    }
+
+    /* MEJORA RESPONSIVE: Ajuste para pantallas grandes */
+    @@media (min-width: 768px) {
+        .card-header h3 {
+            font-size: 1.5rem; /* Revertir tamaño en desktop */
+        }
+
+        .lead strong {
+            font-size: 1.5rem;
+        }
     }
 
     /* BOTONES */
@@ -72,6 +96,12 @@
             margin-bottom: 0.75rem;
         }
 
+    /* MEJORA RESPONSIVE: Texto de la información bancaria */
+    #payment-details-content p {
+        font-size: 0.9rem; /* Ligeramente más pequeño para móvil */
+        margin-bottom: 0.5rem;
+    }
+
     .instruction-note {
         padding: 1rem;
         background-color: #ffffe0; /* Amarillo suave para alerta */
@@ -96,9 +126,9 @@
         }
 </style>
 
-<div class="container py-5">
-    <div class="row justify-content-center pb-5">
-        <div class="col-md-7">
+<div class="container py-5 mb-5 pb-5">
+    <div class="row justify-content-center pb-5 mb-5">
+        <div class="col-12 col-md-8 col-lg-7 mb-5 pb-5">
             <div class="card">
                 <div class="card-header text-center">
                     <h3>Procesar Pago del Pedido #@Model.PedidoId</h3>
@@ -111,13 +141,14 @@
                         Su pedido será validado por un administrador. Una vez confirmado, ¡tendrá acceso!
                     </div>
                     @{
-                        var whatsappNumber = "584241544523"; // Tu número (Cod. País + Número sin 0 inicial)
+                        // Lógica de WhatsApp (sin cambios)
+                        var whatsappNumber = "584241544523";
                         var whatsappMessage = $"Hola, necesito asistencia con el pago del Pedido #{Model.PedidoId}. No me siento seguro de hacerlo por la página. ¿Me pueden ayudar?";
                         var encodedMessage = System.Web.HttpUtility.UrlEncode(whatsappMessage);
                         var whatsappLink = $"https://wa.me/{whatsappNumber}?text={encodedMessage}";
                     }
-                    <div class="d-grid gap-2 mt-4">
-                        <a href="@whatsappLink" target="_blank" class="btn btn-whatsapp-assistance btn-lg">
+                    <div class="d-grid gap-2 mt-4 mb-4">
+                        <a href="@whatsappLink" target="_blank" class="btn btn-whatsapp-assistance">
                             <i class="fab fa-whatsapp me-2"></i> Consultar/Pagar por WhatsApp
                         </a>
                     </div>
@@ -126,7 +157,7 @@
 
                         <div class="mb-4 mt-4">
                             <label asp-for="MetodoPago" class="form-label">Método de Pago</label>
-                            <select asp-for="MetodoPago" class="form-control" id="MetodoPagoSelect" required>
+                            <select asp-for="MetodoPago" class="form-control form-control" id="MetodoPagoSelect" required>
                                 <option value="" disabled selected>-- Seleccione un método --</option>
                                 <option value="Transferencia Bancaria">Transferencia Bancaria</option>
                                 <option value="Pago Móvil">Pago Móvil</option>
@@ -145,18 +176,18 @@
 
                         <div class="mb-4">
                             <label asp-for="ReferenciaPago" class="form-label">Referencia / Tracking ID / Hash</label>
-                            <input asp-for="ReferenciaPago" class="form-control" placeholder="Ingrese el número de referencia/transacción" required />
+                            <input asp-for="ReferenciaPago" class="form-control form-control" placeholder="Ingrese el número de referencia/transacción" required /> 
                             <span asp-validation-for="ReferenciaPago" class="text-danger"></span>
                         </div>
 
                         <div class="mb-4">
                             <label asp-for="ComprobanteArchivo" class="form-label">Adjuntar Comprobante (Requerido)</label>
-                            <input asp-for="ComprobanteArchivo" type="file" class="form-control" required />
+                            <input asp-for="ComprobanteArchivo" type="file" class="form-control form-control" required /> 
                             <span asp-validation-for="ComprobanteArchivo" class="text-danger"></span>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                            <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-upload me-2"></i> Registrar Pago
                             </button>
                         </div>
@@ -168,10 +199,15 @@
 </div>
 
 @section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
     <partial name="_ValidationScriptsPartial" />
 
     <script>
         $(document).ready(function () {
+            // Pasamos el total formateado a JavaScript de forma segura
+            const formattedTotal = '@Html.Raw(Model.Total.ToString("C"))';
+
             // Objeto JSON con la información de pago
             const PAYMENT_DETAILS = {
                 "Transferencia Bancaria": `
@@ -185,11 +221,11 @@
                     <p><strong>Banco:</strong> Banco Móvil</p>
                     <p><strong>C.I.:</strong> V-8.765.432</p>
                     <p><strong>Teléfono:</strong> 0412-1234567</p>
-                    <p class="text-danger">El monto total es <strong>@Model.Total.ToString("C")</strong>. Use el campo Referencia para el Hash/N° de la transacción.</p>
+                    <p class="text-danger">El monto total es <strong>${formattedTotal}</strong>. Use el campo Referencia para el Hash/N° de la transacción.</p>
                 `,
                 "PayPal": `
                     <p><strong>Cuenta PayPal:</strong> miempresa@paypal.com</p>
-                    <p><strong>Instrucciones:</strong> Debe realizar el pago directamente a nuestra cuenta de PayPal por <strong>@Model.Total.ToString("C")</strong>.</p>
+                    <p><strong>Instrucciones:</strong> Debe realizar el pago directamente a nuestra cuenta de PayPal por <strong>${formattedTotal}</strong>.</p>
                     <p class="text-danger">Use el campo Referencia para su N° de transacción o Hash de PayPal.</p>
                 `
             };

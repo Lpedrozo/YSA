@@ -151,17 +151,22 @@
         }
 </style>
 
-<div class="container mt-5 mb-5">
+<div class="container mt-5 mb-5 pb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="text-center" style="margin-right: 1.5rem;">Módulos para: @ViewBag.CursoTitulo</h1>
     </div>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <a asp-action="GestionarCursos" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-2"></i> Volver a Cursos
-        </a>
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearModuloModal">
-            <i class="fas fa-plus-circle me-2"></i> Nuevo Módulo
-        </button>
+
+    <div class="row mb-4 g-2">
+        <div class="col-12 col-sm-6">
+            <a asp-action="GestionarCursos" class="btn btn-secondary w-100">
+                <i class="fas fa-arrow-left me-2"></i> Volver a Cursos
+            </a>
+        </div>
+        <div class="col-12 col-sm-6">
+            <button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#crearModuloModal">
+                <i class="fas fa-plus-circle me-2"></i> Nuevo Módulo
+            </button>
+        </div>
     </div>
     <hr style="margin-top: 0;" />
 
@@ -174,7 +179,7 @@
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="cardsModulos">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5 pb-5" id="cardsModulos">
             @foreach (var modulo in Model.OrderBy(m => m.Orden))
             {
                 <div class="col" data-id="@modulo.Id">
@@ -190,6 +195,13 @@
                             </div>
 
                             <div class="d-flex flex-column align-items-end ms-3">
+                                <a asp-action="GestionarRecursosActividades"
+                                   asp-route-tipoEntidad="Modulo"
+                                   asp-route-entidadId="@modulo.Id"
+                                   class="btn btn-sm btn-recurso w-100 mb-2"
+                                   style="background-color: #008CBA !important; border-color: #008CBA !important; color: white;">
+                                    <i class="fas fa-paperclip me-1"></i> Recursos
+                                </a>
 
                                 <a asp-action="GestionarLecciones" asp-route-moduloId="@modulo.Id" class="btn btn-sm btn-info w-100 mb-2">
                                     <i class="fas fa-list me-1"></i> Lecciones
@@ -334,7 +346,7 @@
                                             </div>
                                             <div class="d-flex flex-column align-items-end ms-3">
                                                 <a href="/Admin/GestionarLecciones?moduloId=${modulo.id}" class="btn btn-sm btn-info w-100 mb-2">
-                                                    <i class="fas fa-list me-1"></i> Lecciones
+                                                     <i class="fas fa-list me-1"></i> Lecciones
                                                 </a>
                                                 <div class="d-flex">
                                                     <button type="button" class="btn btn-sm btn-primary btn-icon editar-btn me-2"

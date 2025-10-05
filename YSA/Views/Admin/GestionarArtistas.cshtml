@@ -5,7 +5,7 @@
 
 <style>
     /* ------------------------------------- */
-    /* 1. Variables B&W y Estilos Generales  */
+    /* 1. Variables B&W y Estilos Generales  */
     /* ------------------------------------- */
     :root {
         --color-secondary: #000000; /* Negro Puro (Título) */
@@ -39,7 +39,7 @@
 
     /* Botones de acción compactos (Editar/Eliminar) */
     .btn-primary, .btn-danger {
-        width: 36px;
+        width: 70px;
         height: 36px;
         padding: 0;
         display: inline-flex;
@@ -93,6 +93,12 @@
         border: 3px solid var(--color-border-light);
     }
 
+    .artist-info-group {
+        /* Fuerza la columna en móviles */
+        display: flex;
+        align-items: center;
+    }
+
     .artist-name-title {
         color: var(--color-secondary);
         font-weight: 600;
@@ -117,19 +123,78 @@
     .modal-dialog {
         max-width: 600px;
     }
+
+    /* ------------------------------------- */
+    /* 3. MEDIA QUERY RESPONSIVE (MÓVIL)     */
+    /* ------------------------------------- */
+    @@media (max-width: 767.98px) { /* Extra Small a Small devices */
+
+        .container.mt-5 {
+            margin-top: 1.5rem !important;
+        }
+        /* Fuerza la tarjeta a ocupar todo el ancho en móvil */
+        .col-lg-6 {
+            width: 100%;
+        }
+        /* Centra el botón principal y le da ancho completo */
+        .d-flex.justify-content-end.mb-4 {
+            justify-content: center !important;
+        }
+
+        .btn-success {
+            width: 100%;
+            max-width: 300px;
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+        }
+        /* Reorganiza la card para que la imagen y el texto se apilen */
+        .artist-card .d-flex.align-items-center {
+            flex-direction: column; /* Apila imagen y texto */
+            text-align: center;
+        }
+
+        .artist-card .me-4.flex-shrink-0 {
+            margin-right: 0 !important;
+            margin-bottom: 10px; /* Espacio entre imagen y texto */
+        }
+
+        .artist-card .flex-grow-1 {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .artist-info-detail {
+            /* Centra los detalles y hace que se vean mejor apilados */
+            justify-content: center;
+        }
+        /* Mueve los botones de acción debajo del texto principal */
+        .artist-card .d-flex.flex-column.align-items-center.ms-auto {
+            flex-direction: row !important; /* Vuelve los botones a línea horizontal */
+            justify-content: center;
+            width: 100%;
+            margin-top: 10px;
+            margin-left: 0 !important;
+        }
+
+        .btn-primary, .btn-danger {
+            width: 70px;
+            height: 45px;
+            margin: 0 5px;
+        }
+    }
 </style>
 
-<div class="container mt-5 mb-5">
+<div class="container mt-5 mb-5 pb-5">
     <h1 class="text-center mb-4">Gestión de Artistas</h1>
     <hr style="border-top: 2px solid var(--color-border-light); opacity: 1;" />
 
     <div class="d-flex justify-content-end mb-4">
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearArtistaModal">
+        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#crearArtistaModal">
             <i class="fas fa-plus-circle me-2"></i> Nuevo Artista
         </button>
     </div>
 
-    <div class="row pb-5" id="contenedorArtistas">
+    <div class="row pb-5 mb-5" id="contenedorArtistas">
         @if (Model != null && Model.Any())
         {
             @foreach (var artista in Model)
@@ -236,7 +301,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
             </form>
         </div>
@@ -367,6 +432,12 @@
                 if (result.isConfirmed) {
                     const formData = new FormData(form);
                     formData.append('__RequestVerificationToken', getAntiForgeryToken());
+
+                    // Nota: Aquí se asume que tu controlador DeleteArtista espera un FormData.
+                    // Si solo espera el ID de la ruta, puedes usar:
+                    // const url = form.action;
+                    // const response = await fetch(url, { method: 'POST', headers: { 'RequestVerificationToken': getAntiForgeryToken() }});
+
                     const response = await fetch(form.action, { method: 'POST', body: formData });
                     const result = await response.json();
                     if (result.success) {
@@ -389,6 +460,13 @@
             const estiloPrincipal = this.getAttribute('data-estiloprincipal');
             const urlImagen = this.getAttribute('data-urlimagen');
 
+            // Asume que el campo Biografía no se pasa por data-attribute (limitación de longitud),
+            // por lo que debe cargarse por separado si es necesario. Por ahora, lo limpiamos o dejamos lo que tenía.
+            // Si la Biografía es un campo importante, considera obtenerla por AJAX al hacer clic.
+            // const biografia = this.getAttribute('data-biografia'); // Si la incluyes
+            // document.getElementById('Editar_Biografia').value = biografia;
+
+            // Asignación de valores
             document.getElementById('Editar_Id').value = id;
             document.getElementById('Editar_UsuarioId').value = usuarioId;
             document.getElementById('Editar_Nombre').value = nombre;
@@ -397,14 +475,18 @@
             document.getElementById('Editar_NombreArtistico').value = nombreArtistico;
             document.getElementById('Editar_EstiloPrincipal').value = estiloPrincipal;
             document.getElementById('Editar_Password').value = ''; // Limpia el campo de contraseña
+            // Si no obtuviste la biografía, la dejamos como está o la limpiamos. En este caso, la dejaremos en blanco por precaución.
+            // document.getElementById('Editar_Biografia').value = '';
+
 
             const previewImg = document.getElementById('Editar_PreviewImagen');
-            if (urlImagen && urlImagen !== 'null') {
+            if (urlImagen && urlImagen !== 'null' && urlImagen !== '/images/default-avatar.png') {
                 previewImg.src = urlImagen;
                 previewImg.style.display = 'block';
             } else {
-                previewImg.src = '';
-                previewImg.style.display = 'none';
+                // Usar la imagen por defecto si la URL está vacía o es la URL por defecto
+                previewImg.src = '/images/default-avatar.png';
+                previewImg.style.display = 'block';
             }
         }
 
@@ -422,7 +504,9 @@
                 const result = await response.json();
                 if (result.success) {
                     Swal.fire('Éxito', result.message, 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('crearArtistaModal')).hide();
+                    // Usar Bootstrap 5 para cerrar el modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('crearArtistaModal'));
+                    if(modal) modal.hide();
                     this.reset();
                     await recargarContenedor();
                 } else {
@@ -441,7 +525,9 @@
                 const result = await response.json();
                 if (result.success) {
                     Swal.fire('Éxito', result.message, 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('editarArtistaModal')).hide();
+                    // Usar Bootstrap 5 para cerrar el modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editarArtistaModal'));
+                    if(modal) modal.hide();
                     await recargarContenedor();
                 } else {
                     const errorMsg = result.message || 'Hubo un error al actualizar el artista.';

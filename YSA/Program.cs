@@ -58,6 +58,9 @@ builder.Services.AddScoped<IEventoService, EventoService>();
 builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<ICompraService, CompraService>();
+builder.Services.AddScoped<IRecursoActividadRepository, RecursoActividadRepository>();
+builder.Services.AddScoped<IRecursoActividadService, RecursoActividadService>();
+
 
 var app = builder.Build();
 

@@ -33,7 +33,7 @@
     }
 </style>
 
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
     <h1 class="text-center mb-4">Gestión de Cursos</h1>
     <hr />
     <div class="d-flex justify-content-end mb-3">
@@ -42,7 +42,7 @@
         </button>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 pb-5" id="tablaCursos">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 pb-5 mb-5" id="tablaCursos">
         @foreach (var curso in Model)
         {
             <div class="col">
@@ -93,7 +93,14 @@
                             <a asp-action="GestionarModulos" asp-route-cursoId="@curso.Id" class="btn btn-sm btn-info" title="Módulos">
                                 <i class="fas fa-cubes"></i>
                             </a>
-
+                            <a asp-action="GestionarRecursosActividades"
+                               asp-route-tipoEntidad="Curso"
+                               asp-route-entidadId="@curso.Id"
+                               class="btn btn-sm text-white"
+                               title="Recursos/Actividades del Curso"
+                               style="background-color: #008CBA !important; border-color: #008CBA !important;">
+                                <i class="fas fa-paperclip"></i>
+                            </a>
                             <button type="button" class="btn btn-sm btn-primary editar-btn"
                                     data-id="@curso.Id"
                                     data-bs-toggle="modal"
@@ -316,6 +323,12 @@
     <script>
         // Inicializa TinyMCE para los campos de descripción
         function inicializarTinyMCE() {
+            // Destruir instancias existentes antes de reinicializar (importante para modales y recargas)
+            tinymce.remove('#Crear_DescripcionLarga');
+            tinymce.remove('#Editar_DescripcionLarga');
+            tinymce.remove('#Crear_DescripcionCorta');
+            tinymce.remove('#Editar_DescripcionCorta');
+
             tinymce.init({
                 selector: '#Crear_DescripcionLarga, #Editar_DescripcionLarga',
                 plugins: 'anchor autolink charmap codesample emoticons link lists searchreplace table visualblocks wordcount',
@@ -334,27 +347,136 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             inicializarTinyMCE();
-            // El ID 'tablaCursos' ahora apunta al div de los cards
             const cardContainer = document.getElementById('tablaCursos');
             const crearModalEl = document.getElementById('crearCursoModal');
             const editarModalEl = document.getElementById('editarCursoModal');
-            const crearForm = document.getElementById('formCrearCurso');
-            const editarForm = document.getElementById('formEditarCurso');
             const asociarArtistaModalEl = document.getElementById('asociarArtistaModal');
             const guardarAsociacionBtn = document.getElementById('guardarAsociacionBtn');
+            const crearForm = document.getElementById('formCrearCurso');
+            const editarForm = document.getElementById('formEditarCurso');
+
 
             function getAntiForgeryToken() {
                 const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
                 return tokenElement ? tokenElement.value : '';
             }
 
+            // FUNCIÓN DE RECARGA: Obtiene solo los cards actualizados y los reemplaza
+            async function recargarVista() {
+                try {
+                    const response = await fetch('@Url.Action("GetCursosPartial", "Admin")'); // Asumiendo un endpoint parcial que devuelve solo los cards
+                    if (!response.ok) {
+                        throw new Error('No se pudieron cargar los cursos.');
+                    }
+                    const html = await response.text();
+                    cardContainer.innerHTML = html;
+                    attachEventListeners(); // Re-adjuntar eventos después de la recarga
+                    inicializarTinyMCE(); // Re-inicializar TinyMCE si fuera necesario (aunque no afecta a los cards directamente)
+                } catch (error) {
+                    Swal.fire('Error', error.message, 'error');
+                }
+            }
+
+            // Reemplaza los formularios de POST tradicionales con un manejador AJAX
+            async function handleAjaxFormSubmit(event) {
+                event.preventDefault();
+                const form = event.currentTarget;
+                const url = form.action;
+                const id = new URLSearchParams(url.split('?')[1]).get('id'); // Obtiene el ID de la URL
+                const token = getAntiForgeryToken();
+                const actionName = form.getAttribute('asp-action');
+
+                let confirmText = '';
+                let successMessage = '';
+
+                switch (actionName) {
+                    case 'EliminarCurso':
+                        confirmText = '¡No podrás revertir la eliminación de este curso!';
+                        successMessage = 'Curso eliminado con éxito.';
+                        break;
+                    case 'DestacarCurso':
+                        confirmText = '¿Quieres destacar este curso?';
+                        successMessage = 'Curso destacado con éxito.';
+                        break;
+                    case 'RecomendarCurso':
+                        confirmText = '¿Quieres recomendar este curso?';
+                        successMessage = 'Curso recomendado con éxito.';
+                        break;
+                    case 'QuitarDestacado':
+                        confirmText = '¿Quieres quitar el estado de destacado?';
+                        successMessage = 'Estado destacado eliminado.';
+                        break;
+                    case 'QuitarRecomendado':
+                        confirmText = '¿Quieres quitar el estado de recomendado?';
+                        successMessage = 'Estado recomendado eliminado.';
+                        break;
+                    default:
+                        // No debería ocurrir para estos botones, pero por si acaso.
+                        return;
+                }
+
+                if (actionName === 'EliminarCurso') {
+                     // Lógica de SweetAlert para Confirmación de Eliminación
+                    const result = await Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: confirmText,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Sí, ¡adelante!',
+                        cancelButtonText: 'Cancelar'
+                    });
+
+                    if (!result.isConfirmed) {
+                        return;
+                    }
+                }
+
+                // Enviar la solicitud AJAX
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'RequestVerificationToken': token
+                        },
+                        body: `id=${id}&__RequestVerificationToken=${token}` // Enviar el ID y el token
+                    });
+
+                    if (response.ok) {
+                        Swal.fire('Éxito', successMessage, 'success');
+                        await recargarVista();
+                    } else if (response.status === 400) {
+                         const error = await response.text(); // Podría ser un error de validación o un mensaje del controlador
+                         Swal.fire('Error', 'Operación fallida. Revisa los detalles.', 'error');
+                    } else {
+                        Swal.fire('Error', 'Hubo un problema al procesar la solicitud.', 'error');
+                    }
+                } catch (error) {
+                    Swal.fire('Error', `Error de conexión: ${error.message}`, 'error');
+                }
+            }
+
+
+            // Función para adjuntar todos los event listeners
+            function attachEventListeners() {
+                // Adjuntar manejador para las acciones de post (Destacar, Recomendar, Eliminar, etc.)
+                document.querySelectorAll('form[asp-action]').forEach(form => {
+                    form.removeEventListener('submit', handleAjaxFormSubmit); // Eliminar si ya existe
+                    form.addEventListener('submit', handleAjaxFormSubmit); // Adjuntar
+                });
+            }
+
+
+            // --- Lógica del modal de Asociación de Artista (sin cambios) ---
             asociarArtistaModalEl.addEventListener('show.bs.modal', async function (event) {
                 const button = event.relatedTarget;
                 const cursoId = button.getAttribute('data-cursoid');
                 document.getElementById('asociar-curso-id').value = cursoId;
 
                 const artistaSelect = document.getElementById('artista-select');
-                artistaSelect.innerHTML = '<option value="">-- Seleccione un Artista --</option>'; // Reinicia las opciones
+                artistaSelect.innerHTML = '<option value="">-- Seleccione un Artista --</option>';
 
                 try {
                     const response = await fetch('@Url.Action("ObtenerArtistas", "Admin")');
@@ -373,7 +495,6 @@
                 }
             });
 
-            // Manejar el clic en el botón de "Asociar" del modal de artista
             guardarAsociacionBtn.addEventListener('click', async function () {
                 const cursoId = document.getElementById('asociar-curso-id').value;
                 const instructorId = document.getElementById('artista-select').value;
@@ -399,7 +520,7 @@
                         const modal = bootstrap.Modal.getInstance(asociarArtistaModalEl);
                         modal.hide();
                         Swal.fire('Éxito', result.message, 'success');
-                        await recargarVista(); // Cambiado de recargarTabla a recargarVista
+                        await recargarVista();
                     } else {
                         Swal.fire('Error', result.message, 'error');
                     }
@@ -408,6 +529,8 @@
                 }
             });
 
+
+            // --- Lógica de Creación de Curso (con validación y TinyMCE) (Mantenido) ---
             crearForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 tinymce.triggerSave();
@@ -415,7 +538,6 @@
                 const formData = new FormData(this);
                 formData.append('__RequestVerificationToken', getAntiForgeryToken());
 
-                // Asegurar que las categorías se incluyan en el FormData
                 const categoriasSeleccionadas = Array.from(document.querySelectorAll('#crear-categorias-checkboxes input:checked')).map(cb => cb.value);
                 categoriasSeleccionadas.forEach(val => formData.append('CategoriasSeleccionadas', val));
 
@@ -429,12 +551,24 @@
                     modal.hide();
                     Swal.fire('Éxito', 'Curso creado con éxito.', 'success');
                     crearForm.reset();
-                    await recargarVista(); // Cambiado de recargarTabla a recargarVista
+                    // Limpiar TinyMCE después de crear
+                    tinymce.get('Crear_DescripcionCorta').setContent('');
+                    tinymce.get('Crear_DescripcionLarga').setContent('');
+                    await recargarVista();
+                } else if (response.status === 400) {
+                     const result = await response.json();
+                     Swal.fire({
+                        title: 'Error de validación',
+                        html: formatValidationErrors(result.errors),
+                        icon: 'error'
+                    });
                 } else {
-                    Swal.fire('Error', 'Hubo un problema al crear el curso.', 'error');
+                     Swal.fire('Error', 'Hubo un problema al crear el curso.', 'error');
                 }
             });
 
+
+            // --- Lógica de Edición de Curso (con validación y TinyMCE) (Mantenido) ---
             editarModalEl.addEventListener('show.bs.modal', function (event) {
                 const button = event.relatedTarget;
                 const cursoId = button.getAttribute('data-id');
@@ -451,6 +585,7 @@
                 document.getElementById('Editar_Precio').value = precio;
                 document.getElementById('Editar_Nivel').value = nivel;
 
+                // Cargar contenido en TinyMCE
                 tinymce.get('Editar_DescripcionCorta').setContent(descripcionCorta);
                 tinymce.get('Editar_DescripcionLarga').setContent(descripcionLarga);
 
@@ -462,6 +597,7 @@
                     imagenPreview.style.display = 'none';
                 }
 
+                // Cargar categorías
                 const checkboxes = document.querySelectorAll('#editar-categorias-checkboxes input[type="checkbox"]');
                 checkboxes.forEach(checkbox => {
                     const categoriaId = parseInt(checkbox.value);
@@ -476,7 +612,6 @@
                 const formData = new FormData(this);
                 formData.append('__RequestVerificationToken', getAntiForgeryToken());
 
-                // Asegurar que las categorías se incluyan en el FormData
                 const categoriasSeleccionadas = Array.from(document.querySelectorAll('#editar-categorias-checkboxes input:checked')).map(cb => cb.value);
                 categoriasSeleccionadas.forEach(val => formData.append('CategoriasSeleccionadas', val));
 
@@ -490,7 +625,7 @@
                     const modal = bootstrap.Modal.getInstance(editarModalEl);
                     modal.hide();
                     Swal.fire('Éxito', result.message, 'success');
-                    await recargarVista(); // Cambiado de recargarTabla a recargarVista
+                    await recargarVista();
                 } else {
                     Swal.fire({
                         title: 'Error de validación',
@@ -513,50 +648,7 @@
                 return html;
             }
 
-            // FUNCIÓN DE RECARGA ADAPTADA PARA CARDS
-            async function recargarVista() {
-                try {
-                    const response = await fetch('@Url.Action("GestionarCursos", "Admin")');
-                    if (!response.ok) {
-                        throw new Error('No se pudieron cargar los cursos.');
-                    }
-                    const html = await response.text();
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-
-                    // Extraer solo el contenido del nuevo contenedor de cards
-                    const newCardContainer = doc.getElementById('tablaCursos').innerHTML;
-                    cardContainer.innerHTML = newCardContainer;
-
-                    attachEventListeners();
-                } catch (error) {
-                    Swal.fire('Error', error.message, 'error');
-                }
-            }
-
-            // Event Listeners para el botón de eliminar (necesitan ser re-adjuntados después de la recarga)
-            function attachEventListeners() {
-                document.querySelectorAll('.eliminar-btn').forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        const form = this.closest('form');
-                        Swal.fire({
-                            title: '¿Estás seguro?',
-                            text: "¡No podrás revertir esto!",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Sí, ¡bórralo!',
-                            cancelButtonText: 'Cancelar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                form.submit();
-                            }
-                        });
-                    });
-                });
-            }
+            // Inicializa los eventos al cargar la página
             attachEventListeners();
         });
     </script>

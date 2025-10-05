@@ -1,0 +1,202 @@
+﻿@using YSA.Web.Models.ViewModels
+@model List<PreguntaPendienteViewModel>
+
+@{
+    ViewData["Title"] = "Panel del Instructor | Preguntas Pendientes";
+    // Se asume que los iconos de FontAwesome (fas) están incluidos en el layout o se incluirán.
+}
+
+<style>
+    /* ------------------------------------- */
+    /* 1. Estilos Base y Comunes (Sin cambios) */
+    /* ------------------------------------- */
+    .instructor-qa-container {
+        padding: 30px;
+        background-color: #f7f9fc;
+    }
+
+    .qa-header {
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .question-card {
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s;
+    }
+
+        .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+    .question-header {
+        background-color: #fce7b7; /* Un amarillo suave/naranja claro */
+        color: #333;
+        padding: 15px 20px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        border-bottom: 1px solid #f8d7a1;
+    }
+
+        .question-header strong {
+            font-weight: 700;
+            color: #d9534f; /* Color de acento para el curso */
+        }
+
+    .question-meta {
+        font-size: 0.9em;
+        color: #6c757d;
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        flex-wrap: wrap; /* Asegura que los metadatos se envuelvan en móvil */
+    }
+
+        .question-meta span {
+            margin-right: 10px;
+        }
+
+    .question-body {
+        padding: 20px;
+    }
+
+    .question-text {
+        font-size: 1.1em;
+        font-weight: 500;
+        color: #212529;
+        margin-bottom: 15px;
+        padding-left: 10px;
+        border-left: 3px solid #007bff; /* Un color de acento para la pregunta */
+    }
+
+    .response-form-title {
+        font-weight: 600;
+        margin-top: 10px;
+        color: #495057;
+    }
+
+    /* ------------------------------------- */
+    /* 2. Responsive Overrides (Mejoras) */
+    /* ------------------------------------- */
+
+    /* Encabezado: Ajustar el título y el contador en móvil */
+    @@media (max-width: 575.98px) {
+        .qa-header {
+            flex-direction: column; /* Apila el título y el contador */
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+            .qa-header h1 {
+                font-size: 1.8rem;
+                margin-bottom: 10px;
+            }
+
+            .qa-header h3 {
+                font-size: 1.1rem;
+            }
+        /* En móvil, la pregunta y los metadatos deben ser más compactos */
+        .question-header {
+            padding: 10px 15px;
+        }
+
+        .question-meta span {
+            width: 100%; /* Cada meta-ítem en una línea separada */
+            margin-bottom: 5px;
+        }
+
+        .question-body {
+            padding: 15px;
+        }
+    }
+</style>
+
+<div class="container instructor-qa-container mb-5 pb-5">
+
+    <div class="qa-header">
+        <h1><i class="fas fa-headset text-primary me-2"></i> Preguntas Pendientes</h1>
+        @if (Model != null && Model.Any())
+        {
+            <h3 class="text-secondary">
+                <span class="badge bg-warning text-dark shadow-sm">@Model.Count</span>
+                Pendientes por responder
+            </h3>
+        }
+    </div>
+
+    @* Mensajes de retroalimentación (Se mantienen sin cambios) *@
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row mb-5 pb-5">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var pregunta in Model)
+            {
+                <div class="col-12 col-md-6 col-lg-4 d-flex">
+                    <div class="question-card mb-4 flex-fill">
+                        <div class="question-header">
+                            <i class="fas fa-book-open me-1"></i> Curso: <strong>@pregunta.CursoTitulo</strong>
+                            <div class="question-meta">
+                                <span><i class="fas fa-user-circle me-1"></i> Estudiante: @pregunta.EstudianteNombre</span>
+                                <span><i class="fas fa-clock me-1"></i> @pregunta.FechaPregunta.ToString("dd MMM, HH:mm")</span>
+                            </div>
+                        </div>
+                        <div class="card-body question-body">
+                            <p class="question-text">@pregunta.Pregunta</p>
+
+                            <hr />
+
+                            <p class="response-form-title">Responder:</p>
+
+                            <form asp-action="ResponderPregunta" asp-controller="Artista" method="post">
+                                <input type="hidden" name="preguntaId" value="@pregunta.Id" />
+
+                                <div class="mb-3">
+                                    <textarea id="respuesta_@pregunta.Id" name="respuesta" class="form-control" rows="3" required placeholder="Escribe tu respuesta clara y útil aquí..."></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-paper-plane me-1"></i> Enviar Respuesta
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-success p-4 shadow-sm text-center" role="alert">
+                    <i class="fas fa-medal fa-3x mb-3 text-success"></i>
+                    <h4>¡Felicidades, Artista!</h4>
+                    <p class="mb-0">Tu bandeja de preguntas está vacía. ¡Excelente gestión!</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+@* <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> *@
+}

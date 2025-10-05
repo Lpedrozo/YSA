@@ -25,7 +25,6 @@
         justify-content: center;
         align-items: center;
         background-color: var(--color-main-bg);
-        /* Reducimos el padding vertical general de 3rem a 2rem */
         padding: 2rem;
         font-family: Arial, sans-serif;
     }
@@ -47,7 +46,6 @@
         flex: 1;
         background-color: var(--color-text-dark);
         color: #ffffff;
-        /* Reducimos el padding interno de 3rem a 2rem */
         padding: 2rem;
         display: flex;
         flex-direction: column;
@@ -55,18 +53,18 @@
     }
 
     .panel-title {
-        font-size: 2rem; /* Ligeramente más pequeño */
+        font-size: 2rem;
         font-weight: 700;
-        margin-bottom: 1rem; /* Menos margen */
+        margin-bottom: 1rem;
         border-bottom: 2px solid #ffffff;
         padding-bottom: 0.5rem;
     }
 
     .panel-text {
-        font-size: 1rem; /* Ligeramente más pequeño para ahorrar espacio */
+        font-size: 1rem;
         line-height: 1.5;
         color: #e9ecef;
-        margin-bottom: 1rem; /* Menos margen entre párrafos */
+        margin-bottom: 1rem;
     }
 
     /* ------------------------------------- */
@@ -75,30 +73,29 @@
     .login-card-mono {
         flex: 1;
         background-color: var(--color-card-bg);
-        /* Reducimos el padding interno de 3rem a 2rem */
         padding: 2rem;
     }
 
     /* Título del Login */
     .login-title-mono {
-        font-size: 1.8rem; /* Reducción para ahorrar espacio */
+        font-size: 1.8rem;
         font-weight: 700;
         color: var(--color-text-dark);
-        margin-bottom: 0.8rem; /* Menos margen */
+        margin-bottom: 0.8rem;
     }
 
     .login-header-image {
         max-width: 100%;
         height: auto;
         border-radius: 6px;
-        margin-bottom: 1.5rem; /* Menos margen vertical */
+        margin-bottom: 1.5rem;
         display: block;
         border: 1px solid var(--color-border);
     }
 
     /* Inputs y Botón */
     .form-group-vertical {
-        margin-bottom: 1rem; /* Reducción de 1.5rem a 1rem */
+        margin-bottom: 1rem;
     }
 
     .form-label-mono {
@@ -106,8 +103,8 @@
         width: 100%;
         font-weight: 600;
         color: var(--color-text-dark);
-        margin-bottom: 0.3rem; /* Reducción de 0.4rem a 0.3rem */
-        font-size: 0.9rem; /* Ligeramente más pequeño */
+        margin-bottom: 0.3rem;
+        font-size: 0.9rem;
     }
 
     .form-control-mono {
@@ -115,11 +112,24 @@
         border: 1px solid var(--color-border);
         color: var(--color-text-dark);
         border-radius: 6px;
-        height: 44px; /* Ligeramente más corto de 48px */
+        height: 44px;
         padding: 0.5rem 1rem;
         width: 100%;
         transition: border-color 0.2s, box-shadow 0.2s;
     }
+
+        .form-control-mono:focus {
+            border-color: var(--color-primary-action);
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilo para error de validación */
+        .form-control-mono.input-validation-error {
+            border-color: var(--color-error);
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.1);
+        }
+
 
     .btn-mono-primary {
         width: 100%;
@@ -127,62 +137,82 @@
         color: #ffffff;
         border: none;
         border-radius: 6px;
-        padding: 0.7rem 1.25rem; /* Menos padding */
+        padding: 0.7rem 1.25rem;
         font-weight: 700;
         letter-spacing: 0.5px;
         transition: background-color 0.2s;
-        margin-top: 1rem; /* Menos margen superior */
+        margin-top: 1rem;
     }
+
+        .btn-mono-primary:hover {
+            background-color: var(--color-text-subtle);
+        }
 
     .link-mono-subtle {
         color: var(--color-text-subtle);
         font-weight: 500;
         text-decoration: none;
-        font-size: 0.85rem; /* Más pequeño */
+        font-size: 0.85rem;
         transition: color 0.2s;
         display: block;
         margin-top: 0.4rem;
     }
 
+        .link-mono-subtle:hover {
+            color: var(--color-primary-action);
+        }
+
     .form-footer-separator {
-        margin-top: 1rem; /* Reducción de 2rem a 1rem */
-        padding-top: 1rem; /* Reducción de 1.5rem a 1rem */
+        margin-top: 1rem;
+        padding-top: 1rem;
         border-top: 1px solid var(--color-border);
         text-align: center;
     }
 
-    /* Media Query para móvil se mantiene */
+    /* ------------------------------------- */
+    /* MEDIA QUERY RESPONSIVE (MÓVIL/TABLET) */
+    /* ------------------------------------- */
     @@media (max-width: 768px) {
         .dual-card-wrapper {
+            /* 1. Apilamos los elementos verticalmente */
             flex-direction: column;
+            /* 2. Reducimos el ancho máximo para móvil */
             max-width: 420px;
+            /* 3. Reducimos la sombra para que no sea tan dominante */
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
 
         .content-panel-mono {
-            padding: 1.5rem;
-            text-align: center;
+            /* 4. CLAVE: Ocultamos el panel de contenido en móvil */
+            display: none;
         }
-
+        /* 5. Aseguramos que la tarjeta de login tenga bordes redondeados completos en móvil */
         .login-card-mono {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
+            border-radius: 16px;
             padding: 1.5rem;
         }
+            /* 6. Centramos los elementos principales de la tarjeta de login en móvil si es necesario */
+            .login-card-mono .text-center {
+                text-align: center !important;
+            }
+        /* Si el diseño del panel de contenido se deja visible, se aplica lo siguiente: */
+        /*.content-panel-mono {
+                padding: 1.5rem;
+                text-align: center;
+            }
 
-        .panel-title {
-            font-size: 1.8rem;
-        }
-
-        .panel-text {
-            font-size: 0.95rem;
-        }
+            .login-card-mono {
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+                padding: 1.5rem;
+            }*/
     }
 </style>
 
-<div class="main-container-dual">
-    <div class="dual-card-wrapper">
+<div class="main-container-dual mb-5 pb-5">
+    <div class="dual-card-wrapper  mb-5 pb-5">
 
-        <div class="content-panel-mono">
+        <div class="content-panel-mono mb-3 pb-3">
             <h2 class="panel-title">Tu futuro, tu aprendizaje.</h2>
 
             <p class="panel-text">
@@ -207,7 +237,7 @@
                      class="login-header-image" />
             </div>
 
-            <form asp-controller="Cuenta" asp-action="Login" method="post" class="login-form-custom">
+            <form asp-controller="Cuenta" asp-action="Login" method="post" class="login-form-custom mb-3 pb-3">
                 <div asp-validation-summary="ModelOnly" class="text-danger small mb-4 text-center"></div>
 
                 <div class="form-group-vertical">
@@ -246,14 +276,19 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Se añade un estilo visual de error al input afectado
             document.querySelectorAll('[data-valmsg-for]').forEach(span => {
                 const inputId = span.getAttribute('data-valmsg-for');
+                // Buscamos el input por su ID generado por ASP.NET MVC/Core
                 const input = document.getElementById(inputId);
+
+                if (!input) return; // Salir si el input no se encuentra
 
                 const observer = new MutationObserver(mutations => {
                     mutations.forEach(mutation => {
                         if (mutation.type === 'childList' || mutation.type === 'characterData') {
-                            if (span.innerHTML.trim() !== "") {
+                            // Si el span de error contiene texto (es decir, hay un error)
+                            if (span.innerHTML.trim() !== "" && span.innerHTML.trim() !== "[]") {
                                 input.classList.add('input-validation-error');
                             } else {
                                 input.classList.remove('input-validation-error');
@@ -262,9 +297,11 @@
                     });
                 });
 
+                // Observar cambios en el contenido y atributos del span
                 observer.observe(span, { childList: true, characterData: true, subtree: true });
 
-                if (span.innerHTML.trim() !== "") {
+                // Verificación inicial al cargar la página
+                if (span.innerHTML.trim() !== "" && span.innerHTML.trim() !== "[]") {
                     input.classList.add('input-validation-error');
                 }
             });
