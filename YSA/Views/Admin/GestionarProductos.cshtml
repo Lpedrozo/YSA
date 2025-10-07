@@ -138,10 +138,16 @@
 
     <h1>@ViewData["Title"]</h1>
 
-    <p>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearProductoModal">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a asp-action="Panel" asp-controller="Admin" class="btn btn-primary btn-lg">
+            <i class="fas fa-arrow-left me-2"></i> Regresar al Panel
+        </a>
+        <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#crearProductoModal">
             <i class="fas fa-plus-circle me-2"></i> Crear Nuevo Producto
         </button>
+    </div>
+    <p>
+        
     </p>
 
     @if (Model.Productos != null && Model.Productos.Any())
