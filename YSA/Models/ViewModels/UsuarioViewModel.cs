@@ -126,6 +126,7 @@ namespace YSA.Web.Models.ViewModels
         public string Biografia { get; set; }
         public string? UrlFotoPerfil { get; set; }
         public IEnumerable<ArtistaFoto> Portafolio { get; set; } = new List<ArtistaFoto>();
+        public IEnumerable<Curso> Cursos { get; set; } = new List<Curso>();
         // Si tienes cursos, los agregas aquí
     }
 }

@@ -17,6 +17,7 @@ namespace YSA.Core.Services
         Task AprobarPedidoYOtorgarAccesoAsync(int pedidoId);
         Task<bool> TienePedidoPendientePorCursoAsync(int estudianteId, int cursoId); // Nuevo método
         Task<IEnumerable<Pedido>> ObtenerPedidosAprobadosPorUsuarioAsync(int estudianteId);
+        Task<Pago> GetPagoWithPedido(int id);
 
     }
 }

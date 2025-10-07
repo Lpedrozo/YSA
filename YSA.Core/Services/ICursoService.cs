@@ -33,5 +33,7 @@ namespace YSA.Core.Services
         Task AsociarArtistaACursoAsync(int cursoId, int instructorId);
         Task<bool> ResponderPreguntaAsync(int preguntaId, string respuesta, int instructorId);
         Task<List<PreguntaRespuesta>> ObtenerPreguntasPendientesParaInstructorAsync(int instructorId);
+        Task<List<Artista>> ObtenerArtistasAsociadosACursoAsync(int cursoId);
+        Task DesasociarArtistaACursoAsync(int cursoId, int instructorId);
     }
 }

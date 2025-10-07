@@ -21,9 +21,13 @@ namespace YSA.Data.Repositories
         {
             return await _context.Cursos
                                  .Include(c => c.CursoCategorias)
-                                 .ThenInclude(cc => cc.Categoria)
-                                 .Include(c => c.Instructor) // Incluye la entidad Artista (el Instructor)
-                                  .ThenInclude(i => i.Usuario)
+                                     .ThenInclude(cc => cc.Categoria)
+
+                                 // *** CAMBIOS PARA LA RELACIÓN MUCHOS A MUCHOS ***
+                                 .Include(c => c.CursoInstructores) // 1. Incluye la colección de enlaces
+                                     .ThenInclude(ci => ci.Artista)    // 2. Incluye el Artista (Instructor) desde el enlace
+                                         .ThenInclude(a => a.Usuario)  // 3. Incluye la entidad Usuario del Artista
+
                                  .ToListAsync();
         }
 
@@ -178,7 +182,10 @@ namespace YSA.Data.Repositories
             var cursos = await _context.EstudianteCursos
                                        .Where(ec => ec.EstudianteId == estudianteId)
                                        .Include(ec => ec.Curso)
-                                       .ThenInclude(c => c.Instructor)
+
+                                       .ThenInclude(c => c.CursoInstructores)  // 1. Incluye la colección de enlaces
+                                       .ThenInclude(ci => ci.Artista)           // 2. Incluye el Artista/Instructor desde el enlace
+
                                        .OrderByDescending(ec => ec.FechaAccesoOtorgado)
                                        .Take(5)
                                        .Select(ec => ec.Curso)
@@ -211,20 +218,73 @@ namespace YSA.Data.Repositories
 
         public async Task<List<PreguntaRespuesta>> ObtenerPreguntasPendientesPorInstructorAsync(int instructorId)
         {
-            var artistaId = await _context.Artistas.Where(a => a.UsuarioId == instructorId).Select(a => a.Id).FirstOrDefaultAsync();
-            // 1. Encuentra los IDs de los cursos que imparte este instructor
-            var cursosIds = await _context.Cursos
-                .Where(c => c.InstructorId == artistaId)
-                .Select(c => c.Id)
+            var artistaId = await _context.Artistas
+                .Where(a => a.UsuarioId == instructorId)
+                .Select(a => a.Id)
+                .FirstOrDefaultAsync();
+
+            if (artistaId == 0)
+            {
+                return new List<PreguntaRespuesta>();
+            }
+
+            var cursosIds = await _context.CursoInstructores
+                .Where(ci => ci.ArtistaId == artistaId) // Filtra por el ArtistaId
+                .Select(ci => ci.CursoId)               // Selecciona solo los IDs de los cursos
                 .ToListAsync();
 
-            // 2. Obtiene las preguntas asociadas a esos cursos que NO tienen respuesta.
+            if (!cursosIds.Any())
+            {
+                return new List<PreguntaRespuesta>();
+            }
+
             return await _context.PreguntasRespuestas
                 .Where(pr => cursosIds.Contains(pr.CursoId) && pr.Respuesta == "Gracias por preguntar. Ahora, espera la respuesta de tus instructores, ellos no tardan en responder.")
-                .Include(pr => pr.Curso)         // Incluye el curso para contexto
-                .Include(pr => pr.Estudiante)    // Incluye el estudiante que preguntó
+                .Include(pr => pr.Curso)        // Incluye el curso para contexto
+                .Include(pr => pr.Estudiante)   // Incluye el estudiante que preguntó
                 .OrderBy(pr => pr.FechaPregunta)
                 .ToListAsync();
+        }
+
+        public async Task CrearAsociacionInstructor(int cursoId, int artistaId)
+        {
+            var existeAsociacion = await _context.CursoInstructores
+                .AnyAsync(ci => ci.CursoId == cursoId && ci.ArtistaId == artistaId);
+
+            if (existeAsociacion)
+            {
+                throw new InvalidOperationException("Este artista ya está asociado a este curso.");
+            }
+
+            var nuevaAsociacion = new CursoInstructor
+            {
+                CursoId = cursoId,
+                ArtistaId = artistaId
+            };
+
+            await _context.CursoInstructores.AddAsync(nuevaAsociacion);
+            await _context.SaveChangesAsync();
+        }
+        public async Task<List<Artista>> ObtenerArtistasAsociadosACursoAsync(int cursoId)
+        {
+
+            return await _context.CursoInstructores
+                .Where(ca => ca.CursoId == cursoId)
+                .Select(ca => ca.Artista)
+                .ToListAsync();
+
+        }
+
+        public async Task DesasociarArtistaACursoAsync(int cursoId, int instructorId)
+        {
+            var asociacion = await _context.CursoInstructores
+                .FirstOrDefaultAsync(ca => ca.CursoId == cursoId && ca.ArtistaId == instructorId);
+
+            if (asociacion != null)
+            {
+                _context.CursoInstructores.Remove(asociacion);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

@@ -108,6 +108,10 @@ namespace YSA.Core.Services
         {
             return await _artistaRepository.GetAllAsync();
         }
+        public async Task<List<Curso>> GetCursosByArtistaAsync(int Id)
+        {
+            return await _artistaRepository.GetCursosByArtistaAsync(Id);
+        }
         public async Task<Artista> GetByIdAsync(int id)
         {
             return await _artistaRepository.GetByIdAsync(id);

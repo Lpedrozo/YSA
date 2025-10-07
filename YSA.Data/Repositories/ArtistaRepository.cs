@@ -24,6 +24,13 @@ namespace YSA.Data.Repositories
         {
             return await _context.Artistas.Include(a => a.Usuario).FirstOrDefaultAsync(a => a.Id == id);
         }
+        public async Task<List<Curso>> GetCursosByArtistaAsync(int id)
+        {
+            return await _context.CursoInstructores
+                .Where(ci => ci.ArtistaId == id) // Filtra por el Artista/Instructor
+                .Select(ci => ci.Curso)          // Selecciona el objeto Curso asociado
+                .ToListAsync();
+        }
 
         public async Task<List<Artista>> GetAllAsync()
         {
@@ -47,5 +54,6 @@ namespace YSA.Data.Repositories
             _context.Artistas.Remove(artista);
             await _context.SaveChangesAsync();
         }
+        
     }
 }

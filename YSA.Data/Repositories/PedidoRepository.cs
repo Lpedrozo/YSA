@@ -69,7 +69,12 @@ namespace YSA.Data.Repositories
                                          .ThenInclude(vi => vi.Producto) // Inclusión del producto
                                  .FirstOrDefaultAsync(p => p.Id == id);
         }
-
+        public async Task<Pago> GetPagoWithPedido(int id)
+        {
+            return await _context.Pagos
+                                 .Where(p => p.PedidoId == id)
+                                 .FirstOrDefaultAsync();
+        }
         public async Task<PedidoItem> AddPedidoItemAsync(PedidoItem item)
         {
             _context.PedidoItems.Add(item);

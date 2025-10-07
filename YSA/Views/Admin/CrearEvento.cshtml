@@ -151,10 +151,8 @@
 
             <div class="form-group mb-4">
                 <label asp-for="Descripcion" class="control-label"></label>
-                <textarea asp-for="Descripcion" class="form-control" rows="5" id="DescripcionTextarea" maxlength="500" placeholder="Describe brevemente de qué tratará el evento, quién lo imparte y los objetivos."></textarea>
-                <div class="text-end text-muted small mt-1">
-                    <span id="charCount">0</span>/500 caracteres
-                </div>
+                @* Se elimina el maxlength y la referencia al contador de caracteres *@
+                <textarea asp-for="Descripcion" class="form-control" rows="10" id="DescripcionEditor" placeholder="Describe brevemente de qué tratará el evento, quién lo imparte y los objetivos. Puedes usar formato HTML (negritas, listas, etc.)."></textarea>
                 <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div>
 
@@ -174,6 +172,8 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
     <script>
         // Script para contador de caracteres en la descripción
         document.addEventListener('DOMContentLoaded', function () {
@@ -192,6 +192,21 @@
             }
 
             // Forzar el input de FechaEvento a tipo datetime-local (para asegurar la UI correcta en navegadores)
+            var fechaEventoInput = document.getElementById('@Html.IdFor(model => model.FechaEvento)');
+            if (fechaEventoInput) {
+                fechaEventoInput.type = 'datetime-local';
+            }
+
+            tinymce.init({
+                selector: '#DescripcionEditor',
+                plugins: 'lists link code autoresize',
+                toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link code',
+                menubar: false,
+                branding: false,
+                autoresize_bottom_margin: 16
+            });
+
+            // Forzar el input de FechaEvento a tipo datetime-local
             var fechaEventoInput = document.getElementById('@Html.IdFor(model => model.FechaEvento)');
             if (fechaEventoInput) {
                 fechaEventoInput.type = 'datetime-local';

@@ -18,6 +18,7 @@ namespace YSA.Core.Interfaces
         Task<bool> ExistePedidoEnEstadoParaCursoAsync(int estudianteId, int cursoId, string estado); // Nuevo método
         Task<IEnumerable<Pedido>> GetPedidosByUsuarioAndEstadoAsync(int estudianteId, string estado);
         Task<IEnumerable<VentaItem>> GetItemsByPedidoIdAsync(int pedidoId);
+        Task<Pago> GetPagoWithPedido(int id);
 
     }
 }

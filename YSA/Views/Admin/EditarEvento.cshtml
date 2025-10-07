@@ -5,106 +5,138 @@
     // Si usas TempData para la URL existente, es mejor moverla al ViewModel o
     // usar un Input Hidden aquí para la URL, para evitar perder el valor en recargas.
     // Asumo que tienes una propiedad UrlImagenExistente en tu ViewModel para esto.
+    // NOTA: Para edición, asumo que el ViewModel trae la URL existente
     string currentImageUrl = Model.UrlImagenExistente ?? TempData["UrlImagenExistente"]?.ToString();
 }
 
 <style>
-    .form-container {
-        max-width: 800px; /* Limita el ancho del formulario */
-        margin: 0 auto; /* Centra el contenedor */
-        padding: 2rem;
-        background-color: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+    /* ... (Estilos CSS sin cambios) ... */
+        .form-container {
+                max-width: 800px; /* Limita el ancho del formulario */
+                margin: 0 auto; /* Centra el contenedor */
+                padding: 2rem;
+                background-color: #ffffff;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
     }
 
-    .form-group label {
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: #333; /* Color de etiqueta más oscuro */
+        .form-group label {
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                color: #333; /* Color de etiqueta más oscuro */
+
     }
 
-    .form-control:focus {
-        border-color: #000;
-        box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+        .form-control:focus {
+                border-color: #000;
+                box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+
     }
 
-    .form-control-lg {
-        height: calc(1.5em + 1rem + 2px); /* Ajuste de altura para campos clave */
+        .form-control-lg {
+                height: calc(1.5em + 1rem + 2px); /* Ajuste de altura para campos clave */
+
     }
 
-    .main-btn {
-        background-color: black;
-        border-color: black;
-        transition: background-color 0.3s;
+        .main-btn {
+                background-color: black;
+                border-color: black;
+                transition: background-color 0.3s;
+
     }
 
-        .main-btn:hover {
-            background-color: #333;
-            border-color: #333;
-        }
+            .main-btn:hover {
+                    background-color: #333;
+                    border-color: #333;
 
-    .form-switch .form-check-input:checked {
-        background-color: black;
-        border-color: black;
     }
+
+        .form-switch .form-check-input:checked {
+                background-color: black;
+                border-color: black;
+
+    }
+
 
     /* Estilo para la imagen de previsualización */
-    .current-image-preview {
-        max-height: 200px; /* Altura máxima para la imagen de previsualización */
-        width: auto;
-        max-width: 100%; /* Asegura que no se desborde en pantallas grandes */
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        margin-top: 10px;
-        object-fit: contain; /* Asegura que la imagen completa se vea dentro del max-height */
-        display: block;
+        .current-image-preview {
+                max-height: 200px; /* Altura máxima para la imagen de previsualización */
+                width: auto;
+                max-width: 100%; /* Asegura que no se desborde en pantallas grandes */
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                margin-top: 10px;
+                object-fit: contain; /* Asegura que la imagen completa se vea dentro del max-height */
+                display: block;
+
     }
 
+
     /* ------------------------------------- */
-    /* MEDIA QUERY RESPONSIVE (MÓVIL)        */
+
+    /* MEDIA QUERY RESPONSIVE (MÓVIL)        */
+
     /* ------------------------------------- */
-    @@media (max-width: 767.98px) {
-        .form-container {
-            /* Reduce el padding interno en móvil */
-            padding: 1rem;
-            /* Elimina el max-width efectivo en pantallas pequeñas */
-            max-width: 100%;
-        }
+        @@media (max-width: 767.98px) {
+                .form-container
 
-        .container {
-            /* Reduce el padding del contenedor principal */
-            padding: 1rem 0.5rem !important;
-        }
+    {
 
-        .fw-bold {
-            font-size: 1.75rem; /* Título ligeramente más pequeño */
-            margin-bottom: 1rem !important;
-        }
+        /* Reduce el padding interno en móvil */
+                    padding: 1rem;
 
-        .form-group .row > div {
-            /* Asegura un poco de espacio si hay columnas anidadas en el row */
-            padding-bottom: 0.5rem;
-        }
+        /* Elimina el max-width efectivo en pantallas pequeñas */
+                    max-width: 100%;
 
-        .current-image-preview {
-            width: 100%; /* CLAVE: La imagen ocupa el ancho completo de su columna en móvil */
-            height: auto;
-        }
+    }
 
-        .btn-lg {
-            /* Hace que los botones sean de ancho completo y se apilen */
-            width: 100%;
-            margin-bottom: 0.5rem;
-            margin-right: 0 !important; /* Elimina el margen derecho del botón Guardar */
-        }
+            .container {
 
-        .form-group.text-center.mt-5 {
-            /* Asegura que los botones se apilen y ocupen el ancho total */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        /* Reduce el padding del contenedor principal */
+                    padding: 1rem 0.5rem !important;
+
+    }
+
+            .fw-bold {
+                    font-size: 1.75rem; /* Título ligeramente más pequeño */
+                    margin-bottom: 1rem !important;
+
+    }
+
+            .form-group .row > div {
+
+        /* Asegura un poco de espacio si hay columnas anidadas en el row */
+                    padding-bottom: 0.5rem;
+
+    }
+
+            .current-image-preview {
+                    width: 100%; /* CLAVE: La imagen ocupa el ancho completo de su columna en móvil */
+                    height: auto;
+
+    }
+
+            .btn-lg {
+
+        /* Hace que los botones sean de ancho completo y se apilen */
+                    width: 100%;
+                    margin-bottom: 0.5rem;
+                    margin-right: 0 !important; /* Elimina el margen derecho del botón Guardar */
+
+    }
+
+            .form-group.text-center.mt-5 {
+
+        /* Asegura que los botones se apilen y ocupen el ancho total */
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+
+    }
+
+
     }
 </style>
 
@@ -175,12 +207,10 @@
                 </div>
             </div>
 
+            @* CAMBIO CLAVE 1: Reemplazamos DescripcionTextarea por DescripcionEditor y eliminamos el contador/maxlength *@
             <div class="form-group mb-4">
                 <label asp-for="Descripcion" class="control-label"></label>
-                <textarea asp-for="Descripcion" class="form-control" rows="5" id="DescripcionTextarea" maxlength="500" placeholder="Describe brevemente de qué tratará el evento, quién lo imparte y los objetivos."></textarea>
-                <div class="text-end text-muted small mt-1">
-                    <span id="charCount">@Model.Descripcion?.Length ?? 0</span>/500 caracteres
-                </div>
+                <textarea asp-for="Descripcion" class="form-control" rows="10" id="DescripcionEditor" placeholder="Describe el evento usando formato enriquecido (negritas, listas, enlaces, etc.)."></textarea>
                 <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div>
 
@@ -200,23 +230,22 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
     <script>
-        // Script para contador de caracteres en la descripción
         document.addEventListener('DOMContentLoaded', function () {
-            var textarea = document.getElementById('DescripcionTextarea');
-            var charCount = document.getElementById('charCount');
 
-            if (textarea && charCount) {
-                // Función para actualizar el contador
-                function updateCharCount() {
-                    charCount.textContent = textarea.value.length;
-                }
+            // CAMBIO CLAVE 3: Inicializamos TinyMCE en el nuevo ID #DescripcionEditor
+            tinymce.init({
+                selector: '#DescripcionEditor',
+                plugins: 'lists link code autoresize',
+                toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link code',
+                menubar: false,
+                branding: false,
+                height: 300
+            });
 
-                // Escuchar cambios
-                textarea.addEventListener('input', updateCharCount);
-            }
-
-            // Forzar el input de FechaEvento a tipo datetime-local y asegurar el formato
+            // Lógica para FechaEvento (sin cambios)
             var fechaEventoInput = document.getElementById('@Html.IdFor(model => model.FechaEvento)');
             if (fechaEventoInput) {
                 fechaEventoInput.type = 'datetime-local';

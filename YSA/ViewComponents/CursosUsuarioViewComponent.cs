@@ -25,13 +25,19 @@ public class CursosUsuarioViewComponent : ViewComponent
             {
                 // Obtenemos los cursos a los que el usuario tiene acceso
                 var cursos = await _context.EstudianteCursos
-                                         .Where(ec => ec.EstudianteId == int.Parse(userId))
-                                         .Include(ec => ec.Curso)
-                                         .ThenInclude(c => c.Instructor) // Opcional, si quieres mostrar el instructor
-                                         .OrderByDescending(ec => ec.FechaAccesoOtorgado)
-                                         .Take(5) // Limita a los 5 cursos más recientes, como en la imagen de Udemy
-                                         .Select(ec => ec.Curso)
-                                         .ToListAsync();
+                                           .Where(ec => ec.EstudianteId == int.Parse(userId))
+                                           .Include(ec => ec.Curso)
+
+                                           // *** CAMBIO CLAVE: Nueva navegación a Instructores ***
+                                           // Opcional, si quieres mostrar el instructor
+                                           .ThenInclude(c => c.CursoInstructores)  // 1. Incluye la colección de enlaces
+                                               .ThenInclude(ci => ci.Artista)       // 2. Incluye el Artista/Instructor
+                                                   .ThenInclude(a => a.Usuario)     // 3. Incluye el Usuario del Artista (para nombre)
+
+                                           .OrderByDescending(ec => ec.FechaAccesoOtorgado)
+                                           .Take(5) // Limita a los 5 cursos más recientes
+                                           .Select(ec => ec.Curso)
+                                           .ToListAsync();
 
                 // Mapeamos a un ViewModel para la vista
                 cursosComprados = cursos.Select(c => new CursoViewModel
@@ -39,6 +45,9 @@ public class CursosUsuarioViewComponent : ViewComponent
                     Id = c.Id,
                     Titulo = c.Titulo,
                     UrlImagen = c.UrlImagen,
+                    // Nota: Si el CursoViewModel necesita el nombre del instructor, 
+                    // ahora debes acceder a través de la colección CursoInstructores:
+                    // InstructorNombre = c.CursoInstructores.FirstOrDefault()?.Artista.Usuario.NombreCompleto 
                 }).ToList();
             }
         }

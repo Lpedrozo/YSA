@@ -23,6 +23,8 @@ namespace YSA.Core.Interfaces
         Task<List<Curso>> GetCursosByEstudianteIdAsync(int estudianteId);
         Task<bool> ResponderPreguntaAsync(int preguntaId, string respuesta, int instructorId);
         Task<List<PreguntaRespuesta>> ObtenerPreguntasPendientesPorInstructorAsync(int instructorId);
-
+        Task CrearAsociacionInstructor(int cursoId, int artistaId);
+        Task<List<Artista>> ObtenerArtistasAsociadosACursoAsync(int cursoId);
+        Task DesasociarArtistaACursoAsync(int cursoId, int instructorId);
     }
 }

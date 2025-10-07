@@ -243,6 +243,9 @@
 				<button class="nav-link" id="comunidad-tab" data-bs-toggle="tab" data-bs-target="#comunidad-tab-pane" type="button" role="tab">Comunidad</button>
 			</li>
 			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="preguntas-tab" data-bs-toggle="tab" data-bs-target="#preguntas-tab-pane" type="button" role="tab">Preguntas <span class="badge bg-secondary">@(Model.Preguntas?.Count ?? 0)</span></button>
+			</li>
+			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="proyectos-tab" data-bs-toggle="tab" data-bs-target="#proyectos-tab-pane" type="button" role="tab">Actividades <span class="badge bg-warning">@Model.Actividades.Count()</span></button>
 			</li>
 		</ul>
@@ -455,17 +458,78 @@
 				</div>
 			</div>
 		</div>
+		<div class="tab-pane fade pb-5" id="preguntas-tab-pane" role="tabpanel" tabindex="0">
+			<div class="content-container">
+
+				<h3 class="mb-4">Preguntas y Respuestas (Q&A)</h3>
+				<div class="card card-body mb-5 shadow-sm">
+					<h5 class="card-title">Hacer una nueva pregunta</h5>
+
+					<form id="formHacerPregunta" action="@Url.Action("CrearPregunta", "Curso", new { tab = "preguntas-tab" })" method="post">
+						@Html.AntiForgeryToken()
+						<input type="hidden" name="cursoId" value="@Model.Id" />
+
+						<div class="mb-3">
+							<label for="preguntaInput" class="form-label">Tu pregunta:</label>
+							<textarea class="form-control" id="preguntaInput" name="pregunta" rows="3" required placeholder="Escribe tu duda o consulta aquí..."></textarea>
+						</div>
+
+						<button type="submit" class="btn btn-primary">Enviar Pregunta</button>
+					</form>
+				</div>
+
+				<hr />
+
+				<h4 class="mb-4">Consultas Recientes (@(Model.Preguntas?.Count ?? 0))</h4>
+
+				@if (Model.Preguntas != null && Model.Preguntas.Any())
+				{
+					@foreach (var p in Model.Preguntas.OrderByDescending(p => p.FechaPregunta))
+					{
+						<div class="card mb-3 border-secondary">
+							<div class="card-header bg-secondary text-white">
+								<i class="fas fa-question-circle me-1"></i>
+								Pregunta de @p.NombreEstudiante
+								<small class="float-end">@p.FechaPregunta.ToString("dd/MM/yyyy HH:mm")</small>
+							</div>
+							<div class="card-body">
+								<p class="card-text">@p.Pregunta</p>
+
+								@if (!string.IsNullOrEmpty(p.Respuesta))
+								{
+									<hr />
+									<div class="alert alert-light border-start border-primary border-4 py-2">
+										<h6 class="alert-heading text-primary">
+											<i class="fas fa-reply me-1"></i> Respuesta de @p.NombreInstructor
+											<small class="float-end text-muted">@p.FechaRespuesta?.ToString("dd/MM/yyyy HH:mm")</small>
+										</h6>
+										<p class="mb-0">@p.Respuesta</p>
+									</div>
+								}
+								else
+								{
+									<div class="alert alert-warning py-2 mt-3">
+										<i class="fas fa-hourglass-half me-1"></i> Pendiente de respuesta del instructor.
+									</div>
+								}
+							</div>
+						</div>
+					}
+				}
+				else
+				{
+					<div class="alert alert-info" role="alert">
+						Aún no hay preguntas para este curso. ¡Sé el primero en preguntar!
+					</div>
+				}
+			</div>
+		</div>
 
 		@* TAB 4: ACTIVIDADES Y PROYECTOS (Mantenido al 100% de ancho) *@
 		<div class="tab-pane fade pb-5" id="proyectos-tab-pane" role="tabpanel" tabindex="0">
 			<div class="content-container">
 
-				@* Preguntas y Respuestas (Sección no implementada en el código base, pero mantenemos el título) *@
-				<h3 class="mb-4">Preguntas y Respuestas (Q&A)</h3>
-				<p class="text-muted">Aquí iría el formulario de preguntas y la lista de preguntas/respuestas.</p>
-				<hr />
-
-				<h3 class="mt-5 mb-4">Actividades y Entregas</h3>
+				<h3 class="mt-0 mb-4">Actividades y Entregas</h3>
 
 				@if (Model.Actividades != null && Model.Actividades.Any())
 				{

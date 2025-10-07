@@ -118,7 +118,7 @@ public class RecursoActividadRepository : IRecursoActividadRepository
     {
         // 1. Obtener el ArtistaId (InstructorId en la tabla Artistas)
         var artistaId = await _context.Artistas
-            .Where(a => a.UsuarioId == usuarioInstructorId) // Usamos el ID del Usuario de Identity (int instructorId)
+            .Where(a => a.UsuarioId == usuarioInstructorId)
             .Select(a => a.Id)
             .FirstOrDefaultAsync();
 
@@ -130,10 +130,17 @@ public class RecursoActividadRepository : IRecursoActividadRepository
         // 2. Obtener IDs de Cursos, Módulos y Lecciones del Instructor
 
         // A. Obtener todos los Cursos del instructor
-        var cursos = await _context.Cursos
-            .Where(c => c.InstructorId == artistaId)
-            .Include(c => c.Modulos)        // Incluir Módulos
-            .ThenInclude(m => m.Lecciones)  // Incluir Lecciones
+        // *** CAMBIO CLAVE: Aplicar Includes/ThenIncludes ANTES del Select ***
+        var cursos = await _context.CursoInstructores
+            .Where(ci => ci.ArtistaId == artistaId)
+            // 1. Incluir el objeto Curso
+            .Include(ci => ci.Curso)
+                // 2. Incluir la colección Modulos DENTRO del Curso (ci.Curso.Modulos)
+                .ThenInclude(c => c.Modulos)
+                    // 3. Incluir la colección Lecciones DENTRO de Modulos (ci.Curso.Modulos.Lecciones)
+                    .ThenInclude(m => m.Lecciones)
+            // 4. Proyectar la entidad Curso para iterar (que ya viene cargada con Módulos y Lecciones)
+            .Select(ci => ci.Curso)
             .ToListAsync();
 
         // B. Extraer todos los IDs de las entidades a las que el instructor tiene acceso
@@ -141,9 +148,11 @@ public class RecursoActividadRepository : IRecursoActividadRepository
 
         foreach (var curso in cursos)
         {
+            // ... (La lógica de iteración es correcta y se mantiene)
             // IDs de Cursos
             entidadIds.Add(curso.Id);
 
+            // Notar que 'curso.Modulos' ahora está cargado debido al Include/ThenInclude anterior
             foreach (var modulo in curso.Modulos)
             {
                 // IDs de Módulos
@@ -163,9 +172,8 @@ public class RecursoActividadRepository : IRecursoActividadRepository
             return new List<EntregaActividad>();
         }
 
-        // 3. Obtener todas las Actividades asociadas a cualquiera de estas entidades (sin importar el TipoEntidad, siempre que el ID coincida)
+        // 3. Obtener todas las Actividades asociadas a cualquiera de estas entidades
         var actividadesIds = await _context.RecursosActividades
-            // Buscamos actividades cuya EntidadId esté dentro del conjunto que acabamos de obtener.
             .Where(ra => entidadIds.Contains(ra.EntidadId))
             .Select(ra => ra.Id)
             .ToListAsync();

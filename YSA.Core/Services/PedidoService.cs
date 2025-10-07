@@ -81,6 +81,10 @@ namespace YSA.Core.Services
         {
             return await _pedidoRepository.AddPagoAsync(pago);
         }
+        public async Task<Pago> GetPagoWithPedido(int id)
+        {
+            return await _pedidoRepository.GetPagoWithPedido(id);
+        }
         public async Task<IEnumerable<Pedido>> ObtenerPedidosPorEstadoAsync(string estado)
         {
             return await _pedidoRepository.GetPedidosByEstadoAsync(estado);

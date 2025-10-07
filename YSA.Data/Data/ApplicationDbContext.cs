@@ -36,6 +36,7 @@ namespace YSA.Data.Data
         public DbSet<TipoEvento> TipoEventos { get; set; }
         public DbSet<RecursoActividad> RecursosActividades { get; set; }
         public DbSet<EntregaActividad> EntregasActividades { get; set; }
+        public DbSet<CursoInstructor> CursoInstructores { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -70,11 +71,6 @@ namespace YSA.Data.Data
                 .HasOne(cc => cc.Categoria)
                 .WithMany(c => c.CursoCategorias)
                 .HasForeignKey(cc => cc.CategoriaId);
-
-            modelBuilder.Entity<Curso>()
-                .HasOne(c => c.Instructor)
-                .WithMany(a => a.Cursos)
-                .HasForeignKey(c => c.InstructorId);
 
             modelBuilder.Entity<Producto>()
                 .HasOne(p => p.Autor)
@@ -202,6 +198,18 @@ namespace YSA.Data.Data
                 .HasOne(ea => ea.Instructor)
                 .WithMany()
                 .HasForeignKey(ea => ea.InstructorId);
+            modelBuilder.Entity<CursoInstructor>()
+                .HasKey(ci => new { ci.CursoId, ci.ArtistaId }); 
+
+            modelBuilder.Entity<CursoInstructor>()
+                .HasOne(ci => ci.Curso)
+                .WithMany(c => c.CursoInstructores)
+                .HasForeignKey(ci => ci.CursoId);
+
+            modelBuilder.Entity<CursoInstructor>()
+                .HasOne(ci => ci.Artista)
+                .WithMany(a => a.CursosInstructores)
+                .HasForeignKey(ci => ci.ArtistaId);
         }
     }
 }

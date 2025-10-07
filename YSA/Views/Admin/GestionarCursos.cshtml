@@ -2,29 +2,22 @@
 @{
     ViewData["Title"] = "Gestión de Cursos";
 }
-
 <style>
-    /* Estilos del card */
     .card {
         transition: transform 0.2s, box-shadow 0.2s;
-        border-radius: 10px; /* Bordes redondeados para un look moderno */
-        overflow: hidden; /* Para que la imagen respete el borde */
+        border-radius: 10px; 
+        overflow: hidden;
     }
-
         .card:hover {
-            transform: translateY(-5px); /* Pequeño efecto 3D al hacer hover */
+            transform: translateY(-5px); 
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
         }
-
-    /* Asegura que la imagen tenga un tamaño fijo */
     .card-img-top {
         height: 200px;
         object-fit: cover;
     }
-
-    /* Estilos para los botones de acción dentro del card */
     .card-body .btn {
-        padding: 5px 8px; /* Haz los botones un poco más compactos */
+        padding: 5px 8px;
     }
 
     /* Ajuste para los modales */
@@ -65,9 +58,16 @@
                         <h5 class="card-title mb-1">@curso.Titulo</h5>
                         <p class="card-text text-muted small mb-2">
                             <i class="fas fa-chalkboard-teacher me-1"></i>
-                            @(curso.InstructorId.HasValue ? curso.Instructor.Usuario.Nombre + " " + curso.Instructor.Usuario.Apellido : "Sin Instructor")
-                        </p>
 
+                            @if (curso.InstructoresNombres != null && curso.InstructoresNombres.Any())
+                            {
+                                @(string.Join(", ", curso.InstructoresNombres))
+                            }
+                            else
+                            {
+                                @:Sin Artistas Asociados
+                            }
+                        </p>
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="badge bg-secondary">@curso.Nivel</span>
                             <span class="fs-5 fw-bold text-success">@curso.Precio.ToString("C")</span>
@@ -168,13 +168,19 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="asociarArtistaModalLabel">Asociar Artista al Curso</h5>
+                <h5 class="modal-title" id="asociarArtistaModalLabel">Asociar/Desasociar Artista</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+
+                <h6>Artistas Asociados:</h6>
+                <div id="artistas-asociados-lista" class="mb-4">
+                    <p class="text-muted">Cargando lista...</p>
+                </div>
+                <hr />
                 <input type="hidden" id="asociar-curso-id" name="CursoId" />
                 <div class="form-group mb-3">
-                    <label for="artista-select">Seleccionar Artista</label>
+                    <label for="artista-select">Seleccionar Artista para asociar</label>
                     <select id="artista-select" name="InstructorId" class="form-control">
                         <option value="">-- Seleccione un Artista --</option>
                     </select>
@@ -321,9 +327,22 @@
     <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // =========================================================================
+        // FUNCIONES GLOBALES AUXILIARES
+        // =========================================================================
+
+        /**
+         * Obtiene el token de Antiforgery (CSRF) del input oculto.
+         * Se define de forma global para que sea accesible por todas las funciones.
+         */
+        function getAntiForgeryToken() {
+            const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
+            return tokenElement ? tokenElement.value : '';
+        }
+
         // Inicializa TinyMCE para los campos de descripción
         function inicializarTinyMCE() {
-            // Destruir instancias existentes antes de reinicializar (importante para modales y recargas)
+            // Destruir instancias existentes antes de reinicializar
             tinymce.remove('#Crear_DescripcionLarga');
             tinymce.remove('#Editar_DescripcionLarga');
             tinymce.remove('#Crear_DescripcionCorta');
@@ -345,9 +364,111 @@
             });
         }
 
+        async function cargarArtistasAsociados(cursoId) {
+            const listaDiv = document.getElementById('artistas-asociados-lista');
+            listaDiv.innerHTML = '<p class="text-info"><i class="fas fa-spinner fa-spin me-1"></i> Cargando...</p>';
+
+            try {
+                const response = await fetch(`@Url.Action("ObtenerArtistasAsociados", "Admin")?cursoId=${cursoId}`);
+                if (!response.ok) {
+                    throw new Error('Error al obtener artistas asociados.');
+                }
+                const result = await response.json();
+
+                if (result.success && result.artistas.length > 0) {
+                    let html = '<ul class="list-group">';
+                    result.artistas.forEach(artista => {
+                        html += `
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                ${artista.nombreCompleto}
+                                <button type="button" class="btn btn-sm btn-danger desasociar-btn"
+                                        data-instructorid="${artista.id}"
+                                        data-cursoid="${cursoId}"
+                                        title="Quitar artista">
+                                    <i class="fas fa-user-times"></i> Desasociar
+                                </button>
+                            </li>
+                        `;
+                    });
+                    html += '</ul>';
+                    listaDiv.innerHTML = html;
+
+                    // Re-adjuntar eventos de desasociación a los nuevos botones
+                    document.querySelectorAll('.desasociar-btn').forEach(button => {
+                        button.removeEventListener('click', handleDesasociarArtista);
+                        button.addEventListener('click', handleDesasociarArtista);
+                    });
+
+                } else {
+                    listaDiv.innerHTML = '<p class="text-muted">No hay artistas asociados actualmente a este curso.</p>';
+                }
+
+            } catch (error) {
+                listaDiv.innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
+                Swal.fire('Error', 'No se pudo cargar la lista de artistas asociados.', 'error');
+            }
+        }
+
+        /**
+         * Maneja la solicitud de desasociar un artista de un curso y recarga la página.
+         */
+        async function handleDesasociarArtista(event) {
+            const button = event.currentTarget;
+            const cursoId = parseInt(button.getAttribute('data-cursoid'));
+            const instructorId = parseInt(button.getAttribute('data-instructorid'));
+            const token = getAntiForgeryToken();
+
+            const resultSwal = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'El artista será desasociado de este curso.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, Desasociar',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (!resultSwal.isConfirmed) {
+                return;
+            }
+
+            try {
+                const response = await fetch('@Url.Action("DesasociarArtistaACurso", "Admin")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({ cursoId, instructorId })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire({
+                        title: 'Éxito',
+                        text: result.message,
+                        icon: 'success'
+                    }).then(() => {
+                        // Recarga completa de la página tras la operación exitosa
+                        window.location.reload();
+                    });
+
+                } else {
+                    Swal.fire('Error', result.message, 'error');
+                }
+
+            } catch (error) {
+                Swal.fire('Error', 'Hubo un problema al desasociar el artista.', 'error');
+            }
+        }
+
+        // =========================================================================
+        // LÓGICA DE INICIO Y EVENTOS
+        // =========================================================================
+
         document.addEventListener('DOMContentLoaded', function () {
             inicializarTinyMCE();
-            const cardContainer = document.getElementById('tablaCursos');
             const crearModalEl = document.getElementById('crearCursoModal');
             const editarModalEl = document.getElementById('editarCursoModal');
             const asociarArtistaModalEl = document.getElementById('asociarArtistaModal');
@@ -356,33 +477,13 @@
             const editarForm = document.getElementById('formEditarCurso');
 
 
-            function getAntiForgeryToken() {
-                const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
-                return tokenElement ? tokenElement.value : '';
-            }
-
-            // FUNCIÓN DE RECARGA: Obtiene solo los cards actualizados y los reemplaza
-            async function recargarVista() {
-                try {
-                    const response = await fetch('@Url.Action("GetCursosPartial", "Admin")'); // Asumiendo un endpoint parcial que devuelve solo los cards
-                    if (!response.ok) {
-                        throw new Error('No se pudieron cargar los cursos.');
-                    }
-                    const html = await response.text();
-                    cardContainer.innerHTML = html;
-                    attachEventListeners(); // Re-adjuntar eventos después de la recarga
-                    inicializarTinyMCE(); // Re-inicializar TinyMCE si fuera necesario (aunque no afecta a los cards directamente)
-                } catch (error) {
-                    Swal.fire('Error', error.message, 'error');
-                }
-            }
-
             // Reemplaza los formularios de POST tradicionales con un manejador AJAX
             async function handleAjaxFormSubmit(event) {
                 event.preventDefault();
                 const form = event.currentTarget;
                 const url = form.action;
-                const id = new URLSearchParams(url.split('?')[1]).get('id'); // Obtiene el ID de la URL
+                const urlParams = new URLSearchParams(url.split('?')[1]);
+                const id = urlParams.get('id');
                 const token = getAntiForgeryToken();
                 const actionName = form.getAttribute('asp-action');
 
@@ -411,7 +512,6 @@
                         successMessage = 'Estado recomendado eliminado.';
                         break;
                     default:
-                        // No debería ocurrir para estos botones, pero por si acaso.
                         return;
                 }
 
@@ -445,10 +545,16 @@
                     });
 
                     if (response.ok) {
-                        Swal.fire('Éxito', successMessage, 'success');
-                        await recargarVista();
+                        Swal.fire({
+                            title: 'Éxito',
+                            text: successMessage,
+                            icon: 'success'
+                        }).then(() => {
+                            // Recarga completa de la página tras la operación exitosa
+                            window.location.reload();
+                        });
                     } else if (response.status === 400) {
-                         const error = await response.text(); // Podría ser un error de validación o un mensaje del controlador
+                         const error = await response.text();
                          Swal.fire('Error', 'Operación fallida. Revisa los detalles.', 'error');
                     } else {
                         Swal.fire('Error', 'Hubo un problema al procesar la solicitud.', 'error');
@@ -469,12 +575,16 @@
             }
 
 
-            // --- Lógica del modal de Asociación de Artista (sin cambios) ---
+            // --- Lógica del modal de Asociación/Desasociación de Artista ---
             asociarArtistaModalEl.addEventListener('show.bs.modal', async function (event) {
                 const button = event.relatedTarget;
                 const cursoId = button.getAttribute('data-cursoid');
                 document.getElementById('asociar-curso-id').value = cursoId;
 
+                // 1. Cargar Artistas Asociados (para la lista de desasociación)
+                await cargarArtistasAsociados(cursoId);
+
+                // 2. Cargar Artistas para la selección de ASOCIAR
                 const artistaSelect = document.getElementById('artista-select');
                 artistaSelect.innerHTML = '<option value="">-- Seleccione un Artista --</option>';
 
@@ -491,10 +601,11 @@
                         artistaSelect.appendChild(option);
                     });
                 } catch (error) {
-                    Swal.fire('Error', error.message, 'error');
+                    Swal.fire('Error', 'No se pudo cargar la lista de artistas para asociar.', 'error');
                 }
             });
 
+            // Manejador del botón GUARDAR ASOCIACIÓN (Asociar)
             guardarAsociacionBtn.addEventListener('click', async function () {
                 const cursoId = document.getElementById('asociar-curso-id').value;
                 const instructorId = document.getElementById('artista-select').value;
@@ -517,10 +628,15 @@
 
                     const result = await response.json();
                     if (result.success) {
-                        const modal = bootstrap.Modal.getInstance(asociarArtistaModalEl);
-                        modal.hide();
-                        Swal.fire('Éxito', result.message, 'success');
-                        await recargarVista();
+                        Swal.fire({
+                             title: 'Éxito',
+                             text: result.message,
+                             icon: 'success'
+                        }).then(() => {
+                            // Recarga completa de la página tras la operación exitosa
+                            window.location.reload();
+                        });
+
                     } else {
                         Swal.fire('Error', result.message, 'error');
                     }
@@ -530,7 +646,8 @@
             });
 
 
-            // --- Lógica de Creación de Curso (con validación y TinyMCE) (Mantenido) ---
+            // --- Lógica de Creación y Edición ---
+
             crearForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 tinymce.triggerSave();
@@ -549,26 +666,26 @@
                 if (response.ok) {
                     const modal = bootstrap.Modal.getInstance(crearModalEl);
                     modal.hide();
-                    Swal.fire('Éxito', 'Curso creado con éxito.', 'success');
-                    crearForm.reset();
-                    // Limpiar TinyMCE después de crear
-                    tinymce.get('Crear_DescripcionCorta').setContent('');
-                    tinymce.get('Crear_DescripcionLarga').setContent('');
-                    await recargarVista();
+                    Swal.fire({
+                        title: 'Éxito',
+                        text: 'Curso creado con éxito.',
+                        icon: 'success'
+                    }).then(() => {
+                        // Recarga completa de la página tras la operación exitosa
+                        window.location.reload();
+                    });
                 } else if (response.status === 400) {
                      const result = await response.json();
                      Swal.fire({
-                        title: 'Error de validación',
-                        html: formatValidationErrors(result.errors),
-                        icon: 'error'
-                    });
+                         title: 'Error de validación',
+                         html: formatValidationErrors(result.errors),
+                         icon: 'error'
+                     });
                 } else {
                      Swal.fire('Error', 'Hubo un problema al crear el curso.', 'error');
                 }
             });
 
-
-            // --- Lógica de Edición de Curso (con validación y TinyMCE) (Mantenido) ---
             editarModalEl.addEventListener('show.bs.modal', function (event) {
                 const button = event.relatedTarget;
                 const cursoId = button.getAttribute('data-id');
@@ -624,8 +741,14 @@
                 if (result.success) {
                     const modal = bootstrap.Modal.getInstance(editarModalEl);
                     modal.hide();
-                    Swal.fire('Éxito', result.message, 'success');
-                    await recargarVista();
+                    Swal.fire({
+                        title: 'Éxito',
+                        text: result.message,
+                        icon: 'success'
+                    }).then(() => {
+                        // Recarga completa de la página tras la operación exitosa
+                        window.location.reload();
+                    });
                 } else {
                     Swal.fire({
                         title: 'Error de validación',

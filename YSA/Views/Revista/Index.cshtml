@@ -114,7 +114,7 @@
 
 </style>
 
-<div class="container-fluid py-5">
+<div class="container-fluid px-5 py-5">
 
     <div class="row mb-5 align-items-center">
         <div class="col-12 text-center mb-4">
@@ -147,8 +147,8 @@
                             <div class="row g-4">
                                 @foreach (var evento in Model.EventosElevarte)
                                 {
-                                    <div class="col-lg-4 col-md-6 col-12"> 
-                                        <div class="card h-100 shadow-sm event-card" data-event-id="@evento.Id"> 
+                                    <div class="col-lg-4 col-md-6 col-12">
+                                        <div class="card h-100 shadow-sm event-card" data-event-id="@evento.Id" style="cursor:pointer;">
                                             <img src="@Url.Content(evento.UrlImagen)" class="card-img-top" alt="@evento.Titulo">
                                             <div class="card-body">
                                                 <h5 class="card-title">@evento.Titulo</h5>
@@ -257,6 +257,14 @@
     <script>
         $(document).ready(function () {
 
+            $(document).on('click', '.event-card', function () {
+                const eventId = $(this).data('event-id');
+                if (eventId) {
+                    // Usamos la acción "DetalleEvento" que creamos anteriormente
+                    const urlDetalle = '@Url.Action("DetalleEvento", "Revista")';
+                    window.location.href = urlDetalle + '/' + eventId;
+                }
+            });
             // ----------------------------------------------------------------
             // SOLUCIÓN: Usar DELEGACIÓN DE EVENTOS para elementos dinámicos
             // Esto asegura que el clic funcione incluso si la tarjeta es clonada.

@@ -10,6 +10,6 @@ namespace YSA.Core.Interfaces
         Task UpdateAsync(Artista artista);
         Task DeleteAsync(Artista artista);
         Task<Artista> GetByUsuarioIdAsync(string userId);
-
+        Task<List<Curso>> GetCursosByArtistaAsync(int id);
     }
 }

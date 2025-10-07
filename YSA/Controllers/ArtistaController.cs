@@ -151,6 +151,7 @@ namespace YSA.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Detalles(int id)
         {
+            // Usamos la tupla para obtener el artista y el portafolio (aunque el portafolio no se use en la vista final, la llamada del servicio puede ser necesaria)
             var (artista, fotos) = await _artistaService.ObtenerArtistaYPortafolioAsync(id);
 
             if (artista == null)
@@ -164,6 +165,9 @@ namespace YSA.Web.Controllers
                 return NotFound("Usuario asociado al artista no encontrado.");
             }
 
+            // 1. Obtener los cursos asociados al artista
+            var cursos = await _artistaService.GetCursosByArtistaAsync(artista.Id);
+
             // 2. Mapear Entidades a ViewModel
             var viewModel = new ArtistaDetallesViewModel
             {
@@ -171,8 +175,10 @@ namespace YSA.Web.Controllers
                 NombreCompleto = $"{usuario.Nombre} {usuario.Apellido}",
                 Biografia = artista.Biografia,
                 UrlFotoPerfil = usuario.UrlImagen,
-                Portafolio = fotos ?? new List<ArtistaFoto>(), 
+                Portafolio = fotos ?? new List<ArtistaFoto>(),
 
+                // 3. Asignar los cursos obtenidos al ViewModel
+                Cursos = cursos ?? new List<Curso>()
             };
 
             return View(viewModel);

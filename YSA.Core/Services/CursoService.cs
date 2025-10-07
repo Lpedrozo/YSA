@@ -214,9 +214,8 @@ namespace YSA.Core.Services
                 throw new InvalidOperationException("Curso no encontrado.");
             }
 
-            // Asigna el nuevo InstructorId
-            curso.InstructorId = instructorId;
-            await _cursoRepository.UpdateAsync(curso);
+            await _cursoRepository.CrearAsociacionInstructor(cursoId, instructorId);
+
         }
         public async Task<bool> ResponderPreguntaAsync(int preguntaId, string respuesta, int instructorId)
         {
@@ -232,6 +231,14 @@ namespace YSA.Core.Services
         public async Task<List<PreguntaRespuesta>> ObtenerPreguntasPendientesParaInstructorAsync(int instructorId)
         {
             return await _cursoRepository.ObtenerPreguntasPendientesPorInstructorAsync(instructorId);
+        }
+        public async Task<List<Artista>> ObtenerArtistasAsociadosACursoAsync(int cursoId)
+        {
+            return await _cursoRepository.ObtenerArtistasAsociadosACursoAsync(cursoId);
+        }
+        public Task DesasociarArtistaACursoAsync(int cursoId, int instructorId)
+        {
+            return _cursoRepository.DesasociarArtistaACursoAsync(cursoId, instructorId);
         }
     }
 }

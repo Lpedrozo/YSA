@@ -27,9 +27,6 @@ namespace YSA.Core.Entities
         public string UrlImagen { get; set; }
 
         public DateTime FechaPublicacion { get; set; } = DateTime.UtcNow;
-
-        public int? InstructorId { get; set; }
-        public Artista Instructor { get; set; }
         public bool EsDestacado { get; set; }
         public bool EsRecomendado { get; set; }
         public virtual ICollection<Modulo> Modulos { get; set; }
@@ -39,5 +36,7 @@ namespace YSA.Core.Entities
         public ICollection<PreguntaRespuesta> PreguntasRespuestas { get; set; }
         [Required]
         public NivelDificultad Nivel { get; set; }
+        public virtual ICollection<CursoInstructor> CursoInstructores { get; set; }
+
     }
 }

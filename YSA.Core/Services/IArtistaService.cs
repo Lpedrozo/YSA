@@ -20,6 +20,6 @@ namespace YSA.Core.Services
         Task<string> EliminarFotoPortafolioAsync(int fotoId);
         Task<Artista> ObtenerArtistaPorUsuarioIdAsync(string userId);
         Task<(Artista Artista, List<ArtistaFoto> Fotos)> ObtenerArtistaYPortafolioAsync(int artistaId);
-
+        Task<List<Curso>> GetCursosByArtistaAsync(int Id);
     }
 }

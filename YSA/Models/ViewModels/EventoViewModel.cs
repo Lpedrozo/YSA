@@ -48,7 +48,7 @@ namespace YSA.Web.Models.ViewModels
         public string Lugar { get; set; }
 
         [Display(Name = "Imagen de Portada")]
-        public IFormFile ImagenPortada { get; set; }
+        public IFormFile? ImagenPortada { get; set; }
 
         [Display(Name = "Destacar en la página principal")]
         public bool EsDestacado { get; set; }
@@ -56,7 +56,7 @@ namespace YSA.Web.Models.ViewModels
         [Required(ErrorMessage = "Debe seleccionar un tipo de evento.")]
         [Display(Name = "Tipo de Evento")]
         public int TipoEventoId { get; set; }
-        public string UrlImagenExistente { get; set; }
+        public string? UrlImagenExistente { get; set; }
 
         public IEnumerable<SelectListItem>? TiposEventoDisponibles { get; set; }
     }
@@ -67,5 +67,34 @@ namespace YSA.Web.Models.ViewModels
         [Required(ErrorMessage = "Debes seleccionar un archivo de imagen.")]
         [Display(Name = "Seleccionar Imagen")]
         public IFormFile Foto { get; set; }
+    }
+    public class EventoDetalleViewModel
+    {
+        public int Id { get; set; }
+
+        [Display(Name = "Título")]
+        public string Titulo { get; set; }
+
+        [Display(Name = "Descripción")]
+        public string Descripcion { get; set; } // Contendrá el HTML enriquecido
+
+        [Display(Name = "Fecha y Hora")]
+        [DataType(DataType.DateTime)]
+        public DateTime FechaEvento { get; set; }
+
+        [Display(Name = "Lugar / Enlace")]
+        public string Lugar { get; set; }
+
+        [Display(Name = "Imagen de Portada")]
+        public string UrlImagen { get; set; }
+
+        [Display(Name = "Destacado")]
+        public bool EsDestacado { get; set; }
+
+        [Display(Name = "Tipo de Evento")]
+        public string TipoEventoNombre { get; set; }
+
+        [Display(Name = "Plataforma")]
+        public string TipoEventoPlataforma { get; set; }
     }
 }

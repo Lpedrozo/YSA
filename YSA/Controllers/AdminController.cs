@@ -156,9 +156,10 @@ namespace YSA.Web.Controllers
                 Precio = c.Precio,
                 UrlImagen = c.UrlImagen,
                 Nivel = c.Nivel,
-                InstructorId = c.InstructorId,
-                Instructor = c.Instructor,
-                CategoriasSeleccionadas = c.CursoCategorias.Select(cc => cc.CategoriaId).ToArray()
+                CategoriasSeleccionadas = c.CursoCategorias.Select(cc => cc.CategoriaId).ToArray(),
+                InstructoresNombres = c.CursoInstructores
+        .Select(ci => $"{ci.Artista.Usuario.Nombre} {ci.Artista.Usuario.Apellido}")
+        .ToList()
             }).ToList();
 
             var categorias = await _cursoService.ObtenerTodasLasCategoriasAsync();
@@ -246,7 +247,44 @@ namespace YSA.Web.Controllers
 
             return Json(new { success = true, data = cursoViewModel });
         }
+        [HttpGet]
+        public async Task<IActionResult> ObtenerArtistasAsociados(int cursoId)
+        {
+            // Asume que tienes un método de servicio nuevo para esta operación
+            var artistasAsociados = await _cursoService.ObtenerArtistasAsociadosACursoAsync(cursoId);
 
+            var artistasJson = artistasAsociados.Select(a => new {
+                id = a.Id,
+                nombreCompleto = $"{a.NombreArtistico}"
+            }).ToList();
+
+            return Json(new { success = true, artistas = artistasJson });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DesasociarArtistaACurso([FromBody] AsociarArtistaViewModel dto)
+        {
+            if (dto == null || dto.CursoId <= 0 || dto.InstructorId <= 0)
+            {
+                return Json(new { success = false, message = "Datos de solicitud inválidos." });
+            }
+
+            try
+            {
+                // Asume que tienes un método de servicio nuevo para esta operación
+                await _cursoService.DesasociarArtistaACursoAsync(dto.CursoId, dto.InstructorId);
+                return Json(new { success = true, message = "Artista desasociado con éxito." });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false, message = "Ocurrió un error al desasociar el artista." });
+            }
+        }
         [HttpPost]
         public async Task<IActionResult> CrearCurso([FromForm] CursoViewModel model)
         {
@@ -753,13 +791,15 @@ namespace YSA.Web.Controllers
             foreach (var pedido in pedidosPendientes)
             {
                 var estudiante = await _userManager.FindByIdAsync(pedido.EstudianteId.ToString());
+                var pago = await _pedidoService.GetPagoWithPedido(pedido.Id);
 
                 viewModel.Add(new PedidoPendienteViewModel
                 {
                     PedidoId = pedido.Id,
                     NombreEstudiante = estudiante?.Nombre ?? "Estudiante Desconocido", // Muestra un nombre por defecto si no se encuentra
                     FechaPedido = pedido.FechaPedido,
-                    Total = pedido.Total
+                    Total = pedido.Total,
+                    UrlComprobante = pago.UrlComprobante,
                 });
             }
 
@@ -1106,6 +1146,11 @@ namespace YSA.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CrearEvento(CrearEventoViewModel viewModel)
         {
+            if (!string.IsNullOrEmpty(viewModel.Descripcion))
+            {
+                var sanitizer = new HtmlSanitizer();
+                viewModel.Descripcion = sanitizer.Sanitize(viewModel.Descripcion);
+            }
             if (ModelState.IsValid)
             {
                 // Lógica para subir la imagen al servidor
@@ -1198,7 +1243,11 @@ namespace YSA.Web.Controllers
             {
                 return NotFound();
             }
-
+            if (!string.IsNullOrEmpty(viewModel.Descripcion))
+            {
+                var sanitizer = new HtmlSanitizer();
+                viewModel.Descripcion = sanitizer.Sanitize(viewModel.Descripcion);
+            }
             if (ModelState.IsValid)
             {
                 var eventoAActualizar = await _eventoService.GetEventoByIdAsync(id);
