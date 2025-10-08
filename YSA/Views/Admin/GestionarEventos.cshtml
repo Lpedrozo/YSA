@@ -101,7 +101,7 @@
                                 <a asp-action="EditarEvento" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a asp-action="DetallesEvento" asp-route-id="@item.Id" class="btn btn-sm btn-secondary" title="Ver Detalles">
+                                <a asp-controller="Revista" asp-action="DetalleEvento" asp-route-id="@item.Id" class="btn btn-sm btn-secondary" title="Ver Detalles">
                                     <i class="fas fa-eye"></i>
                                 </a>
 

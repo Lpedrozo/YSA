@@ -10,6 +10,14 @@
     ViewData["Title"] = $"Gestión de Recursos/Actividades para {tipoEntidad} - {entidadNombre}";
 }
 
+<style>
+    /* Estilos para que el modal sea más grande y TinyMCE quepa */
+    #crearRecursoModal .modal-dialog,
+    #editarRecursoModal .modal-dialog {
+        max-width: 800px; /* Ancho para el editor */
+    }
+</style>
+
 <div class="container mt-5 mb-5 pb-5">
 
     <h1>Recursos y Actividades para: @entidadNombre</h1>
@@ -105,13 +113,14 @@
 </div>
 
 <div class="modal fade" id="crearRecursoModal" tabindex="-1" aria-labelledby="crearRecursoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="crearRecursoModalLabel">Crear Nuevo Recurso o Actividad</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="formCrearRecurso" asp-action="CrearRecursoActividad" method="post" enctype="multipart/form-data">
+            <form id="formCrearRecurso" asp-action="CrearRecursoActividad" method="post" enctype="multipart/form-data" novalidate>
+                @Html.AntiForgeryToken()
                 <div class="modal-body">
                     <div id="crear-recurso-validation-errors" class="alert alert-danger d-none"></div>
 
@@ -149,7 +158,7 @@
 
                     <div class="form-group mb-3">
                         <label for="Crear_Descripcion">Descripción (Opcional)</label>
-                        <textarea id="Crear_Descripcion" name="Descripcion" class="form-control"></textarea>
+                        <textarea id="Crear_Descripcion" name="Descripcion" class="form-control tinymce-descripcion" rows="5"></textarea>
                     </div>
 
                     <div class="form-check">
@@ -168,13 +177,15 @@
 </div>
 
 <div class="modal fade" id="editarRecursoModal" tabindex="-1" aria-labelledby="editarRecursoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editarRecursoModalLabel">Editar Recurso o Actividad</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="formEditarRecurso" asp-action="EditarRecursoActividad" method="post" enctype="multipart/form-data">
+            <form id="formEditarRecurso" asp-action="EditarRecursoActividad" method="post" enctype="multipart/form-data" novalidate>
+                {{-- CAMBIO: novalidate --}}
+                @Html.AntiForgeryToken()
                 <div class="modal-body">
                     <div id="editar-recurso-validation-errors" class="alert alert-danger d-none"></div>
 
@@ -213,7 +224,7 @@
 
                     <div class="form-group mb-3">
                         <label for="Editar_Descripcion">Descripción (Opcional)</label>
-                        <textarea id="Editar_Descripcion" name="Descripcion" class="form-control"></textarea>
+                        <textarea id="Editar_Descripcion" name="Descripcion" class="form-control tinymce-descripcion" rows="5"></textarea>
                     </div>
 
                     <div class="form-check">
@@ -235,8 +246,53 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
     <script>
+        // Función clave para permitir que TinyMCE funcione dentro de un modal de Bootstrap (problema de foco)
+        function tinymceModalSetup(editor) {
+            editor.on('init', function() {
+                // Cuando el modal de Bootstrap se muestra:
+                $(editor.getContainer()).parents('.modal').on('shown.bs.modal', function () {
+                    editor.focus();
+                });
+            });
+        }
+
+        // Función para inicializar o re-inicializar el editor
+        function initTinyMCE(selector, content = '') {
+            var editorId = selector.replace('#', '');
+
+            // 1. Si existe una instancia de TinyMCE para ese ID, la destruimos.
+            if (tinymce.get(editorId)) {
+                tinymce.get(editorId).remove();
+            }
+
+            // 2. Inicializamos una nueva instancia.
+            tinymce.init({
+                selector: selector,
+                plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+                toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+                height: 300,
+                setup: function (editor) {
+                    tinymceModalSetup(editor); // Aplicar la corrección de foco
+                    editor.on('init', function (e) {
+                        // Establecer el contenido SÓLO después de que el editor se haya inicializado
+                        if (content) {
+                            editor.setContent(content);
+                        } else {
+                            editor.setContent('');
+                        }
+                    });
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
+
+            // --- Inicialización de TinyMCE al cargar la página ---
+            initTinyMCE('#Crear_Descripcion');
 
             // --- Referencias a Elementos ---
             const crearForm = document.getElementById('formCrearRecurso');
@@ -318,19 +374,27 @@
             setupTipoRecursoLogic(tipoRecursoSelectCrear, seccionUrlArchivoCrear, requiereEntregaCheckboxCrear);
             setupTipoRecursoLogic(tipoRecursoSelectEditar, seccionUrlArchivoEditar, requiereEntregaCheckboxEditar);
 
+
             // --- 2. Funciones CRUD Asíncronas ---
 
             // A. CREAR RECURSO
             crearForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
+
+                // Asegúrate de que TinyMCE guarde su contenido en el textarea antes de crear FormData
+                if (tinymce.get('Crear_Descripcion')) {
+                    tinymce.get('Crear_Descripcion').save();
+                }
+
                 btnGuardarCrear.disabled = true;
                 btnGuardarCrear.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
 
                 const formData = new FormData(this);
-                // El token de antiforgery se añade automáticamente en FormData si está en el form
+
                 if (!document.getElementById('Crear_RequiereEntrega').checked) {
                     formData.append('RequiereEntrega', 'false');
                 }
+
                 try {
                     const response = await fetch(this.action, {
                         method: 'POST',
@@ -374,10 +438,13 @@
                         document.getElementById('Editar_TipoEntidad').value = data.tipoEntidad;
                         document.getElementById('Editar_EntidadId').value = data.entidadId;
                         document.getElementById('Editar_Titulo').value = data.titulo;
-                        document.getElementById('Editar_Descripcion').value = data.descripcion || '';
                         document.getElementById('Editar_Url').value = data.url || '';
                         document.getElementById('Editar_TipoRecurso').value = data.tipoRecurso;
                         document.getElementById('Editar_RequiereEntrega').checked = data.requiereEntrega;
+
+                        // CAMBIO CLAVE: Inicializar TinyMCE con el contenido cargado
+                        const descripcionContent = data.descripcion || '';
+                        initTinyMCE('#Editar_Descripcion', descripcionContent);
 
                         // Necesario para que la lógica de visibilidad se active
                         tipoRecursoSelectEditar.dispatchEvent(new Event('change'));
@@ -397,6 +464,12 @@
             // C. EDITAR RECURSO
             editarForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
+
+                // Asegúrate de que TinyMCE guarde su contenido en el textarea
+                if (tinymce.get('Editar_Descripcion')) {
+                    tinymce.get('Editar_Descripcion').save();
+                }
+
                 btnGuardarEdicion.disabled = true;
                 btnGuardarEdicion.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...';
 
@@ -405,6 +478,7 @@
                 if (!document.getElementById('Editar_RequiereEntrega').checked) {
                     formData.append('RequiereEntrega', 'false');
                 }
+
                 try {
                     const response = await fetch(this.action, {
                         method: 'POST',

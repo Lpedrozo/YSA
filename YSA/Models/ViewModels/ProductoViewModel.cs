@@ -62,11 +62,10 @@ namespace YSA.Web.Models.ViewModels
         public decimal Precio { get; set; }
 
         [Display(Name = "Imagen de Portada")]
-        public IFormFile ImagenPortada { get; set; }
+        public IFormFile? ImagenPortada { get; set; }
 
-        [Required(ErrorMessage = "El archivo digital es obligatorio.")]
         [Display(Name = "Archivo Digital")]
-        public IFormFile ArchivoDigital { get; set; }
+        public IFormFile? ArchivoDigital { get; set; }
 
         [Display(Name = "Autor")]
         public int? AutorId { get; set; }

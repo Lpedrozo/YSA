@@ -39,7 +39,7 @@ namespace YSA.Web.Models.ViewModels
         public bool EsRecomendado { get; set; }
         public string? NombreInstructor { get; set; }
         public NivelDificultad Nivel { get; set; } // Añadir esta propiedad
-        public Artista Instructor { get; set; } // Agrega esta propiedad
+        public Artista? Instructor { get; set; } // Agrega esta propiedad
         public List<string> InstructoresNombres { get; set; } = new List<string>();
 
     }

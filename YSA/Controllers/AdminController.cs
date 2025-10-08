@@ -838,6 +838,9 @@ namespace YSA.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var sanitizer = new HtmlSanitizer();
+                model.Contenido = sanitizer.Sanitize(model.Contenido);
+
                 var anuncio = new Anuncio()
                 {
                     Titulo = model.Titulo,
@@ -859,6 +862,9 @@ namespace YSA.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var sanitizer = new HtmlSanitizer();
+                model.Contenido = sanitizer.Sanitize(model.Contenido);
+
                 var anuncio = new Anuncio()
                 {
                     Id = model.Id,
@@ -935,7 +941,8 @@ namespace YSA.Web.Controllers
                 Email = a.Usuario.Email,
                 NombreArtistico = a.NombreArtistico,
                 EstiloPrincipal = a.EstiloPrincipal,
-                UrlImagen = a.Usuario.UrlImagen
+                UrlImagen = a.Usuario.UrlImagen,
+                Biografia = a.Biografia
             }).ToList();
 
             return View(artistasViewModel);
@@ -959,6 +966,9 @@ namespace YSA.Web.Controllers
                 FechaCreacion = DateTime.UtcNow,
                 UrlImagen = urlImagenDefecto,
             };
+
+            var sanitizer = new Ganss.Xss.HtmlSanitizer(); // Asegúrate de que esta librería esté instalada
+            model.Biografia = sanitizer.Sanitize(model.Biografia ?? string.Empty);
 
             var artista = new Artista
             {
@@ -1023,6 +1033,8 @@ namespace YSA.Web.Controllers
             usuarioExistente.UserName = model.Email;
 
             artistaExistente.NombreArtistico = model.NombreArtistico;
+            var sanitizer = new Ganss.Xss.HtmlSanitizer(); // Asegúrate de que esta librería esté instalada
+            model.Biografia = sanitizer.Sanitize(model.Biografia ?? string.Empty);
             artistaExistente.Biografia = model.Biografia;
             artistaExistente.EstiloPrincipal = model.EstiloPrincipal;
 
@@ -1132,6 +1144,7 @@ namespace YSA.Web.Controllers
             var tiposEvento = await _eventoService.GetTiposEventosAsync();
             var viewModel = new CrearEventoViewModel
             {
+                FechaEvento = DateTime.Now,
                 TiposEventoDisponibles = tiposEvento.Select(t => new SelectListItem
                 {
                     Value = t.Id.ToString(),
@@ -1415,6 +1428,10 @@ namespace YSA.Web.Controllers
                 {
                     urlImagen = await GuardarArchivo(viewModel.ImagenPortada, "productos/portadas");
                 }
+                var sanitizer = new HtmlSanitizer();
+                viewModel.DescripcionLarga = sanitizer.Sanitize(viewModel.DescripcionLarga);
+                viewModel.DescripcionCorta = sanitizer.Sanitize(viewModel.DescripcionCorta);
+
 
                 string urlArchivoDigital = null;
                 if (viewModel.ArchivoDigital != null)
@@ -1534,6 +1551,10 @@ namespace YSA.Web.Controllers
                 {
                     return NotFound();
                 }
+
+                var sanitizer = new HtmlSanitizer();
+                viewModel.DescripcionLarga = sanitizer.Sanitize(viewModel.DescripcionLarga);
+                viewModel.DescripcionCorta = sanitizer.Sanitize(viewModel.DescripcionCorta);
 
                 // Lógica para actualizar la imagen de portada
                 if (viewModel.ImagenPortada != null)

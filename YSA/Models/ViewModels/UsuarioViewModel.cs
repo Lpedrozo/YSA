@@ -113,6 +113,7 @@ namespace YSA.Web.Models.ViewModels
         public string NombreArtistico { get; set; }
         public string EstiloPrincipal { get; set; }
         public string? UrlImagen { get; set; }
+        public string? Biografia { get; set; }
     }
     public class PortafolioViewModel
     {

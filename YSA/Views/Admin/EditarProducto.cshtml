@@ -2,112 +2,106 @@
 
 @{
     ViewData["Title"] = "Editar Producto Digital";
-    // Propiedades para simplificar el acceso a los datos existentes
     string currentImageUrl = TempData["UrlImagenExistente"]?.ToString();
     string currentFileUrl = TempData["UrlArchivoExistente"]?.ToString();
-
-    // Si el ViewModel tiene la propiedad, es mejor usarla
-    // string currentImageUrl = Model.UrlImagenExistente;
 }
 
-<style>
-    .form-container {
-        max-width: 900px; /* Ampliamos un poco el contenedor */
-        margin: 0 auto;
-        padding: 2rem;
-        background-color: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    }
 
-    .form-group label {
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: #333;
-    }
+                       <style >
+                       .form-container {
+                           max-width: 900px; /* Ampliamos un poco el contenedor */
+                           margin: 0 auto;
+                           padding: 2rem;
+                           background-color: #ffffff;
+                           border-radius: 12px;
+                           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                       }
+                       /* ... (El resto de tus estilos CSS personalizados) ... */
+                       .form-group label {
+                           font-weight: 600;
+                           margin-bottom: 0.5rem;
+                           color: #333;
+                       }
 
-    .form-control:focus {
-        border-color: #000;
-        box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
-    }
+                       .form-control:focus {
+                           border-color: #000;
+                           box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+                       }
 
-    .main-btn {
-        background-color: black;
-        border-color: black;
-        transition: background-color 0.3s;
-    }
+                       .main-btn {
+                           background-color: black;
+                           border-color: black;
+                           transition: background-color 0.3s;
+                       }
 
-        .main-btn:hover {
-            background-color: #333;
-            border-color: #333;
-        }
+                           .main-btn:hover {
+                               background-color: #333;
+                               border-color: #333;
+                           }
 
-    .current-image-preview {
-        max-height: 150px;
-        width: auto;
-        max-width: 100%; /* Asegura que la imagen no exceda el ancho en pantallas grandes */
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        margin-top: 10px;
-        object-fit: contain;
-        display: block; /* Ocupa su propia línea */
-    }
+                       .current-image-preview {
+                           max-height: 150px;
+                           width: auto;
+                           max-width: 100%;
+                           border: 1px solid #ddd;
+                           border-radius: 8px;
+                           margin-top: 10px;
+                           object-fit: contain;
+                           display: block;
+                       }
 
-    .card-section {
-        border: 1px solid #f0f0f0;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        background-color: #fcfcfc;
-    }
+                       .card-section {
+                           border: 1px solid #f0f0f0;
+                           border-radius: 8px;
+                           padding: 1.5rem;
+                           margin-bottom: 2rem;
+                           background-color: #fcfcfc;
+                       }
+                       /* ------------------------------------- */
+                       /* MEDIA QUERY RESPONSIVE (MÓVIL)        */
+                       /* ------------------------------------- */
+                       @@media (max-width: 767.98px) {
+                           .form-container {
+                               padding: 1rem;
+                               max-width: 100%;
+                           }
 
-    /* ------------------------------------- */
-    /* MEDIA QUERY RESPONSIVE (MÓVIL)        */
-    /* ------------------------------------- */
-    @@media (max-width: 767.98px) {
-        .form-container {
-            /* Reduce el padding interno y usa todo el ancho disponible */
-            padding: 1rem;
-            max-width: 100%;
-        }
+                           .container {
+                               padding: 1rem 0.5rem !important;
+                           }
 
-        .container {
-            /* Reduce el padding del contenedor principal */
-            padding: 1rem 0.5rem !important;
-        }
+                           .fw-bold {
+                               font-size: 1.75rem;
+                               margin-bottom: 1rem !important;
+                           }
 
-        .fw-bold {
-            font-size: 1.75rem; /* Título ligeramente más pequeño */
-            margin-bottom: 1rem !important;
-        }
+                           .card-section {
+                               padding: 1rem;
+                               margin-bottom: 1.5rem;
+                           }
 
-        .card-section {
-            padding: 1rem; /* Reduce el padding interno de las secciones */
-            margin-bottom: 1.5rem; /* Reduce el margen entre secciones */
-        }
+                               .card-section h5 {
+                                   font-size: 1.25rem;
+                               }
 
-            .card-section h5 {
-                font-size: 1.25rem;
-            }
+                           .current-image-preview {
+                               width: 100%;
+                               height: auto;
+                               max-height: 200px;
+                           }
 
-        .current-image-preview {
-            width: 100%; /* La imagen ocupa todo el ancho en móvil */
-            height: auto;
-            max-height: 200px; /* Podemos darle más altura si es necesario */
-        }
-        /* Botones de acción (Apilados) */
-        .btn-lg {
-            width: 100%;
-            margin-bottom: 0.5rem;
-            margin-right: 0 !important;
-        }
+                           .btn-lg {
+                               width: 100%;
+                               margin-bottom: 0.5rem;
+                               margin-right: 0 !important;
+                           }
 
-        .form-group.text-center.mt-5 {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-    }
+                           .form-group.text-center.mt-5 {
+                               display: flex;
+                               flex-direction: column;
+                               align-items: center;
+                           }
+                       }
 </style>
 
 <div class="container py-4 mb-5">
@@ -122,35 +116,42 @@
 
             <input type="hidden" asp-for="Id" />
 
-            <div class="row">
+            <div class="card-section">
+                <h5 class="fw-bold mb-3"><i class="fas fa-edit me-2"></i> Detalles del Producto</h5>
 
-                <div class="col-md-6">
-                    <div class="card-section">
-                        <h5 class="fw-bold mb-3">Detalles del Contenido</h5>
-
+                <div class="row">
+                    <div class="col-md-12">
                         <div class="form-group mb-3">
                             <label asp-for="Titulo" class="form-label"></label>
                             <input asp-for="Titulo" class="form-control" placeholder="Ej: Pinceles Procreate Vol. 3" />
                             <span asp-validation-for="Titulo" class="text-danger"></span>
                         </div>
+                    </div>
+                </div>
 
+                <div class="row">
+                    <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label asp-for="DescripcionCorta" class="form-label"></label>
-                            <input asp-for="DescripcionCorta" class="form-control" maxlength="150" placeholder="Máx 150 caracteres para listados" />
+                            <textarea asp-for="DescripcionCorta" class="tinymce-editor-short" rows="4" placeholder="Descripción breve para listados y tarjetas."></textarea>
                             <span asp-validation-for="DescripcionCorta" class="text-danger"></span>
                         </div>
-
+                    </div>
+                    <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label asp-for="DescripcionLarga" class="form-label"></label>
-                            <textarea asp-for="DescripcionLarga" class="form-control" rows="5" placeholder="Descripción detallada para la página de producto."></textarea>
+                            <textarea asp-for="DescripcionLarga" class="tinymce-editor-long" rows="4" placeholder="Descripción detallada para la página de producto."></textarea>
                             <span asp-validation-for="DescripcionLarga" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
+            </div>
 
+
+            <div class="row">
                 <div class="col-md-6">
                     <div class="card-section">
-                        <h5 class="fw-bold mb-3">Venta y Distribución</h5>
+                        <h5 class="fw-bold mb-3"><i class="fas fa-dollar-sign me-2"></i> Venta y Distribución</h5>
 
                         <div class="form-group mb-3">
                             <label asp-for="TipoProducto" class="form-label"></label>
@@ -173,24 +174,22 @@
                             <label asp-for="ArchivoDigital" class="form-label">Subir Archivo Digital (Opcional)</label>
                             <input asp-for="ArchivoDigital" type="file" class="form-control" />
                             <span asp-validation-for="ArchivoDigital" class="text-danger"></span>
-                            @if (!string.IsNullOrEmpty(currentFileUrl))
-                            {
+                                @if (!string.IsNullOrEmpty(currentFileUrl))
+                                {
                                 <div class="alert alert-secondary alert-sm mt-2 p-2">
                                     <i class="fas fa-file-alt me-1"></i> Archivo actual:
                                     <a href="@currentFileUrl" target="_blank" class="fw-semibold text-decoration-none">Ver enlace</a>
                                     <small class="d-block text-muted">Sube un nuevo archivo para reemplazarlo.</small>
                                 </div>
-                            }
+                                }
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="card-section mt-4">
-                <h5 class="fw-bold mb-3">Clasificación y Medios</h5>
-                <div class="row">
+                <div class="col-md-6">
+                    <div class="card-section">
+                        <h5 class="fw-bold mb-3"><i class="fas fa-tags me-2"></i> Clasificación y Medios</h5>
 
-                    <div class="col-md-6">
                         <div class="form-group mb-4">
                             <label asp-for="AutorId" class="form-label"></label>
                             <select asp-for="AutorId" class="form-select" asp-items="@Model.AutoresDisponibles">
@@ -206,20 +205,18 @@
                             <small class="form-text text-muted">Mantén Ctrl (o Cmd) para seleccionar múltiples categorías.</small>
                             <span asp-validation-for="CategoriaIds" class="text-danger"></span>
                         </div>
-                    </div>
 
-                    <div class="col-md-6">
                         <div class="form-group mb-4">
                             <label asp-for="ImagenPortada" class="form-label">Cambiar Imagen de Portada</label>
                             <input asp-for="ImagenPortada" type="file" class="form-control" accept="image/*" />
                             <span asp-validation-for="ImagenPortada" class="text-danger"></span>
 
-                            @if (!string.IsNullOrEmpty(currentImageUrl))
-                            {
+                                @if (!string.IsNullOrEmpty(currentImageUrl))
+                                {
                                 <p class="text-muted small mt-2 mb-1">Imagen actual:</p>
                                 <img src="@currentImageUrl" alt="Imagen del producto" class="current-image-preview" />
                                 <small class="form-text text-muted">Sube un nuevo archivo para reemplazarla.</small>
-                            }
+                                }
                         </div>
                     </div>
                 </div>
@@ -237,8 +234,29 @@
     </div>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <script>
+        // Inicializar TinyMCE para los dos campos con diferentes alturas
+        tinymce.init({
+            // Selector: El editor corto para la Descripción Corta
+            selector: 'textarea.tinymce-editor-short',
+            plugins: 'advlist autolink lists link code',
+            toolbar: 'bold italic bullist numlist link',
+            menubar: false, // Ocultar el menú superior para un editor más simple
+            height: 150 // Altura más pequeña
+        });
+
+        tinymce.init({
+            // Selector: El editor largo para la Descripción Larga
+            selector: 'textarea.tinymce-editor-long',
+            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+            height: 300 // Altura estándar para contenido detallado
+        });
+    </script>
 }

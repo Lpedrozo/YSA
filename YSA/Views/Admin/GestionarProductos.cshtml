@@ -217,17 +217,17 @@
 
                     <div class="form-group mb-3">
                         <label asp-for="NuevoProducto.DescripcionCorta" class="form-label">Descripción Corta</label>
-                        <input asp-for="NuevoProducto.DescripcionCorta" class="form-control" />
+                        <textarea asp-for="NuevoProducto.DescripcionCorta" class="tinymce-editor-short"></textarea>
                     </div>
 
                     <div class="form-group mb-3">
                         <label asp-for="NuevoProducto.DescripcionLarga" class="form-label">Descripción Larga</label>
-                        <textarea asp-for="NuevoProducto.DescripcionLarga" class="form-control"></textarea>
+                        <textarea asp-for="NuevoProducto.DescripcionLarga" class="tinymce-editor-long"></textarea>
                     </div>
 
                     <div class="form-group mb-3">
                         <label asp-for="NuevoProducto.TipoProducto" class="form-label">Tipo de Producto</label>
-                        <select asp-for="NuevoProducto.TipoProducto" class="form-control" required>
+                        <select asp-for="NuevoProducto.TipoProducto" class="form-select" required>
                             <option value="">-- Seleccionar --</option>
                             <option value="pdf">PDF</option>
                             <option value="revista">Revista</option>
@@ -251,14 +251,14 @@
 
                     <div class="form-group mb-3">
                         <label asp-for="NuevoProducto.AutorId" class="form-label">Autor</label>
-                        <select asp-for="NuevoProducto.AutorId" class="form-control" asp-items="@Model.AutoresDisponibles">
+                        <select asp-for="NuevoProducto.AutorId" class="form-select" asp-items="@Model.AutoresDisponibles">
                             <option value="">-- Seleccionar --</option>
                         </select>
                     </div>
 
                     <div class="form-group mb-3">
                         <label asp-for="NuevoProducto.CategoriaIds" class="form-label">Categorías</label>
-                        <select asp-for="NuevoProducto.CategoriaIds" class="form-control" multiple asp-items="@Model.CategoriasDisponibles">
+                        <select asp-for="NuevoProducto.CategoriaIds" class="form-select" multiple asp-items="@Model.CategoriasDisponibles">
                         </select>
                     </div>
                 </div>
@@ -275,4 +275,52 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <script>
+        // Función clave para permitir que TinyMCE funcione dentro de un modal de Bootstrap
+        var modal_setup = function (editor) {
+            editor.on('init', function() {
+                // Si el modal está activo, permite que el editor reciba el foco
+                $(editor.getContainer()).parents('.modal').on('shown.bs.modal', function() {
+                    editor.focus();
+                });
+            });
+        };
+
+        // Inicialización para Descripción Corta (Editor simple)
+        tinymce.init({
+            selector: 'textarea.tinymce-editor-short',
+            plugins: 'advlist autolink lists link code',
+            toolbar: 'bold italic bullist numlist link',
+            menubar: false,
+            height: 150,
+            // APLICAR LA CORRECCIÓN
+            setup: function (editor) {
+                editor.on('init', function () {
+                    $(editor.getContainer()).parents('.modal').on('shown.bs.modal', function () {
+                        editor.focus();
+                    });
+                });
+            }
+        });
+
+        // Inicialización para Descripción Larga (Editor completo)
+        tinymce.init({
+            selector: 'textarea.tinymce-editor-long',
+            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+            height: 300,
+            // APLICAR LA CORRECCIÓN
+            setup: function (editor) {
+                editor.on('init', function () {
+                    $(editor.getContainer()).parents('.modal').on('shown.bs.modal', function () {
+                        editor.focus();
+                    });
+                });
+            }
+        });
+    </script>
 }

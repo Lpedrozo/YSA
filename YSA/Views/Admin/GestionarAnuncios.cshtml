@@ -165,7 +165,7 @@
                             <h6 class="card-subtitle mb-2">Publicado: @anuncio.FechaPublicacion.ToShortDateString()</h6>
 
                             <p class="card-text card-text-content flex-grow-1">
-                                @anuncio.Contenido
+                                @Html.Raw(anuncio.Contenido)
                             </p>
 
                             <div class="mt-3 pt-2 border-top d-flex justify-content-end">
@@ -195,13 +195,13 @@
 </div>
 
 <div class="modal fade" id="crearAnuncioModal" tabindex="-1" aria-labelledby="crearAnuncioModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="crearAnuncioModalLabel" style="color:var(--color-secondary);">Crear Anuncio</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form asp-action="CrearAnuncio" method="post">
+            <form asp-action="CrearAnuncio" method="post" novalidate>
                 <div class="modal-body">
                     <input type="hidden" name="CursoId" value="@ViewBag.CursoId" />
                     <div class="form-group mb-3">
@@ -210,7 +210,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="Contenido" style="color:var(--color-primary);">Contenido</label>
-                        <textarea name="Contenido" class="form-control" rows="5" required></textarea>
+                        <textarea name="Contenido" class="tinymce-full-editor" rows="8"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -223,13 +223,13 @@
 </div>
 
 <div class="modal fade" id="editarAnuncioModal" tabindex="-1" aria-labelledby="editarAnuncioModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editarAnuncioModalLabel" style="color:var(--color-secondary);">Editar Anuncio</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form asp-action="EditarAnuncio" method="post">
+            <form asp-action="EditarAnuncio" method="post" novalidate>
                 <div class="modal-body">
                     <input type="hidden" name="Id" id="editar-anuncio-id" />
                     <input type="hidden" name="CursoId" value="@ViewBag.CursoId" />
@@ -239,7 +239,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="Contenido" style="color:var(--color-primary);">Contenido</label>
-                        <textarea name="Contenido" id="editar-anuncio-contenido" class="form-control" rows="5" required></textarea>
+                        <textarea name="Contenido" id="editar-anuncio-contenido" class="tinymce-full-editor" rows="8"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -250,11 +250,36 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
     <script>
+        // Función clave para permitir que TinyMCE funcione dentro de un modal de Bootstrap
+        function tinymceModalSetup(editor) {
+            editor.on('init', function() {
+                // Cuando el modal de Bootstrap se muestra:
+                $(editor.getContainer()).parents('.modal').on('shown.bs.modal', function () {
+                    editor.focus();
+                });
+            });
+        }
+
+        // Inicialización para el campo de Contenido
+        tinymce.init({
+            selector: 'textarea.tinymce-full-editor',
+            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+            height: 300,
+            setup: tinymceModalSetup // Aplicar la corrección de foco del modal
+        });
+
+        // Esperar a que el DOM esté completamente cargado
         document.addEventListener('DOMContentLoaded', function () {
+
             // Lógica para llenar el modal de edición
             document.querySelectorAll('.editar-anuncio-btn').forEach(button => {
                 button.addEventListener('click', function() {
@@ -264,24 +289,46 @@
 
                     document.getElementById('editar-anuncio-id').value = id;
                     document.getElementById('editar-anuncio-titulo').value = titulo;
-                    document.getElementById('editar-anuncio-contenido').value = contenido;
+
+                    // PASO 4: ACTUALIZAR EL CONTENIDO EN TINYMCE
+                    // En lugar de actualizar el textarea directamente, usamos el API de TinyMCE
+
+                    // 1. Destruir la instancia existente (para evitar conflictos al abrir múltiples veces)
+                    var editorId = 'editar-anuncio-contenido';
+                    if (tinymce.get(editorId)) {
+                        tinymce.get(editorId).remove();
+                    }
+
+                    // 2. Inicializar de nuevo y establecer el contenido
+                    tinymce.init({
+                        selector: '#' + editorId,
+                        plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+                        toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+                        height: 300,
+                        setup: function (editor) {
+                            tinymceModalSetup(editor); // Aplicar la corrección de foco
+                            editor.on('init', function (e) {
+                                // Establecer el contenido SÓLO después de que el editor se haya inicializado
+                                editor.setContent(contenido);
+                            });
+                        }
+                    });
                 });
             });
 
-            // Lógica para la confirmación de eliminación con SweetAlert2
+            // ... (Lógica para SweetAlert2 se mantiene igual) ...
             document.querySelectorAll('.eliminar-anuncio-btn').forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
                     const form = this.closest('form');
 
-                    // Modificar colores de SweetAlert2 para mantener el tema B&W
                     Swal.fire({
                         title: '¿Estás seguro?',
                         text: "¡No podrás revertir esto!",
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#dc3545', // Mantener rojo para la acción de eliminar
-                        cancelButtonColor: '#6a6a6a', // Gris para cancelar
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: '#6a6a6a',
                         confirmButtonText: 'Sí, ¡bórralo!',
                         cancelButtonText: 'Cancelar'
                     }).then((result) => {
@@ -291,6 +338,21 @@
                     });
                 });
             });
+
+            // Importante: Re-inicializar el editor de CREAR cada vez que se abre el modal,
+            // si el modal de EDITAR lo está destruyendo.
+            // Una solución más simple es NO DESTRUIR el editor de Crear, solo el de Editar.
+            // Si el editor de Crear (el que usa la clase) no se inicializó, lo hacemos aquí:
+            if (!tinymce.get(document.querySelector('textarea.tinymce-full-editor[name="Contenido"]'))) {
+                tinymce.init({
+                    selector: 'textarea.tinymce-full-editor[name="Contenido"]', // Solo el de Crear
+                    plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+                    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+                    height: 300,
+                    setup: tinymceModalSetup
+                });
+            }
+
         });
     </script>
 }

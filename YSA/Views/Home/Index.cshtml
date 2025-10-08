@@ -4,19 +4,17 @@
 }
 
 <style>
-    /* ------------------------------------- */
-    /* 1. Paleta Monocromática (Sin cambios) */
-    /* ------------------------------------- */
+    /* ---------------------------- */
     :root {
-        --color-primary-action: #000000; /* Negro para acentos y CTA */
-        --color-secondary: #343a40; /* Gris oscuro para títulos */
-        --color-accent: #666666; /* Nuevo: Gris medio para bordes o detalles de cards */
-        --color-background: #f8f8f8; /* Fondo muy claro */
-        --color-card-bg: #ffffff; /* Blanco para tarjetas */
-        --color-text-dark: #212529; /* Texto principal */
-        --color-text-light: #ffffff; /* Texto sobre fondo oscuro */
-        --color-border: #ced4da; /* Borde y separadores */
-        --color-alert: #dc3545; /* Rojo para errores/alertas */
+        --color-primary-action: #000000;
+        --color-secondary: #343a40;
+        --color-accent: #666666;
+        --color-background: #f8f8f8;
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #ced4da;
+        --color-alert: #dc3545;
     }
 
     body {
@@ -25,9 +23,6 @@
         color: var(--color-text-dark);
     }
 
-    /* ------------------------------------- */
-    /* 2. Hero Section (Ajustes de altura para móvil) */
-    /* ------------------------------------- */
     .hero-section {
         background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/diseño/HeaderAcademia.jpg');
         background-size: cover;
@@ -46,9 +41,6 @@
         text-align: center;
     }
 
-    /* ------------------------------------- */
-    /* 3. Títulos de Sección (Sin cambios) */
-    /* ------------------------------------- */
     .section-title {
         font-size: 2.5rem;
         font-weight: 700;
@@ -59,9 +51,6 @@
         display: inline-block;
     }
 
-    /* ------------------------------------- */
-    /* 4. Tarjetas de Contenido (Comunes) (Sin cambios) */
-    /* ------------------------------------- */
     .card {
         border-radius: 1rem;
         border: 1px solid #e0e0e0;
@@ -93,22 +82,15 @@
         font-weight: 600;
     }
 
-    /* ------------------------------------- */
-    /* 5. Carrusel (Ajustes para mejor espacio en móvil) */
-    /* ------------------------------------- */
     .carousel-item {
         padding: 0 1rem;
     }
 
-    /* Ocultar flechas en móvil para ahorrar espacio y porque no son tan necesarias */
     .carousel-control-prev,
     .carousel-control-next {
         width: 5%;
     }
 
-    /* ------------------------------------- */
-    /* 6. Bloque de Contexto (Sin cambios) */
-    /* ------------------------------------- */
     .context-block {
         padding: 1.5rem;
         height: 100%;
@@ -132,9 +114,6 @@
             line-height: 1.6;
         }
 
-    /* ------------------------------------- */
-    /* 7. Artistas (Sin cambios) */
-    /* ------------------------------------- */
     .artist-card-img {
         height: 250px;
         object-fit: cover;
@@ -162,15 +141,10 @@
             color: var(--color-primary-action);
         }
 
-    /* ================================================= */
-    /* 8. MEDIA QUERIES PARA RESPONSIVIDAD OPTIMIZADA */
-    /* ================================================= */
-
-    /* Extra Small devices (smartphones, less than 576px) */
-    /* La vista por defecto de Bootstrap (col-12) ya es buena, pero ajustamos detalles */
     @@media (max-width: 575.98px) {
         .hero-section {
-            height: 35vh; /* Menos altura para dejar espacio al contenido */
+            height: 35vh;
+            /* Menos altura para dejar espacio al contenido */
         }
 
         .hero-title {
@@ -185,25 +159,24 @@
         .carousel-control-next {
             display: none;
         }
-        /* En móvil, los carruseles solo deben mostrar 1 tarjeta, ya que Bootstrap por defecto hace los col-12 */
-        /* Eliminamos el padding lateral del carousel-item para que la tarjeta ocupe más ancho */
+
         .carousel-inner .carousel-item {
             padding: 0;
         }
 
         .context-block {
-            margin-bottom: 2rem; /* Espacio extra debajo del bloque de contexto en móvil */
+            margin-bottom: 2rem;
+            /* Espacio extra debajo del bloque de contexto en móvil */
         }
     }
 
     /* Medium devices (tablets, 768px and up) */
     @@media (min-width: 768px) and (max-width: 991.98px) {
-        /* Para Artistas, en pantallas MD/Tablet, queremos 2 columnas */
         #artistasCarousel .col-md-6 {
             flex: 0 0 50%;
             max-width: 50%;
         }
-        /* Para Eventos, en pantallas MD/Tablet, queremos 2 columnas */
+
         #eventosCarousel .col-md-6 {
             flex: 0 0 50%;
             max-width: 50%;
@@ -212,18 +185,16 @@
 
     /* Large devices (desktops, 992px and up) */
     @@media (min-width: 992px) {
-        /* Para Artistas, en pantallas LG/Desktop, queremos 4 columnas */
         #artistasCarousel .col-lg-3 {
             flex: 0 0 25%;
             max-width: 25%;
         }
-        /* Para Eventos, en pantallas LG/Desktop, queremos 3 columnas */
+
         #eventosCarousel .col-lg-4 {
             flex: 0 0 33.333333%;
             max-width: 33.333333%;
         }
     }
-
 </style>
 
 <div class="hero-section">
@@ -253,18 +224,13 @@
             <div id="eventosCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     @{
-                        // Lógica para el carrusel de Eventos (3 por slide en grande, 1 en móvil/tablet)
                         int totalEvents = Model.EventosAcademia?.Count() ?? 0;
 
-                        // En la vista Razor no podemos calcular dinámicamente el totalSlides sin JavaScript,
-                        // pero con Bootstrap, definimos el layout de la tarjeta para que sea responsive.
-                        // Usaremos 3 como base para el loop, y Bootstrap manejará el layout.
                         int itemsPerSlideEvents = 3;
                         int totalSlidesEvents = (int)Math.Ceiling(totalEvents / (double)itemsPerSlideEvents);
                     }
                     @if (totalEvents > 0)
                     {
-                        // Este bucle generará slides de TRES elementos, pero el JS de abajo forzará 1/2/3 según el tamaño.
                         @for (int i = 0; i < totalSlidesEvents; i++)
                         {
                             <div class="carousel-item @(i == 0 ? "active" : "")">
@@ -272,8 +238,8 @@
                                     @foreach (var evento in Model.EventosAcademia.Skip(i * itemsPerSlideEvents).Take(itemsPerSlideEvents))
                                     {
                                         <div class="col-lg-4 col-md-6 col-12">
-                                            @* AÑADIMOS col-12 para móvil, mantenemos col-md-6 para tablet y col-lg-4 para escritorio*@
-                                            <a href="#" class="card h-100 shadow-sm">
+                                            @* Enlace para ir al detalle del evento en Revista/DetalleEvento *@
+                                            <a href="@Url.Action("DetalleEvento", "Revista", new { id = evento.Id })" class="card h-100 shadow-sm">
                                                 <img src="@Url.Content(evento.UrlImagen)" class="card-img-top" alt="@evento.Titulo">
                                                 <div class="card-body">
                                                     <h5 class="card-title">@evento.Titulo</h5>
@@ -322,11 +288,9 @@
             <div id="artistasCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     @{
-                        // Lógica para el carrusel de Artistas (4 por slide en grande, 1 en móvil/tablet)
                         int itemsPerSlideArtistas = 4;
                         int totalArtists = Model.Artistas?.Count() ?? 0;
 
-                        // Usaremos 4 como base para el loop. El JS de abajo forzará 1/2/4 según el tamaño.
                         int totalSlidesArtistas = (int)Math.Ceiling(totalArtists / (double)itemsPerSlideArtistas);
                     }
                     @if (totalArtists > 0)
@@ -338,8 +302,8 @@
                                     @foreach (var artista in Model.Artistas.Skip(i * itemsPerSlideArtistas).Take(itemsPerSlideArtistas))
                                     {
                                         <div class="col-lg-3 col-md-6 col-12">
-                                            @* AÑADIMOS col-12 para móvil, col-md-6 para tablet y mantenemos col-lg-3 para escritorio*@
-                                            <a class="card artist-card h-100 shadow-sm" data-artista-id="@artista.Id">
+                                            @* Enlace para ir al detalle del artista en Artista/Detalles *@
+                                            <a href="@Url.Action("Detalles", "Artista", new { id = artista.Id })" class="card artist-card h-100 shadow-sm" data-artista-id="@artista.Id">
                                                 <img src="@(string.IsNullOrEmpty(artista.Usuario?.UrlImagen) ? "https://via.placeholder.com/400x400?text=Sin+Foto" : Url.Content(artista.Usuario.UrlImagen))"
                                                      class="card-img-top artist-card-img" alt="Foto de @artista.Usuario.Nombre" />
                                                 <div class="card-body text-center">
@@ -453,7 +417,8 @@
     <script>
         $(document).ready(function () {
 
-            // 1. Lógica de Redirección para las tarjetas de Artistas (SIN CAMBIOS)
+            // Se elimina la función de click del artista ya que ahora el <a> gestiona el enlace
+            /*
             $('.artist-card').on('click', function (e) {
                 e.preventDefault();
                 const artistaId = $(this).data('artista-id');
@@ -461,9 +426,8 @@
                     window.location.href = `@Url.Action("Detalles", "Artista", new { id = "" })/` + artistaId;
                 }
             });
+            */
 
-            // 2. Lógica de Responsividad de Carrusel (NUEVA LÓGICA)
-            // Esta función calcula cuántos elementos caben en una diapositiva según el tamaño de la pantalla
             function getItemsPerSlide() {
                 if (window.innerWidth >= 992) { // Desktop (lg)
                     return {
@@ -483,152 +447,17 @@
                 }
             }
 
-            // Función principal para reestructurar el carrusel
-            function restructureCarousel(carouselId, allItems, itemsPerSlide) {
-                const $carouselInner = $(`#${carouselId} .carousel-inner`);
-                $carouselInner.empty(); // Limpiar el contenido existente
 
-                if (allItems.length === 0) {
-                    // Manejar caso sin items
-                    $carouselInner.append('<div class="carousel-item active"><div class="alert alert-info text-center" role="alert">No hay elementos para mostrar.</div></div>');
-                    return;
-                }
-
-                const totalSlides = Math.ceil(allItems.length / itemsPerSlide);
-
-                for (let i = 0; i < totalSlides; i++) {
-                    const $slide = $(`<div class="carousel-item ${i === 0 ? 'active' : ''}"><div class="row g-4"></div></div>`);
-                    const $row = $slide.find('.row');
-                    const startIndex = i * itemsPerSlide;
-                    const itemsInSlide = allItems.slice(startIndex, startIndex + itemsPerSlide);
-
-                    itemsInSlide.each(function () {
-                        // Clonamos y ajustamos las clases de columna según el tipo de carrusel
-                        const $clonedItem = $(this).clone();
-
-                        let colClass;
-                        if (carouselId === 'eventosCarousel') {
-                            colClass = itemsPerSlide === 1 ? 'col-12' : (itemsPerSlide === 2 ? 'col-md-6' : 'col-lg-4');
-                        } else { // artistasCarousel
-                            colClass = itemsPerSlide === 1 ? 'col-12' : (itemsPerSlide === 2 ? 'col-md-6' : 'col-lg-3');
-                        }
-
-                        $clonedItem.removeClass().addClass(colClass); // Reemplazamos clases existentes
-
-                        $row.append($clonedItem);
-                    });
-
-                    $carouselInner.append($slide);
-                }
-
-                // Mostrar/Ocultar controles de navegación
-                const $prevBtn = $(`#${carouselId} .carousel-control-prev`);
-                const $nextBtn = $(`#${carouselId} .carousel-control-next`);
-
-                if (totalSlides > 1) {
-                    $prevBtn.show();
-                    $nextBtn.show();
-                } else {
-                    $prevBtn.hide();
-                    $nextBtn.hide();
-                }
-
-                // Reiniciar el carrusel de Bootstrap
-                const carouselElement = document.getElementById(carouselId);
-                if (carouselElement) {
-                    const bsCarousel = bootstrap.Carousel.getInstance(carouselElement);
-                    if (bsCarousel) {
-                        bsCarousel.to(0); // Ir al primer slide
-                    } else {
-                        new bootstrap.Carousel(carouselElement); // Crear nueva instancia si no existe
-                    }
-                }
-            }
-
-
-            // 3. Inicialización y Evento de Redimensionamiento
-
-            // Guardar todos los elementos de los carruseles originalmente generados por Razor
-            // Importante: En este caso, usaremos los DIVs que contienen el <a>.
-            const allEvents = $('#eventosCarousel .carousel-item .row > div');
-            const allArtists = $('#artistasCarousel .carousel-item .row > div');
-
-            function handleCarouselResponsiveness() {
-                const itemsConfig = getItemsPerSlide();
-
-                // Primero, reconstruir el carrusel de Eventos
-                const eventItemsPerSlide = itemsConfig.eventos;
-                // Para eventos, la lógica es más simple si dejamos que Bootstrap se encargue de las columnas,
-                // ya que Razor ya ha generado todas las tarjetas.
-                // Lo que haremos es reajustar las clases de columna:
-
-                // Eventos:
-                // Si itemsPerSlide es 1, queremos 1 elemento por slide (col-12)
-                // Si itemsPerSlide es 2, queremos 2 elementos por slide (col-md-6)
-                // Si itemsPerSlide es 3, queremos 3 elementos por slide (col-lg-4)
-
-                // Este es el enfoque "mágico" que evita reestructurar todo el HTML:
-
-                // Eventos
-                $('#eventosCarousel .carousel-item .row > div').each(function() {
-                    $(this).removeClass('col-12 col-md-6 col-lg-4').addClass('col-12 ' + (eventItemsPerSlide > 1 ? 'col-md-6' : '') + (eventItemsPerSlide > 2 ? 'col-lg-4' : ''));
-                });
-
-                // Artistas
-                const artistItemsPerSlide = itemsConfig.artistas;
-                // Si itemsPerSlide es 1, queremos 1 elemento por slide (col-12)
-                // Si itemsPerSlide es 2, queremos 2 elementos por slide (col-md-6)
-                // Si itemsPerSlide es 4, queremos 4 elementos por slide (col-lg-3)
-                $('#artistasCarousel .carousel-item .row > div').each(function() {
-                    $(this).removeClass('col-12 col-md-6 col-lg-3').addClass('col-12 ' + (artistItemsPerSlide > 1 ? 'col-md-6' : '') + (artistItemsPerSlide > 2 ? 'col-lg-3' : ''));
-                });
-
-                // El siguiente paso SÍ requiere reestructurar el HTML:
-                // Debemos asegurar que solo haya 'itemsPerSlide' por .carousel-item
-                // ¡IMPORTANTE! Para simplificar el código, en lugar de usar un script complejo que reestructura el HTML
-                // te voy a dar una versión simplificada que confía en el sistema de Bootstrap.
-
-                // El código Razor que tienes **ya está generando 3 items por slide para eventos y 4 para artistas**.
-                // Para la responsividad, solo necesitas reajustar las clases col-* dentro de cada slide.
-                // Como las columnas son generadas por Razor, **necesitas usar una librería de terceros** para
-                // hacer que el carrusel sea verdaderamente responsive (como Owl Carousel) o
-                // usar un enfoque simplificado con Bootstrap puro que te proporciono a continuación.
-
-                // USANDO SOLO BOOTSTRAP:
-                // 1. En móvil (XS/SM), cada `col-12` se apila, mostrando 3 o 4 tarjetas en la misma diapositiva.
-                //    Para evitar esto, debes *mantener el bucle C#* con 1 elemento por slide *solo si quieres cambiar la lógica de la diapositiva*.
-                //
-                //    Opción más simple: dejar la estructura Razor tal cual y usar la función de JS para
-                //    REORGANIZAR LOS ELEMENTOS DE LAS DIAPOSITIVAS EN FUNCIÓN DEL TAMAÑO.
-
-                // Llama a la función de reestructuración con el nuevo número de ítems por slide
-                // Para hacer la vista responsiva con la lógica de *cambio de número de elementos por slide*,
-                // necesitamos una lógica de reestructuración más compleja que la que tienes en Razor.
-
-                // *Solución temporal/simple: Volver a la versión de Razor para mobile (1 elemento por slide)*
-                // Esta es la forma más limpia en tu código actual:
-
-                const allEventItems = [];
-                $('#eventosCarousel .carousel-item .row > div').each(function() {
-                    allEventItems.push($(this).children().get(0)); // Obtener la tarjeta <a>
-                });
-                restructureCarouselBootstrap('eventosCarousel', allEventItems, itemsConfig.eventos);
-
-
-                const allArtistItems = [];
-                $('#artistasCarousel .carousel-item .row > div').each(function() {
-                    allArtistItems.push($(this).children().get(0)); // Obtener la tarjeta <a>
-                });
-                restructureCarouselBootstrap('artistasCarousel', allArtistItems, itemsConfig.artistas);
-            }
-
-            // FUNCIÓN DE REESTRUCTURACIÓN COMPLETA
             function restructureCarouselBootstrap(carouselId, rawItems, itemsPerSlide) {
                 const $carouselInner = $(`#${carouselId} .carousel-inner`);
                 $carouselInner.empty(); // Limpiar el contenido existente
 
                 if (rawItems.length === 0) {
-                    $carouselInner.append('<div class="carousel-item active"><div class="alert alert-info text-center" role="alert">No hay elementos para mostrar.</div></div>');
+                    // Se usa el mensaje correcto para cada carrusel
+                    const alertMessage = carouselId === 'eventosCarousel'
+                        ? 'No hay eventos próximos de la academia.'
+                        : 'No hay artistas destacados para mostrar.';
+                    $carouselInner.append(`<div class="carousel-item active"><div class="alert alert-info text-center" role="alert">${alertMessage}</div></div>`);
                     return;
                 }
 
@@ -644,10 +473,23 @@
                         const $card = $(item).clone();
                         let colClass;
 
+                        // Las clases de columna se simplifican a la clase base de Bootstrap 5
+                        // y se usan las clases de media query para asegurar la distribución correcta
+                        // ya que la lógica C# inicial ya maneja la clase base col-12
                         if (carouselId === 'eventosCarousel') {
-                            colClass = itemsPerSlide === 1 ? 'col-12' : (itemsPerSlide === 2 ? 'col-6' : 'col-lg-4 col-md-6');
+                            colClass = 'col-12';
+                            if (itemsPerSlide === 2) {
+                                colClass += ' col-md-6';
+                            } else if (itemsPerSlide === 3) {
+                                colClass += ' col-md-6 col-lg-4';
+                            }
                         } else { // artistasCarousel
-                            colClass = itemsPerSlide === 1 ? 'col-12' : (itemsPerSlide === 2 ? 'col-6' : 'col-lg-3 col-md-6');
+                            colClass = 'col-12';
+                            if (itemsPerSlide === 2) {
+                                colClass += ' col-md-6';
+                            } else if (itemsPerSlide === 4) {
+                                colClass += ' col-md-6 col-lg-3';
+                            }
                         }
 
                         // Envuelve la tarjeta clonada en la columna correcta.
@@ -664,42 +506,47 @@
                 if (bsCarousel) {
                     bsCarousel.dispose(); // Destruir instancia anterior
                 }
-                new bootstrap.Carousel(carouselElement); // Crear nueva instancia
+                // Se crea la nueva instancia del carrusel SOLO si hay elementos para evitar error si rawItems.length === 0
+                if (rawItems.length > 0) {
+                     new bootstrap.Carousel(carouselElement);
+                }
+
 
                 // Lógica de botones (mostrar/ocultar)
                 $(`#${carouselId} .carousel-control-prev`).toggle(totalSlides > 1);
                 $(`#${carouselId} .carousel-control-next`).toggle(totalSlides > 1);
             }
 
-            // Ocultamos la estructura inicial de Razor para que no se muestre antes de la reestructuración.
-            // Para que este script funcione correctamente, primero debemos **extraer todos los elementos**
-            // del código Razor y **reconstruir la estructura con la lógica del JS**.
+            // --- Extracción de Tarjetas Originales ---
+            // Se realiza un solo parseo del código Razor para obtener TODAS las tarjetas.
+            // Esto es necesario porque el código C# inicial ya ha generado los items del carrusel
+            // pero el JS lo reestructura para la vista móvil/tablet/desktop.
 
-            // Al cargar, debemos extraer los elementos de la estructura original de Razor
             const originalEventCards = [];
-            $('#eventosCarousel .carousel-item').each(function() {
-                $(this).find('.row > div > a').each(function() {
+            $('#eventosCarousel .carousel-item').each(function () {
+                $(this).find('.row > div > a').each(function () {
                     originalEventCards.push(this);
                 });
             });
 
             const originalArtistCards = [];
-            $('#artistasCarousel .carousel-item').each(function() {
-                $(this).find('.row > div > a').each(function() {
+            $('#artistasCarousel .carousel-item').each(function () {
+                $(this).find('.row > div > a').each(function () {
                     originalArtistCards.push(this);
                 });
             });
 
+            // Se inicializa el carrusel con la lógica de responsividad de JS
             function initializeCarousels() {
                 const itemsConfig = getItemsPerSlide();
                 restructureCarouselBootstrap('eventosCarousel', originalEventCards, itemsConfig.eventos);
                 restructureCarouselBootstrap('artistasCarousel', originalArtistCards, itemsConfig.artistas);
             }
 
-            // Inicializar al cargar
+            // Llamada inicial
             initializeCarousels();
 
-            // Ejecutar la función cuando la ventana cambia de tamaño
+            // Ejecutar la función cuando la ventana cambia de tamaño (debounce)
             let resizeTimer;
             $(window).on('resize', function (e) {
                 clearTimeout(resizeTimer);

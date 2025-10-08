@@ -124,6 +124,12 @@
         max-width: 600px;
     }
 
+    /* CAMBIO: Aumenta el ancho del modal para TinyMCE */
+    #crearArtistaModal .modal-dialog,
+    #editarArtistaModal .modal-dialog {
+        max-width: 800px;
+    }
+
     /* ------------------------------------- */
     /* 3. MEDIA QUERY RESPONSIVE (MÓVIL)     */
     /* ------------------------------------- */
@@ -191,7 +197,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <a asp-action="Panel" asp-controller="Admin" class="btn btn-success btn-lg">
             <i class="fas fa-arrow-left me-2"></i> Regresar al Panel
-        </a>        
+        </a>
         <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#crearArtistaModal">
             <i class="fas fa-plus-circle me-2"></i> Nuevo Artista
         </button>
@@ -233,6 +239,7 @@
                                         data-email="@artista.Email"
                                         data-nombreartistico="@artista.NombreArtistico"
                                         data-estiloprincipal="@artista.EstiloPrincipal"
+                                        data-biografia="@Html.Raw(artista.Biografia)" 
                                         data-urlimagen="@artista.UrlImagen" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -260,13 +267,13 @@
 </div>
 
 <div class="modal fade" id="crearArtistaModal" tabindex="-1" aria-labelledby="crearArtistaModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="crearArtistaModalLabel" style="color:var(--color-secondary);">Crear Nuevo Artista</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="formCrearArtista" asp-action="CrearArtista" method="post" enctype="multipart/form-data">
+            <form id="formCrearArtista" asp-action="CrearArtista" method="post" enctype="multipart/form-data" novalidate>
                 @Html.AntiForgeryToken()
                 <div class="modal-body">
                     <div class="form-group mb-3">
@@ -291,7 +298,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="Crear_Biografia" style="color:var(--color-primary);">Biografía</label>
-                        <textarea id="Crear_Biografia" name="Biografia" class="form-control" rows="5"></textarea>
+                        <textarea id="Crear_Biografia" name="Biografia" class="form-control tinymce-biografia" rows="5"></textarea>
                     </div>
                     <div class="form-group mb-3">
                         <label for="Crear_EstiloPrincipal" style="color:var(--color-primary);">Estilo Principal</label>
@@ -312,13 +319,13 @@
 </div>
 
 <div class="modal fade" id="editarArtistaModal" tabindex="-1" aria-labelledby="editarArtistaModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editarArtistaModalLabel" style="color:var(--color-secondary);">Editar Artista</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="formEditarArtista" asp-action="UpdateArtista" method="post" enctype="multipart/form-data">
+            <form id="formEditarArtista" asp-action="UpdateArtista" method="post" enctype="multipart/form-data" novalidate>
                 @Html.AntiForgeryToken()
                 <input type="hidden" id="Editar_Id" name="Id" />
                 <input type="hidden" id="Editar_UsuarioId" name="UsuarioId" />
@@ -345,7 +352,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="Editar_Biografia" style="color:var(--color-primary);">Biografía</label>
-                        <textarea id="Editar_Biografia" name="Biografia" class="form-control" rows="5"></textarea>
+                        <textarea id="Editar_Biografia" name="Biografia" class="form-control tinymce-biografia" rows="5"></textarea>
                     </div>
                     <div class="form-group mb-3">
                         <label for="Editar_EstiloPrincipal" style="color:var(--color-primary);">Estilo Principal</label>
@@ -369,15 +376,55 @@
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
     <script>
+        // Función clave para permitir que TinyMCE funcione dentro de un modal de Bootstrap (problema de foco)
+        function tinymceModalSetup(editor) {
+            editor.on('init', function() {
+                // Cuando el modal de Bootstrap se muestra:
+                $(editor.getContainer()).parents('.modal').on('shown.bs.modal', function () {
+                    editor.focus();
+                });
+            });
+        }
+
+        // Función para inicializar o re-inicializar el editor
+        function initTinyMCE(selector, content = '') {
+            var editorId = selector.replace('#', '');
+
+            // 1. Si existe una instancia de TinyMCE para ese ID, la destruimos.
+            if (tinymce.get(editorId)) {
+                tinymce.get(editorId).remove();
+            }
+
+            // 2. Inicializamos una nueva instancia.
+            tinymce.init({
+                selector: selector,
+                plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+                toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+                height: 250,
+                setup: function (editor) {
+                    tinymceModalSetup(editor); // Aplicar la corrección de foco
+                    editor.on('init', function (e) {
+                        // Establecer el contenido SÓLO después de que el editor se haya inicializado
+                        if (content) {
+                            editor.setContent(content);
+                        }
+                    });
+                }
+            });
+        }
+
         function getAntiForgeryToken() {
             const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
             return tokenElement ? tokenElement.value : '';
         }
 
+        // Lógica de recarga (asumiendo que funciona)
         async function recargarContenedor() {
             try {
-                // Carga la página completa
                 const response = await fetch('@Url.Action("GestionarArtistas", "Admin")');
                 if (!response.ok) {
                     throw new Error('No se pudieron cargar los artistas.');
@@ -386,14 +433,12 @@
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
 
-                // Reemplaza el contenido del contenedor de cards
                 const newContainerContent = doc.getElementById('contenedorArtistas')?.outerHTML || '';
                 const oldContainer = document.getElementById('contenedorArtistas');
 
                 if (oldContainer) {
                     oldContainer.outerHTML = newContainerContent;
                 } else {
-                    // Si el contenedor no existe, recarga para asegurar el renderizado
                     window.location.reload();
                     return;
                 }
@@ -407,7 +452,6 @@
         function attachEventListeners() {
             // Re-adjunta los listeners para los botones de eliminar
             document.querySelectorAll('.eliminar-btn').forEach(button => {
-                // Es buena práctica remover el listener antes de adjuntar para evitar duplicados
                 button.removeEventListener('click', handleEliminarClick);
                 button.addEventListener('click', handleEliminarClick);
             });
@@ -436,11 +480,6 @@
                     const formData = new FormData(form);
                     formData.append('__RequestVerificationToken', getAntiForgeryToken());
 
-                    // Nota: Aquí se asume que tu controlador DeleteArtista espera un FormData.
-                    // Si solo espera el ID de la ruta, puedes usar:
-                    // const url = form.action;
-                    // const response = await fetch(url, { method: 'POST', headers: { 'RequestVerificationToken': getAntiForgeryToken() }});
-
                     const response = await fetch(form.action, { method: 'POST', body: formData });
                     const result = await response.json();
                     if (result.success) {
@@ -462,12 +501,8 @@
             const nombreArtistico = this.getAttribute('data-nombreartistico');
             const estiloPrincipal = this.getAttribute('data-estiloprincipal');
             const urlImagen = this.getAttribute('data-urlimagen');
-
-            // Asume que el campo Biografía no se pasa por data-attribute (limitación de longitud),
-            // por lo que debe cargarse por separado si es necesario. Por ahora, lo limpiamos o dejamos lo que tenía.
-            // Si la Biografía es un campo importante, considera obtenerla por AJAX al hacer clic.
-            // const biografia = this.getAttribute('data-biografia'); // Si la incluyes
-            // document.getElementById('Editar_Biografia').value = biografia;
+            // NUEVO: Obtener la Biografía del data-attribute
+            const biografia = this.getAttribute('data-biografia');
 
             // Asignación de valores
             document.getElementById('Editar_Id').value = id;
@@ -477,9 +512,10 @@
             document.getElementById('Editar_Email').value = email;
             document.getElementById('Editar_NombreArtistico').value = nombreArtistico;
             document.getElementById('Editar_EstiloPrincipal').value = estiloPrincipal;
-            document.getElementById('Editar_Password').value = ''; // Limpia el campo de contraseña
-            // Si no obtuviste la biografía, la dejamos como está o la limpiamos. En este caso, la dejaremos en blanco por precaución.
-            // document.getElementById('Editar_Biografia').value = '';
+            document.getElementById('Editar_Password').value = '';
+
+            // CAMBIO CLAVE: Inicializar TinyMCE y cargar el contenido de la Biografía
+            initTinyMCE('#Editar_Biografia', biografia);
 
 
             const previewImg = document.getElementById('Editar_PreviewImagen');
@@ -487,7 +523,6 @@
                 previewImg.src = urlImagen;
                 previewImg.style.display = 'block';
             } else {
-                // Usar la imagen por defecto si la URL está vacía o es la URL por defecto
                 previewImg.src = '/images/default-avatar.png';
                 previewImg.style.display = 'block';
             }
@@ -495,6 +530,10 @@
 
 
         document.addEventListener('DOMContentLoaded', function () {
+
+            // Inicialización única para el modal de Crear (textarea con la clase 'tinymce-biografia' y ID 'Crear_Biografia')
+            initTinyMCE('#Crear_Biografia');
+
             attachEventListeners(); // Adjunta eventos iniciales
 
             document.getElementById('formCrearArtista').addEventListener('submit', async function (e) {
@@ -507,7 +546,6 @@
                 const result = await response.json();
                 if (result.success) {
                     Swal.fire('Éxito', result.message, 'success');
-                    // Usar Bootstrap 5 para cerrar el modal
                     const modal = bootstrap.Modal.getInstance(document.getElementById('crearArtistaModal'));
                     if(modal) modal.hide();
                     this.reset();
@@ -528,7 +566,6 @@
                 const result = await response.json();
                 if (result.success) {
                     Swal.fire('Éxito', result.message, 'success');
-                    // Usar Bootstrap 5 para cerrar el modal
                     const modal = bootstrap.Modal.getInstance(document.getElementById('editarArtistaModal'));
                     if(modal) modal.hide();
                     await recargarContenedor();

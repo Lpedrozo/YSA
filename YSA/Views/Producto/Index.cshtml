@@ -165,11 +165,7 @@
         border-color: var(--color-secondary);
         color: var(--color-primary);
     }
-
-    /* ------------------------------------- */
-    /* MEJORAS RESPONSIVE (Móvil < 576px) */
-    /* ------------------------------------- */
-
+    s
     @@media (max-width: 575.98px) {
         /* Reducir el tamaño de la imagen de la tarjeta en móviles */
         .card-img-top {
@@ -237,7 +233,7 @@
                         <img src="@Url.Content(producto.UrlImagen)" class="card-img-top" alt="@producto.Titulo">
                         <div class="card-body">
                             <h5 class="card-title">@producto.Titulo</h5>
-                            <p class="card-text text-secondary">@producto.DescripcionCorta</p>
+                            <p class="card-text text-secondary">@Html.Raw(producto.DescripcionCorta)</p>
                             <span class="price">@string.Format("{0:C}", producto.Precio)</span>
                             <small class="text-muted">Por @(producto.Autor?.Usuario?.Nombre ?? "Autor Desconocido")</small>
 
