@@ -1,6 +1,17 @@
 ﻿@model YSA.Web.Models.ViewModels.PagoViewModel
+@using System.Globalization;
 @{
     ViewData["Title"] = "Procesar Pago";
+
+    // **NUEVO CÁLCULO:** El total en Bolívares (VES)
+    decimal totalVes = 0;
+    if (Model.TasaBCV > 0)
+    {
+        totalVes = Model.Total * Model.TasaBCV;
+    }
+
+    // Definición de CultureInfo.InvariantCulture para formatos numéricos
+    var culture = CultureInfo.InvariantCulture;
 }
 
 <style>
@@ -52,6 +63,11 @@
         color: var(--color-primary);
         /* MEJORA RESPONSIVE: Tamaño del total a pagar */
         font-size: 1.35rem;
+    }
+
+    .text-ves {
+        color: #008000; /* Verde para destacar el monto en Bolívares */
+        font-weight: 700;
     }
 
     /* MEJORA RESPONSIVE: Ajuste para pantallas grandes */
@@ -134,8 +150,16 @@
                     <h3>Procesar Pago del Pedido #@Model.PedidoId</h3>
                 </div>
                 <div class="card-body p-4">
-                    <p class="lead text-center">Total a pagar: <strong>@Model.Total.ToString("C")</strong></p>
 
+                    <p class="lead text-center mb-1">
+                        Monto en Dólares (USD):
+                        <strong>@Model.Total.ToString("N2", culture) USD</strong>
+                    </p>
+                    <p class="lead text-center">
+                        Equivalente en Bolívares:
+                        <strong class="text-ves">@totalVes.ToString("N2", culture) VES</strong>
+                        <small class="text-muted d-block" style="font-size: 0.75rem;">(Tasa BCV del día: @Model.TasaBCV.ToString("N2", culture) VES/USD)</small>
+                    </p>
                     <div class="instruction-note text-center">
                         <i class="fas fa-exclamation-triangle me-2"></i>
                         Su pedido será validado por un administrador. Una vez confirmado, ¡tendrá acceso!
@@ -154,6 +178,8 @@
                     </div>
                     <form asp-action="ProcesarPago" method="post" enctype="multipart/form-data">
                         <input type="hidden" asp-for="PedidoId" />
+
+                        <input type="hidden" asp-for="TasaBCV" />
 
                         <div class="mb-4 mt-4">
                             <label asp-for="MetodoPago" class="form-label">Método de Pago</label>
@@ -176,13 +202,13 @@
 
                         <div class="mb-4">
                             <label asp-for="ReferenciaPago" class="form-label">Referencia / Tracking ID / Hash</label>
-                            <input asp-for="ReferenciaPago" class="form-control form-control" placeholder="Ingrese el número de referencia/transacción" required /> 
+                            <input asp-for="ReferenciaPago" class="form-control form-control" placeholder="Ingrese el número de referencia/transacción" required />
                             <span asp-validation-for="ReferenciaPago" class="text-danger"></span>
                         </div>
 
                         <div class="mb-4">
                             <label asp-for="ComprobanteArchivo" class="form-label">Adjuntar Comprobante (Requerido)</label>
-                            <input asp-for="ComprobanteArchivo" type="file" class="form-control form-control" required /> 
+                            <input asp-for="ComprobanteArchivo" type="file" class="form-control form-control" required />
                             <span asp-validation-for="ComprobanteArchivo" class="text-danger"></span>
                         </div>
 
@@ -205,12 +231,17 @@
 
     <script>
         $(document).ready(function () {
-            // Pasamos el total formateado a JavaScript de forma segura
-            const formattedTotal = '@Html.Raw(Model.Total.ToString("C"))';
+            // **VARIABLES JS ACTUALIZADAS**
+            // Se usa .ToString("N2", culture) en el bloque Razor para que JavaScript reciba el formato correcto (ej: 10.00)
+            const formattedTotalUSD = '@Html.Raw(Model.Total.ToString("N2", culture))';
+            const formattedTotalVES = '@Html.Raw(totalVes.ToString("N2", culture))';
+            const tasaHoy = '@Model.TasaBCV.ToString("N2", culture)';
 
             // Objeto JSON con la información de pago
             const PAYMENT_DETAILS = {
                 "Transferencia Bancaria": `
+                    <p><strong>Monto a Pagar:</strong> ${formattedTotalVES} VES</p>
+                    <p><strong>Tasa utilizada:</strong> ${tasaHoy} VES/USD</p>
                     <p><strong>Banco:</strong> Banco Universal Negro</p>
                     <p><strong>RUC/C.I.:</strong> V-12.345.678</p>
                     <p><strong>Cuenta:</strong> 0102-0304-0506-0708-0910</p>
@@ -218,14 +249,18 @@
                     <p class="text-danger">Asegúrese de transferir el monto exacto antes de continuar.</p>
                 `,
                 "Pago Móvil": `
+                    <p><strong>Monto a Pagar:</strong> ${formattedTotalVES} VES</p>
+                    <p><strong>Tasa utilizada:</strong> ${tasaHoy} VES/USD</p>
                     <p><strong>Banco:</strong> Banco Móvil</p>
                     <p><strong>C.I.:</strong> V-8.765.432</p>
                     <p><strong>Teléfono:</strong> 0412-1234567</p>
-                    <p class="text-danger">El monto total es <strong>${formattedTotal}</strong>. Use el campo Referencia para el Hash/N° de la transacción.</p>
+                    <p class="text-danger">El monto total es <strong>${formattedTotalVES} VES</strong>. Use el campo Referencia para el Hash/N° de la transacción.</p>
                 `,
                 "PayPal": `
+                    <p><strong>Monto a Pagar:</strong> ${formattedTotalUSD} USD</p>
+                    <p><strong>Tasa de referencia:</strong> ${tasaHoy} VES/USD</p>
                     <p><strong>Cuenta PayPal:</strong> miempresa@paypal.com</p>
-                    <p><strong>Instrucciones:</strong> Debe realizar el pago directamente a nuestra cuenta de PayPal por <strong>${formattedTotal}</strong>.</p>
+                    <p><strong>Instrucciones:</strong> Debe realizar el pago directamente a nuestra cuenta de PayPal por <strong>${formattedTotalUSD} USD</strong>.</p>
                     <p class="text-danger">Use el campo Referencia para su N° de transacción o Hash de PayPal.</p>
                 `
             };

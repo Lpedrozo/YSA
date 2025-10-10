@@ -1,6 +1,20 @@
 ﻿@model YSA.Web.Models.ViewModels.ConfirmacionPagoViewModel
+@using System.Globalization;
 @{
     ViewData["Title"] = "Confirmar Pago";
+
+    // *** NUEVO BLOQUE RAZOR PARA CÁLCULO Y CULTURA ***
+    // Definir culturas para formatear los números (punto decimal para USD, coma para VES)
+    var cultureUS = new CultureInfo("en-US"); // Para USD (Moneda base)
+    var cultureVE = new CultureInfo("es-VE"); // Para VES (Moneda local)
+
+    // Cálculo del total en Bolívares (VES)
+    decimal totalVes = 0;
+    if (Model.TasaBCV > 0)
+    {
+        totalVes = Model.Total * Model.TasaBCV.Value; // Usamos .Value porque TasaBCV es Nullable<decimal>
+    }
+    // *** FIN BLOQUE RAZOR ***
 }
 
 <style>
@@ -15,6 +29,15 @@
         --color-text-light: #ffffff;
         --color-success: #333333; /* Usado para texto de éxito en B/N */
     }
+
+    /* *** NUEVO ESTILO: Para resaltar el total en Bolívares *** */
+    .text-ves {
+        color: #008000; /* Verde para destacar el monto en Bolívares */
+        font-weight: 700;
+        font-size: 1.2em;
+    }
+
+    /* ... (Mantenemos el resto de sus estilos) ... */
 
     body {
         font-family: 'Poppins', sans-serif;
@@ -120,6 +143,14 @@
         </div>
     }
 
+    @if (TempData["ErrorMessage"] != null)
+    {
+        // Se añade la lógica de manejo de errores de tasa de cambio
+        <div class="alert alert-warning mb-4">
+            <i class="fas fa-exclamation-triangle me-2"></i> @TempData["ErrorMessage"]
+        </div>
+    }
+
     <div class="row mb-5 pb-5">
 
         <div class="col-md-6 mb-4 order-1 order-md-2">
@@ -168,11 +199,22 @@
                 {
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <span class="text-truncate me-3">@articulo.TituloItem</span>
-                        <span class="badge bg-primary rounded-pill flex-shrink-0">@articulo.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</span>
+                        <span class="badge bg-primary rounded-pill flex-shrink-0">@articulo.Precio.ToString("N2", cultureUS) USD</span>
                     </li>
                 }
             </ul>
-            <h4 class="mt-4">Total a pagar: <span style="color:var(--color-primary); font-weight:700;">@Model.Total.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</span></h4>
+
+            <div class="p-3 bg-white border rounded">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <h5 class="mb-0 text-secondary">Total en Dólares (USD):</h5>
+                    <h5 class="mb-0" style="color:var(--color-primary); font-weight:700;">@Model.Total.ToString("N2", cultureUS) USD</h5>
+                </div>
+                <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+                    <h4 class="mb-0">Total a pagar en VES:</h4>
+                    <h4 class="text-ves mb-0">@totalVes.ToString("N2", cultureVE) VES</h4>
+                </div>
+                <small class="text-muted d-block text-end">Tasa BCV del día: @Model.TasaBCV.Value.ToString("N4", cultureUS) VES/USD</small>
+            </div>
             @{
                 var whatsappNumber = "584241544523"; // Tu número (Cod. País + Número sin 0 inicial)
                 var whatsappMessage = $"Hola, necesito asistencia con el pago del Pedido #{Model.PedidoId}. ¿Me pueden ayudar?";
@@ -199,32 +241,43 @@
 
     <script>
         $(document).ready(function () {
-            // *** PASO DE DEPURACIÓN CLAVE: Verificar si jQuery está cargado ***
+
+            // *** CAMBIO CLAVE: Variables JS con formato para USD, VES y Tasa ***
+            // Usamos un formato genérico (N2) con cultura Invariant para evitar problemas de comas/puntos en JS
+            const formattedTotalUSD = '@Html.Raw(Model.Total.ToString("N2", cultureUS))';
+            // Formateamos el total VES con su cultura
+            const formattedTotalVES = '@Html.Raw(totalVes.ToString("N2", cultureVE))';
+            const tasaHoy = '@Model.TasaBCV.Value.ToString("N4", cultureUS)';
+
+
             if (typeof jQuery == 'undefined') {
                 console.error('Error: jQuery no está cargado. La funcionalidad de cambio de método de pago no funcionará.');
                 return; // Detener el script si jQuery no está
             }
 
-            // PASO CLAVE 1: Obtener el valor formateado de Razor
-            // Importante: No envolvemos la salida de Razor en comillas simples aquí,
-            // ya que el resultado ya es una cadena y puede contener caracteres que rompan la sintaxis.
-            const formattedTotal = '@Html.Raw(Model.Total.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE")))';
-
             // Objeto JSON con la información de pago
             const PAYMENT_DETAILS = {
                 "Transferencia Bancaria": `
+                    <p><strong>Monto a Pagar:</strong> <span class="text-ves">${formattedTotalVES} VES</span></p>
+                    <p class="mb-2"><small class="text-muted">Tasa Aplicada: ${tasaHoy} VES/USD</small></p>
+                    <hr class="my-2"/>
                     <div class="info-item"><strong>Banco:</strong> Banco Universal Monocromático</div>
                     <div class="info-item"><strong>RUC/C.I.:</strong> V-12.345.678</div>
                     <div class="info-item"><strong>N° Cuenta:</strong> 0102-0304-0506-0708-0910</div>
                     <div class="info-item"><strong>Correo:</strong> pagos@miempresa.com</div>
                 `,
                 "Pago Móvil": `
+                    <p><strong>Monto a Pagar:</strong> <span class="text-ves">${formattedTotalVES} VES</span></p>
+                    <p class="mb-2"><small class="text-muted">Tasa Aplicada: ${tasaHoy} VES/USD</small></p>
+                    <hr class="my-2"/>
                     <div class="info-item"><strong>Banco:</strong> Banco Móvil Digital</div>
                     <div class="info-item"><strong>C.I.:</strong> V-8.765.432</div>
                     <div class="info-item"><strong>Teléfono:</strong> 0412-1234567</div>
-                    <div class="info-item"><strong>Monto Exacto:</strong> ${formattedTotal}</div>
                 `,
                 "PayPal": `
+                    <p><strong>Monto a Pagar:</strong> <span class="text-primary">${formattedTotalUSD} USD</span></p>
+                    <p class="mb-2"><small class="text-muted">Tasa de Referencia: ${tasaHoy} VES/USD</small></p>
+                    <hr class="my-2"/>
                     <div class="info-item"><strong>Cuenta PayPal:</strong> miempresa@paypal.com</div>
                     <div class="info-item"><strong>Instrucciones:</strong> Debe realizar el pago directamente. Adjunte el comprobante de PayPal.</div>
                 `
@@ -236,7 +289,6 @@
 
             function updatePaymentInfo() {
                 const selectedMethod = $select.val();
-                console.log('Método seleccionado:', selectedMethod); // Depuración
 
                 if (selectedMethod && PAYMENT_DETAILS[selectedMethod]) {
                     // Si el contenido existe, lo insertamos

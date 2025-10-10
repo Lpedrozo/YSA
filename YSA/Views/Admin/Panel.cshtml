@@ -37,13 +37,22 @@
         height: 100%;
         text-decoration: none; /* Asegura que el enlace no tenga línea */
         color: inherit;
+        display: flex; /* Añadir display flex para alinear contenido */
+        flex-direction: column; /* Contenido en columna */
+        justify-content: space-between; /* Espaciar contenido verticalmente */
     }
 
-        .metric-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-            border-color: var(--color-primary); /* Resalta el borde al hacer hover */
-        }
+    /* Aplicar hover y estilo a la etiqueta <a> que ahora envuelve la tarjeta */
+    .metric-link, .metric-link:hover {
+        color: inherit; /* Mantener el color del texto */
+        text-decoration: none; /* Quitar subrayado */
+    }
+
+    .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        border-color: var(--color-primary); /* Resalta el borde al hacer hover */
+    }
 
     .metric-value {
         font-size: 3rem;
@@ -64,6 +73,16 @@
         color: var(--color-primary); /* Gris oscuro */
         opacity: 0.7;
     }
+
+    /* **NUEVOS ESTILOS para el ícono de la Tasa BCV** */
+    .metric-card.bcv-rate .metric-icon {
+        font-size: 2.5rem; /* Un poco más pequeño para encajar mejor */
+        color: var(--color-primary); /* Usar el color primario */
+        opacity: 1; /* Sin opacidad para que resalte */
+        align-self: flex-end; /* Alinear a la derecha-abajo si el contenido es flexible */
+        margin-top: 1rem; /* Espacio para separarlo del valor */
+    }
+
 
     /* Estilo especial para Pedidos Pendientes (Rojo/Negro) */
     .metric-pending .metric-value,
@@ -130,8 +149,69 @@
 
     <h1 class="mb-5 mt-3">Panel de Administración</h1>
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 pb-5 mb-5">
+    <div class="row row-cols-1 row-cols-md-4 g-4 mb-5 pb-3">
 
+        <div class="col">
+            <a href="@Url.Action("HistorialTasas", "Admin")" class="metric-link">
+                <div class="card metric-card text-start p-4 bcv-rate">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            @if (Model.TasaBCV.HasValue)
+                            {
+                                <div class="metric-value">@Model.TasaBCV.Value.ToString("N2")</div>
+                            }
+                            else
+                            {
+                                <div class="metric-value" style="font-size: 1.5rem;">Error</div>
+                            }
+                            <div class="metric-label">Tasa Oficial BCV (VES/USD)</div>
+                        </div>
+                        <i class="fas fa-money-bill-wave metric-icon"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col">
+            <div class="card metric-card text-start p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="metric-value">@Model.TotalCursos</div>
+                        <div class="metric-label">Total Cursos</div>
+                    </div>
+                    <i class="fas fa-book-open metric-icon"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card metric-card text-start p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="metric-value">@Model.TotalEstudiantes</div>
+                        <div class="metric-label">Estudiantes Activos</div>
+                    </div>
+                    <i class="fas fa-users metric-icon"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <a href="@Url.Action("PedidosPendientes", "Admin")" class="card metric-card metric-pending text-start p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="metric-value">@Model.PedidosPendientes</div>
+                        <div class="metric-label">Pedidos Pendientes</div>
+                    </div>
+                    <i class="fas fa-exclamation-triangle metric-icon"></i>
+                </div>
+            </a>
+        </div>
+
+    </div>
+    <h2 class="mb-4 pt-3">Accesos Rápidos</h2>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 pb-5 mb-5">
         <div class="col">
             <a href="@Url.Action("GestionarCursos", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
@@ -141,7 +221,6 @@
                 </div>
             </a>
         </div>
-
         <div class="col">
             <a href="@Url.Action("GestionarArtistas", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
@@ -151,7 +230,6 @@
                 </div>
             </a>
         </div>
-
         <div class="col">
             <a href="@Url.Action("GestionarProductos", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
@@ -161,7 +239,6 @@
                 </div>
             </a>
         </div>
-
         <div class="col">
             <a href="@Url.Action("GestionarEventos", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
@@ -171,7 +248,6 @@
                 </div>
             </a>
         </div>
-
         <div class="col">
             <a href="@Url.Action("GestionarEstudiantes", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
@@ -181,7 +257,6 @@
                 </div>
             </a>
         </div>
-
         <div class="col">
             <a href="@Url.Action("GestionarCategorias", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
@@ -191,8 +266,6 @@
                 </div>
             </a>
         </div>
-
-
         <div class="col">
             <a href="@Url.Action("PedidosPendientes", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
@@ -202,6 +275,14 @@
                 </div>
             </a>
         </div>
-
+        <div class="col">
+            <a href="@Url.Action("HistorialTasas", "Admin")" class="card action-card text-center p-4">
+                <div class="card-body">
+                    <i class="fas fa-chart-line action-card-icon"></i>
+                    <div class="action-card-title">Historial de Tasas</div>
+                    <p class="card-text small text-muted mt-1">Ver la evolución y registros pasados de la tasa BCV.</p>
+                </div>
+            </a>
+        </div>
     </div>
 </div>

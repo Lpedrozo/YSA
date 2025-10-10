@@ -7,17 +7,20 @@ using YSA.Web.Models.ViewModels;
 using System;
 using System.IO;
 using System.Linq;
+using YSA.Core.Interfaces;
 
 public class PedidoController : Controller
 {
     private readonly IPedidoService _pedidoService;
     private readonly IVentaItemService _ventaItemService;
+    private readonly IExchangeRateService _exchangeRateService;
 
     // Asegúrate de inyectar todos los servicios necesarios
-    public PedidoController(IPedidoService pedidoService, IVentaItemService ventaItemService)
+    public PedidoController(IPedidoService pedidoService, IVentaItemService ventaItemService, IExchangeRateService exchangeRateService)
     {
         _pedidoService = pedidoService;
         _ventaItemService = ventaItemService;
+        _exchangeRateService = exchangeRateService;
     }
 
     [HttpPost]
@@ -63,10 +66,20 @@ public class PedidoController : Controller
             return NotFound("Pedido no encontrado o no autorizado.");
         }
 
+        var tasaHoy = await _exchangeRateService.GetTasaToday();
+
+        // Si no hay tasa, usamos un valor por defecto (o mostramos error, mejor un valor de error)
+        if (!tasaHoy.HasValue || tasaHoy.Value <= 0)
+        {
+            TempData["ErrorMessage"] = "No se pudo obtener la tasa de cambio oficial. Intente más tarde.";
+            return RedirectToAction("Index");
+        }
         var viewModel = new ConfirmacionPagoViewModel
         {
             PedidoId = pedido.Id,
             Total = pedido.Total,
+            // *** NUEVO ***
+            TasaBCV = tasaHoy,
             Articulos = pedido.PedidoItems.Select(item =>
             {
                 // Determinar si el VentaItem es un Curso o un Producto para obtener el título

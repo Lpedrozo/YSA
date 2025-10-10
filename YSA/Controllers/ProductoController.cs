@@ -19,17 +19,22 @@ namespace YSA.Web.Controllers
         private readonly IProductoService _productoService;
         private readonly ICompraService _compraService;
         private readonly IPedidoService _pedidoService;
-        private readonly UserManager<Usuario> _userManager;
+        private readonly UserManager<Usuario> _userManager; 
+        private readonly IExchangeRateService _exchangeRateService;
 
         public ProductoController(IProductoService productoService,
                                   ICompraService compraService,
                                   UserManager<Usuario> userManager,
-                                  IPedidoService pedidoService)
+                                  IPedidoService pedidoService,
+                                  IExchangeRateService exchangeRateService)
+
         {
             _productoService = productoService;
             _compraService = compraService;
             _userManager = userManager;
             _pedidoService = pedidoService;
+            _exchangeRateService = exchangeRateService;
+
         }
 
         public async Task<IActionResult> Index(string searchString, int page = 1)
@@ -130,12 +135,24 @@ namespace YSA.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+            // *** NUEVA LÍNEA: Obtener la Tasa Oficial BCV ***
+            var tasaHoy = await _exchangeRateService.GetTasaToday();
+
+            // Si no hay tasa, usamos un valor por defecto (o mostramos error, mejor un valor de error)
+            if (!tasaHoy.HasValue || tasaHoy.Value <= 0)
+            {
+                TempData["ErrorMessage"] = "No se pudo obtener la tasa de cambio oficial. Intente más tarde.";
+                return RedirectToAction("Index");
+            }
+
+
             // El ViewModel se prepara correctamente
             var viewModel = new PagoViewModel
             {
                 PedidoId = pedidoId,
-                Total = pedido.Total,
-                // Nota: Asegúrate de que tu PagoViewModel tenga la propiedad Total
+                Total = pedido.Total, // Este es el total en USD
+                                      // *** NUEVA PROPIEDAD ***
+                TasaBCV = tasaHoy.Value
             };
 
             return View(viewModel);

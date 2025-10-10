@@ -10,6 +10,7 @@ using YSA.Core.Entities;
 using YSA.Core.Enums;
 using YSA.Core.Interfaces;
 using YSA.Core.Services;
+using YSA.Data.Repositories;
 using YSA.Web.Models.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -29,6 +30,7 @@ namespace YSA.Web.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IProductoService _productoService;
         private readonly IRecursoActividadService _recursoActividadService;
+        private readonly IExchangeRateService _exchangeRateService;
 
         public AdminController(ICursoService cursoService, 
             IModuloService moduloService, 
@@ -40,7 +42,8 @@ namespace YSA.Web.Controllers
             IEventoService eventoService, 
             IWebHostEnvironment hostingEnvironment, 
             IProductoService productoService,
-            IRecursoActividadService recursoActividadService)
+            IRecursoActividadService recursoActividadService,
+            IExchangeRateService exchangeRateService)
         {
             _cursoService = cursoService;
             _moduloService = moduloService;
@@ -53,15 +56,34 @@ namespace YSA.Web.Controllers
             _hostingEnvironment = hostingEnvironment;
             _productoService = productoService;
             _recursoActividadService = recursoActividadService;
+            _exchangeRateService = exchangeRateService;
         }
 
-        public IActionResult Panel()
+        [HttpGet]
+        public async Task<IActionResult> HistorialTasas()
         {
+            // 1. EL CONTROLADOR LLAMA AL SERVICIO
+            var tasas = await _exchangeRateService.GetRateHistoryAsync();
+
+            // 2. Continúa con la creación del ViewModel
+            var model = new TasaBCVHistorialViewModel
+            {
+                Tasas = tasas
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> Panel() // Lo hacemos ASÍNCRONO
+        {
+            var tasaBcv = await _exchangeRateService.GetTasaToday();
+
             var model = new DashboardViewModel
             {
-                TotalCursos = 120, // Reemplazar con datos reales
-                TotalEstudiantes = 540, // Reemplazar con datos reales
-                PedidosPendientes = 8 // Reemplazar con datos reales
+                TotalCursos = 120, 
+                TotalEstudiantes = 540,
+                PedidosPendientes = 8, 
+                TasaBCV = tasaBcv
             };
             return View(model);
         }

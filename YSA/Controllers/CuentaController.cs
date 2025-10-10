@@ -52,7 +52,8 @@ namespace YSA.Web.Controllers
                 Email = viewModel.Email,
                 Nombre = viewModel.Nombre,
                 Apellido = viewModel.Apellido,
-                FechaCreacion = DateTime.UtcNow
+                FechaCreacion = DateTime.UtcNow,
+                UrlImagen = "/FotoPerfil/usuariopredeterminada.jpg"
             };
 
             var resultado = await _userManager.CreateAsync(usuario, viewModel.Contrasena);

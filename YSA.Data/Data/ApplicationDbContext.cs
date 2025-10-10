@@ -11,7 +11,7 @@ namespace YSA.Data.Data
             : base(options)
         {
         }
-
+        public DbSet<TasaBCV> TasasBCV { get; set; }
         public DbSet<Artista> Artistas { get; set; }
         public DbSet<Curso> Cursos { get; set; }
         public DbSet<Modulo> Modulos { get; set; }

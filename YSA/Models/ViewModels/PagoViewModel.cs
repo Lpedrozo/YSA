@@ -15,6 +15,7 @@ namespace YSA.Web.Models.ViewModels
 
         [StringLength(255)]
         public string ReferenciaPago { get; set; }
+        public decimal TasaBCV { get; set; }
 
         public IFormFile ComprobanteArchivo { get; set; }
     }

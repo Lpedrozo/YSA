@@ -1,0 +1,51 @@
+﻿@model YSA.Web.Models.ViewModels.TasaBCVHistorialViewModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "Historial de Tasa BCV";
+}
+
+<div class="container py-5">
+    <h1 class="mb-4">Historial de Tasa de Cambio (VES/USD)</h1>
+    <p class="text-muted">Tasa registrada y vigente por fecha.</p>
+
+    <div class="card shadow-sm mt-4">
+        <div class="card-body p-0">
+            <table class="table table-striped table-hover mb-0">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th style="width: 25%;">Fecha de Vigencia</th>
+                        <th style="width: 25%;">Tasa (VES por USD)</th>
+                        <th style="width: 25%;">Fecha de Registro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Tasas.Any())
+                    {
+                        @foreach (var tasa in Model.Tasas)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="badge bg-primary">@tasa.Fecha.ToShortDateString()</span>
+                                </td>
+                                <td>
+                                    <strong>@tasa.Valor.ToString("N2", CultureInfo.InvariantCulture) VES</strong>
+                                </td>
+                                <td>
+                                    <small class="text-muted">@tasa.FechaCreacion.ToString("dd/MM/yyyy h:mm tt")</small>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center text-muted py-4">
+                                No se encontraron registros de tasas de cambio. El worker debe ejecutarse primero.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

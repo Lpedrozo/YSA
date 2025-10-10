@@ -5,6 +5,8 @@
         public int PedidoId { get; set; }
         public decimal Total { get; set; }
         public List<ArticuloPedidoViewModel> Articulos { get; set; }
+        public decimal? TasaBCV { get; set; }
+
     }
 
     // Usado para mostrar cada ítem en el resumen del pedido
