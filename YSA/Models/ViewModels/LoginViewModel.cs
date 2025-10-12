@@ -14,5 +14,7 @@ namespace YSA.Web.Models.ViewModels
 
         [Display(Name = "Recordarme")]
         public bool RecordarMe { get; set; }
+        public string ReturnUrl { get; set; }
+
     }
 }

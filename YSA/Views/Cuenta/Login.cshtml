@@ -1,7 +1,12 @@
 ﻿@model YSA.Web.Models.ViewModels.LoginViewModel
+@using Microsoft.AspNetCore.Identity
+@using YSA.Core.Entities  @* Asegúrate de que este namespace sea correcto *@
+@inject SignInManager<Usuario> SignInManager
 
 @{
     ViewData["Title"] = "Iniciar Sesión";
+    // Define el returnUrl para que el login te devuelva a la página anterior o al Home.
+    ViewData["ReturnUrl"] = ViewData["ReturnUrl"] ?? Url.Content("~/");
 }
 
 <style>
@@ -169,6 +174,18 @@
         text-align: center;
     }
 
+    /* CLASES ADICIONALES PARA GOOGLE BUTTON */
+    .btn-outline-dark {
+        background-color: white;
+        color: var(--color-text-dark);
+        border: 1px solid var(--color-border);
+    }
+
+        .btn-outline-dark:hover {
+            background-color: var(--color-main-bg);
+            border-color: var(--color-text-dark);
+        }
+
     /* ------------------------------------- */
     /* MEDIA QUERY RESPONSIVE (MÓVIL/TABLET) */
     /* ------------------------------------- */
@@ -195,17 +212,6 @@
             .login-card-mono .text-center {
                 text-align: center !important;
             }
-        /* Si el diseño del panel de contenido se deja visible, se aplica lo siguiente: */
-        /*.content-panel-mono {
-                padding: 1.5rem;
-                text-align: center;
-            }
-
-            .login-card-mono {
-                border-top-left-radius: 0;
-                border-top-right-radius: 0;
-                padding: 1.5rem;
-            }*/
     }
 </style>
 
@@ -237,8 +243,37 @@
                      class="login-header-image" />
             </div>
 
+            @{
+                var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            }
+
+            @if (loginProviders.Count > 0)
+            {
+                <form asp-controller="Cuenta" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
+
+                    <div class="d-grid gap-2 mb-4">
+                        @foreach (var p in loginProviders)
+                        {
+                            <button type="submit" class="btn btn-outline-dark"
+                                    name="provider"
+                                    value="@p.Name"
+                                    title="Iniciar sesión con tu cuenta de @p.DisplayName"
+                                    style="width: 100%; display: flex; align-items: center; justify-content: center; font-weight: 600; padding: 0.6rem 1.25rem;">
+
+                                <i class="fab fa-google me-2" style="margin-right: 0.5rem;"></i>
+                                Continuar con Google
+                            </button>
+                        }
+                    </div>
+
+                    <div style="border-bottom: 1px solid var(--color-border); margin: 1.5rem 0 1rem 0;"></div>
+
+                    <p class="text-center text-muted small mb-3" style="color: var(--color-text-subtle);">O usa tu correo y contraseña</p>
+                </form>
+            }
             <form asp-controller="Cuenta" asp-action="Login" method="post" class="login-form-custom mb-3 pb-3">
                 <div asp-validation-summary="ModelOnly" class="text-danger small mb-4 text-center"></div>
+                <input type="hidden" asp-for="ReturnUrl" value="@ViewData["ReturnUrl"]" /> @* Enviamos el ReturnUrl al post *@
 
                 <div class="form-group-vertical">
                     <label asp-for="Email" class="form-label-mono">Correo electrónico</label>
@@ -252,14 +287,20 @@
                     <span asp-validation-for="Contrasena" class="text-danger small mt-1 d-block"></span>
                 </div>
 
+                <div class="form-check d-flex justify-content-between align-items-center mt-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" asp-for="RecordarMe" id="rememberMeCheckbox">
+                        <label class="form-check-label small" asp-for="RecordarMe" for="rememberMeCheckbox" style="font-weight: normal; color: var(--color-text-dark);">
+                            Recordarme
+                        </label>
+                    </div>
+                    <a href="#" class="link-mono-subtle" style="margin-top: 0;">¿Olvidaste tu contraseña?</a>
+                </div>
+
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn-mono-primary">
                         Acceder
                     </button>
-                </div>
-
-                <div class="text-center mt-3">
-                    <a href="#" class="link-mono-subtle">¿Olvidaste tu contraseña?</a>
                 </div>
 
                 <div class="form-footer-separator">
@@ -279,15 +320,13 @@
             // Se añade un estilo visual de error al input afectado
             document.querySelectorAll('[data-valmsg-for]').forEach(span => {
                 const inputId = span.getAttribute('data-valmsg-for');
-                // Buscamos el input por su ID generado por ASP.NET MVC/Core
                 const input = document.getElementById(inputId);
 
-                if (!input) return; // Salir si el input no se encuentra
+                if (!input) return;
 
                 const observer = new MutationObserver(mutations => {
                     mutations.forEach(mutation => {
                         if (mutation.type === 'childList' || mutation.type === 'characterData') {
-                            // Si el span de error contiene texto (es decir, hay un error)
                             if (span.innerHTML.trim() !== "" && span.innerHTML.trim() !== "[]") {
                                 input.classList.add('input-validation-error');
                             } else {

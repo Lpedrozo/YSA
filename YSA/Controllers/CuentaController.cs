@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using YSA.Core.Services;
 using System.Data;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
 
 namespace YSA.Web.Controllers
 {
@@ -222,6 +223,9 @@ namespace YSA.Web.Controllers
 
             return RedirectToAction(nameof(MiPerfil));
         }
+
+        // Modificación del método ChangePassword/UpdatePassword en CuentaController (o IUsuarioService)
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(UserViewModel viewModel)
@@ -231,25 +235,59 @@ namespace YSA.Web.Controllers
                 // Manejar errores de validación si es necesario, quizás redirigiendo con un modelo de error
                 return RedirectToAction(nameof(MiPerfil));
             }
-
             var usuario = await _userManager.GetUserAsync(User);
             if (usuario == null)
             {
                 return NotFound();
             }
 
-            var resultado = await _usuarioService.ChangePasswordAsync(usuario, viewModel.CurrentPassword, viewModel.NewPassword);
+            // Paso Clave: Verificar si el usuario ya tiene una contraseña local
+            var hasPassword = await _userManager.HasPasswordAsync(usuario);
+
+            IdentityResult resultado;
+
+            if (hasPassword)
+            {
+                // Caso 1: El usuario tiene contraseña local (se registró tradicionalmente o ya la había configurado).
+                // Se requiere la contraseña actual para seguridad.
+                if (string.IsNullOrEmpty(viewModel.CurrentPassword))
+                {
+                    ModelState.AddModelError(string.Empty, "Debes proporcionar tu contraseña actual para cambiarla.");
+                    return RedirectToAction(nameof(MiPerfil));
+                }
+
+                // Usamos ChangePasswordAsync, que valida la contraseña actual
+                resultado = await _userManager.ChangePasswordAsync(
+                    usuario,
+                    viewModel.CurrentPassword,
+                    viewModel.NewPassword);
+            }
+            else
+            {
+                // Caso 2: El usuario NO tiene contraseña local (se registró con Google/Facebook, etc.).
+                // NO se requiere CurrentPassword. Usamos AddPasswordAsync para crearla.
+
+                // El campo CurrentPassword de la vista será ignorado.
+                resultado = await _userManager.AddPasswordAsync(usuario, viewModel.NewPassword);
+            }
+
+            // El resto de la lógica de manejo de resultados es la misma
 
             if (resultado.Succeeded)
             {
                 await _signInManager.RefreshSignInAsync(usuario);
-                // Si el cambio de contraseña es exitoso, puedes redirigir a la misma página con un mensaje de éxito
-                return RedirectToAction(nameof(MiPerfil));
+                TempData["SuccessMessage"] = hasPassword
+                    ? "Contraseña cambiada con éxito."
+                    : "Contraseña local establecida con éxito.";
             }
-
-            foreach (var error in resultado.Errors)
+            else
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                // Manejo de errores
+                foreach (var error in resultado.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                TempData["ErrorMessage"] = "Error al procesar la contraseña.";
             }
 
             return RedirectToAction(nameof(MiPerfil));
@@ -334,6 +372,133 @@ namespace YSA.Web.Controllers
 
             return RedirectToAction(nameof(MiPerfil));
         }
+        // POST: /Cuenta/ExternalLogin
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider, string returnUrl = null)
+        {
+            // 1. Define la URL a la que Google debe devolver la respuesta (callback)
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Cuenta", new { returnUrl });
 
+            // 2. Configura las propiedades que Identity necesita para el desafío (challenge)
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+
+            // 3. Ejecuta el desafío. Esto redirige al usuario a la página de inicio de sesión de Google.
+            return new ChallengeResult(provider, properties);
+        }
+        // GET: /Cuenta/ExternalLoginCallback
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+        {
+            if (remoteError != null)
+            {
+                TempData["Error"] = $"Error del proveedor: {remoteError}";
+                return RedirectToAction(nameof(Registro));
+            }
+
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                TempData["Error"] = "Error cargando la información de inicio de sesión externa.";
+                return RedirectToAction(nameof(Registro));
+            }
+
+            // 1. Intentar iniciar sesión con el proveedor externo
+            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+            if (result.Succeeded)
+            {
+                // CASO 1: Usuario Existente (ya tiene un vínculo con Google)
+                // O: Se le permitió ingresar sin 2FA si ya lo tenía configurado.
+                return LocalRedirect(returnUrl ?? "/Home/Index");
+            }
+
+            // Si no fue exitoso y NO es porque la cuenta está bloqueada o requiere 2FA.
+            // Esto cubre los casos donde el usuario de Google es NUEVO y necesita REGISTRO.
+            if (result.IsLockedOut)
+            {
+                // Si el usuario está bloqueado por muchos intentos fallidos (aunque es raro con SSO)
+                TempData["Error"] = "La cuenta del usuario está bloqueada.";
+                return RedirectToAction(nameof(Login)); // O a la vista que maneje el bloqueo
+            }
+
+            if (result.IsNotAllowed)
+            {
+                // La cuenta no está permitida (ej. no EmailConfirmed, aunque Google ya lo confirma)
+                TempData["Error"] = "La cuenta no está permitida para iniciar sesión.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            // 2. Nuevo Usuario: Creación de la cuenta (REEMPLAZA A requiresRegistration)
+            if (result.Succeeded == false)
+            {
+                // 2.1 Extraer la información del claim de Google
+                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+
+                // **Comprobación adicional:** Verificar si el email ya existe en el sistema (posible usuario registrado manualmente).
+                var existingUser = await _userManager.FindByEmailAsync(email);
+
+                if (existingUser != null)
+                {
+                    // CASO ESPECIAL: El usuario ya existe en tu DB (por registro manual) pero no tiene el login de Google asociado.
+                    // Simplemente asocia el login de Google a la cuenta existente.
+                    var addLoginResult = await _userManager.AddLoginAsync(existingUser, info);
+                    if (addLoginResult.Succeeded)
+                    {
+                        await _signInManager.SignInAsync(existingUser, isPersistent: false, info.LoginProvider);
+                        return LocalRedirect(returnUrl ?? "/Home/Index");
+                    }
+                    // Si falla la asociación, puede ser que el login ya esté asignado a otra cuenta.
+                    TempData["Error"] = "El correo electrónico ya está registrado. Error al asociar la cuenta de Google. Contacte soporte.";
+                    return RedirectToAction(nameof(Registro));
+                }
+
+                // Si el email NO existe, procedemos a la creación de la cuenta
+                var nombre = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+                var apellido = info.Principal.FindFirstValue(ClaimTypes.Surname);
+                var pictureUrl = info.Principal.FindFirstValue("picture");
+
+                // 2.2 Crear la entidad de usuario
+                var usuario = new Usuario
+                {
+                    UserName = email,
+                    Email = email,
+                    Nombre = nombre ?? "",
+                    Apellido = apellido ?? "",
+                    FechaCreacion = DateTime.UtcNow,
+                    EmailConfirmed = true,
+                    UrlImagen = pictureUrl ?? "/FotoPerfil/usuariopredeterminada.jpg"
+                };
+
+                var createResult = await _userManager.CreateAsync(usuario);
+
+                if (createResult.Succeeded)
+                {
+                    // 2.3 Asociar el inicio de sesión externo (Google) con el nuevo usuario
+                    createResult = await _userManager.AddLoginAsync(usuario, info);
+
+                    if (createResult.Succeeded)
+                    {
+                        // 2.4 Asignar el rol por defecto (Estudiante)
+                        // Asegúrate de que este rol exista en tu base de datos
+                        await _userManager.AddToRoleAsync(usuario, "Estudiante");
+
+                        // 2.5 Iniciar sesión
+                        await _signInManager.SignInAsync(usuario, isPersistent: false, info.LoginProvider);
+                        return LocalRedirect(returnUrl ?? "/Home/Index");
+                    }
+                }
+
+                // Manejo de errores de creación
+                TempData["Error"] = createResult.Errors.Any() ? createResult.Errors.First().Description : "Error desconocido al crear la cuenta con Google.";
+                return RedirectToAction(nameof(Registro));
+            }
+
+            // Si el flujo no cae en Succeeded ni en las demás condiciones, devuelve un error genérico.
+            TempData["Error"] = "Fallo al procesar el inicio de sesión externo (Resultado desconocido).";
+            return RedirectToAction(nameof(Registro));
+        }
     }
 }

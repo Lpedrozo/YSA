@@ -9,6 +9,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using Microsoft.AspNetCore.Authentication; // <-- Esta es la clave
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -50,6 +51,15 @@ builder.Services.AddSession(options =>
 builder.Services.AddIdentity<Usuario, Rol>()
    .AddEntityFrameworkStores<ApplicationDbContext>()
    .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        options.ClientId = configuration["Authentication:Google:ClientId"]!;
+        options.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
+        options.Scope.Add("profile");
+        options.ClaimActions.MapJsonKey("picture", "picture", "url");
+    });
 
 // Agrega los servicios de MVC (Controladores y Vistas)
 builder.Services.AddControllersWithViews();

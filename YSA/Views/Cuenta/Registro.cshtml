@@ -1,7 +1,13 @@
 ﻿@model YSA.Web.Models.ViewModels.RegistroViewModel
+@using Microsoft.AspNetCore.Identity
+@using YSA.Core.Entities
+@inject SignInManager<Usuario> SignInManager
+@* Asegúrate de que tu clase 'Usuario' sea accesible aquí. Si está en otro namespace, añádelo con @using *@
 
 @{
     ViewData["Title"] = "Registro de Estudiantes";
+    // Define el returnUrl para que Google te devuelva a la vista correcta después del login
+    ViewData["ReturnUrl"] = ViewData["ReturnUrl"] ?? Url.Content("~/");
 }
 
 <style>
@@ -175,6 +181,18 @@
         text-align: center;
     }
 
+    /* CLASES ADICIONALES PARA GOOGLE BUTTON */
+    .btn-outline-dark {
+        background-color: white;
+        color: var(--color-text-dark);
+        border: 1px solid var(--color-border);
+    }
+
+        .btn-outline-dark:hover {
+            background-color: var(--color-main-bg);
+            border-color: var(--color-text-dark);
+        }
+
     /* ------------------------------------- */
     /* MEDIA QUERY RESPONSIVE (MÓVIL/TABLET) */
     /* ------------------------------------- */
@@ -198,10 +216,6 @@
             border-radius: 16px;
             padding: 1.5rem;
         }
-        /* Aseguramos que las columnas de Nombre y Apellido se apilen.
-               Bootstrap lo hace con col-md-6, pero es buena práctica forzarlo.
-               Aquí no necesitamos cambiar nada en el CSS porque col-md-6 se convierte en col-12 automáticamente en sm y xs.
-            */
     }
 </style>
 
@@ -235,6 +249,42 @@
                      class="register-header-image" />
             </div>
 
+            @{
+                // Obtiene la lista de todos los proveedores configurados (solo Google en este caso)
+                var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            }
+
+            @if (loginProviders.Count > 0)
+            {
+                <form asp-controller="Cuenta" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
+
+                    @* Mostrar errores del callback, si existen *@
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger small text-center mb-3">@TempData["Error"]</div>
+                    }
+
+                    <p class="text-center text-muted small mb-3" style="color: var(--color-text-subtle);">O regístrate con</p>
+
+                    <div class="d-grid gap-2 mb-4">
+                        @foreach (var p in loginProviders)
+                        {
+                            // p.Name será "Google"
+                            <button type="submit" class="btn btn-outline-dark"
+                                    name="provider"
+                                    value="@p.Name"
+                                    title="Registrarse usando tu cuenta de @p.DisplayName"
+                                    style="width: 100%; display: flex; align-items: center; justify-content: center; font-weight: 600; padding: 0.6rem 1.25rem;">
+
+                                <i class="fab fa-google me-2" style="margin-right: 0.5rem;"></i>
+                                Continuar con Google
+                            </button>
+                        }
+                    </div>
+
+                    <div style="border-bottom: 1px solid var(--color-border); margin: 1.5rem 0;"></div>
+                </form>
+            }
             <form asp-controller="Cuenta" asp-action="Registro" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger small mb-2 text-center"></div>
 
@@ -311,6 +361,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('[data-valmsg-for]').forEach(span => {
                 const inputId = span.getAttribute('data-valmsg-for');
+                // IMPORTANTE: Asegúrate de que el ID del input sea el mismo que el valor de asp-for (ej. id="Nombre")
                 const input = document.getElementById(inputId);
 
                 if (!input) return;
@@ -335,6 +386,7 @@
             });
         });
     </script>
+    @* Asegúrate de incluir los scripts de validación, que son esenciales *@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

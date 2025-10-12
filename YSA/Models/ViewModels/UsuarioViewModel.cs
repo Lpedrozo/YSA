@@ -24,7 +24,7 @@ namespace YSA.Web.Models.ViewModels
         public string? UrlImagen { get; set; }
         public IFormFile? File { get; set; }
 
-        public IEnumerable<ProductoViewModel> ProductosComprados { get; set; } // <--- Nueva propiedad
+        public IEnumerable<ProductoViewModel> ProductosComprados { get; set; } = new List<ProductoViewModel>();
 
     }
     public class PerfilViewModel
@@ -129,5 +129,11 @@ namespace YSA.Web.Models.ViewModels
         public IEnumerable<ArtistaFoto> Portafolio { get; set; } = new List<ArtistaFoto>();
         public IEnumerable<Curso> Cursos { get; set; } = new List<Curso>();
         // Si tienes cursos, los agregas aquí
+    }
+    public class ForgotPasswordViewModel
+    {
+        [Required(ErrorMessage = "El correo electrónico es obligatorio.")]
+        [EmailAddress(ErrorMessage = "El formato del correo electrónico no es válido.")]
+        public string Email { get; set; }
     }
 }
