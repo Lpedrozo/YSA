@@ -575,7 +575,7 @@
 									{
 										// --- Entrega Existente ---
 										<a href="@actividad.EntregaEstudiante.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-primary me-2">
-											<i class="fas fa-file-alt me-1"></i> Ver mi Aarchivo
+											<i class="fas fa-file-alt me-1"></i> Ver mi Archivo
 										</a>
 
 										@if (actividad.EntregaEstudiante.Estado == "Calificado")
@@ -753,8 +753,6 @@
 		</div>
 	</div>
 </div>
-
-
 @section Scripts {
 	<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 	<script>
@@ -781,14 +779,26 @@
 
 				// 3. Actualizar el reproductor
 				if (videoUrl) {
-					mainCourseImage.classList.add('d-none');
-					mainVideoFrame.classList.remove('d-none');
 
 					// Extracción del ID de YouTube
-					const videoIdMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([\w-]{11})(?:\S+)?/);
-					const videoId = videoIdMatch ? videoIdMatch[1] : videoUrl;
-					const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`;
-					mainVideoFrame.src = embedUrl;
+					// MODIFICADO: Se añadió '|shorts\/' al patrón para capturar URLs de YouTube Shorts.
+					const videoIdMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})(?:\S+)?/);
+					const videoId = videoIdMatch ? videoIdMatch[1] : null;
+
+					if (videoId) {
+						// Si se encuentra un ID válido, incrustar
+						mainCourseImage.classList.add('d-none');
+						mainVideoFrame.classList.remove('d-none');
+						const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`;
+						mainVideoFrame.src = embedUrl;
+					} else {
+						// Si no se pudo obtener un ID de 11 caracteres (URL inválida), mostrar la imagen
+						mainVideoFrame.classList.add('d-none');
+						mainCourseImage.classList.remove('d-none');
+						mainVideoFrame.src = ''; // Limpiar el iframe
+						console.error("URL de YouTube inválida o no reconocida:", videoUrl);
+					}
+
 				} else {
 					// Si no hay video, mostrar la imagen y un mensaje.
 					mainVideoFrame.classList.add('d-none');
@@ -870,7 +880,7 @@
 			}
 
 			// ----------------------------------------------------------------------
-			// LÓGICA DE MODALES DE ACTIVIDADES (NUEVO)
+			// LÓGICA DE MODALES DE ACTIVIDADES
 			// ----------------------------------------------------------------------
 
 			// Modal de Entrega (Subir/Reemplazar)
