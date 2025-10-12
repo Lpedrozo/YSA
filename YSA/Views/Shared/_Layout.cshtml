@@ -25,70 +25,102 @@
 			top: 0;
 			left: 0;
 			width: 100%;
-			background-color: black;
+			background-color: white;
+			/* Padding más compacto para el header general */
 			padding: 1rem 1rem;
 			z-index: 1040;
 			transition: all 0.3s ease-in-out;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 		}
 
 			.main-header.scroll-header-shrink {
+				/* Padding aún más compacto para el header encogido */
 				padding: 0.5rem 1rem;
-				background-color: rgba(0, 0, 0, 0.9);
+				background-color: rgba(255, 255, 255, 0.9);
 				backdrop-filter: blur(5px);
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 			}
 
-		/* Botón de Hamburguesa Blanco */
+		/* Botón de Hamburguesa */
 		.navbar-toggler {
-			border-color: rgba(255, 255, 255, 0.3);
-			/* CORRECCIÓN Z-INDEX: Asegura que el botón esté sobre el logo centrado */
+			border: none !important;
+			background-color: transparent !important;
+			padding: 0.5rem 0.75rem;
 			z-index: 1050;
 			position: relative;
 		}
 
 		.navbar-toggler-icon {
-			background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+			background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 0, 0, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
 		}
 
-		/* Estilos del Logo Central */
+		/* Estilos del Logo (ahora para la imagen) */
 		.header-logo {
-			font-size: 2rem;
-			font-weight: bold;
-			color: white;
+			color: black;
 			text-decoration: none;
-			transition: font-size 0.3s ease-in-out;
-		}
-
-		.main-header.scroll-header-shrink .header-logo {
-			font-size: 1.5rem;
-		}
-
-		/* Centrar el logo en todas las vistas */
-		.navbar-brand-wrapper {
+			transition: all 0.3s ease-in-out;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			width: 100%;
-			position: absolute;
-			left: 0;
-			/* CORRECCIÓN Z-INDEX: Aseguramos que el logo centrado esté debajo del toggler */
-			z-index: 1049;
+			/* TAMAÑO DE ESCRITORIO (SE MANTIENE GRANDE) */
+			height: 90px;
 		}
 
-		@@media (min-width: 992px) {
-			.navbar-brand-wrapper {
-				display: none;
+			/* Estilo para la imagen del logo */
+			.header-logo img {
+				height: 100%;
+				width: auto;
+				max-width: 100%;
+				transition: height 0.3s ease-in-out;
 			}
 
+		/* Ajuste del tamaño del logo cuando el header se encoge */
+		.main-header.scroll-header-shrink .header-logo {
+			/* TAMAÑO DE ESCRITORIO SHRINK (SE MANTIENE GRANDE) */
+			height: 80px;
+		}
+
+			.main-header.scroll-header-shrink .header-logo img {
+				height: 100%;
+			}
+
+		/* Centrar el logo en escritorio (d-lg-block) */
+		.header-logo.navbar-brand-center {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			z-index: 1050;
+		}
+
+		/* Ocultar wrapper y logo en móvil para que no choque con el menú */
+		@@media (max-width: 991.98px) {
+			/* AJUSTE CLAVE: Hacemos que el container use flexbox para alinear los extremos */
+			.container-fluid {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			/* Ocultamos el logo centrado de escritorio en móvil */
 			.header-logo.navbar-brand-center {
-				position: absolute;
-				left: 50%;
-				transform: translateX(-50%);
-				z-index: 1050;
+				display: none !important;
+			}
+			/* Hacemos visible el logo de la derecha en móvil y definimos su tamaño */
+			.header-logo.navbar-brand-mobile {
+				/* Sobrescribimos el d-none inicial */
+				display: flex !important;
+				/* MODIFICADO: TAMAÑO INTERMEDIO */
+				height: 70px;
+			}
+			/* Ajustamos el tamaño en shrink para el logo móvil */
+			.main-header.scroll-header-shrink .header-logo.navbar-brand-mobile {
+				/* MODIFICADO: TAMAÑO INTERMEDIO SHRINK */
+				height: 60px;
 			}
 		}
 
 		/* Estilos de los enlaces de navegación */
 		.header-nav-link {
+			color: black !important;
 			transition: color 0.3s ease, background-color 0.3s ease;
 		}
 
@@ -96,28 +128,31 @@
 				color: #3498db !important;
 			}
 
-		/* --- ESTILOS DE MENÚS DESPLEGABLES (Mantenidos) --- */
+		/* --- ESTILOS DE MENÚS DESPLEGABLES --- */
 
 		.dropdown-menu-dark {
-			background-color: black;
-			border: 1px solid rgba(255, 255, 255, 0.1);
+			background-color: white;
+			border: 1px solid rgba(0, 0, 0, 0.1);
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 		}
 
 			.dropdown-menu-dark .dropdown-item {
-				color: white;
+				color: black;
 			}
 
 				.dropdown-menu-dark .dropdown-item:hover,
 				.dropdown-menu-dark .dropdown-item:focus {
-					background-color: #2c3e50;
+					background-color: #f8f9fa;
 					color: #3498db;
 				}
 
+		/* Ajustes específicos para el dropdown de Mi Aprendizaje */
 		#miAprendizajeDropdown + div.dropdown-menu {
 			min-width: 300px;
 			padding: 0.5rem;
-			background-color: #2c3e50;
-			border: 1px solid rgba(255, 255, 255, 0.1);
+			background-color: #f8f9fa;
+			border: 1px solid rgba(0, 0, 0, 0.1);
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 		}
 
 		@@media (min-width: 992px) {
@@ -129,7 +164,7 @@
 
 		#miAprendizajeDropdown + div.dropdown-menu .dropdown-item {
 			padding: 0.5rem 1rem;
-			color: white;
+			color: black;
 			border-radius: 5px;
 			margin-bottom: 5px;
 		}
@@ -140,23 +175,16 @@
 			}
 
 		#miAprendizajeDropdown + div.dropdown-menu small {
-			color: #bdc3c7 !important;
+			color: #6c757d !important;
 		}
-
-		#miAprendizajeDropdown + div.dropdown-menu .btn-primary {
-			background-color: #3498db !important;
-			border-color: #3498db !important;
-			color: white !important;
-			font-weight: bold;
-		}
-
 
 		/* --- CONTENIDO PRINCIPAL Y FOOTER --- */
 		body {
 			display: flex;
 			flex-direction: column;
 			min-height: 100vh;
-			padding-top: 5rem;
+			/* Ajuste del padding-top para el header más compacto en móvil */
+			padding-top: 8rem;
 		}
 
 		.main-content {
@@ -218,30 +246,38 @@
 
 <body>
 
-	<header class="main-header navbar navbar-expand-lg navbar-dark">
+	<header class="main-header navbar navbar-expand-lg navbar-light">
 		<div class="container-fluid">
 
+			@* Botón de Menú (Izquierda) *@
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 
-			<div class="navbar-brand-wrapper d-lg-none">
-				<a class="header-logo navbar-brand" asp-controller="Home" asp-action="Index">YSA</a>
-			</div>
+			@* Logo para escritorio (Centrado, oculto en móvil) *@
+			<a class="header-logo navbar-brand navbar-brand-center d-none d-lg-block" asp-controller="Home" asp-action="Index">
+				<img src="~/diseño/logoYSA.png" alt="Logo YoSoyArte" />
+			</a>
 
-			<a class="header-logo navbar-brand navbar-brand-center d-none d-lg-block" asp-controller="Home" asp-action="Index">YSA</a>
+			@* Logo para móvil (Derecha, visible solo en móvil) *@
+			<a class="header-logo navbar-brand navbar-brand-mobile d-none" asp-controller="Home" asp-action="Index">
+				<img src="~/diseño/logoYSA.png" alt="Logo YoSoyArte" />
+			</a>
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 					<li class="nav-item">
-						<a class="nav-link text-white header-nav-link" asp-controller="Curso" asp-action="Index"><i class="fas fa-book-open me-2"></i>Cursos</a>
+						<a class="nav-link text-dark header-nav-link" asp-controller="Home" asp-action="Index"><i class="fas fa-home me-2"></i>Inicio</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link text-white header-nav-link" asp-controller="Revista" asp-action="Index"><i class="fas fa-newspaper me-2"></i>Revista</a>
+						<a class="nav-link text-dark header-nav-link" asp-controller="Curso" asp-action="Index"><i class="fas fa-book-open me-2"></i>Cursos</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link text-white header-nav-link" asp-controller="Producto" asp-action="Index"><i class="fas fa-file-pdf me-2"></i>PDFs</a>
+						<a class="nav-link text-dark header-nav-link" asp-controller="Revista" asp-action="Index"><i class="fas fa-newspaper me-2"></i>Revista</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link text-dark header-nav-link" asp-controller="Producto" asp-action="Index"><i class="fas fa-file-pdf me-2"></i>Productos</a>
 					</li>
 				</ul>
 
@@ -253,8 +289,8 @@
 						@if (User.IsInRole("Estudiante"))
 						{
 							<li class="nav-item dropdown">
-								<a class="nav-link text-white header-nav-link" href="#" id="miAprendizajeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-									<i class="fas fa-graduation-cap me-2"></i>Mi Aprendizaje
+								<a class="nav-link text-dark header-nav-link" href="#" id="miAprendizajeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+									<i class="fas fa-graduation-cap me-2"></i>Mi aprendizaje
 								</a>
 								@await Component.InvokeAsync("CursosUsuario")
 							</li>
@@ -264,8 +300,8 @@
 						@if (User.IsInRole("Administrador"))
 						{
 							<li class="nav-item">
-								<a class="nav-link text-white header-nav-link" asp-controller="Admin" asp-action="Panel" role="button">
-									<i class="fas fa-chart-bar me-2"></i>Panel de Admin
+								<a class="nav-link text-dark header-nav-link" asp-controller="Admin" asp-action="Panel" role="button">
+									<i class="fas fa-chart-bar me-2"></i>Panel de admin
 								</a>
 							</li>
 						}
@@ -274,19 +310,19 @@
 						@if (User.IsInRole("Artista"))
 						{
 							<li class="nav-item">
-								<a class="nav-link text-white header-nav-link" asp-controller="Artista" asp-action="GestionarPortafolio" role="button">
-									<i class="fas fa-file-alt me-2"></i>Mi Portafolio
+								<a class="nav-link text-dark header-nav-link" asp-controller="Artista" asp-action="GestionarPortafolio" role="button">
+									<i class="fas fa-file-alt me-2"></i>Mi portafolio
 								</a>
 							</li>
 						}
 
 						@* Menú Desplegable de Mi Cuenta *@
 						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle text-white header-nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								<i class="fas fa-user-circle me-2"></i>Mi Cuenta
+							<a class="nav-link dropdown-toggle text-dark header-nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="fas fa-user-circle me-2"></i>Mi cuenta
 							</a>
 							<ul class="dropdown-menu dropdown-menu-dark dropdown-menu-lg-end" aria-labelledby="navbarDropdown">
-								<li><a class="dropdown-item" asp-controller="Cuenta" asp-action="MiPerfil">Mi Perfil</a></li>
+								<li><a class="dropdown-item" asp-controller="Cuenta" asp-action="MiPerfil">Mi perfil</a></li>
 
 								@* Ítems de Artista movidos aquí para no saturar la navegación principal en móvil *@
 								@if (User.IsInRole("Artista"))
@@ -296,7 +332,7 @@
 								}
 
 								<li><hr class="dropdown-divider"></li>
-								<li><a class="dropdown-item" href="#" onclick="document.getElementById('logoutForm').submit();">Cerrar Sesión</a></li>
+								<li><a class="dropdown-item" href="#" onclick="document.getElementById('logoutForm').submit();">Cerrar sesión</a></li>
 							</ul>
 						</li>
 						<form asp-controller="Cuenta" asp-action="Logout" method="post" id="logoutForm" style="display: none;"></form>
@@ -305,10 +341,10 @@
 					{
 						@* Enlaces de Login y Registro *@
 						<li class="nav-item">
-							<a class="nav-link text-white header-nav-link" asp-controller="Cuenta" asp-action="Login"><i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión</a>
+							<a class="nav-link text-dark header-nav-link" asp-controller="Cuenta" asp-action="Login"><i class="fas fa-sign-in-alt me-2"></i>Iniciar sesión</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-white header-nav-link" asp-controller="Cuenta" asp-action="Registro"><i class="fas fa-user-plus me-2"></i>Registrarse</a>
+							<a class="nav-link text-dark header-nav-link" asp-controller="Cuenta" asp-action="Registro"><i class="fas fa-user-plus me-2"></i>Registrarse</a>
 						</li>
 					}
 				</ul>
@@ -345,7 +381,7 @@
 	@{
 		var mensaje = "Hola, me gustaría recibir asistencia sobre:.";
 		var mensajeCodificado = System.Web.HttpUtility.UrlEncode(mensaje);
-		var telefono = "584241544523";
+		var telefono = "584121463374";
 		var urlWhatsapp = $"https://wa.me/{telefono}?text={mensajeCodificado}";
 	}
 	<a href="@urlWhatsapp" class="whatsapp-float" target="_blank" title="Asistencia por WhatsApp">

@@ -20,20 +20,20 @@
 
 <div class="container mt-5 mb-5 pb-5">
 
-    <h1>Recursos y Actividades para: @entidadNombre</h1>
+    <h1>Recursos y actividades para: @entidadNombre</h1>
     <p class="text-muted">Añade contenido interactivo o de apoyo a este @tipoEntidad.</p>
 
     <div class="d-flex flex-wrap justify-content-start align-items-center mb-4">
         @if (tipoEntidad == "Curso")
         {
             <a asp-action="GestionarCursos" class="btn btn-secondary me-3 mb-2">
-                <i class="fas fa-arrow-left me-2"></i> Volver a Cursos
+                <i class="fas fa-arrow-left me-2"></i> Volver a cursos
             </a>
         }
         @if (tipoEntidad == "Modulo")
         {
             <a asp-action="GestionarModulos" asp-route-cursoId="@cursoId" class="btn btn-secondary me-3 mb-2">
-                <i class="fas fa-arrow-left me-2"></i> Volver a Módulos
+                <i class="fas fa-arrow-left me-2"></i> Volver a módulos
             </a>
         }
         @if (tipoEntidad == "Leccion")
@@ -44,7 +44,7 @@
         }
 
         <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#crearRecursoModal">
-            <i class="fas fa-plus-circle me-2"></i> Nuevo Recurso/Actividad
+            <i class="fas fa-plus-circle me-2"></i> Nuevo recurso/actividad
         </button>
     </div>
     <hr />
@@ -66,7 +66,7 @@
     }
     else
     {
-        <div class="alert alert-light">Total de Recursos/Actividades: @Model.Count</div>
+        <div class="alert alert-light">Total de recursos/actividades: @Model.Count</div>
 
         <div id="lista-recursos" class="list-group mb-5 pb-5">
             @foreach (var recurso in Model.OrderBy(r => r.Id))
@@ -83,7 +83,7 @@
                                 Tipo: <strong>@recurso.TipoRecurso</strong>
                                 @if (recurso.RequiereEntrega)
                                 {
-                                    <span class="badge bg-warning text-dark ms-2">Requiere Entrega</span>
+                                    <span class="badge bg-warning text-dark ms-2">Requiere entrega</span>
                                 }
                             </small>
                             @if (!string.IsNullOrWhiteSpace(recurso.Url))
@@ -116,7 +116,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="crearRecursoModalLabel">Crear Nuevo Recurso o Actividad</h5>
+                <h5 class="modal-title" id="crearRecursoModalLabel">Crear nuevo recurso o actividad</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formCrearRecurso" asp-action="CrearRecursoActividad" method="post" enctype="multipart/form-data" novalidate>
@@ -128,14 +128,14 @@
                     <input type="hidden" name="EntidadId" value="@entidadId" />
 
                     <div class="form-group mb-3">
-                        <label for="Crear_Titulo">Título del Recurso/Actividad</label>
+                        <label for="Crear_Titulo">Título del recurso/actividad</label>
                         <input type="text" id="Crear_Titulo" name="Titulo" class="form-control" required maxlength="255" />
                     </div>
 
                     <div class="form-group mb-3">
-                        <label for="Crear_TipoRecurso">Tipo de Recurso</label>
+                        <label for="Crear_TipoRecurso">Tipo de recurso</label>
                         <select id="Crear_TipoRecurso" name="TipoRecurso" class="form-select" required>
-                            <option value="" disabled selected>-- Seleccione Tipo --</option>
+                            <option value="" disabled selected>-- Seleccione tipo --</option>
                             @foreach (var item in tiposRecurso)
                             {
                                 <option value="@item.Text">@item.Text</option>
@@ -145,12 +145,12 @@
 
                     <div id="seccion-url-archivo">
                         <div class="form-group mb-3">
-                            <label for="Crear_Url">URL o Enlace Externo (si aplica)</label>
+                            <label for="Crear_Url">URL o enlace externo (si aplica)</label>
                             <input type="url" id="Crear_Url" name="Url" class="form-control" />
                         </div>
 
                         <div class="form-group mb-3">
-                            <label for="Crear_Archivo">Subir Archivo (PDF, ZIP, etc.)</label>
+                            <label for="Crear_Archivo">Subir archivo (PDF, ZIP, etc.)</label>
                             <input type="file" id="Crear_Archivo" name="Archivo" class="form-control" accept=".pdf,.doc,.docx,.zip,.rar" />
                             <small class="form-text text-muted">Deja vacío si usas un Enlace/URL.</small>
                         </div>
@@ -163,7 +163,7 @@
 
                     <div class="form-check">
                         <input type="checkbox" id="Crear_RequiereEntrega" name="RequiereEntrega" class="form-check-input" value="true">
-                        <label class="form-check-label" for="Crear_RequiereEntrega">Requiere Entrega del Estudiante (Marcar para Actividades Evaluables)</label>
+                        <label class="form-check-label" for="Crear_RequiereEntrega">Requiere entrega del estudiante (Marcar para actividades evaluables)</label>
                     </div>
 
                 </div>
@@ -180,11 +180,10 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editarRecursoModalLabel">Editar Recurso o Actividad</h5>
+                <h5 class="modal-title" id="editarRecursoModalLabel">Editar recurso o actividad</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formEditarRecurso" asp-action="EditarRecursoActividad" method="post" enctype="multipart/form-data" novalidate>
-                {{-- CAMBIO: novalidate --}}
                 @Html.AntiForgeryToken()
                 <div class="modal-body">
                     <div id="editar-recurso-validation-errors" class="alert alert-danger d-none"></div>
@@ -194,14 +193,14 @@
                     <input type="hidden" id="Editar_EntidadId" name="EntidadId" value="" />
 
                     <div class="form-group mb-3">
-                        <label for="Editar_Titulo">Título del Recurso/Actividad</label>
+                        <label for="Editar_Titulo">Título del recurso/actividad</label>
                         <input type="text" id="Editar_Titulo" name="Titulo" class="form-control" required maxlength="255" />
                     </div>
 
                     <div class="form-group mb-3">
                         <label for="Editar_TipoRecurso">Tipo de Recurso</label>
                         <select id="Editar_TipoRecurso" name="TipoRecurso" class="form-select" required>
-                            <option value="" disabled selected>-- Seleccione Tipo --</option>
+                            <option value="" disabled selected>-- Seleccione ripo --</option>
                             @foreach (var item in tiposRecurso)
                             {
                                 <option value="@item.Text">@item.Text</option>
@@ -211,12 +210,12 @@
 
                     <div id="seccion-url-archivo-editar">
                         <div class="form-group mb-3">
-                            <label for="Editar_Url">URL o Enlace Externo (si aplica)</label>
+                            <label for="Editar_Url">URL o enlace externo (si aplica)</label>
                             <input type="text" id="Editar_Url" name="Url" class="form-control" />
                         </div>
 
                         <div class="form-group mb-3">
-                            <label for="Editar_Archivo">Reemplazar Archivo</label>
+                            <label for="Editar_Archivo">Reemplazar archivo</label>
                             <input type="file" id="Editar_Archivo" name="Archivo" class="form-control" accept=".pdf,.doc,.docx,.zip,.rar" />
                             <small class="form-text text-muted">Subir un nuevo archivo reemplazará el actual.</small>
                         </div>
@@ -229,13 +228,13 @@
 
                     <div class="form-check">
                         <input type="checkbox" id="Editar_RequiereEntrega" name="RequiereEntrega" class="form-check-input" value="true">
-                        <label class="form-check-label" for="Editar_RequiereEntrega">Requiere Entrega del Estudiante</label>
+                        <label class="form-check-label" for="Editar_RequiereEntrega">Requiere entrega del estudiante</label>
                     </div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="btnGuardarEdicion">Guardar Cambios</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardarEdicion">Guardar cambios</button>
                 </div>
             </form>
         </div>

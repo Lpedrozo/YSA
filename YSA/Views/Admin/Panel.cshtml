@@ -1,6 +1,6 @@
 ﻿@model YSA.Web.Models.ViewModels.DashboardViewModel
 @{
-    ViewData["Title"] = "Panel de Administración";
+    ViewData["Title"] = "Panel de administración";
 }
 
 <style>
@@ -147,7 +147,7 @@
 
 <div class="dashboard-container py-5 px-3 pb-5 mb-5">
 
-    <h1 class="mb-5 mt-3">Panel de Administración</h1>
+    <h1 class="mb-5 mt-3">Panel de administración</h1>
 
     <div class="row row-cols-1 row-cols-md-4 g-4 mb-5 pb-3">
 
@@ -164,7 +164,7 @@
                             {
                                 <div class="metric-value" style="font-size: 1.5rem;">Error</div>
                             }
-                            <div class="metric-label">Tasa Oficial BCV (VES/USD)</div>
+                            <div class="metric-label">Tasa oficial BCV (VES/USD)</div>
                         </div>
                         <i class="fas fa-money-bill-wave metric-icon"></i>
                     </div>
@@ -177,7 +177,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="metric-value">@Model.TotalCursos</div>
-                        <div class="metric-label">Total Cursos</div>
+                        <div class="metric-label">Total cursos</div>
                     </div>
                     <i class="fas fa-book-open metric-icon"></i>
                 </div>
@@ -189,7 +189,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="metric-value">@Model.TotalEstudiantes</div>
-                        <div class="metric-label">Estudiantes Activos</div>
+                        <div class="metric-label">Estudiantes activos</div>
                     </div>
                     <i class="fas fa-users metric-icon"></i>
                 </div>
@@ -201,7 +201,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="metric-value">@Model.PedidosPendientes</div>
-                        <div class="metric-label">Pedidos Pendientes</div>
+                        <div class="metric-label">Pedidos pendientes</div>
                     </div>
                     <i class="fas fa-exclamation-triangle metric-icon"></i>
                 </div>
@@ -209,14 +209,14 @@
         </div>
 
     </div>
-    <h2 class="mb-4 pt-3">Accesos Rápidos</h2>
+    <h2 class="mb-4 pt-3">Accesos rápidos</h2>
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 pb-5 mb-5">
         <div class="col">
             <a href="@Url.Action("GestionarCursos", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
                     <i class="fas fa-graduation-cap action-card-icon"></i>
-                    <div class="action-card-title">Gestionar Cursos</div>
+                    <div class="action-card-title">Gestionar cursos</div>
                     <p class="card-text small text-muted mt-1">Crear, editar o administrar la estructura de los cursos.</p>
                 </div>
             </a>
@@ -225,7 +225,7 @@
             <a href="@Url.Action("GestionarArtistas", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
                     <i class="fas fa-paint-brush action-card-icon"></i>
-                    <div class="action-card-title">Gestionar Artistas</div>
+                    <div class="action-card-title">Gestionar artistas</div>
                     <p class="card-text small text-muted mt-1">Administrar perfiles de profesores y colaboradores.</p>
                 </div>
             </a>
@@ -234,7 +234,7 @@
             <a href="@Url.Action("GestionarProductos", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
                     <i class="fas fa-file-pdf action-card-icon"></i>
-                    <div class="action-card-title">Gestionar Productos Digitales</div>
+                    <div class="action-card-title">Gestionar productos digitales</div>
                     <p class="card-text small text-muted mt-1">Administrar la librería de recursos descargables (PDFs).</p>
                 </div>
             </a>
@@ -243,7 +243,7 @@
             <a href="@Url.Action("GestionarEventos", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
                     <i class="fas fa-calendar-alt action-card-icon"></i>
-                    <div class="action-card-title">Gestionar Eventos</div>
+                    <div class="action-card-title">Gestionar eventos</div>
                     <p class="card-text small text-muted mt-1">Crear y actualizar clases en vivo, talleres o webinars.</p>
                 </div>
             </a>
@@ -252,7 +252,7 @@
             <a href="@Url.Action("GestionarEstudiantes", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
                     <i class="fas fa-user-friends action-card-icon"></i>
-                    <div class="action-card-title">Gestionar Estudiantes</div>
+                    <div class="action-card-title">Gestionar estudiantes</div>
                     <p class="card-text small text-muted mt-1">Ver perfiles, permisos y actividad de usuarios.</p>
                 </div>
             </a>
@@ -261,7 +261,7 @@
             <a href="@Url.Action("GestionarCategorias", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
                     <i class="fas fa-folder action-card-icon"></i>
-                    <div class="action-card-title">Gestionar Categorías</div>
+                    <div class="action-card-title">Gestionar categorías</div>
                     <p class="card-text small text-muted mt-1">Organizar y clasificar el contenido de la plataforma (cursos, productos).</p>
                 </div>
             </a>
@@ -270,7 +270,7 @@
             <a href="@Url.Action("PedidosPendientes", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
                     <i class="fas fa-receipt action-card-icon"></i>
-                    <div class="action-card-title">Historial y Pagos</div>
+                    <div class="action-card-title">Historial y pagos</div>
                     <p class="card-text small text-muted mt-1">Revisar el estado y detalle de todas las transacciones.</p>
                 </div>
             </a>
@@ -279,7 +279,7 @@
             <a href="@Url.Action("HistorialTasas", "Admin")" class="card action-card text-center p-4">
                 <div class="card-body">
                     <i class="fas fa-chart-line action-card-icon"></i>
-                    <div class="action-card-title">Historial de Tasas</div>
+                    <div class="action-card-title">Historial de tasas</div>
                     <p class="card-text small text-muted mt-1">Ver la evolución y registros pasados de la tasa BCV.</p>
                 </div>
             </a>

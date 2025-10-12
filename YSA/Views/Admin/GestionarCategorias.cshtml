@@ -25,15 +25,15 @@
 </style>
 
 <div class="container mt-4 mb-5">
-    <h1 class="text-center mb-4">Gestión de Categorías</h1>
+    <h1 class="text-center mb-4">Gestión de categorías</h1>
     <hr />
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <a asp-action="Panel" asp-controller="Admin" class="btn btn-dark btn-lg">
-            <i class="fas fa-arrow-left me-2"></i> Regresar al Panel
+        <a asp-action="Panel" asp-controller="Admin" class="btn btn-dark">
+            <i class="fas fa-arrow-left me-2"></i> Regresar al panel
         </a>        
-        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">
-            <i class="fas fa-plus-circle"></i> Nueva Categoría
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearCategoriaModal">
+            <i class="fas fa-plus-circle"></i> Nueva categoría
         </button>
     </div>
 
@@ -57,7 +57,7 @@
                             </button>
                             <form asp-action="EliminarCategoria" asp-route-id="@categoria.Id" method="post" class="d-inline eliminar-form">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-danger eliminar-btn" title="Eliminar Categoría">
+                                <button type="submit" class="btn btn-sm btn-danger eliminar-btn" title="Eliminar categoría">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </form>
@@ -73,7 +73,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="crearCategoriaModalLabel">Crear Categoría</h5>
+                <h5 class="modal-title" id="crearCategoriaModalLabel">Crear categoría</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formCrearCategoria" asp-action="CrearCategoria" method="post">
@@ -81,7 +81,7 @@
                     <div id="crear-validation-errors" class="alert alert-danger d-none"></div>
                     @Html.AntiForgeryToken()
                     <div class="form-group mb-3">
-                        <label for="Crear_NombreCategoria" class="form-label">Nombre de la Categoría</label>
+                        <label for="Crear_NombreCategoria" class="form-label">Nombre de la categoría</label>
                         <input type="text" id="Crear_NombreCategoria" name="NombreCategoria" class="form-control" required maxlength="100" />
                     </div>
                 </div>
@@ -98,7 +98,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="editarCategoriaModalLabel">Editar Categoría</h5>
+                <h5 class="modal-title" id="editarCategoriaModalLabel">Editar categoría</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formEditarCategoria" asp-action="EditarCategoria" method="post">
@@ -107,7 +107,7 @@
                     @Html.AntiForgeryToken()
                     <input type="hidden" id="Editar_Id" name="Id" />
                     <div class="form-group mb-3">
-                        <label for="Editar_NombreCategoria" class="form-label">Nombre de la Categoría</label>
+                        <label for="Editar_NombreCategoria" class="form-label">Nombre de la categoría</label>
                         <input type="text" id="Editar_NombreCategoria" name="NombreCategoria" class="form-control" required maxlength="100" />
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 ﻿@model YSA.Web.Models.ViewModels.ConfirmacionPagoViewModel
 @using System.Globalization;
 @{
-    ViewData["Title"] = "Confirmar Pago";
+    ViewData["Title"] = "Confirmar pago";
 
     // *** NUEVO BLOQUE RAZOR PARA CÁLCULO Y CULTURA ***
     // Definir culturas para formatear los números (punto decimal para USD, coma para VES)
@@ -131,7 +131,7 @@
 <div class="container py-5 mb-5 pb-5">
     <div class="row justify-content-center">
         <div class="col-12 text-center mb-4">
-            <h1 class="text-center">Confirmar tu Compra</h1>
+            <h1 class="text-center">Confirmar tu compra</h1>
             <p class="lead">Revisa tu pedido y registra tu pago para finalizar la compra.</p>
         </div>
     </div>
@@ -156,14 +156,14 @@
         <div class="col-md-6 mb-4 order-1 order-md-2">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i> Registrar Pago y Comprobante</h5>
+                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i> Registrar pago y comprobante</h5>
                 </div>
                 <div class="card-body">
                     <form asp-controller="Pedido" asp-action="ProcesarPago" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="pedidoId" value="@Model.PedidoId" />
 
                         <div class="mb-3">
-                            <label for="MetodoPago" class="form-label">Método de Pago</label>
+                            <label for="MetodoPago" class="form-label">Método de pago</label>
                             <select class="form-control" id="MetodoPago" name="metodoPago" required>
                                 <option value="" disabled selected>Seleccione un método</option>
                                 <option value="Transferencia Bancaria">Transferencia Bancaria</option>
@@ -173,27 +173,27 @@
                         </div>
 
                         <div id="payment-info-box" style="display:none;">
-                            <h5>Datos para Realizar el Pago</h5>
+                            <h5>Datos para realizar el pago</h5>
                             <div id="payment-details-content">
                             </div>
                         </div>
 
                         <div class="mb-3 mt-4">
-                            <label for="ReferenciaPago" class="form-label">Referencia del Pago</label>
+                            <label for="ReferenciaPago" class="form-label">Referencia del pago</label>
                             <input type="text" class="form-control" id="ReferenciaPago" name="referenciaPago" placeholder="Ingrese N° de transacción o Hash" required>
                         </div>
                         <div class="mb-3">
-                            <label for="comprobanteArchivo" class="form-label">Subir Comprobante (PDF, JPG, PNG)</label>
+                            <label for="comprobanteArchivo" class="form-label">Subir comprobante (PDF, JPG, PNG)</label>
                             <input type="file" class="form-control" id="comprobanteArchivo" name="comprobanteArchivo" accept=".pdf,.jpg,.jpeg,.png" required>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Enviar Comprobante</button>
+                        <button type="submit" class="btn btn-primary w-100">Enviar comprobante</button>
                     </form>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6 mb-4 order-2 order-md-1">
-            <h3 class="h4">Resumen del Pedido (<span class="text-secondary fw-normal">#@Model.PedidoId</span>)</h3>
+            <h3 class="h4">Resumen del pedido (<span class="text-secondary fw-normal">#@Model.PedidoId</span>)</h3>
             <ul class="list-group mb-3">
                 @foreach (var articulo in Model.Articulos)
                 {
@@ -206,7 +206,7 @@
 
             <div class="p-3 bg-white border rounded">
                 <div class="d-flex justify-content-between align-items-center mb-1">
-                    <h5 class="mb-0 text-secondary">Total en Dólares (USD):</h5>
+                    <h5 class="mb-0 text-secondary">Total en dólares (USD):</h5>
                     <h5 class="mb-0" style="color:var(--color-primary); font-weight:700;">@Model.Total.ToString("N2", cultureUS) USD</h5>
                 </div>
                 <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
@@ -223,7 +223,7 @@
             }
             <div class="d-grid gap-2 mt-4">
                 <a href="@whatsappLink" target="_blank" class="btn btn-whatsapp-assistance btn-lg">
-                    <i class="fab fa-whatsapp me-2"></i> Pagar o Consultar por WhatsApp
+                    <i class="fab fa-whatsapp me-2"></i> Pagar o consultar por whatsApp
                 </a>
             </div>
 

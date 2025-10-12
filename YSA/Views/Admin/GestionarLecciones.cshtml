@@ -153,18 +153,18 @@
 
 <div class="container mt-5 mb-5 pb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-center" style="margin-right: 1.5rem;">Lecciones para el Módulo: @ViewBag.ModuloTitulo</h1>
+        <h1 class="text-center" style="margin-right: 1.5rem;">Lecciones para el módulo: @ViewBag.ModuloTitulo</h1>
     </div>
 
     <div class="row mb-4 g-2">
         <div class="col-12 col-sm-6">
             <a asp-action="GestionarModulos" asp-route-cursoId="@ViewBag.CursoId" class="btn btn-secondary w-100">
-                <i class="fas fa-arrow-left me-2"></i> Volver a Módulos
+                <i class="fas fa-arrow-left me-2"></i> Volver a módulos
             </a>
         </div>
         <div class="col-12 col-sm-6">
             <button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#crearLeccionModal">
-                <i class="fas fa-plus-circle me-2"></i> Nueva Lección
+                <i class="fas fa-plus-circle me-2"></i> Nueva lección
             </button>
         </div>
     </div>
@@ -213,7 +213,7 @@
                                 </button>
                                 <form asp-action="EliminarLeccion" asp-route-id="@leccion.Id" method="post" class="d-inline">
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-danger btn-icon eliminar-btn" title="Eliminar Lección">
+                                    <button type="submit" class="btn btn-sm btn-danger btn-icon eliminar-btn" title="Eliminar lección">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>
@@ -230,7 +230,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="crearLeccionModalLabel" style="color:var(--color-secondary);">Crear Lección</h5>
+                <h5 class="modal-title" id="crearLeccionModalLabel" style="color:var(--color-secondary);">Crear lección</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formCrearLeccion" asp-action="CrearLeccion" method="post">
@@ -246,7 +246,7 @@
                         <input type="number" id="Crear_Orden" name="Orden" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Crear_UrlVideo" class="form-label" style="color:var(--color-primary);">URL del Video</label>
+                        <label for="Crear_UrlVideo" class="form-label" style="color:var(--color-primary);">URL del video</label>
                         <input type="text" id="Crear_UrlVideo" name="UrlVideo" class="form-control" />
                     </div>
                     <div class="form-group mb-3">
@@ -267,7 +267,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editarLeccionModalLabel" style="color:var(--color-secondary);">Editar Lección</h5>
+                <h5 class="modal-title" id="editarLeccionModalLabel" style="color:var(--color-secondary);">Editar lección</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formEditarLeccion" asp-action="EditarLeccion" method="post">
@@ -284,7 +284,7 @@
                         <input type="number" id="Editar_Orden" name="Orden" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Editar_UrlVideo" class="form-label" style="color:var(--color-primary);">URL del Video</label>
+                        <label for="Editar_UrlVideo" class="form-label" style="color:var(--color-primary);">URL del video</label>
                         <input type="text" id="Editar_UrlVideo" name="UrlVideo" class="form-control" />
                     </div>
                     <div class="form-group mb-3">

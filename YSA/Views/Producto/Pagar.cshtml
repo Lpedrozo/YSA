@@ -1,7 +1,7 @@
 ﻿@model YSA.Web.Models.ViewModels.PagoViewModel
 @using System.Globalization;
 @{
-    ViewData["Title"] = "Procesar Pago";
+    ViewData["Title"] = "Procesar pago";
 
     // **NUEVO CÁLCULO:** El total en Bolívares (VES)
     decimal totalVes = 0;
@@ -147,16 +147,16 @@
         <div class="col-12 col-md-8 col-lg-7 mb-5 pb-5">
             <div class="card">
                 <div class="card-header text-center">
-                    <h3>Procesar Pago del Pedido #@Model.PedidoId</h3>
+                    <h3>Procesar pago del pedido #@Model.PedidoId</h3>
                 </div>
                 <div class="card-body p-4">
 
                     <p class="lead text-center mb-1">
-                        Monto en Dólares (USD):
+                        Monto en dólares (USD):
                         <strong>@Model.Total.ToString("N2", culture) USD</strong>
                     </p>
                     <p class="lead text-center">
-                        Equivalente en Bolívares:
+                        Equivalente en bolívares:
                         <strong class="text-ves">@totalVes.ToString("N2", culture) VES</strong>
                         <small class="text-muted d-block" style="font-size: 0.75rem;">(Tasa BCV del día: @Model.TasaBCV.ToString("N2", culture) VES/USD)</small>
                     </p>
@@ -166,14 +166,14 @@
                     </div>
                     @{
                         // Lógica de WhatsApp (sin cambios)
-                        var whatsappNumber = "584241544523";
+                        var whatsappNumber = "584121463374";
                         var whatsappMessage = $"Hola, necesito asistencia con el pago del Pedido #{Model.PedidoId}. No me siento seguro de hacerlo por la página. ¿Me pueden ayudar?";
                         var encodedMessage = System.Web.HttpUtility.UrlEncode(whatsappMessage);
                         var whatsappLink = $"https://wa.me/{whatsappNumber}?text={encodedMessage}";
                     }
                     <div class="d-grid gap-2 mt-4 mb-4">
                         <a href="@whatsappLink" target="_blank" class="btn btn-whatsapp-assistance">
-                            <i class="fab fa-whatsapp me-2"></i> Consultar/Pagar por WhatsApp
+                            <i class="fab fa-whatsapp me-2"></i> Consultar por whatsApp
                         </a>
                     </div>
                     <form asp-action="ProcesarPago" method="post" enctype="multipart/form-data">
@@ -182,7 +182,7 @@
                         <input type="hidden" asp-for="TasaBCV" />
 
                         <div class="mb-4 mt-4">
-                            <label asp-for="MetodoPago" class="form-label">Método de Pago</label>
+                            <label asp-for="MetodoPago" class="form-label">Método de pago</label>
                             <select asp-for="MetodoPago" class="form-control form-control" id="MetodoPagoSelect" required>
                                 <option value="" disabled selected>-- Seleccione un método --</option>
                                 <option value="Transferencia Bancaria">Transferencia Bancaria</option>
@@ -201,20 +201,20 @@
                         </div>
 
                         <div class="mb-4">
-                            <label asp-for="ReferenciaPago" class="form-label">Referencia / Tracking ID / Hash</label>
+                            <label asp-for="ReferenciaPago" class="form-label">Referencia</label>
                             <input asp-for="ReferenciaPago" class="form-control form-control" placeholder="Ingrese el número de referencia/transacción" required />
                             <span asp-validation-for="ReferenciaPago" class="text-danger"></span>
                         </div>
 
                         <div class="mb-4">
-                            <label asp-for="ComprobanteArchivo" class="form-label">Adjuntar Comprobante (Requerido)</label>
+                            <label asp-for="ComprobanteArchivo" class="form-label">Adjuntar comprobante (Requerido)</label>
                             <input asp-for="ComprobanteArchivo" type="file" class="form-control form-control" required />
                             <span asp-validation-for="ComprobanteArchivo" class="text-danger"></span>
                         </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-upload me-2"></i> Registrar Pago
+                                <i class="fas fa-upload me-2"></i> Registrar pago
                             </button>
                         </div>
                     </form>

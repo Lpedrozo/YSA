@@ -72,7 +72,7 @@
             <h1 class="fw-bold mb-3 display-4">@Model.Titulo</h1>
             @if (Model.EsDestacado)
             {
-                <span class="badge bg-warning text-dark me-2"><i class="fas fa-star me-1"></i> Evento Destacado</span>
+                <span class="badge bg-warning text-dark me-2"><i class="fas fa-star me-1"></i> Evento destacado</span>
             }
             <span class="badge bg-dark"><i class="fas fa-tag me-1"></i> @Model.TipoEventoNombre</span>
             <hr class="mt-4 mb-4 w-50 mx-auto" />
@@ -90,10 +90,10 @@
 
         @* Columna de Información Rápida *@
         <div class="col-lg-4 mb-4">
-            <h3 class="fw-bold mb-4">Detalles Rápidos</h3>
+            <h3 class="fw-bold mb-4">Detalles rápidos</h3>
 
             <div class="info-box">
-                <h5><i class="fas fa-calendar-alt me-2"></i> Fecha y Hora</h5>
+                <h5><i class="fas fa-calendar-alt me-2"></i> Fecha y hora</h5>
                 <p>@Model.FechaEvento.ToString("dddd, dd MMMM yyyy")</p>
                 <p>@Model.FechaEvento.ToString("hh:mm tt")</p>
             </div>
@@ -111,7 +111,7 @@
 
         @* Columna de Descripción (El contenido HTML renderizado) *@
         <div class="col-lg-8 mb-4">
-            <h3 class="fw-bold mb-4">Sobre el Evento</h3>
+            <h3 class="fw-bold mb-4">Sobre el evento</h3>
 
             <div class="event-description-content">
                 @* CLAVE: Usar Html.Raw para renderizar el HTML (negritas, listas) de forma segura *@

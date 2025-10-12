@@ -1,6 +1,6 @@
 ﻿@model YSA.Web.Models.ViewModels.ProductosIndexViewModel
 @{
-    ViewData["Title"] = "Catálogo de Productos";
+    ViewData["Title"] = "Catálogo de productos";
 
     // Asumo que el ViewModel ahora tendrá propiedades para Paginación/Filtros
     var totalPaginas = Model.TotalPaginas;
@@ -196,7 +196,7 @@
 <div class="container py-5">
     <div class="row">
         <div class="col-12 text-center mb-4">
-            <h1 class="section-title">Catálogo de Productos Digitales</h1>
+            <h1 class="section-title">Catálogo de productos digitales</h1>
             <p class="section-subtitle">
                 Explora nuestra colección de libros y revistas digitales para inspirar tu arte.
             </p>
@@ -246,7 +246,7 @@
                             else if (Model.ProductosEnValidacionIds.Contains(producto.Id))
                             {
                                 <button class="btn btn-warning w-100 mt-3" disabled>
-                                    <i class="fas fa-hourglass-half me-2"></i> En Validación
+                                    <i class="fas fa-hourglass-half me-2"></i> En validación
                                 </button>
                             }
                             else

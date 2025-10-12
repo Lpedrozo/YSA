@@ -15,10 +15,10 @@ namespace YSA.Web.Models.ViewModels
         public string Titulo { get; set; }
 
         [StringLength(255)]
-        [Display(Name = "Descripción Corta")]
+        [Display(Name = "Descripción corta")]
         public string DescripcionCorta { get; set; }
 
-        [Display(Name = "Descripción Larga")]
+        [Display(Name = "Descripción larga")]
         public string DescripcionLarga { get; set; }
 
         [Required(ErrorMessage = "El precio es obligatorio.")]
@@ -26,7 +26,7 @@ namespace YSA.Web.Models.ViewModels
         [Display(Name = "Precio")]
         public decimal Precio { get; set; }
 
-        [Display(Name = "URL de la Imagen")]
+        [Display(Name = "URL de la imagen")]
         public string? UrlImagen { get; set; }
 
         public int? InstructorId { get; set; }
@@ -54,10 +54,10 @@ namespace YSA.Web.Models.ViewModels
         public string Titulo { get; set; }
 
         [StringLength(255)]
-        [Display(Name = "Descripción Corta")]
+        [Display(Name = "Descripción corta")]
         public string DescripcionCorta { get; set; }
 
-        [Display(Name = "Descripción Larga")]
+        [Display(Name = "Descripción larga")]
         public string DescripcionLarga { get; set; }
 
         [Required(ErrorMessage = "El precio es obligatorio.")]
@@ -65,7 +65,7 @@ namespace YSA.Web.Models.ViewModels
         [Display(Name = "Precio")]
         public decimal Precio { get; set; }
 
-        [Display(Name = "URL de la Imagen")]
+        [Display(Name = "URL de la imagen")]
         public string? UrlImagen { get; set; }
 
         public int? InstructorId { get; set; }

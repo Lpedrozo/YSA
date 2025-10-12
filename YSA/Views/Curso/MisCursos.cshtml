@@ -124,7 +124,7 @@
 </style>
 
 <div class="container mt-5 mb-5 pb-5">
-    <h2 class="text-center mb-4">Mis Cursos</h2>
+    <h2 class="text-center mb-4">Mis cursos</h2>
     <hr />
 
     @if (Model == null || !Model.Any())
@@ -153,7 +153,7 @@
                             <p class="card-text flex-grow-1">@Html.Raw(curso.DescripcionCorta)</p>
                             <div class="d-grid mt-3">
                                 <a asp-controller="Curso" asp-action="VerCurso" asp-route-id="@curso.Id" class="btn btn-primary">
-                                    <i class="fas fa-chalkboard-teacher me-2"></i> Ir al Curso
+                                    <i class="fas fa-chalkboard-teacher me-2"></i> Ir al curso
                                 </a>
                             </div>
                         </div>

@@ -46,14 +46,14 @@ namespace YSA.Web.Models.ViewModels
         public string Titulo { get; set; }
 
         [StringLength(255)]
-        [Display(Name = "Descripción Corta")]
+        [Display(Name = "Descripción corta")]
         public string DescripcionCorta { get; set; }
 
-        [Display(Name = "Descripción Larga")]
+        [Display(Name = "Descripción larga")]
         public string DescripcionLarga { get; set; }
 
         [Required(ErrorMessage = "El tipo de producto es obligatorio.")]
-        [Display(Name = "Tipo de Producto")]
+        [Display(Name = "Tipo de producto")]
         public string TipoProducto { get; set; }
 
         [Required(ErrorMessage = "El precio es obligatorio.")]
@@ -61,10 +61,10 @@ namespace YSA.Web.Models.ViewModels
         [Display(Name = "Precio")]
         public decimal Precio { get; set; }
 
-        [Display(Name = "Imagen de Portada")]
+        [Display(Name = "Imagen de portada")]
         public IFormFile? ImagenPortada { get; set; }
 
-        [Display(Name = "Archivo Digital")]
+        [Display(Name = "Archivo digital")]
         public IFormFile? ArchivoDigital { get; set; }
 
         [Display(Name = "Autor")]

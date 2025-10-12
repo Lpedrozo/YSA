@@ -82,48 +82,69 @@ namespace YSA.Core.Services
                 var tasaRepository = scope.ServiceProvider.GetRequiredService<ITasaBCVRepository>();
                 var exchangeService = scope.ServiceProvider.GetRequiredService<IExchangeRateService>();
 
-                // **CAMBIO CLAVE: La fecha objetivo es MAÑANA**
-                var tomorrow = DateTime.Today.AddDays(1);
+                // --- REGLA 1: No consultar Sábado ni Domingo ---
+                var today = DateTime.Today;
+                if (today.DayOfWeek == DayOfWeek.Saturday || today.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    _logger?.LogInformation($"Hoy es {today.DayOfWeek}. No se consulta ni se guarda una nueva tasa.");
+                    return;
+                }
+
+                // --- REGLA 2: Calcular la próxima fecha de aplicación (Salto de fin de semana) ---
+                var nextApplicableDate = today.AddDays(1);
+
+                // Si hoy es Viernes, la tasa aplicará el Lunes.
+                // Si mañana (nextApplicableDate) es Sábado o Domingo, lo movemos al Lunes.
+                if (nextApplicableDate.DayOfWeek == DayOfWeek.Saturday)
+                {
+                    // Si mañana es Sábado, la fecha de aplicación es el Lunes (+2 días)
+                    nextApplicableDate = nextApplicableDate.AddDays(2);
+                    _logger?.LogInformation("Detectado Viernes. La tasa actual aplicará el próximo Lunes.");
+                }
+                else if (nextApplicableDate.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    // Si mañana fuera Domingo (lógica de seguridad, no debería pasar si se salta el Sábado),
+                    // la fecha de aplicación es el Lunes (+1 día)
+                    nextApplicableDate = nextApplicableDate.AddDays(1);
+                    _logger?.LogInformation("Detectado Sábado/Domingo. La tasa actual aplicará el próximo Lunes.");
+                }
 
                 try
                 {
-                    // 1. Verificar si la tasa de MAÑANA ya está registrada
-                    // Debes asegurarte de que tu método ExistsRateForDateAsync funcione correctamente,
-                    // comparando solo la fecha (como ya lo tienes implementado).
-                    var existingRate = await tasaRepository.ExistsRateForDateAsync(tomorrow, stoppingToken);
+                    // 1. Verificar si la tasa de la Fecha de Aplicación ya está registrada
+                    var existingRate = await tasaRepository.ExistsRateForDateAsync(nextApplicableDate, stoppingToken);
 
                     if (existingRate)
                     {
-                        _logger?.LogInformation($"La tasa de cambio para {tomorrow:d} ya existe. Saltando la consulta.");
+                        _logger?.LogInformation($"La tasa de cambio para {nextApplicableDate:d} ya existe. Saltando la consulta.");
                         return;
                     }
 
-                    // 2. Obtener la tasa actual del API (esta es la tasa que se aplicará MAÑANA)
+                    // 2. Obtener la tasa actual del API (esta es la tasa que se aplicará en nextApplicableDate)
                     var currentRate = await exchangeService.GetVenezuelaRateAsync();
 
                     if (currentRate.HasValue)
                     {
-                        // 3. Crear el nuevo registro con la fecha de MAÑANA
+                        // 3. Crear el nuevo registro con la fecha de Aplicación
                         var newRate = new TasaBCV
                         {
-                            // Asumo que tu propiedad se llama 'Tasa' o 'Valor'. Usaré 'Tasa' si es más correcto.
                             Valor = currentRate.Value,
-                            Fecha = tomorrow, // <-- Guardamos con la fecha de MAÑANA
+                            Fecha = nextApplicableDate, // <-- Guardamos con la fecha de aplicación calculada
                             FechaCreacion = DateTime.Now
                         };
 
                         // 4. Guardar en la base de datos
                         await tasaRepository.AddRateAsync(newRate);
-                        _logger?.LogInformation($"Tasa de cambio guardada con éxito para {tomorrow:d}. Valor: {currentRate.Value:N2}");
+                        _logger?.LogInformation($"Tasa de cambio guardada con éxito para {nextApplicableDate:d}. Valor: {currentRate.Value:N2}");
                     }
                     else
                     {
-                        _logger?.LogWarning($"No se pudo obtener la tasa de cambio del API para {tomorrow:d}. El servicio retornó un valor nulo.");
+                        _logger?.LogWarning($"No se pudo obtener la tasa de cambio del API para {nextApplicableDate:d}. El servicio retornó un valor nulo.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger?.LogError(ex, $"Error crítico al intentar guardar la tasa diaria para {tomorrow:d}.");
+                    _logger?.LogError(ex, $"Error crítico al intentar guardar la tasa diaria para {nextApplicableDate:d}.");
                 }
             }
         }

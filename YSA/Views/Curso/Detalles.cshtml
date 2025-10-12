@@ -195,7 +195,7 @@
                 @Html.Raw(Model.DescripcionLarga)
             </div>
 
-            <h2 class="mb-3 text-secondary">Contenido del Curso</h2>
+            <h2 class="mb-3 text-secondary">Contenido del curso</h2>
             <div class="accordion" id="acordeonModulos">
                 @if (Model.Modulos != null && Model.Modulos.Any())
                 {
@@ -244,13 +244,13 @@
         <div class="col-lg-4 d-none d-lg-block">
             <div class="sticky-top" style="top: 20px;">
                 <div class="card price-card price-card-lg text-center p-4">
-                    <h5 class="fw-bold text-secondary">Precio del Curso:</h5>
+                    <h5 class="fw-bold text-secondary">Precio del curso:</h5>
                     <h2 class="display-6 fw-bold mb-3" style="color: var(--color-primary);">@Model.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</h2>
                     <p class="text-secondary mb-4"><i class="fas fa-check-circle text-success me-2"></i>Acceso de por vida</p>
 
                     @if (Model.TieneAcceso)
                     {
-                        <a asp-action="VerCurso" asp-controller="Curso" asp-route-id="@Model.Id" class="btn btn-action w-100">Ver Contenido</a>
+                        <a asp-action="VerCurso" asp-controller="Curso" asp-route-id="@Model.Id" class="btn btn-action w-100">Ver contenido</a>
 
                         <div class="alert alert-success d-flex align-items-center justify-content-center mt-3" role="alert">
                             <i class="fas fa-check-circle me-2"></i>Ya tienes acceso a este curso.

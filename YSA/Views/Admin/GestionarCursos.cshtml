@@ -29,9 +29,12 @@
 <div class="container mt-4 mb-5">
     <h1 class="text-center mb-4">Gestión de Cursos</h1>
     <hr />
-    <div class="d-flex justify-content-end mb-3">
+    <div class="d-flex justify-content-between mb-3">
+        <a asp-action="Panel" asp-controller="Admin" class="btn btn-dark">
+            <i class="fas fa-arrow-left me-2"></i> Regresar al Panel
+        </a>
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearCursoModal">
-            <i class="fas fa-plus-circle"></i> Nuevo Curso
+            <i class="fas fa-plus-circle"></i> Nuevo curso
         </button>
     </div>
 

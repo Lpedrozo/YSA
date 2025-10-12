@@ -1,6 +1,6 @@
 ﻿@model YSA.Web.Models.ViewModels.UserViewModel
 @{
-    ViewData["Title"] = "Mi Perfil y Cursos";
+    ViewData["Title"] = "Mi perfil y cursos";
 }
 
 <style>
@@ -276,14 +276,14 @@
                 <p class="text-muted-dark">@Model.Email</p>
 
                 <ul class="sidebar-menu">
-                    <li class="sidebar-menu-item"><a href="#" id="miPerfilLink" class="active"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
-                    <li class="sidebar-menu-item"><a href="#" id="seguridadLink"><i class="fas fa-lock me-2"></i> Seguridad de la Cuenta</a></li>
-                    <li class="sidebar-menu-item"><a href="#" id="misCursosLink"><i class="fas fa-book-open me-2"></i> Mis Cursos</a></li>
-                    <li class="sidebar-menu-item"><a href="#" id="misProductosLink"><i class="fas fa-file-pdf me-2"></i> Mis Productos</a></li>
+                    <li class="sidebar-menu-item"><a href="#" id="miPerfilLink" class="active"><i class="fas fa-user-circle me-2"></i> Mi perfil</a></li>
+                    <li class="sidebar-menu-item"><a href="#" id="seguridadLink"><i class="fas fa-lock me-2"></i> Seguridad de la cuenta</a></li>
+                    <li class="sidebar-menu-item"><a href="#" id="misCursosLink"><i class="fas fa-book-open me-2"></i> Mis cursos</a></li>
+                    <li class="sidebar-menu-item"><a href="#" id="misProductosLink"><i class="fas fa-file-pdf me-2"></i> Mis productos</a></li>
                     <li class="sidebar-menu-item">
                         <form asp-controller="Cuenta" asp-action="Logout" method="post" id="logoutForm">
                             <button type="submit" class="btn btn-link" style="color: var(--color-text-muted); text-decoration: none; padding: 12px 15px; width: 100%; text-align: left; transition: background-color 0.2s, color 0.2s;">
-                                <i class="fas fa-power-off me-2"></i> Cerrar Sesión
+                                <i class="fas fa-power-off me-2"></i> Cerrar sesión
                             </button>
                             @Html.AntiForgeryToken()
                         </form>
@@ -296,7 +296,7 @@
             <div class="profile-content">
                 <div id="profileSection" class="content-section">
                     <form asp-action="UpdateProfile" method="post">
-                        <h2 class="section-title">Información del Perfil</h2>
+                        <h2 class="section-title">Información del perfil</h2>
                         <p class="text-muted-dark">Establece la configuración de tu cuenta y actualiza tus datos personales.</p>
                         <div class="mb-3">
                             <label class="form-label">Correo electrónico</label>
@@ -315,30 +315,30 @@
                 </div>
 
                 <div id="securitySection" class="content-section" style="display: none;">
-                    <h2 class="section-title">Cambiar Contraseña</h2>
+                    <h2 class="section-title">Cambiar contraseña</h2>
                     <p class="text-muted-dark">Mantén tu cuenta segura actualizando tu contraseña periódicamente.</p>
                     <form asp-action="ChangePassword" method="post">
                         <div class="mb-3">
-                            <label for="currentPassword" class="form-label">Contraseña Actual</label>
+                            <label for="currentPassword" class="form-label">Contraseña actual</label>
                             <input type="password" id="currentPassword" name="CurrentPassword" class="form-control" />
                             <span asp-validation-for="CurrentPassword" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
-                            <label for="newPassword" class="form-label">Nueva Contraseña</label>
+                            <label for="newPassword" class="form-label">Nueva contraseña</label>
                             <input type="password" id="newPassword" name="NewPassword" class="form-control" />
                             <span asp-validation-for="NewPassword" class="text-danger"></span>
                         </div>
                         <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirmar Nueva Contraseña</label>
+                            <label for="confirmPassword" class="form-label">Confirmar nueva contraseña</label>
                             <input type="password" id="confirmPassword" name="ConfirmPassword" class="form-control" />
                             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                         </div>
-                        <button type="submit" class="btn btn-primary">Actualizar Contraseña</button>
+                        <button type="submit" class="btn btn-primary">Actualizar contraseña</button>
                     </form>
                 </div>
 
                 <div id="coursesSection" class="content-section" style="display: none;">
-                    <h2 class="section-title">Mis Cursos Adquiridos</h2>
+                    <h2 class="section-title">Mis cursos adquiridos</h2>
                     @if (Model.CursosComprados != null && Model.CursosComprados.Any())
                     {
                         <div class="row row-cols-1 row-cols-md-2 g-4">
@@ -352,7 +352,7 @@
                                             <p class="card-text text-muted-dark">@Html.Raw(curso.DescripcionCorta)</p>
                                             <p class="card-text curso-price">@curso.Precio.ToString("C")</p>
                                             <a asp-controller="Curso" asp-action="VerCurso" asp-route-id="@curso.Id" class="btn btn-primary mt-3">
-                                                <i class="fas fa-eye me-2"></i> Ver Detalles
+                                                <i class="fas fa-eye me-2"></i> Ver detalles
                                             </a>
                                         </div>
                                     </div>
@@ -369,7 +369,7 @@
                 </div>
 
                 <div id="productsSection" class="content-section" style="display: none;">
-                    <h2 class="section-title">Mis Productos Digitales</h2>
+                    <h2 class="section-title">Mis productos digitales</h2>
                     @if (Model.ProductosComprados != null && Model.ProductosComprados.Any())
                     {
                         <div class="row row-cols-1 row-cols-md-2 g-4">

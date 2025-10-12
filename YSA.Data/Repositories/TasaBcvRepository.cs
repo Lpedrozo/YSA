@@ -40,20 +40,58 @@ namespace YSA.Data.Repositories
         {
             var today = DateTime.Today.Date;
 
-            // Busca la tasa con la fecha más cercana al día de hoy, priorizando fechas iguales o futuras cercanas
-            var tasa = await _context.TasasBCV
+            // 1. INTENTO DE BÚSQUEDA DEL DÍA ACTIVO
+            // Esta búsqueda sigue siendo útil, ya que si hoy es Lunes, queremos la tasa del Lunes
+            // (que fue guardada el domingo o el mismo lunes muy temprano).
+            // O si es jueves, queremos la tasa del jueves (que fue guardada el miércoles).
+            var activeRate = await _context.TasasBCV
                 .AsNoTracking()
-                .Where(t => t.Fecha.Date >= today) // Trae la tasa de hoy o de mañana
-                .OrderBy(t => t.Fecha)             // Ordena para que la más cercana a hoy esté primero (hoy, luego mañana)
+                .Where(t => t.Fecha.Date == today) // Busca solo la tasa con fecha de HOY
                 .FirstOrDefaultAsync();
 
-            if (tasa != null)
+            if (activeRate != null)
             {
-                // Si encontramos la de hoy o la de mañana, la devolvemos.
-                return tasa.Valor;
+                return activeRate.Valor;
             }
 
-            // Si no hay ninguna tasa para hoy o mañana, devuelve la última guardada como fallback.
+            // 2. LÓGICA DE FALLBACK (Prioridad de búsqueda hacia el pasado)
+            // Si no se encuentra una tasa con la fecha de hoy, buscamos hacia atrás.
+
+            // Creamos una lista de posibles fechas de búsqueda hacia atrás
+            var datesToSearch = new List<DateTime>();
+
+            // Si hoy es Sábado o Domingo, el día más reciente publicado sería el Viernes.
+            if (today.DayOfWeek == DayOfWeek.Saturday)
+            {
+                datesToSearch.Add(today.AddDays(-1)); // Viernes
+                datesToSearch.Add(today.AddDays(-2)); // Jueves (Fallback)
+            }
+            else if (today.DayOfWeek == DayOfWeek.Sunday)
+            {
+                datesToSearch.Add(today.AddDays(-2)); // Viernes
+                datesToSearch.Add(today.AddDays(-3)); // Jueves (Fallback)
+            }
+            else // Para cualquier otro día (Lunes a Viernes), buscamos el día anterior inmediato.
+            {
+                datesToSearch.Add(today.AddDays(-1));
+                datesToSearch.Add(today.AddDays(-2)); // Segundo día anterior como seguridad
+            }
+
+            // Hacemos la búsqueda retroactiva
+            var fallbackRate = await _context.TasasBCV
+                .AsNoTracking()
+                .Where(t => datesToSearch.Contains(t.Fecha.Date))
+                .OrderByDescending(t => t.Fecha) // La tasa más reciente de las fechas de búsqueda
+                .FirstOrDefaultAsync();
+
+            if (fallbackRate != null)
+            {
+                return fallbackRate.Valor;
+            }
+
+
+            // 3. FALLBACK GENERAL (Última Tasa Guardada)
+            // Si ni la tasa de hoy ni la retroactiva funcionaron, devolver la última guardada, sin importar la fecha.
             var lastRate = await _context.TasasBCV
                 .AsNoTracking()
                 .OrderByDescending(t => t.Fecha)

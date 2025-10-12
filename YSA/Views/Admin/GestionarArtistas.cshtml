@@ -1,6 +1,6 @@
 ﻿@model List<YSA.Web.Models.ViewModels.ArtistaListViewModel>
 @{
-    ViewData["Title"] = "Gestión de Artistas";
+    ViewData["Title"] = "Gestión de artistas";
 }
 
 <style>
@@ -191,15 +191,15 @@
 </style>
 
 <div class="container mt-5 mb-5 pb-5">
-    <h1 class="text-center mb-4">Gestión de Artistas</h1>
+    <h1 class="text-center mb-4">Gestión de artistas</h1>
     <hr style="border-top: 2px solid var(--color-border-light); opacity: 1;" />
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <a asp-action="Panel" asp-controller="Admin" class="btn btn-success btn-lg">
-            <i class="fas fa-arrow-left me-2"></i> Regresar al Panel
+        <a asp-action="Panel" asp-controller="Admin" class="btn btn-success">
+            <i class="fas fa-arrow-left me-2"></i> Regresar al panel
         </a>
-        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#crearArtistaModal">
-            <i class="fas fa-plus-circle me-2"></i> Nuevo Artista
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearArtistaModal">
+            <i class="fas fa-plus-circle me-2"></i> Nuevo artista
         </button>
     </div>
 
@@ -270,7 +270,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="crearArtistaModalLabel" style="color:var(--color-secondary);">Crear Nuevo Artista</h5>
+                <h5 class="modal-title" id="crearArtistaModalLabel" style="color:var(--color-secondary);">Crear nuevo artista</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formCrearArtista" asp-action="CrearArtista" method="post" enctype="multipart/form-data" novalidate>
@@ -285,7 +285,7 @@
                         <input type="text" id="Crear_Apellido" name="Apellido" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Crear_Email" style="color:var(--color-primary);">Correo Electrónico</label>
+                        <label for="Crear_Email" style="color:var(--color-primary);">Correo electrónico</label>
                         <input type="email" id="Crear_Email" name="Email" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
@@ -293,7 +293,7 @@
                         <input type="password" id="Crear_Password" name="Password" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Crear_NombreArtistico" style="color:var(--color-primary);">Nombre Artístico</label>
+                        <label for="Crear_NombreArtistico" style="color:var(--color-primary);">Nombre artístico</label>
                         <input type="text" id="Crear_NombreArtistico" name="NombreArtistico" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
@@ -301,11 +301,11 @@
                         <textarea id="Crear_Biografia" name="Biografia" class="form-control tinymce-biografia" rows="5"></textarea>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Crear_EstiloPrincipal" style="color:var(--color-primary);">Estilo Principal</label>
+                        <label for="Crear_EstiloPrincipal" style="color:var(--color-primary);">Estilo principal</label>
                         <input type="text" id="Crear_EstiloPrincipal" name="EstiloPrincipal" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Crear_ImagenPerfil" style="color:var(--color-primary);">Imagen de Perfil</label>
+                        <label for="Crear_ImagenPerfil" style="color:var(--color-primary);">Imagen de perfil</label>
                         <input type="file" id="Crear_ImagenPerfil" name="ImagenPerfil" class="form-control" accept=".jpg,.jpeg,.png" />
                     </div>
                 </div>
@@ -322,7 +322,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editarArtistaModalLabel" style="color:var(--color-secondary);">Editar Artista</h5>
+                <h5 class="modal-title" id="editarArtistaModalLabel" style="color:var(--color-secondary);">Editar artista</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formEditarArtista" asp-action="UpdateArtista" method="post" enctype="multipart/form-data" novalidate>
@@ -339,15 +339,15 @@
                         <input type="text" id="Editar_Apellido" name="Apellido" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Editar_Email" style="color:var(--color-primary);">Correo Electrónico</label>
+                        <label for="Editar_Email" style="color:var(--color-primary);">Correo electrónico</label>
                         <input type="email" id="Editar_Email" name="Email" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Editar_Password" style="color:var(--color-primary);">Nueva Contraseña</label>
+                        <label for="Editar_Password" style="color:var(--color-primary);">Nueva contraseña</label>
                         <input type="password" id="Editar_Password" name="Password" class="form-control" placeholder="Dejar vacío para no cambiar" />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Editar_NombreArtistico" style="color:var(--color-primary);">Nombre Artístico</label>
+                        <label for="Editar_NombreArtistico" style="color:var(--color-primary);">Nombre artístico</label>
                         <input type="text" id="Editar_NombreArtistico" name="NombreArtistico" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
@@ -355,11 +355,11 @@
                         <textarea id="Editar_Biografia" name="Biografia" class="form-control tinymce-biografia" rows="5"></textarea>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Editar_EstiloPrincipal" style="color:var(--color-primary);">Estilo Principal</label>
+                        <label for="Editar_EstiloPrincipal" style="color:var(--color-primary);">Estilo principal</label>
                         <input type="text" id="Editar_EstiloPrincipal" name="EstiloPrincipal" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Editar_ImagenPerfil" style="color:var(--color-primary);">Imagen de Perfil</label>
+                        <label for="Editar_ImagenPerfil" style="color:var(--color-primary);">Imagen de perfil</label>
                         <input type="file" id="Editar_ImagenPerfil" name="ImagenPerfil" class="form-control" accept=".jpg,.jpeg,.png" />
                         <small class="form-text text-muted">Dejar vacío para conservar la imagen actual.</small>
                         <img id="Editar_PreviewImagen" src="" class="img-thumbnail mt-2 profile-img-card" style="display: none;" alt="Imagen actual del artista" />

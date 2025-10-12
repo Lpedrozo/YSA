@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<YSA.Web.Models.ViewModels.EntregaActividadPendienteViewModel>
 
 @{
-    ViewData["Title"] = "Entregas Pendientes de Calificación";
+    ViewData["Title"] = "Entregas Ppendientes de calificación";
     int totalPendientes = Model.Count();
 }
 
@@ -25,7 +25,7 @@
                             </span>
                         </div>
                         <div>
-                            <p class="card-title text-muted mb-1">Entregas por Revisar</p>
+                            <p class="card-title text-muted mb-1">Entregas por revisar</p>
                             <h2 class="card-text fw-bold">@totalPendientes</h2>
                         </div>
                     </div>
@@ -72,17 +72,17 @@
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="curso-tab" data-bs-toggle="tab" data-bs-target="#curso-tab-pane" type="button" role="tab" aria-controls="curso-tab-pane" aria-selected="false">
-                            Por Curso <span class="badge bg-primary">@Model.Count(m => m.TipoEntidad == "Curso")</span>
+                            Por curso <span class="badge bg-primary">@Model.Count(m => m.TipoEntidad == "Curso")</span>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="modulo-tab" data-bs-toggle="tab" data-bs-target="#modulo-tab-pane" type="button" role="tab" aria-controls="modulo-tab-pane" aria-selected="false">
-                            Por Módulo <span class="badge bg-info">@Model.Count(m => m.TipoEntidad == "Modulo")</span>
+                            Por módulo <span class="badge bg-info">@Model.Count(m => m.TipoEntidad == "Modulo")</span>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="leccion-tab" data-bs-toggle="tab" data-bs-target="#leccion-tab-pane" type="button" role="tab" aria-controls="leccion-tab-pane" aria-selected="false">
-                            Por Lección <span class="badge bg-warning">@Model.Count(m => m.TipoEntidad == "Leccion")</span>
+                            Por lección <span class="badge bg-warning">@Model.Count(m => m.TipoEntidad == "Leccion")</span>
                         </button>
                     </li>
                 </ul>
@@ -285,7 +285,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="calificarModalLabel"><i class="bi bi-pencil-square me-2"></i> Calificar Entrega</h5>
+                <h5 class="modal-title" id="calificarModalLabel"><i class="bi bi-pencil-square me-2"></i> Calificar entrega</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -300,14 +300,14 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <h6 class="mt-2 text-primary">Comentario del Estudiante:</h6>
+                            <h6 class="mt-2 text-primary">Comentario del estudiante:</h6>
                             <blockquote class="blockquote border-start border-3 ps-3 alert-light p-2" id="comentarioEstudiantePlaceholder">
                                 <p class="mb-0 fst-italic text-muted"></p>
                             </blockquote>
                         </div>
                     </div>
 
-                    <h5 class="mt-4 border-bottom pb-2">Tu Calificación y Retroalimentación</h5>
+                    <h5 class="mt-4 border-bottom pb-2">Tu calificación y retroalimentación</h5>
 
                     <div class="mb-3">
                         <label for="calificacionInput" class="form-label fw-bold">Puntuación Final (0-100)</label>
@@ -323,7 +323,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-success"><i class="bi bi-send-fill me-1"></i> Enviar Calificación</button>
+                    <button type="submit" class="btn btn-success"><i class="bi bi-send-fill me-1"></i> Enviar calificación</button>
                 </div>
             </form>
         </div>

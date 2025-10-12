@@ -8,7 +8,7 @@ namespace YSA.Web.Models.ViewModels
 
         [Required(ErrorMessage = "El nombre de la categoría es obligatorio.")]
         [StringLength(255, ErrorMessage = "El nombre no puede exceder los 255 caracteres.")]
-        [Display(Name = "Nombre de la Categoría")]
+        [Display(Name = "Nombre de la categoría")]
         public string NombreCategoria { get; set; }
     }
 }

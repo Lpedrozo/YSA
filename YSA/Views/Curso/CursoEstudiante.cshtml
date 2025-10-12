@@ -268,7 +268,7 @@
 						<h2 class="mb-3">@Model.Titulo</h2>
 						<p class="text-muted">@Html.Raw(Model.DescripcionLarga)</p>
 						<hr />
-						<p><strong>Instructor:</strong></p>
+						<p><strong>Maestro:</strong></p>
 						<div class="d-flex align-items-center">
 							@{
 								var avgRating = Model.Resenas.Any() ? Model.Resenas.Average(r => r.Calificacion) : 0;
@@ -351,7 +351,7 @@
 				@* MODIFICADO: De col-lg-8 a col-md-7 col-lg-8 (Anuncios/Formulario) *@
 				<div class="col-md-7 col-lg-8">
 					<div class="content-container mb-4">
-						<h3 class="mb-4">Anuncios del Curso</h3>
+						<h3 class="mb-4">Anuncios del curso</h3>
 
 						@if (Model.Anuncios != null && Model.Anuncios.Any())
 						{
@@ -373,7 +373,7 @@
 					@if (User.Identity.IsAuthenticated && !yaHaHechoResena)
 					{
 						<div class="content-container mt-4">
-							<h3 class="mb-3">Deja tu Reseña</h3>
+							<h3 class="mb-3">Deja tu reseña</h3>
 							<form asp-action="CrearResena" asp-controller="Curso" method="post">
 								<input type="hidden" name="CursoId" value="@Model.Id" />
 								<div class="mb-3">
@@ -390,7 +390,7 @@
 									<label for="Comentario" class="form-label">Comentario</label>
 									<textarea class="form-control" id="Comentario" name="Comentario" rows="3" required placeholder="Cuéntanos tu experiencia con el curso..."></textarea>
 								</div>
-								<button type="submit" class="btn btn-primary">Enviar Reseña</button>
+								<button type="submit" class="btn btn-primary">Enviar reseña</button>
 							</form>
 						</div>
 					}
@@ -405,7 +405,7 @@
 				@* MODIFICADO: De col-lg-4 a col-md-5 col-lg-4 (Reseñas) *@
 				<div class="col-md-5 col-lg-4">
 					<div class="content-container">
-						<h3 class="mb-4">Reseñas de Estudiantes</h3>
+						<h3 class="mb-4">Reseñas de estudiantes</h3>
 
 						@if (Model.Resenas != null && Model.Resenas.Any())
 						{
@@ -461,7 +461,7 @@
 		<div class="tab-pane fade pb-5" id="preguntas-tab-pane" role="tabpanel" tabindex="0">
 			<div class="content-container">
 
-				<h3 class="mb-4">Preguntas y Respuestas (Q&A)</h3>
+				<h3 class="mb-4">Preguntas y respuestas (Q&A)</h3>
 				<div class="card card-body mb-5 shadow-sm">
 					<h5 class="card-title">Hacer una nueva pregunta</h5>
 
@@ -474,7 +474,7 @@
 							<textarea class="form-control" id="preguntaInput" name="pregunta" rows="3" required placeholder="Escribe tu duda o consulta aquí..."></textarea>
 						</div>
 
-						<button type="submit" class="btn btn-primary">Enviar Pregunta</button>
+						<button type="submit" class="btn btn-primary">Enviar pregunta</button>
 					</form>
 				</div>
 
@@ -529,7 +529,7 @@
 		<div class="tab-pane fade pb-5" id="proyectos-tab-pane" role="tabpanel" tabindex="0">
 			<div class="content-container">
 
-				<h3 class="mt-0 mb-4">Actividades y Entregas</h3>
+				<h3 class="mt-0 mb-4">Actividades</h3>
 
 				@if (Model.Actividades != null && Model.Actividades.Any())
 				{
@@ -552,7 +552,7 @@
 								@if (!string.IsNullOrEmpty(actividad.Url))
 								{
 									<a href="@actividad.Url" target="_blank" class="btn btn-sm btn-outline-info me-2">
-										<i class="fas fa-download me-1"></i> Descargar Material Adicional
+										<i class="fas fa-download me-1"></i> Descargar material adicional
 									</a>
 								}
 
@@ -575,7 +575,7 @@
 									{
 										// --- Entrega Existente ---
 										<a href="@actividad.EntregaEstudiante.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-primary me-2">
-											<i class="fas fa-file-alt me-1"></i> Ver Mi Archivo
+											<i class="fas fa-file-alt me-1"></i> Ver mi Aarchivo
 										</a>
 
 										@if (actividad.EntregaEstudiante.Estado == "Calificado")
@@ -693,7 +693,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header bg-success text-white">
-				<h5 class="modal-title" id="entregaModalLabel">Subir Entrega</h5>
+				<h5 class="modal-title" id="entregaModalLabel">Subir entrega</h5>
 				<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<form asp-action="SubirEntregaActividad" asp-controller="Curso" method="post" enctype="multipart/form-data">
@@ -705,20 +705,20 @@
 					<p class="mb-3">Actividad: <strong id="actividadTituloPlaceholder"></strong></p>
 
 					<div class="mb-3">
-						<label for="archivoEntrega" class="form-label">Archivo de la Tarea</label>
+						<label for="archivoEntrega" class="form-label">Archivo de la tarea</label>
 						<input class="form-control" type="file" id="archivoEntrega" name="archivoEntrega" required>
 						<div class="form-text">Formatos aceptados: PDF, ZIP, DOCX, JPG, etc.</div>
 					</div>
 
 					<div class="mb-3">
-						<label for="comentarioEstudiante" class="form-label">Comentarios para el Instructor (Opcional)</label>
+						<label for="comentarioEstudiante" class="form-label">Comentarios para el maestro (Opcional)</label>
 						<textarea class="form-control" id="comentarioEstudiante" name="comentario" rows="3" placeholder="Escribe cualquier nota sobre tu entrega..."></textarea>
 						<div class="form-text">Si estás reemplazando una entrega, tu nuevo comentario sobrescribirá el anterior.</div>
 					</div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-					<button type="submit" class="btn btn-success"><i class="fas fa-check-circle me-1"></i> Confirmar Entrega</button>
+					<button type="submit" class="btn btn-success"><i class="fas fa-check-circle me-1"></i> Confirmar entrega</button>
 				</div>
 			</form>
 		</div>
@@ -730,17 +730,17 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header bg-primary text-white">
-				<h5 class="modal-title" id="calificacionModalLabel"><i class="fas fa-trophy me-2"></i> Calificación de Actividad</h5>
+				<h5 class="modal-title" id="calificacionModalLabel"><i class="fas fa-trophy me-2"></i> Calificación de actividad</h5>
 				<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
 				<p class="mb-3">Actividad: <strong id="calificacionActividadTituloPlaceholder"></strong></p>
 				<div class="text-center mb-4 p-4 border rounded bg-light">
-					<p class="mb-0 text-muted">Tu Puntuación Final:</p>
+					<p class="mb-0 text-muted">Tu puntuación final:</p>
 					<h1 class="display-3 fw-bold text-primary" id="calificacionPlaceholder">--</h1>
 				</div>
 
-				<h6 class="text-primary mt-4 border-bottom pb-2">Retroalimentación del Instructor:</h6>
+				<h6 class="text-primary mt-4 border-bottom pb-2">Retroalimentación del maestro:</h6>
 				<blockquote class="blockquote border-start border-3 ps-3" id="observacionPlaceholder">
 					<p class="mb-0 fst-italic text-dark"></p>
 				</blockquote>

@@ -5,7 +5,10 @@
 }
 
 <div class="container py-5">
-    <h1 class="mb-4">Historial de Tasa de Cambio (VES/USD)</h1>
+    <a asp-action="Panel" asp-controller="Admin" class="btn btn-dark">
+        <i class="fas fa-arrow-left me-2"></i> Regresar al panel
+    </a>
+    <h1 class="mb-4 mt-4">Historial de tasa de cambio (VES/USD)</h1>
     <p class="text-muted">Tasa registrada y vigente por fecha.</p>
 
     <div class="card shadow-sm mt-4">
@@ -13,9 +16,9 @@
             <table class="table table-striped table-hover mb-0">
                 <thead class="bg-dark text-white">
                     <tr>
-                        <th style="width: 25%;">Fecha de Vigencia</th>
+                        <th style="width: 25%;">Fecha de vigencia</th>
                         <th style="width: 25%;">Tasa (VES por USD)</th>
-                        <th style="width: 25%;">Fecha de Registro</th>
+                        <th style="width: 25%;">Fecha de registro</th>
                     </tr>
                 </thead>
                 <tbody>

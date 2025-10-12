@@ -8,16 +8,16 @@ namespace YSA.Web.Models.ViewModels
         public string? Apellido { get; set; }
         public string? Email { get; set; }
         [DataType(DataType.Password)]
-        [Display(Name = "Contraseña Actual")]
+        [Display(Name = "Contraseña actual")]
         public string? CurrentPassword { get; set; }
 
         [StringLength(100, ErrorMessage = "La {0} debe tener al menos {2} y un máximo de {1} caracteres de longitud.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Nueva Contraseña")]
+        [Display(Name = "Nueva contraseña")]
         public string? NewPassword { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirmar Nueva Contraseña")]
+        [Display(Name = "Confirmar nueva contraseña")]
         [Compare("NewPassword", ErrorMessage = "La nueva contraseña y la de confirmación no coinciden.")]
         public string? ConfirmPassword { get; set; }
         public ICollection<CursoViewModel> CursosComprados { get; set; } = new List<CursoViewModel>();
@@ -32,11 +32,11 @@ namespace YSA.Web.Models.ViewModels
         [Required]
         public string Id { get; set; }
 
-        [Required(ErrorMessage = "El Nombre es obligatorio.")]
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
         [StringLength(100, ErrorMessage = "El {0} debe tener al menos {2} y un máximo de {1} caracteres de longitud.", MinimumLength = 2)]
         public string Nombre { get; set; }
 
-        [Required(ErrorMessage = "El Apellido es obligatorio.")]
+        [Required(ErrorMessage = "El apellido es obligatorio.")]
         [StringLength(100, ErrorMessage = "El {0} debe tener al menos {2} y un máximo de {1} caracteres de longitud.", MinimumLength = 2)]
         public string Apellido { get; set; }
     }
