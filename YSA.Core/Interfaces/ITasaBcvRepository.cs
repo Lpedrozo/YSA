@@ -10,6 +10,7 @@ namespace YSA.Core.Interfaces
         Task<decimal?> GetTodayRateAsync();
         Task<decimal?> GetCurrentActiveRateAsync();
         Task<IEnumerable<TasaBCV>> GetAllRatesAsync();
-
+        Task<TasaBCV> GetLastRateAsync();
+        Task UpdateRateAsync(TasaBCV tasa);
     }
 }

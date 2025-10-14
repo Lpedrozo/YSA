@@ -106,5 +106,19 @@ namespace YSA.Data.Repositories
                 .OrderByDescending(t => t.Fecha)
                 .ToListAsync();
         }
+        public async Task<TasaBCV> GetLastRateAsync()
+        {
+            return await _context.TasasBCV
+                .OrderByDescending(t => t.FechaCreacion) // Ordenar por la hora real de creación
+                .FirstOrDefaultAsync();
+        }
+
+        // 2. Nuevo método para actualizar una tasa existente
+        public async Task UpdateRateAsync(TasaBCV tasa)
+        {
+            // Adjuntar la entidad al contexto y marcarla como modificada, o solo usar SaveChanges si ya está adjunta
+            _context.TasasBCV.Update(tasa);
+            await _context.SaveChangesAsync();
+        }
     }
 }
