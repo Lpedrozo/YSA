@@ -243,12 +243,6 @@
                                         data-urlimagen="@artista.UrlImagen" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <form asp-action="DeleteArtista" asp-route-id="@artista.Id" method="post" class="d-inline eliminar-form">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-danger eliminar-btn" title="Eliminar">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </form>
                             </div>
                         </div>
                     </div>

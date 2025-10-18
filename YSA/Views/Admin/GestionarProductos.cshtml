@@ -179,12 +179,6 @@
                                 <a asp-action="EditarProducto" asp-route-id="@item.Id" class="btn btn-sm btn-info me-1">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
-                                <form asp-action="EliminarProducto" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
-                                    </button>
-                                </form>
                             </div>
                         </div>
                     </div>

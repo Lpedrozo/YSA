@@ -109,12 +109,6 @@
                                     <i class="fas fa-image"></i>
                                 </button>
 
-                                <form asp-action="EliminarEventoDirecto" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar el evento: @item.Titulo?');">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-danger" title="Eliminar">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </form>
                             </div>
                         </div>
                     </div>

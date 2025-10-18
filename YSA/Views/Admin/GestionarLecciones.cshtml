@@ -211,12 +211,6 @@
                                         title="Editar Lección">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <form asp-action="EliminarLeccion" asp-route-id="@leccion.Id" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-danger btn-icon eliminar-btn" title="Eliminar lección">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </form>
                             </div>
                         </div>
                     </div>
