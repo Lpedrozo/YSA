@@ -95,7 +95,8 @@ builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<ICompraService, CompraService>();
 builder.Services.AddScoped<IRecursoActividadRepository, RecursoActividadRepository>();
 builder.Services.AddScoped<IRecursoActividadService, RecursoActividadService>();
-
+builder.Services.AddScoped<IArticuloRepository, ArticuloRepository>();
+builder.Services.AddScoped<IArticuloService, ArticuloService>();
 // **Registro de Tasa de Cambio**
 builder.Services.AddScoped<ITasaBCVRepository, TasaBCVRepository>();
 

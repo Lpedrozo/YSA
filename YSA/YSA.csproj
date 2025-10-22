@@ -33,6 +33,7 @@
     <Folder Include="wwwroot\eventos\portadas\" />
     <Folder Include="wwwroot\FotoPerfil\" />
     <Folder Include="wwwroot\Artista\" />
+    <Folder Include="wwwroot\Articulos\" />
     <Folder Include="wwwroot\productos\archivos\" />
     <Folder Include="wwwroot\productos\portadas\" />
   </ItemGroup>

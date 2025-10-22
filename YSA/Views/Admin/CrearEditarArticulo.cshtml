@@ -1,0 +1,248 @@
+﻿@using YSA.Web.Models.ViewModels
+@using YSA.Core.Entities
+@model ArticuloViewModel
+
+@{
+    // Títulos dinámicos
+    ViewData["Title"] = Model.Id == 0 ? "Crear Artículo" : "Editar Artículo";
+    var formTitle = Model.Id == 0 ? "Crear Nuevo Artículo" : $"Editar Artículo: {Model.Titulo}";
+    var submitButtonText = Model.Id == 0 ? "Crear Artículo" : "Guardar Cambios";
+}
+
+<!-- Incluir iconos de Bootstrap (opcional, si el proyecto lo usa) -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<!-- Contenedor principal centrado con sombra y espaciado -->
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <h1 class="display-5 fw-bold mb-4 text-primary">@formTitle</h1>
+
+            <!-- Componente Card principal para el formulario -->
+            <form asp-action="@(Model.Id == 0 ? "CrearArticulo" : "EditarArticulo")"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="card shadow-lg p-lg-4 p-3 border-0">
+                <input type="hidden" asp-for="Id" />
+
+                <!-- Cuerpo del formulario -->
+                <div class="card-body">
+
+                    <!-- SECCIÓN 1: Contenido Principal -->
+                    <h2 class="card-title h4 text-secondary border-bottom pb-2 mb-4">
+                        <i class="bi bi-pencil-square me-2"></i>Contenido Principal
+                    </h2>
+
+                    <div class="row g-3">
+                        <!-- Título -->
+                        <div class="col-md-6">
+                            <label asp-for="Titulo" class="form-label fw-bold"></label>
+                            <input asp-for="Titulo" class="form-control rounded-3" placeholder="Título principal del artículo" />
+                            <span asp-validation-for="Titulo" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Categoría -->
+                        <div class="col-md-6">
+                            <label asp-for="Categoria" class="form-label fw-bold"></label>
+                            <input asp-for="Categoria" class="form-control rounded-3" placeholder="Ej: Tecnología, Estilo de Vida" />
+                            <span asp-validation-for="Categoria" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Resumen -->
+                    <div class="mb-3 mt-3">
+                        <label asp-for="Resumen" class="form-label fw-bold"></label>
+                        <textarea asp-for="Resumen" rows="3" class="form-control rounded-3" placeholder="Un resumen corto para la vista previa..."></textarea>
+                        <span asp-validation-for="Resumen" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Contenido Texto (TinyMCE) -->
+                    <div class="mb-5">
+                        <label asp-for="ContenidoTexto" class="form-label fw-bold"></label>
+                        <!-- CLASE AÑADIDA: tinymce-editor-long -->
+                        <textarea asp-for="ContenidoTexto" class="tinymce-editor-long"></textarea>
+                        <span asp-validation-for="ContenidoTexto" class="text-danger small"></span>
+                    </div>
+
+                    <!-- SECCIÓN 2: Imagen Principal del Artículo -->
+                    <h2 class="card-title h4 text-secondary border-bottom pb-2 mb-4">
+                        <i class="bi bi-image me-2"></i>Imagen Principal del Artículo
+                    </h2>
+
+                    @if (!string.IsNullOrEmpty(Model.UrlImagenPrincipal))
+                    {
+                        <div class="mb-4 bg-light p-3 rounded-3 shadow-sm">
+                            <p class="small text-muted mb-2">Imagen actual:</p>
+                            <img src="@Model.UrlImagenPrincipal" alt="Imagen Principal Actual" class="img-fluid rounded-3 mb-2" style="max-height: 250px; width: 100%; object-fit: cover;" />
+                            <input type="hidden" asp-for="UrlImagenPrincipal" />
+                        </div>
+                    }
+
+                    <div class="mb-5">
+                        <label asp-for="ImagenPrincipalFile" class="form-label fw-bold"></label>
+                        <!-- Input tipo file de Bootstrap -->
+                        <input asp-for="ImagenPrincipalFile" type="file" class="form-control rounded-3" />
+                    </div>
+
+                    <!-- SECCIÓN 3: Persona Destacada/Entrevistada -->
+                    <h2 class="card-title h4 text-secondary border-bottom pb-2 mb-4">
+                        <i class="bi bi-person-badge me-2"></i>Persona Destacada/Entrevistada
+                    </h2>
+
+                    <div class="row g-3">
+                        <!-- Nombre Persona Destacada -->
+                        <div class="col-md-6">
+                            <label asp-for="NombrePersonaDestacada" class="form-label fw-bold"></label>
+                            <input asp-for="NombrePersonaDestacada" class="form-control rounded-3" placeholder="Nombre de la persona destacada" />
+                            <span asp-validation-for="NombrePersonaDestacada" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Biografía Corta Destacado (TinyMCE) -->
+                        <div class="col-md-6">
+                            <label asp-for="BiografiaCortaDestacado" class="form-label fw-bold"></label>
+                            <!-- CLASE AÑADIDA: tinymce-editor-short -->
+                            <textarea asp-for="BiografiaCortaDestacado" class="tinymce-editor-short" placeholder="Breve descripción o cargo con formato enriquecido"></textarea>
+                            <span asp-validation-for="BiografiaCortaDestacado" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Foto del Destacado -->
+                    <div class="mt-4 mb-5">
+                        <h3 class="h5 text-primary mb-3">Foto del Destacado</h3>
+                        @if (!string.IsNullOrEmpty(Model.UrlFotoDestacado))
+                        {
+                            <div class="mb-3 d-flex align-items-center bg-light p-3 rounded-3 shadow-sm">
+                                <p class="small text-muted me-3 mb-0">Foto actual:</p>
+                                <!-- Imagen redondeada con clases de Bootstrap -->
+                                <img src="@Model.UrlFotoDestacado" alt="Foto Destacado Actual" class="img-fluid rounded-circle border border-2 border-secondary shadow-sm" style="width: 80px; height: 80px; object-fit: cover;" />
+                                <input type="hidden" asp-for="UrlFotoDestacado" />
+                            </div>
+                        }
+
+                        <label asp-for="FotoDestacadoFile" class="form-label fw-bold"></label>
+                        <input asp-for="FotoDestacadoFile" type="file" class="form-control rounded-3" />
+                    </div>
+
+                    <!-- SECCIÓN 4: Fotos de Contenido Adicionales (Solo para Editar) -->
+                    @if (Model.Id > 0)
+                    {
+                        <div class="border-top pt-4 mt-4">
+                            <h2 class="card-title h4 text-secondary border-bottom pb-2 mb-4">
+                                <i class="bi bi-images me-2"></i>Gestión de Fotos de Contenido
+                            </h2>
+
+                            <!-- Fotos Existentes -->
+                            @if (Model.FotosExistentes != null && Model.FotosExistentes.Any())
+                            {
+                                <p class="mb-3 fw-bold small">Fotos ya cargadas (@Model.FotosExistentes.Count):</p>
+                                <div class="d-flex flex-wrap gap-3 mb-4">
+                                    @foreach (var foto in Model.FotosExistentes)
+                                    {
+                                        <!-- Tarjeta pequeña para cada foto -->
+                                        <div class="position-relative" style="width: 100px; height: 100px;">
+                                            <img src="@foto.UrlFoto" alt="Foto Contenido" class="img-fluid rounded shadow-sm w-100 h-100 object-fit-cover" />
+
+                                            <!-- Botón de eliminación posicionado en la esquina superior derecha -->
+                                            <form asp-action="EliminarFotoContenido" method="post" class="position-absolute top-0 end-0">
+                                                <input type="hidden" name="fotoId" value="@foto.Id" />
+                                                <input type="hidden" name="articuloId" value="@Model.Id" />
+                                                <!-- Por favor, implemente un MODAL de CONFIRMACIÓN de Bootstrap aquí. -->
+                                                <button type="submit" class="btn btn-danger btn-sm rounded-circle p-0"
+                                                        style="width: 24px; height: 24px; font-size: 0.75rem;"
+                                                        title="Eliminar Foto">
+                                                    &times;
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info small border-0" role="alert">
+                                    No hay fotos de contenido adicionales para este artículo.
+                                </div>
+                            }
+
+                            <!-- Subida de Nuevas Fotos -->
+                            <div class="mt-4">
+                                <label asp-for="FotosContenidoFiles" class="form-label fw-bold"></label>
+                                <input asp-for="FotosContenidoFiles" type="file" multiple class="form-control rounded-3" />
+                                <div class="form-text">Puede seleccionar múltiples archivos.</div>
+                            </div>
+                        </div>
+                    }
+
+
+                    <!-- Botones de Acción Globales -->
+                    <div class="d-flex justify-content-between align-items-center border-top pt-4 mt-5">
+
+                        <!-- Botón Volver -->
+                        <a asp-action="Articulos" class="btn btn-outline-secondary btn-lg rounded-pill">
+                            <i class="bi bi-arrow-left me-2"></i> Volver al Listado
+                        </a>
+
+                        <!-- Botón Guardar/Crear -->
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-lg">
+                            <i class="bi bi-save me-2"></i> @submitButtonText
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <!-- Incluir jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- CDN de TinyMCE -->
+    <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <script>
+        // Configuración para Biografía Corta (Editor simple: bold, italic, list)
+        tinymce.init({
+            selector: 'textarea.tinymce-editor-short',
+            plugins: 'advlist autolink lists link code',
+            toolbar: 'bold italic bullist numlist link',
+            menubar: false,
+            height: 150,
+            // Permite el foco correcto si el formulario se usara dentro de un modal
+            setup: function (editor) {
+                editor.on('init', function () {
+                    $(editor.getContainer()).parents('.modal').on('shown.bs.modal', function () {
+                        editor.focus();
+                    });
+                });
+            }
+        });
+
+        // Configuración para Contenido Texto (Editor completo)
+        tinymce.init({
+            selector: 'textarea.tinymce-editor-long',
+            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+            height: 500,
+            // Permite el foco correcto si el formulario se usara dentro de un modal
+            setup: function (editor) {
+                editor.on('init', function () {
+                    $(editor.getContainer()).parents('.modal').on('shown.bs.modal', function () {
+                        editor.focus();
+                    });
+                });
+            }
+        });
+    </script>
+
+
+}

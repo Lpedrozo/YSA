@@ -1,397 +1,330 @@
 ﻿@model YSA.Web.Models.ViewModels.RevistaIndexViewModel
 @{
     ViewData["Title"] = "Revista de Arte y Cultura";
+    var detalleUrl = Url.Action("DetalleArticulo", "Revista");
 }
 
 <style>
     /* ------------------------------------- */
-    /* 1. VARIABLES & ESTILOS BASE (Mínimos cambios) */
+    /* ESTILOS BASE Y PALETA DE COLORES SUAVES */
     /* ------------------------------------- */
     :root {
-        --color-primary: #333333; /* Gris Oscuro/Negro para acentos */
-        --color-secondary: #000000; /* Negro para títulos */
-        --color-accent: #666666; /* Gris medio para bordes o detalles */
-        --color-background: #ffffff; /* Fondo Blanco */
-        --color-text-dark: #333333; /* Texto Oscuro */
-        --color-text-light: #ffffff; /* Texto Claro */
+        --color-primary: #2b826b; /* Verde Suave para acentos */
+        --color-secondary: #000000;
+        --color-text-dark: #333333;
+        --color-background: #f8f8f8;
+        --color-card-background: #ffffff;
+        --color-hero-bg: #e5f3f0; /* Fondo de Contenido Suave */
+        --color-hero-dark: #4d9d8b; /* Fondo de Imagen Suave */
     }
 
-    body {
-        font-family: 'Poppins', sans-serif;
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-    }
-
+    /* Estilos globales */
     .section-title {
         font-size: 2.5rem;
         font-weight: 700;
-        color: var(--color-secondary); /* Negro */
-        padding-bottom: 0.5rem;
+        color: var(--color-secondary);
         margin-bottom: 2rem;
-        display: inline-block;
+        text-align: center;
     }
 
-    .card {
-        border-radius: 1rem;
-        border: 1px solid #e0e0e0;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease-in-out;
+    .revista-header {
+        background-color: #f5fafa; /* Fondo muy claro */
+        padding: 4rem 0;
+        text-align: center;
+        width: 100%; /* Asegura ancho completo */
+    }
+
+    .revista-title {
+        font-family: 'Georgia', serif;
+        font-size: 4rem;
+        font-weight: 700;
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    /* Estilos de Tarjeta (Para Recientes) - Se mantienen */
+    .articulo-card {
+        border-radius: 0.75rem;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         overflow: hidden;
-        background-color: #fff;
-        height: 100%;
-    }
-
-        .card:hover {
-            transform: translateY(-5px) scale(1.01);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-    .card-img-top {
-        height: 250px;
-        object-fit: cover;
-        width: 100%;
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-    }
-
-    /* Ajuste para las imágenes de Artistas, si es necesario */
-    .artista-card .card-img-top {
-        /* Ejemplo de altura diferente si la necesitas para artistas en esta vista */
-        height: 200px; 
-    }
-
-    /* CARRUSEL CONTROLS */
-    .carousel-control-prev-icon,
-    .carousel-control-next-icon {
-        background-color: var(--color-primary); /* Gris oscuro */
-        border-radius: 50%;
-        padding: 1.5rem;
-    }
-
-    /* Bloque de contexto */
-    .revista-context-block {
-        padding: 1rem;
+        background-color: var(--color-card-background);
+        cursor: pointer;
         height: 100%;
         display: flex;
         flex-direction: column;
+    }
+
+        .articulo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+    .articulo-card-img {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .articulo-card .card-body {
+        flex-grow: 1;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--color-primary);
+        line-height: 1.2;
+    }
+
+    /* ------------------------------------- */
+    /* ESTILOS HERO DE DOS COLUMNAS - AJUSTADOS + ANIMACIÓN HOVER */
+    /* ------------------------------------- */
+    .articulo-destacado-visual {
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+        margin-bottom: 0;
+        overflow: hidden;
+        min-height: 350px;
+        transition: all 0.3s ease-in-out;
+        cursor: pointer;
+    }
+
+        .articulo-destacado-visual:hover {
+            transform: scale(1.005);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        /* Contenedor de la Fila */
+        .articulo-destacado-visual .row {
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+            min-height: inherit;
+        }
+
+    /* COLUMNA VISUAL (Izquierda o Derecha) */
+    .hero-visual-col {
+        background-color: var(--color-hero-dark);
+        padding: 1rem;
+        display: flex;
+        align-items: center;
         justify-content: center;
-        border: 1px solid #ddd;
-        border-radius: 1rem;
-        background-color: #f7f7f7;
-    }
-    
-    /* ------------------------------------- */
-    /* 2. MEDIA QUERIES PARA RESPONSIVIDAD */
-    /* ------------------------------------- */
-
-    /* Extra Small devices (smartphones, less than 768px) */
-    @@media (max-width: 767.98px) {
-        .section-title {
-            font-size: 2rem;
-        }
-        
-        /* Ocultar flechas en móvil para mayor simplicidad */
-        .carousel-control-prev,
-        .carousel-control-next {
-            display: none;
-        }
-
-        /* En móvil, los col pasan a ocupar el ancho total para que se muestre 1 por slide (manejado por JS) */
-        .revista-context-block {
-            margin-bottom: 1.5rem; /* Espacio debajo del bloque de texto en móvil */
-        }
-    }
-    
-    /* Small to Medium devices (Tablets, 768px to 991.98px) */
-    @@media (min-width: 768px) and (max-width: 991.98px) {
-        /* La estructura de Bootstrap MD (col-md-4, col-md-6) se aplicará automáticamente por el JS */
+        height: 100%;
+        position: relative;
     }
 
-    /* Large devices (Desktop, 992px and up) */
+    /* COLUMNA DE CONTENIDO (Texto) */
+    .hero-content-col {
+        background-color: var(--color-hero-bg);
+        color: var(--color-text-dark);
+        padding: 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
+    }
+
+    /* IMAGEN DENTRO DE LA COLUMNA VISUAL */
+    .hero-decorative-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 1rem;
+        color: var(--color-primary);
+    }
+
+    .hero-summary {
+        font-size: 1rem;
+        font-weight: 400;
+        margin-bottom: 1.5rem;
+    }
+
+    /* === REGLA ELIMINADA: La alternancia ahora se maneja con la clase de Bootstrap flex-lg-row-reverse === */
+    /* .articulo-destacado-visual:nth-child(even) .row { flex-direction: row-reverse; } */
+
+    /* LAYOUT: Contenedor principal sin espacios (g-0) y sin redondeo en los bordes */
+    .featured-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    /* Título en la columna de contenido */
+    .hero-content-col a:not(.btn) {
+        text-decoration: none;
+        color: inherit;
+    }
+
+        .hero-content-col a:not(.btn):hover {
+            opacity: 0.8;
+        }
+
+    /* MODIFICACIÓN CLAVE PARA FORZAR ANCHO COMPLETO (responsive) */
+    .container-fluid {
+        /* Fuerza a tomar el ancho total del viewport */
+        width: 100vw;
+        position: relative;
+        /* Compensa el ancho de 100vw con márgenes negativos para eliminar el scroll horizontal */
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        /* Aseguramos que los paddings de Bootstrap estén a cero, aunque ya se usa g-0 */
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* Media Queries */
+    @@media (max-width: 991.98px) {
+        /* Aseguramos que las columnas tomen el 100% de ancho en móvil (col-sm-12 ya lo hace, pero forzamos) */
+        .hero-visual-col, .hero-content-col {
+            padding: 2rem;
+            min-height: 250px;
+            width: 100%;
+        }
+        /* En móvil, la dirección siempre es la misma (imagen arriba, contenido abajo),
+               por lo que no necesitamos deshacer row-reverse ya que solo se aplica en 'lg' */
+        /* Ajuste clave para la imagen en móvil */
+        .hero-decorative-img {
+            max-width: 80%;
+            height: auto;
+            object-fit: contain;
+            margin: auto;
+        }
+
+        .articulo-destacado-visual:hover {
+            transform: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .container-fluid {
+            display: block;
+        }
+    }
+
     @@media (min-width: 992px) {
-        /* La estructura LG se aplicará automáticamente por el JS */
-    }
+        .articulo-destacado-visual {
+            min-height: 400px;
+        }
 
+        .hero-title {
+            font-size: 2.5rem;
+        }
+
+        .hero-content-col {
+            padding: 3rem 4rem;
+        }
+    }
 </style>
 
-<div class="container-fluid px-5 py-5">
-
-    <div class="row mb-5 align-items-center">
-        <div class="col-12 text-center mb-4">
-            <h2 class="section-title">Nuestra revista</h2>
-        </div>
-
-        <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
-            <div class="revista-context-block text-center">
-                <h3>Eventos y tendencias</h3>
-                <p>
-                    Sumérgete en el corazón vibrante de la cultura. Nuestra revista es la brújula que te guía a través de los eventos más significativos, desde exposiciones de arte de vanguardia hasta festivales culturales únicos. Aquí, la inspiración nunca duerme.
-                </p>
-                <p class="small text-muted mt-2">
-                    Explora lo que viene y marca tu calendario.
-                </p>
-            </div>
-        </div>
-
-        <div class="col-lg-9 col-md-8">
-            <div id="eventosCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    @{
-                        // Generamos todos los items en una sola diapositiva INICIAL (la activa)
-                        // El JS se encargará de reestructurarlos.
-                        int totalEvents = Model.EventosElevarte?.Count() ?? 0;
-                    }
-                    @if (totalEvents > 0)
-                    {
-                        <div class="carousel-item active">
-                            <div class="row g-4">
-                                @foreach (var evento in Model.EventosElevarte)
-                                {
-                                    <div class="col-lg-4 col-md-6 col-12">
-                                        <div class="card h-100 shadow-sm event-card" data-event-id="@evento.Id" style="cursor:pointer;">
-                                            <img src="@Url.Content(evento.UrlImagen)" class="card-img-top" alt="@evento.Titulo">
-                                            <div class="card-body">
-                                                <h5 class="card-title">@evento.Titulo</h5>
-                                                <p class="card-text">@evento.FechaEvento.ToString("dd MMMM yyyy")</p>
-                                                <span class="badge rounded-pill bg-primary text-white">@evento.Lugar</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="carousel-item active">
-                            <div class="alert alert-info text-center" role="alert">
-                                No hay eventos próximos para mostrar.
-                            </div>
-                        </div>
-                    }
-                </div>
-                
-                @* Los botones se dejan aquí, el JS los mostrará/ocultará dinámicamente *@
-                <button class="carousel-control-prev" type="button" data-bs-target="#eventosCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#eventosCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Siguiente</span>
-                </button>
-            </div>
-        </div>
+<div class="revista-header mb-5">
+    <div class="container">
+        <h1 class="revista-title">Revista</h1>
+        <p class="revista-subtitle">Explora los artículos de nuestra academia.</p>
     </div>
+</div>
 
-    <hr class="my-5" />
+@* El container-fluid ahora fuerza el ancho completo con 100vw y compensación de márgenes *@
+<div class="container-fluid mb-5 pb-5">
 
-    <div class="row mb-5 align-items-center">
-        <div class="col-12 text-center mb-4">
-            <h2 class="section-title">Explora a nuestros maestros destacados</h2>
-        </div>
+    @if (Model.ArticulosDestacados.Any())
+    {
+        <div class="featured-grid mb-5">
 
-        <div class="col-lg-9 col-md-8 order-md-1">
-            <div id="artistasCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    @{
-                        int totalArtists = Model.Artistas?.Count ?? 0;
-                    }
-                    @if (totalArtists > 0)
-                    {
-                        <div class="carousel-item active">
-                            <div class="row g-4">
-                                @foreach (var artista in Model.Artistas)
-                                {
-                                    <div class="col-lg-3 col-md-6 col-12"> @* Clases base para que se vean bien mientras carga el JS *@
-                                        <div class="card h-100 shadow-sm artista-card" data-artista-id="@artista.Id" style="cursor:pointer;">
-                                            <img src="@(string.IsNullOrEmpty(artista.Usuario.UrlImagen) ? "https://via.placeholder.com/400x200.png?text=Sin+Foto" : Url.Content(artista.Usuario.UrlImagen))"
-                                                    class="card-img-top" alt="Foto de perfil de @artista.Usuario.Nombre">
-                                            <div class="card-body text-center">
-                                                <h5 class="card-title">@artista.Usuario.Nombre @artista.Usuario.Apellido</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
+            @* CAMBIO CLAVE: Usamos .Select((item, index) => ...) para obtener el índice y aplicar la clase flex-lg-row-reverse a los artículos pares (índice 1, 3, 5...) *@
+            @foreach (var articulo in Model.ArticulosDestacados.Select((item, index) => new { Articulo = item, Index = index }))
+            {
+                // isEven es true para el 2do, 4to, etc. (Index 1, 3, etc.)
+                var isEven = (articulo.Index + 1) % 2 == 0;
+
+                <a href="@(detalleUrl)/@articulo.Articulo.Id" style="text-decoration: none; color: inherit;">
+                    <div class="articulo-destacado-visual">
+                        @* APLICACIÓN DE CLASE DE ALTERNANCIA: flex-lg-row-reverse invierte el orden en desktop si es artículo par *@
+                        <div class="row g-0 @(isEven ? "flex-lg-row-reverse" : "")">
+
+                            @* Columna de Imagen Decorativa (Ancho 4/12 en Lg, 5/12 en Md) *@
+                            <div class="col-lg-4 col-md-5 col-sm-12 hero-visual-col">
+                                <img src="@Url.Content(articulo.Articulo.UrlImagenPrincipal ?? "https://via.placeholder.com/400x600.png?text=Visual")"
+                                     alt="@articulo.Articulo.Titulo"
+                                     class="hero-decorative-img">
+                            </div>
+
+                            @* Columna de Contenido de Texto (Ancho 8/12 en Lg, 7/12 en Md) *@
+                            <div class="col-lg-8 col-md-7 col-sm-12 hero-content-col">
+
+                                <p class="text-uppercase mb-2" style="font-weight: 500; opacity: 0.8;">
+                                    <span class="badge rounded-pill" style="background-color: var(--color-primary); color: white;">@articulo.Articulo.Categoria</span>
+                                </p>
+
+                                <h3 class="hero-title">@articulo.Articulo.Titulo</h3>
+
+                                <p class="hero-summary d-none d-md-block">@articulo.Articulo.Resumen</p>
+
+                                @* Botón/Enlace de Leer Más *@
+                                <span class="btn btn-light rounded-pill mt-3" style="width: fit-content; color: var(--color-primary); border: 1px solid var(--color-primary);">
+                                    Leer Artículo
+                                </span>
+
+                                <small class="mt-3" style="color: rgba(43, 130, 107, 0.7);">
+                                    Publicado el @articulo.Articulo.FechaPublicacion.ToString("dd MMMM yyyy")
+                                </small>
+
                             </div>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="carousel-item active">
-                            <div class="alert alert-info text-center" role="alert">
-                                No hay artistas para mostrar.
-                            </div>
-                        </div>
-                    }
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#artistasCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#artistasCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Siguiente</span>
-                </button>
-            </div>
+                    </div>
+                </a>
+            }
         </div>
+        <hr class="my-5" />
+    }
 
-        <div class="col-lg-3 col-md-4 order-md-2 mb-5 pb-5 mt-4 mt-md-0">
-            <div class="revista-context-block text-center">
-                <h3>El talento detrás del arte</h3>
-                <p>
-                    Conoce a los visionarios que están redefiniendo el panorama cultural. Cada artista tiene una historia única, una voz poderosa y una obra que merece ser celebrada. Explora sus perfiles y sumérgete en sus mundos creativos.
-                </p>
-                <p class="small text-muted mt-2">
-                    Haz click en las tarjetas para ver sus portafolios.
-                </p>
+    <h2 class="section-title">Más artículos</h2>
+
+    @if (Model.ArticulosRecientes.Any())
+    {
+        @* La sección de recientes sigue centrada con padding de container por defecto *@
+        <div class="container">
+            <div class="row g-4">
+                @foreach (var articulo in Model.ArticulosRecientes)
+                {
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <a href="@(detalleUrl)/@articulo.Id" style="text-decoration: none; color: inherit;">
+                            <div class="card articulo-card">
+                                <img src="@Url.Content(articulo.UrlImagenPrincipal ?? "https://via.placeholder.com/600x400.png?text=Articulo")" class="articulo-card-img" alt="@articulo.Titulo">
+                                <div class="card-body">
+                                    <span class="badge rounded-pill" style="background-color: var(--color-primary); color: white;">@articulo.Categoria</span>
+                                    <h5 class="card-title mt-2" style="font-size:1.1rem;">@articulo.Titulo</h5>
+                                    @{
+                                        var resumenCorto = articulo.Resumen?.Substring(0, Math.Min(articulo.Resumen.Length, 100)) + ((articulo.Resumen?.Length > 100) ? "..." : "");
+                                    }
+                                    <p class="card-text" style="font-size:0.9rem; color:#888;">@resumenCorto</p>
+                                    <small class="text-muted">@articulo.FechaPublicacion.ToString("dd MMM yyyy")</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
             </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center mt-5" role="alert">
+            <p>¡Estamos preparando nuevo contenido! Vuelve pronto.</p>
+        </div>
+    }
 
 </div>
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function () {
-
-            $(document).on('click', '.event-card', function () {
-                const eventId = $(this).data('event-id');
-                if (eventId) {
-                    // Usamos la acción "DetalleEvento" que creamos anteriormente
-                    const urlDetalle = '@Url.Action("DetalleEvento", "Revista")';
-                    window.location.href = urlDetalle + '/' + eventId;
-                }
-            });
-            // ----------------------------------------------------------------
-            // SOLUCIÓN: Usar DELEGACIÓN DE EVENTOS para elementos dinámicos
-            // Esto asegura que el clic funcione incluso si la tarjeta es clonada.
-            // ----------------------------------------------------------------
-            $(document).on('click', '.artista-card', function () {
-                const artistaId = $(this).data('artista-id');
-                if (artistaId) {
-                    const urlDetalle = '@Url.Action("Detalles", "Artista")';
-                    window.location.href = urlDetalle + '/' + artistaId;
-                }
-            });
-
-
-            // ----------------------------------------------------
-            // LÓGICA DE RESPONSIVIDAD DINÁMICA DE CAROUSEL
-            // (La lógica que ya tenías y que hacía que se perdiera el evento)
-            // ----------------------------------------------------
-
-            function getItemsPerSlide() {
-                if (window.innerWidth >= 992) { // Desktop (lg)
-                    return {
-                        eventos: 3,
-                        artistas: 4
-                    };
-                } else if (window.innerWidth >= 768) { // Tablet (md)
-                    return {
-                        eventos: 2,
-                        artistas: 2
-                    };
-                } else { // Mobile (sm, xs)
-                    return {
-                        eventos: 1,
-                        artistas: 1
-                    };
-                }
-            }
-
-            // Función de reestructuración que reconstruye el HTML del carrusel basado en el tamaño
-            function restructureCarouselBootstrap(carouselId, rawItems, itemsPerSlide) {
-                const $carouselInner = $(`#${carouselId} .carousel-inner`);
-                $carouselInner.empty(); // Limpiar el contenido existente
-
-                if (rawItems.length === 0) {
-                    const message = carouselId === 'eventosCarousel' ? 'No hay eventos próximos para mostrar.' : 'No hay artistas para mostrar.';
-                    $carouselInner.append(`<div class="carousel-item active"><div class="alert alert-info text-center" role="alert">${message}</div></div>`);
-
-                    // Ocultar botones de navegación si no hay ítems
-                    $(`#${carouselId} .carousel-control-prev`).hide();
-                    $(`#${carouselId} .carousel-control-next`).hide();
-                    return;
-                }
-
-                const totalSlides = Math.ceil(rawItems.length / itemsPerSlide);
-
-                // Mostrar/Ocultar botones de navegación
-                $(`#${carouselId} .carousel-control-prev`).toggle(totalSlides > 1);
-                $(`#${carouselId} .carousel-control-next`).toggle(totalSlides > 1);
-
-
-                for (let i = 0; i < totalSlides; i++) {
-                    const $slide = $(`<div class="carousel-item ${i === 0 ? 'active' : ''}"><div class="row g-4 justify-content-center"></div></div>`);
-                    const $row = $slide.find('.row');
-                    const startIndex = i * itemsPerSlide;
-                    const itemsInSlide = rawItems.slice(startIndex, startIndex + itemsPerSlide);
-
-                    itemsInSlide.forEach(item => {
-                        // Importante: No clonar eventos aquí. La delegación los maneja.
-                        const $card = $(item).clone(false);
-                        let colClass;
-
-                        if (carouselId === 'eventosCarousel') {
-                            colClass = itemsPerSlide === 1 ? 'col-12' : (itemsPerSlide === 2 ? 'col-md-6' : 'col-lg-4');
-                        } else { // artistasCarousel
-                            colClass = itemsPerSlide === 1 ? 'col-12' : (itemsPerSlide === 2 ? 'col-md-6' : 'col-lg-3');
-                        }
-
-                        // Envuelve la tarjeta clonada en la columna correcta.
-                        const $colDiv = $('<div>').addClass(colClass).append($card);
-                        $row.append($colDiv);
-                    });
-
-                    $carouselInner.append($slide);
-                }
-
-                // Destruir y crear nueva instancia de Bootstrap Carousel
-                const carouselElement = document.getElementById(carouselId);
-                const bsCarousel = bootstrap.Carousel.getInstance(carouselElement);
-                if (bsCarousel) {
-                    bsCarousel.dispose();
-                }
-                new bootstrap.Carousel(carouselElement);
-            }
-
-            // 1. Obtener todos los elementos (tarjetas) de la estructura INICIAL de Razor
-            const originalEventCards = [];
-            $('#eventosCarousel .carousel-item .row > div').each(function() {
-                originalEventCards.push($(this).children().get(0));
-            });
-
-            const originalArtistCards = [];
-            $('#artistasCarousel .carousel-item .row > div').each(function() {
-                originalArtistCards.push($(this).children().get(0));
-            });
-
-
-            // 2. Función de inicialización
-            function initializeCarousels() {
-                const itemsConfig = getItemsPerSlide();
-
-                // Reestructurar eventos
-                restructureCarouselBootstrap('eventosCarousel', originalEventCards, itemsConfig.eventos);
-
-                // Reestructurar artistas
-                restructureCarouselBootstrap('artistasCarousel', originalArtistCards, itemsConfig.artistas);
-            }
-
-            // Inicializar al cargar la página
-            initializeCarousels();
-
-            // 3. Manejar el evento de redimensionamiento de la ventana
-            let resizeTimer;
-            $(window).on('resize', function (e) {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function () {
-                    initializeCarousels();
-                }, 250); // Pequeño retraso para optimizar
-            });
-        });
-    </script>
 }

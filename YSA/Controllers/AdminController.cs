@@ -31,6 +31,7 @@ namespace YSA.Web.Controllers
         private readonly IProductoService _productoService;
         private readonly IRecursoActividadService _recursoActividadService;
         private readonly IExchangeRateService _exchangeRateService;
+        private readonly IArticuloService _articuloService; // <--- Nuevo servicio inyectado
 
         public AdminController(ICursoService cursoService, 
             IModuloService moduloService, 
@@ -43,7 +44,8 @@ namespace YSA.Web.Controllers
             IWebHostEnvironment hostingEnvironment, 
             IProductoService productoService,
             IRecursoActividadService recursoActividadService,
-            IExchangeRateService exchangeRateService)
+            IExchangeRateService exchangeRateService,
+            IArticuloService articuloService)
         {
             _cursoService = cursoService;
             _moduloService = moduloService;
@@ -57,6 +59,7 @@ namespace YSA.Web.Controllers
             _productoService = productoService;
             _recursoActividadService = recursoActividadService;
             _exchangeRateService = exchangeRateService;
+            _articuloService = articuloService; // <--- Asignación
         }
 
         [HttpGet]
@@ -1997,6 +2000,169 @@ namespace YSA.Web.Controllers
             {
                 return Json(new { success = false, message = "Error al eliminar el recurso. Verifique permisos o restricciones de la base de datos." });
             }
+        }
+        public async Task<IActionResult> Articulos()
+        {
+            var articulos = await _articuloService.GetAllArticulosAsync();
+            var viewModels = articulos.Select(a => new ArticuloViewModel
+            {
+                Id = a.Id,
+                Titulo = a.Titulo,
+                Categoria = a.Categoria,
+                Estado = a.Estado,
+                NombrePersonaDestacada = a.NombrePersonaDestacada
+                // Solo mapeamos las propiedades necesarias para la tabla
+            }).ToList();
+            return View(viewModels);
+        }
+
+        [HttpGet]
+        public IActionResult CrearArticulo()
+        {
+            var viewModel = new ArticuloViewModel
+            {
+                Estado = "Borrador"
+            };
+            return View("CrearEditarArticulo", viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CrearArticulo(ArticuloViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("CrearEditarArticulo", model);
+            }
+
+            var sanitizer = new HtmlSanitizer();
+            model.ContenidoTexto = sanitizer.Sanitize(model.ContenidoTexto);
+            model.BiografiaCortaDestacado = sanitizer.Sanitize(model.BiografiaCortaDestacado);
+
+            var articulo = new Articulo
+            {
+                Titulo = model.Titulo,
+                Resumen = model.Resumen,
+                ContenidoTexto = model.ContenidoTexto,
+                Categoria = model.Categoria,
+                Estado = model.Estado,
+                NombrePersonaDestacada = model.NombrePersonaDestacada,
+                BiografiaCortaDestacado = model.BiografiaCortaDestacado,
+            };
+
+            await _articuloService.CreateArticuloAsync(
+                articulo,
+                model.FotoDestacadoFile,
+                model.ImagenPrincipalFile,
+                model.FotosContenidoFiles?.ToList());
+
+            TempData["SuccessMessage"] = "Artículo creado exitosamente.";
+            return RedirectToAction(nameof(Articulos));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditarArticulo(int id)
+        {
+            var articulo = await _articuloService.GetArticuloByIdAsync(id);
+            if (articulo == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new ArticuloViewModel
+            {
+                Id = articulo.Id,
+                Titulo = articulo.Titulo,
+                Resumen = articulo.Resumen,
+                ContenidoTexto = articulo.ContenidoTexto,
+                Categoria = articulo.Categoria,
+                Estado = articulo.Estado,
+                NombrePersonaDestacada = articulo.NombrePersonaDestacada,
+                BiografiaCortaDestacado = articulo.BiografiaCortaDestacado,
+                UrlFotoDestacado = articulo.UrlFotoDestacado,
+                UrlImagenPrincipal = articulo.UrlImagenPrincipal,
+                FotosExistentes = articulo.Fotos?.OrderBy(f => f.Orden).ToList()
+            };
+
+            return View("CrearEditarArticulo", viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarArticulo(ArticuloViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Si falla la validación, recarga las fotos existentes para no perderlas en la vista
+                var articuloOriginal = await _articuloService.GetArticuloByIdAsync(model.Id);
+                model.FotosExistentes = articuloOriginal?.Fotos?.OrderBy(f => f.Orden).ToList() ?? new List<ArticuloFoto>();
+                return View("CrearEditarArticulo", model);
+            }
+
+            var sanitizer = new HtmlSanitizer();
+            model.ContenidoTexto = sanitizer.Sanitize(model.ContenidoTexto);
+            model.BiografiaCortaDestacado = sanitizer.Sanitize(model.BiografiaCortaDestacado);
+
+            var articulo = new Articulo
+            {
+                Id = model.Id,
+                Titulo = model.Titulo,
+                Resumen = model.Resumen,
+                ContenidoTexto = model.ContenidoTexto,
+                Categoria = model.Categoria,
+                Estado = model.Estado,
+                NombrePersonaDestacada = model.NombrePersonaDestacada,
+                BiografiaCortaDestacado = model.BiografiaCortaDestacado,
+                // Las URLs existentes se mantienen si no hay nuevo archivo subido (lógica en el servicio)
+            };
+
+            await _articuloService.UpdateArticuloAsync(
+                articulo,
+                model.FotoDestacadoFile,
+                model.ImagenPrincipalFile,
+                model.FotosContenidoFiles?.ToList());
+
+            TempData["SuccessMessage"] = "Artículo actualizado exitosamente.";
+            return RedirectToAction(nameof(Articulos));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EliminarArticulo(int id)
+        {
+            await _articuloService.DeleteArticuloAsync(id);
+            TempData["SuccessMessage"] = "Artículo eliminado exitosamente.";
+            return RedirectToAction(nameof(Articulos));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EliminarFotoContenido(int fotoId, int articuloId)
+        {
+            await _articuloService.DeleteFotoContenidoAsync(fotoId);
+            TempData["SuccessMessage"] = "Foto de contenido eliminada.";
+            return RedirectToAction(nameof(EditarArticulo), new { id = articuloId });
+        }
+        [HttpPost]
+        public async Task<IActionResult> GuardarArticulo(int id)
+        {
+            await _articuloService.UpdateArticuloEstadoAsync(id, "Guardado");
+            TempData["SuccessMessage"] = "El artículo ha sido movido a **Guardado** y está listo para revisión.";
+            return RedirectToAction(nameof(Articulos));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PublicarArticulo(int id)
+        {
+            await _articuloService.UpdateArticuloEstadoAsync(id, "Publicado");
+            TempData["SuccessMessage"] = "¡El artículo ha sido **Publicado** exitosamente!";
+            return RedirectToAction(nameof(Articulos));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VolverABorrador(int id)
+        {
+            await _articuloService.UpdateArticuloEstadoAsync(id, "Borrador");
+            TempData["SuccessMessage"] = "El artículo ha vuelto a **Borrador** y está listo para editar.";
+            return RedirectToAction(nameof(Articulos));
         }
     }
 }

@@ -37,6 +37,8 @@ namespace YSA.Data.Data
         public DbSet<RecursoActividad> RecursosActividades { get; set; }
         public DbSet<EntregaActividad> EntregasActividades { get; set; }
         public DbSet<CursoInstructor> CursoInstructores { get; set; }
+        public DbSet<Articulo> Articulos { get; set; }
+        public DbSet<ArticuloFoto> ArticuloFotos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -210,6 +212,11 @@ namespace YSA.Data.Data
                 .HasOne(ci => ci.Artista)
                 .WithMany(a => a.CursosInstructores)
                 .HasForeignKey(ci => ci.ArtistaId);
+            modelBuilder.Entity<ArticuloFoto>()
+                .HasOne(af => af.Articulo)
+                .WithMany(a => a.Fotos)
+                .HasForeignKey(af => af.ArticuloId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

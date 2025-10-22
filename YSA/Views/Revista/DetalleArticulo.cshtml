@@ -1,0 +1,73 @@
+﻿@model YSA.Web.Models.ViewModels.ArticuloDetalleViewModel
+@{
+    ViewData["Title"] = Model.Titulo;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Revista")">Revista</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.Titulo</li>
+                </ol>
+            </nav>
+
+            <h1 class="display-3 fw-bold mb-3">@Model.Titulo</h1>
+            <p class="lead text-muted">@Model.Resumen</p>
+
+            <p class="mb-4">
+                <span class="badge rounded-pill bg-primary me-2">@Model.Categoria</span>
+                <small class="text-muted">Publicado el @Model.FechaPublicacion.ToString("dd MMMM yyyy")</small>
+            </p>
+
+            @if (!string.IsNullOrEmpty(Model.UrlImagenPrincipal))
+            {
+                <div class="mb-5 text-center">
+                    <img src="@Url.Content(Model.UrlImagenPrincipal)" class="img-fluid rounded shadow" alt="@Model.Titulo" style="max-height: 500px; object-fit: cover; width: 100%;">
+                </div>
+            }
+
+            @* Contenido Principal (Renderiza el HTML previamente sanitizado) *@
+            <div class="articulo-contenido mb-5">
+                @Html.Raw(Model.ContenidoTexto)
+            </div>
+
+            @* Bloque de Persona Destacada (Autor o Entrevistado) *@
+            @if (!string.IsNullOrEmpty(Model.NombrePersonaDestacada))
+            {
+                <div class="card p-4 mb-5 shadow-sm" style="background-color: #f0f0f5;">
+                    <div class="row align-items-center">
+                        <div class="col-md-auto text-center mb-3 mb-md-0">
+                            <img src="@(string.IsNullOrEmpty(Model.UrlFotoDestacado) ? "https://via.placeholder.com/100x100.png?text=Foto" : Url.Content(Model.UrlFotoDestacado))"
+                                 alt="@Model.NombrePersonaDestacada" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                        </div>
+                        <div class="col-md">
+                            <h4 class="fw-bold">Acerca de @Model.NombrePersonaDestacada</h4>
+                            @Html.Raw(Model.BiografiaCortaDestacado)
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @* Galería de Fotos de Contenido Adicionales *@
+            @if (Model.FotosContenido.Any())
+            {
+                <h3 class="mb-4 text-center">Galería de Imágenes</h3>
+                <div class="row g-4">
+                    @foreach (var foto in Model.FotosContenido)
+                    {
+                        <div class="col-md-4 col-sm-6">
+                            <a href="@Url.Content(foto.UrlFoto)" target="_blank">
+                                <img src="@Url.Content(foto.UrlFoto)" class="img-fluid rounded shadow-sm" alt="@foto.Descripcion" style="width:100%; height:200px; object-fit:cover;">
+                            </a>
+                            <p class="text-center small text-muted mt-1">@foto.Descripcion</p>
+                        </div>
+                    }
+                </div>
+            }
+
+        </div>
+    </div>
+</div>

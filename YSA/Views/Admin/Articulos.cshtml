@@ -1,0 +1,281 @@
+﻿@model IEnumerable<YSA.Web.Models.ViewModels.ArticuloViewModel>
+
+@{
+    ViewData["Title"] = "Gestión de Artículos";
+}
+
+<style>
+    :root {
+        --color-secondary: #000000;
+        --color-primary: #333333;
+        --color-text-muted: #6a6a6a;
+        --color-background-light: #f7f7f7;
+        --color-background-white: #ffffff;
+        --color-border-light: #eeeeee;
+    }
+
+    body {
+        background-color: var(--color-background-light);
+        color: var(--color-primary);
+    }
+
+    h1 {
+        color: var(--color-secondary);
+        font-weight: 700;
+    }
+
+    /* Estilos del botón de "Crear Artículo" (Green -> B&W) */
+    .btn-create {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        border-radius: 8px;
+    }
+
+        .btn-create:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* ------------------------------------- */
+    /* 2. Estilos de las Cards de Artículo  */
+    /* ------------------------------------- */
+    .articulo-card {
+        border: 1px solid var(--color-border-light);
+        border-radius: 12px;
+        background-color: var(--color-background-white);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.3s;
+    }
+
+        .articulo-card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+    .card-title {
+        font-weight: 700;
+        color: var(--color-secondary);
+        font-size: 1.25rem;
+    }
+
+    .card-meta-text {
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+    }
+
+    /* Estilos de Botones de Acción dentro de la card (B&W) */
+    .btn-action {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: white !important;
+        transition: background-color 0.2s;
+        border-radius: 5px; /* Ajuste para que los botones de acción sean menos redondos que la tarjeta */
+    }
+
+        .btn-action:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* BADGES DE ESTADO ACTUALIZADOS */
+    .badge-estado-publicado {
+        background-color: #198754; /* Verde oscuro para publicado */
+        color: white;
+    }
+
+    .badge-estado-borrador {
+        background-color: #ffc107; /* Amarillo para borrador */
+        color: #333;
+    }
+
+    .badge-estado-guardado {
+        background-color: #0d6efd; /* Azul para guardado/revisión */
+        color: white;
+    }
+
+    /* ------------------------------------- */
+    /* 3. MEDIA QUERY RESPONSIVE (MÓVIL)   */
+    /* ------------------------------------- */
+    @@media (max-width: 575.98px) {
+        .btn-create {
+            width: 100%;
+        }
+    }
+
+</style>
+<div class="container mt-5 mb-5 pb-5">
+    <h1 class="text-center mb-5">Gestión de Artículos</h1>
+
+    @* Botón de Crear Artículo *@
+    <div class="d-flex justify-content-end mb-4">
+        <a asp-action="CrearArticulo" class="btn btn-create">
+            <i class="fas fa-plus-circle me-2"></i> Crear Nuevo Artículo
+        </a>
+    </div>
+
+    @* Mensaje de Éxito (Adaptado a Bootstrap) *@
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 8px;">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @* Grid de Tarjetas *@
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center" role="alert" style="border-radius: 8px;">
+            No hay artículos creados aún. Haz clic en **Crear Nuevo Artículo** para empezar.
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5 pb-5">
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card articulo-card h-100 p-4">
+                        <div class="card-body d-flex flex-column">
+
+                            @* Título y Estado *@
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title me-3">@item.Titulo</h5>
+                                @{
+                                    var badgeClass = item.Estado switch
+                                    {
+                                        "Publicado" => "badge-estado-publicado",
+                                        "Guardado" => "badge-estado-guardado",
+                                        _ => "badge-estado-borrador", // Borrador (Default)
+                                    };
+                                }
+                                <span class="badge @badgeClass align-self-start">
+                                    @item.Estado
+                                </span>
+                            </div>
+
+                            @* Metadatos (Destacado y Categoría) *@
+                            <p class="card-meta-text mb-1">
+                                <i class="fas fa-user-tag me-1"></i>
+                                Destacado: @(string.IsNullOrEmpty(item.NombrePersonaDestacada) ? "N/A" : item.NombrePersonaDestacada)
+                            </p>
+                            <p class="card-meta-text mb-3">
+                                <i class="fas fa-tags me-1"></i>
+                                Categoría: @item.Categoria
+                            </p>
+
+                            @* Acciones de Transición de Estado *@
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                @if (item.Estado == "Borrador")
+                                {
+                                    // Botón para Guardar (Mover a estado de Revisión/Guardado)
+                                    <form asp-action="GuardarArticulo" asp-route-id="@item.Id" method="post" class="m-0">
+                                        <button type="submit" class="btn btn-sm btn-info btn-action" title="Mover a Guardado">
+                                            <i class="fas fa-save"></i> Guardar
+                                        </button>
+                                    </form>
+
+                                    // Botón para Publicar (Solo desde Borrador, si se permite publicar directamente)
+                                    <form asp-action="PublicarArticulo" asp-route-id="@item.Id" method="post" class="m-0">
+                                        <button type="submit" class="btn btn-sm btn-success btn-action" title="Publicar inmediatamente">
+                                            <i class="fas fa-globe"></i> Publicar
+                                        </button>
+                                    </form>
+                                }
+                                else if (item.Estado == "Guardado" || item.Estado == "Publicado")
+                                {
+                                    // Opción para Volver a Borrador (Permite editar de nuevo)
+                                    <form asp-action="VolverABorrador" asp-route-id="@item.Id" method="post" class="m-0">
+                                        <button type="submit" class="btn btn-sm btn-warning btn-action" title="Volver a Borrador para editar">
+                                            <i class="fas fa-undo"></i> Editar de nuevo
+                                        </button>
+                                    </form>
+                                }
+
+                                @if (item.Estado == "Guardado")
+                                {
+                                    // Opción para Publicar desde Guardado
+                                    <form asp-action="PublicarArticulo" asp-route-id="@item.Id" method="post" class="m-0">
+                                        <button type="submit" class="btn btn-sm btn-success btn-action" title="Publicar el artículo">
+                                            <i class="fas fa-globe"></i> Publicar
+                                        </button>
+                                    </form>
+                                }
+                                else if (item.Estado == "Publicado")
+                                {
+                                    // Opción para Despublicar/Archivar (Se podría añadir un estado "Archivado" en el futuro)
+                                    <span class="text-success small align-self-center"><i class="fas fa-check-circle"></i> En línea</span>
+                                }
+                            </div>
+
+                            @* Acciones principales: Editar y Eliminar *@
+                            <div class="mt-3 pt-3 border-top d-flex justify-content-end align-items-center">
+                                @{
+                                    // Lógica: Solo se puede editar si el estado es "Borrador"
+                                    var canEdit = item.Estado == "Borrador";
+                                }
+                                <a asp-action="EditarArticulo" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-outline-dark me-2 @(canEdit ? "" : "disabled")"
+                                   title="@(canEdit ? "Editar el contenido del artículo" : "Solo se puede editar en estado Borrador")"
+                                   aria-disabled="@(!canEdit ? "true" : "false")">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+
+                                @* Nota: El atributo data-titulo se utiliza para la confirmación de SweetAlert2 *@
+                                <button type="button" class="btn btn-sm btn-danger eliminar-articulo-btn" data-id="@item.Id" data-titulo="@item.Titulo">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+
+                                @* Formulario de eliminación para ser enviado vía JS (Swal) *@
+                                <form asp-action="EliminarArticulo" method="post" asp-route-id="@item.Id" id="eliminar-form-@item.Id" class="d-none"></form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <script>
+        // Añade iconos si no están cargados. Asumimos Bootstrap y Font Awesome ya están cargados.
+        // Si no tienes Font Awesome, usa la CDN: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Lógica para SweetAlert2 (Reemplaza el confirm() nativo)
+            document.querySelectorAll('.eliminar-articulo-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const id = this.getAttribute('data-id');
+                    const titulo = this.getAttribute('data-titulo');
+                    const formId = `eliminar-form-${id}`;
+
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: `¡No podrás revertir la eliminación del artículo: ${titulo}!`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545',
+                        cancelButtonColor: 'var(--color-primary)', // Usar el color B&W para Cancelar
+                        confirmButtonText: 'Sí, ¡bórralo!',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Si se confirma, envía el formulario oculto
+                            document.getElementById(formId).submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}
