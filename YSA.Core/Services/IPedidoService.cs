@@ -18,6 +18,6 @@ namespace YSA.Core.Services
         Task<bool> TienePedidoPendientePorCursoAsync(int estudianteId, int cursoId); // Nuevo método
         Task<IEnumerable<Pedido>> ObtenerPedidosAprobadosPorUsuarioAsync(int estudianteId);
         Task<Pago> GetPagoWithPedido(int id);
-
+        Task AnularPedidoAsync(int pedidoId);
     }
 }

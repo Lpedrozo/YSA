@@ -807,29 +807,49 @@ namespace YSA.Web.Controllers
             }
             return RedirectToAction("GestionarLecciones", new { moduloId = moduloId });
         }
-        public async Task<IActionResult> PedidosPendientes()
+        private async Task<List<PedidoPendienteViewModel>> MapearPedidosAViewModelAsync(IEnumerable<Pedido> pedidos)
         {
-            var pedidosPendientes = await _pedidoService.ObtenerPedidosPorEstadoAsync("Validando");
-
-            var viewModel = new List<PedidoPendienteViewModel>();
-
-            foreach (var pedido in pedidosPendientes)
+            var viewModelList = new List<PedidoPendienteViewModel>();
+            foreach (var pedido in pedidos)
             {
                 var estudiante = await _userManager.FindByIdAsync(pedido.EstudianteId.ToString());
+                // Nota: Asegúrese de que GetPagoWithPedido maneje si no existe el pago (e.g. Pedidos "Pendiente")
                 var pago = await _pedidoService.GetPagoWithPedido(pedido.Id);
 
-                viewModel.Add(new PedidoPendienteViewModel
+                viewModelList.Add(new PedidoPendienteViewModel
                 {
                     PedidoId = pedido.Id,
-                    NombreEstudiante = estudiante?.Nombre ?? "Estudiante Desconocido", // Muestra un nombre por defecto si no se encuentra
+                    NombreEstudiante = estudiante?.Nombre ?? "Estudiante Desconocido",
                     FechaPedido = pedido.FechaPedido,
                     Total = pedido.Total,
-                    UrlComprobante = pago.UrlComprobante,
+                    UrlComprobante = pago?.UrlComprobante,
+                    Estado = pedido.Estado // Agregamos el estado
                 });
             }
+            return viewModelList;
+        }
+        public async Task<IActionResult> GestionarPedidos()
+        {
+            var dashboardModel = new DashboardPedidosViewModel();
 
-            // 4. Pasa la lista de ViewModels a la vista
-            return View(viewModel);
+            // 1. Pedidos en estado Validando (Requieren Aprobación/Anulación)
+            var pedidosValidando = await _pedidoService.ObtenerPedidosPorEstadoAsync("Validando");
+            dashboardModel.PedidosValidando = await MapearPedidosAViewModelAsync(pedidosValidando);
+
+            // 2. Pedidos en estado Completado (Ya Aprobados)
+            var pedidosCompletados = await _pedidoService.ObtenerPedidosPorEstadoAsync("Completado");
+            dashboardModel.PedidosCompletados = await MapearPedidosAViewModelAsync(pedidosCompletados);
+
+            // 3. Pedidos en estado Cancelado (Ya Anulados)
+            var pedidosCancelados = await _pedidoService.ObtenerPedidosPorEstadoAsync("Cancelado");
+            dashboardModel.PedidosCancelados = await MapearPedidosAViewModelAsync(pedidosCancelados);
+
+            // 4. Pedidos en estado Pendiente (Pendientes de que el usuario suba comprobante)
+            var pedidosPendientes = await _pedidoService.ObtenerPedidosPorEstadoAsync("Pendiente");
+            dashboardModel.PedidosPendientes = await MapearPedidosAViewModelAsync(pedidosPendientes);
+
+
+            return View("GestionarPedidos", dashboardModel);
         }
 
         [HttpPost]
@@ -837,9 +857,28 @@ namespace YSA.Web.Controllers
         {
             // Llama al servicio para cambiar el estado y otorgar acceso
             await _pedidoService.AprobarPedidoYOtorgarAccesoAsync(pedidoId);
-            return RedirectToAction(nameof(PedidosPendientes));
+            return RedirectToAction(nameof(GestionarPedidos));
         }
+        [HttpPost]
+        public async Task<IActionResult> AnularPedido(int pedidoId)
+        {
+            try
+            {
+                await _pedidoService.AnularPedidoAsync(pedidoId);
 
+                TempData["MensajeAnulacion"] = $"El pedido #{pedidoId} ha sido anulado con éxito. ❌";
+            }
+            catch (KeyNotFoundException)
+            {
+                TempData["MensajeError"] = $"Error al anular: El pedido #{pedidoId} no fue encontrado.";
+            }
+            catch (Exception)
+            {
+                TempData["MensajeError"] = "Ocurrió un error inesperado al intentar anular el pedido.";
+            }
+
+            return RedirectToAction(nameof(GestionarPedidos));
+        }
         public async Task<IActionResult> GestionarAnuncios(int cursoId)
         {
             var anuncios = await _cursoService.ObtenerAnunciosPorCursoAsync(cursoId);

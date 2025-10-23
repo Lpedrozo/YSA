@@ -1,6 +1,6 @@
-﻿@model IEnumerable<YSA.Web.Models.ViewModels.PedidoPendienteViewModel>
+﻿@model YSA.Web.Models.ViewModels.DashboardPedidosViewModel
 @{
-    ViewData["Title"] = "Pedidos pendientes";
+    ViewData["Title"] = "Gestión de Pedidos";
 }
 
 <style>
@@ -110,7 +110,7 @@
         flex-grow: 1;
     }
 
-    /* Estilo para la lista de artículos */
+    /* Estilo para la lista de artículos (si se incluyera) */
     .item-list {
         list-style: none;
         padding-left: 0;
@@ -141,70 +141,97 @@
             background-color: #0d6efd !important;
             color: white !important;
         }
+
+    /* Estilo para manejar el scroll horizontal en pestañas para móviles */
+    .nav-wrapper {
+        overflow-x: auto;
+    }
 </style>
 
 <div class="container mt-5 mb-5 pb-5">
-    <h1 class="mb-4">Pedidos pendientes de aprobación</h1>
+    <h1 class="mb-4">Gestión de Pedidos y Pagos</h1>
     <hr style="border-top: 2px solid var(--color-border-light); opacity: 1; margin-bottom: 2rem;" />
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <a asp-action="Panel" asp-controller="Admin" class="btn btn-dark">
             <i class="fas fa-arrow-left me-2"></i> Regresar al panel
         </a>
     </div>
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info text-center py-4" role="alert" style="border-radius: 8px;">
-            <i class="fas fa-info-circle me-2"></i> No hay **pedidos pendientes** de revisión en este momento.
+
+    <div class="nav-wrapper">
+        <ul class="nav nav-tabs nav-fill flex-nowrap" id="pedidosTabs" role="tablist" style="min-width: 500px;">
+            <li class="nav-item flex-shrink-0" role="presentation">
+                <button class="nav-link active" id="validando-tab" data-bs-toggle="tab" data-bs-target="#validando" type="button" role="tab" aria-controls="validando" aria-selected="true">
+                    <i class="fas fa-clock me-1"></i> Validando (@Model.PedidosValidando.Count)
+                </button>
+            </li>
+            <li class="nav-item flex-shrink-0" role="presentation">
+                <button class="nav-link" id="pendiente-tab" data-bs-toggle="tab" data-bs-target="#pendiente" type="button" role="tab" aria-controls="pendiente" aria-selected="false">
+                    <i class="fas fa-wallet me-1"></i> Pendiente (@Model.PedidosPendientes.Count)
+                </button>
+            </li>
+            <li class="nav-item flex-shrink-0" role="presentation">
+                <button class="nav-link" id="completado-tab" data-bs-toggle="tab" data-bs-target="#completado" type="button" role="tab" aria-controls="completado" aria-selected="false">
+                    <i class="fas fa-check-circle me-1"></i> Completados (@Model.PedidosCompletados.Count)
+                </button>
+            </li>
+            <li class="nav-item flex-shrink-0" role="presentation">
+                <button class="nav-link" id="cancelado-tab" data-bs-toggle="tab" data-bs-target="#cancelado" type="button" role="tab" aria-controls="cancelado" aria-selected="false">
+                    <i class="fas fa-times-circle me-1"></i> Anulados (@Model.PedidosCancelados.Count)
+                </button>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="tab-content" id="pedidosTabsContent">
+
+        <div class="tab-pane fade show active" id="validando" role="tabpanel" aria-labelledby="validando-tab">
+            @await Html.PartialAsync("_ListaPedidosPartial", Model.PedidosValidando)
         </div>
-    }
-    else
-    {
-        <div class="row mb-5 pb-5">
-            @foreach (var pedido in Model)
-            {
-                <div class="col-12 col-md-6 col-lg-4 mb-4">
-                    <div class="card pedido-card p-4">
-                        <div class="card-header border-0 bg-transparent p-0 mb-3">
-                            <span class="card-title-lg">Pedido #@pedido.PedidoId</span>
-                        </div>
 
-                        <div class="card-body card-body-scroll p-0 mb-3">
-                            <div class="card-info-item">
-                                <span class="card-info-label">Estudiante:</span>
-                                <span class="card-info-value">@pedido.NombreEstudiante</span>
-                            </div>
-                            <div class="card-info-item">
-                                <span class="card-info-label">Fecha:</span>
-                                <span class="card-info-value">@pedido.FechaPedido.ToShortDateString()</span>
-                            </div>
-
-                            <div class="card-info-item mt-3" style="border-top: 1px solid var(--color-secondary-light); border-bottom: none; padding-top: 10px;">
-                                <span class="card-info-label" style="font-size: 1.1rem; color: var(--color-secondary);">Total a pagar:</span>
-                                <span class="card-info-value" style="color:var(--color-danger); font-size: 1.3rem; font-weight: 700;">
-                                    @pedido.Total.ToString("C", new System.Globalization.CultureInfo("es-VE"))
-                                </span>
-                            </div>
-
-                        </div>
-
-                        <div class="card-footer bg-transparent border-0 p-0 d-grid gap-2">
-                            <form asp-controller="Admin" asp-action="AprobarPedido" method="post">
-                                <input type="hidden" name="pedidoId" value="@pedido.PedidoId" />
-                                <button type="submit" class="btn btn-aprobar w-100">
-                                    <i class="fas fa-check-circle me-2"></i> Aprobar pago
-                                </button>
-                            </form>
-
-                            @if (!string.IsNullOrEmpty(pedido.UrlComprobante))
-                            {
-                                <a href="@Url.Content(pedido.UrlComprobante)" target="_blank" class="btn btn-comprobante w-100">
-                                    <i class="fas fa-file-image me-2"></i> Ver comprobante
-                                </a>
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
+        <div class="tab-pane fade" id="pendiente" role="tabpanel" aria-labelledby="pendiente-tab">
+            @await Html.PartialAsync("_ListaPedidosPartial", Model.PedidosPendientes)
         </div>
-    }
+
+        <div class="tab-pane fade" id="completado" role="tabpanel" aria-labelledby="completado-tab">
+            @await Html.PartialAsync("_ListaPedidosPartial", Model.PedidosCompletados)
+        </div>
+
+        <div class="tab-pane fade" id="cancelado" role="tabpanel" aria-labelledby="cancelado-tab">
+            @await Html.PartialAsync("_ListaPedidosPartial", Model.PedidosCancelados)
+        </div>
+
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Lógica para mantener la pestaña activa después de la redirección
+        document.addEventListener("DOMContentLoaded", function() {
+            var activeTab = localStorage.getItem('activePedidoTab');
+            if (activeTab) {
+                // Si existe un tab guardado, intenta activarlo
+                var tabTrigger = document.querySelector('#pedidosTabs button[data-bs-target="' + activeTab + '"]');
+                if (tabTrigger) {
+                    var tab = new bootstrap.Tab(tabTrigger);
+                    tab.show();
+                }
+            } else {
+                // Si no hay tab guardado, forzar la activación de la primera pestaña por defecto
+                var firstTabTrigger = document.querySelector('#pedidosTabs button.nav-link');
+                if (firstTabTrigger) {
+                    var tab = new bootstrap.Tab(firstTabTrigger);
+                    tab.show();
+                }
+            }
+
+            // Guarda el tab activo en localStorage cada vez que uno se muestra
+            document.querySelectorAll('#pedidosTabs button').forEach(function(tabEl) {
+                tabEl.addEventListener('shown.bs.tab', function (event) {
+                    localStorage.setItem('activePedidoTab', event.target.getAttribute('data-bs-target'));
+                });
+            });
+        });
+    </script>
+}

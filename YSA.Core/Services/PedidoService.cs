@@ -125,5 +125,14 @@ namespace YSA.Core.Services
         {
             return await _pedidoRepository.GetPedidosByUsuarioAndEstadoAsync(estudianteId, "Completado");
         }
+        public async Task AnularPedidoAsync(int pedidoId)
+        {
+            bool exito = await ActualizarEstadoPedidoAsync(pedidoId, "Cancelado");
+
+            if (!exito)
+            {
+                throw new KeyNotFoundException($"No se pudo anular el pedido. Pedido ID: {pedidoId} no encontrado.");
+            }
+        }
     }
 }

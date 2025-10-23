@@ -23,5 +23,18 @@
         public DateTime FechaPedido { get; set; }
         public decimal Total { get; set; }
         public string UrlComprobante { get; set; }
+        // Opcional: El estado del pedido original puede ser útil en la vista.
+        public string Estado { get; set; }
+    }
+
+    public class DashboardPedidosViewModel
+    {
+        public List<PedidoPendienteViewModel> PedidosValidando { get; set; } = new List<PedidoPendienteViewModel>();
+        public List<PedidoPendienteViewModel> PedidosCompletados { get; set; } = new List<PedidoPendienteViewModel>();
+        public List<PedidoPendienteViewModel> PedidosCancelados { get; set; } = new List<PedidoPendienteViewModel>();
+        public List<PedidoPendienteViewModel> PedidosPendientes { get; set; } = new List<PedidoPendienteViewModel>(); // Sin pago adjunto
+
+        // Propiedad para saber qué pestaña está activa inicialmente
+        public string EstadoActivo { get; set; } = "Validando";
     }
 }
