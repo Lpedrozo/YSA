@@ -26,15 +26,39 @@ namespace YSA.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Obtener los eventos de la academia (TipoEventoId = 5)
-            var eventosAcademia = await _eventoService.GetEventosByTipoIdAsync(5);
+            var eventosConferencia = await _eventoService.GetEventosByTipoIdAsync(1);
+            var eventosGaleria = await _eventoService.GetEventosByTipoIdAsync(2);
+            var eventosExposicion = await _eventoService.GetEventosByTipoIdAsync(3);
+            var eventosTaller = await _eventoService.GetEventosByTipoIdAsync(4);
+            var eventosSeminario = await _eventoService.GetEventosByTipoIdAsync(5);
 
-            // Obtener algunos artistas (ejemplo: los primeros 3 o 4)
-            var artistas = (await _artistaService.GetAllArtistasAsync()).Take(4);
+            var todosLosEventos = eventosConferencia
+                .Concat(eventosGaleria)
+                .Concat(eventosExposicion)
+                .Concat(eventosTaller)
+                .Concat(eventosSeminario)
+                .ToList();
+
+            var eventosCategorizados = todosLosEventos
+                .GroupBy(e => e.TipoEvento.NombreTipo) 
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(e => new EventoHomeViewModel
+                    {
+                        Id = e.Id,
+                        Titulo = e.Titulo,
+                        TipoEventoNombre = e.TipoEvento.NombreTipo,
+                        UrlImagen = e.UrlImagen,
+                        FechaEvento = e.FechaEvento,
+                        Lugar = e.Lugar
+                    }).ToList()
+                );
+
+            var artistas = await _artistaService.GetAllArtistasAsync();
 
             var viewModel = new HomeViewModel
             {
-                EventosAcademia = eventosAcademia,
+                EventosCategorizados = eventosCategorizados,
                 Artistas = artistas
             };
 

@@ -89,5 +89,30 @@ namespace YSA.Web.Controllers
 
             return View(viewModel);
         }
+        [HttpGet]
+        public async Task<IActionResult> DetalleEvento(int id)
+        {
+            var evento = await _eventoService.GetEventoByIdAsync(id);
+
+            if (evento == null || !evento.EstaActivo)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new EventoDetalleViewModel
+            {
+                Id = evento.Id,
+                Titulo = evento.Titulo,
+                Descripcion = evento.Descripcion,
+                FechaEvento = evento.FechaEvento,
+                Lugar = evento.Lugar,
+                UrlImagen = evento.UrlImagen,
+                EsDestacado = evento.EsDestacado,
+                TipoEventoNombre = evento.TipoEvento?.NombreTipo,
+                TipoEventoPlataforma = evento.TipoEvento?.Plataforma,
+            };
+
+            return View(viewModel);
+        }
     }
 }
