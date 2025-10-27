@@ -15,7 +15,12 @@ namespace YSA.Data.Repositories
         {
             _context = context;
         }
-
+        public async Task<int> GetPedidosPendientesAsync()
+        {
+            return await _context.Pedidos
+                .Where(p => p.Estado == "Validando")
+                .CountAsync();
+        }
         public async Task<Pedido> GetByIdAsync(int id)
         {
             return await _context.Pedidos.FindAsync(id);

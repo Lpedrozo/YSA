@@ -8,6 +8,6 @@ namespace YSA.Core.Interfaces
     {
         Task<Usuario> GetByIdAsync(string id);
         Task UpdateAsync(Usuario usuario);
-
+        Task<int> GetTotalEstudiantesAsync();
     }
 }

@@ -17,7 +17,11 @@ namespace YSA.Data.Repositories
         {
             _userManager = userManager;
         }
-
+        public async Task<int> GetTotalEstudiantesAsync()
+        {
+            var estudiantes = await _userManager.GetUsersInRoleAsync("Estudiante");
+            return estudiantes.Count;
+        }
         public async Task<Usuario> GetByIdAsync(string id)
         {
             return await _userManager.FindByIdAsync(id);

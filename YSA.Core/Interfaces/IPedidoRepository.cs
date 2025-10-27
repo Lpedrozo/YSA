@@ -19,6 +19,6 @@ namespace YSA.Core.Interfaces
         Task<IEnumerable<Pedido>> GetPedidosByUsuarioAndEstadoAsync(int estudianteId, string estado);
         Task<IEnumerable<VentaItem>> GetItemsByPedidoIdAsync(int pedidoId);
         Task<Pago> GetPagoWithPedido(int id);
-
+        Task<int> GetPedidosPendientesAsync();
     }
 }

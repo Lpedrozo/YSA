@@ -22,7 +22,10 @@ namespace YSA.Core.Services
             _userManager = userManager;
             _estudianteCursoRepository = estudianteCursoRepository;
         }
-
+        public async Task<int> GetPedidosPendientesAsync()
+        {
+            return await _pedidoRepository.GetPedidosPendientesAsync();
+        }
         public async Task<Pedido> CrearPedidoAsync(int estudianteId, List<int> ventaItemIds)
         {
             // Ahora usamos UserManager para obtener el usuario directamente

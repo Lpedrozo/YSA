@@ -39,10 +39,19 @@ namespace YSA.Data.Repositories
         public async Task<decimal?> GetCurrentActiveRateAsync()
         {
             var today = DateTime.Today.Date;
+            var searchDate = today;
 
+            if (today.DayOfWeek == DayOfWeek.Saturday)
+            {
+                searchDate = today.AddDays(2);
+            }
+            else if (today.DayOfWeek == DayOfWeek.Sunday)
+            {
+                searchDate = today.AddDays(1);
+            }
             var activeRate = await _context.TasasBCV
                 .AsNoTracking()
-                .Where(t => t.Fecha.Date == today) 
+                .Where(t => t.Fecha.Date == searchDate)
                 .FirstOrDefaultAsync();
 
             if (activeRate != null)
@@ -50,41 +59,18 @@ namespace YSA.Data.Repositories
                 return activeRate.Valor;
             }
 
-            var datesToSearch = new List<DateTime>();
-
-            if (today.DayOfWeek == DayOfWeek.Saturday)
-            {
-                datesToSearch.Add(today.AddDays(-1)); 
-                datesToSearch.Add(today.AddDays(-2)); 
-            }
-            else if (today.DayOfWeek == DayOfWeek.Sunday)
-            {
-                datesToSearch.Add(today.AddDays(-2)); 
-                datesToSearch.Add(today.AddDays(-3)); 
-            }
-            else 
-            {
-                datesToSearch.Add(today.AddDays(-1));
-                datesToSearch.Add(today.AddDays(-2)); 
-            }
-
-            // Hacemos la búsqueda retroactiva
-            var fallbackRate = await _context.TasasBCV
+            var lastPublishedRate = await _context.TasasBCV
                 .AsNoTracking()
-                .Where(t => datesToSearch.Contains(t.Fecha.Date))
-                .OrderByDescending(t => t.Fecha) 
-                .FirstOrDefaultAsync();
-
-            if (fallbackRate != null)
-            {
-                return fallbackRate.Valor;
-            }
-            var lastRate = await _context.TasasBCV
-                .AsNoTracking()
+                .Where(t => t.Fecha.Date < today)
                 .OrderByDescending(t => t.Fecha)
                 .FirstOrDefaultAsync();
 
-            return lastRate?.Valor;
+            if (lastPublishedRate != null)
+            {
+                return lastPublishedRate.Valor;
+            }
+
+            return null;
         }
         public async Task<IEnumerable<TasaBCV>> GetAllRatesAsync()
         {

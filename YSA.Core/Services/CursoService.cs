@@ -17,7 +17,10 @@ namespace YSA.Core.Services
             _cursoRepository = cursoRepository;
             _categoriaRepository = categoriaRepository;
         }
-
+        public async Task<int> GetTotalCursosAsync()
+        {
+            return await _cursoRepository.GetTotalCursosAsync();
+        }
         // Métodos para Categorías (sin cambios)
         public async Task<List<Categoria>> ObtenerTodasLasCategoriasAsync()
         {

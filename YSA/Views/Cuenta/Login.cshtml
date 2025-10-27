@@ -1,6 +1,6 @@
 ﻿@model YSA.Web.Models.ViewModels.LoginViewModel
 @using Microsoft.AspNetCore.Identity
-@using YSA.Core.Entities  @* Asegúrate de que este namespace sea correcto *@
+@using YSA.Core.Entities
 @inject SignInManager<Usuario> SignInManager
 
 @{
@@ -119,6 +119,7 @@
         border-radius: 6px;
         height: 44px;
         padding: 0.5rem 1rem;
+        padding-right: 40px; /* Espacio para el icono de visibilidad */
         width: 100%;
         transition: border-color 0.2s, box-shadow 0.2s;
     }
@@ -184,6 +185,30 @@
         .btn-outline-dark:hover {
             background-color: var(--color-main-bg);
             border-color: var(--color-text-dark);
+        }
+
+    /* ------------------------------------- */
+    /* 4. Estilos de Visibilidad de Contraseña */
+    /* ------------------------------------- */
+    .password-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .password-toggle-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: var(--color-text-subtle);
+        font-size: 1rem;
+        transition: color 0.2s;
+        z-index: 10; /* Asegura que el icono esté sobre el input */
+    }
+
+        .password-toggle-icon:hover {
+            color: var(--color-text-dark);
         }
 
     /* ------------------------------------- */
@@ -283,7 +308,10 @@
 
                 <div class="form-group-vertical">
                     <label asp-for="Contrasena" class="form-label-mono">Contraseña</label>
-                    <input asp-for="Contrasena" type="password" class="form-control-mono" placeholder="Tu contraseña" required>
+                    <div class="password-container">
+                        <input asp-for="Contrasena" type="password" class="form-control-mono" placeholder="Tu contraseña" required>
+                        <i class="fas fa-eye password-toggle-icon" id="togglePasswordLogin"></i>
+                    </div>
                     <span asp-validation-for="Contrasena" class="text-danger small mt-1 d-block"></span>
                 </div>
 
@@ -344,6 +372,24 @@
                     input.classList.add('input-validation-error');
                 }
             });
+
+            // Lógica para alternar la visibilidad de la contraseña (Login)
+            const togglePasswordLogin = document.getElementById('togglePasswordLogin');
+            // Usamos document.querySelector para encontrar el input asp-for="Contrasena"
+            // El Tag Helper genera un ID igual al nombre de la propiedad, que es 'Contrasena'
+            const passwordLoginInput = document.getElementById('Contrasena');
+
+            if (togglePasswordLogin && passwordLoginInput) {
+                togglePasswordLogin.addEventListener('click', function() {
+                    // Alterna el tipo del input: 'password' <-> 'text'
+                    const type = passwordLoginInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordLoginInput.setAttribute('type', type);
+
+                    // Alterna el icono: 'fa-eye' <-> 'fa-eye-slash'
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
+            }
         });
     </script>
     @{

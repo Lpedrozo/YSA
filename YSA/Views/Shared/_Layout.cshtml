@@ -297,7 +297,7 @@
 						}
 
 						@* Rol: Administrador - Panel (Link directo) *@
-						@if (User.IsInRole("Administrador"))
+						@if (User.IsInRole("Administrador") || User.IsInRole("Asistente"))
 						{
 							<li class="nav-item">
 								<a class="nav-link text-dark header-nav-link" asp-controller="Admin" asp-action="Panel" role="button">

@@ -2,7 +2,6 @@
 @using Microsoft.AspNetCore.Identity
 @using YSA.Core.Entities
 @inject SignInManager<Usuario> SignInManager
-@* Asegúrate de que tu clase 'Usuario' sea accesible aquí. Si está en otro namespace, añádelo con @using *@
 
 @{
     ViewData["Title"] = "Registro de Estudiantes";
@@ -133,6 +132,7 @@
         border-radius: 6px;
         height: 44px;
         padding: 0.5rem 1rem;
+        padding-right: 40px; /* Espacio para el icono de visibilidad */
         width: 100%;
         transition: border-color 0.2s, box-shadow 0.2s;
     }
@@ -191,6 +191,30 @@
         .btn-outline-dark:hover {
             background-color: var(--color-main-bg);
             border-color: var(--color-text-dark);
+        }
+
+    /* ------------------------------------- */
+    /* 4. Estilos de Visibilidad de Contraseña */
+    /* ------------------------------------- */
+    .password-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .password-toggle-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: var(--color-text-subtle);
+        font-size: 1rem;
+        transition: color 0.2s;
+        z-index: 10;
+    }
+
+        .password-toggle-icon:hover {
+            color: var(--color-text-dark);
         }
 
     /* ------------------------------------- */
@@ -309,13 +333,19 @@
 
                 <div class="form-group-vertical">
                     <label asp-for="Contrasena" class="form-label-mono">Contraseña</label>
-                    <input type="password" asp-for="Contrasena" class="form-control-mono" placeholder="Crea una contraseña segura" required />
+                    <div class="password-container">
+                        <input type="password" asp-for="Contrasena" class="form-control-mono" placeholder="Crea una contraseña segura" required />
+                        <i class="fas fa-eye password-toggle-icon" id="togglePasswordRegister"></i>
+                    </div>
                     <span asp-validation-for="Contrasena" class="text-danger small mt-1 d-block"></span>
                 </div>
 
                 <div class="form-group-vertical">
                     <label asp-for="ConfirmarContrasena" class="form-label-mono">Confirmar contraseña</label>
-                    <input type="password" asp-for="ConfirmarContrasena" class="form-control-mono" placeholder="Repite la contraseña" required />
+                    <div class="password-container">
+                        <input type="password" asp-for="ConfirmarContrasena" class="form-control-mono" placeholder="Repite la contraseña" required />
+                        <i class="fas fa-eye password-toggle-icon" id="toggleConfirmPasswordRegister"></i>
+                    </div>
                     <span asp-validation-for="ConfirmarContrasena" class="text-danger small mt-1 d-block"></span>
                 </div>
 
@@ -357,11 +387,10 @@
 
 @section Scripts {
     <script>
-        // Script para aplicar el borde rojo al input en caso de error de validación.
         document.addEventListener('DOMContentLoaded', function() {
+            // Script para aplicar el borde rojo al input en caso de error de validación.
             document.querySelectorAll('[data-valmsg-for]').forEach(span => {
                 const inputId = span.getAttribute('data-valmsg-for');
-                // IMPORTANTE: Asegúrate de que el ID del input sea el mismo que el valor de asp-for (ej. id="Nombre")
                 const input = document.getElementById(inputId);
 
                 if (!input) return;
@@ -384,6 +413,32 @@
                     input.classList.add('input-validation-error');
                 }
             });
+
+            // Lógica para alternar la visibilidad de la contraseña (Registro)
+            function setupPasswordToggle(toggleId, inputId) {
+                const toggleIcon = document.getElementById(toggleId);
+                // El Tag Helper genera un ID igual al nombre de la propiedad (Contrasena o ConfirmarContrasena)
+                const passwordInput = document.getElementById(inputId);
+
+                if (toggleIcon && passwordInput) {
+                    toggleIcon.addEventListener('click', function() {
+                        // Alterna el tipo del input: 'password' <-> 'text'
+                        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                        passwordInput.setAttribute('type', type);
+
+                        // Alterna el icono: 'fa-eye' <-> 'fa-eye-slash'
+                        this.classList.toggle('fa-eye');
+                        this.classList.toggle('fa-eye-slash');
+                    });
+                }
+            }
+
+            // Inicializar la funcionalidad para el campo 'Contrasena'
+            setupPasswordToggle('togglePasswordRegister', 'Contrasena');
+
+            // Inicializar la funcionalidad para el campo 'ConfirmarContrasena'
+            setupPasswordToggle('toggleConfirmPasswordRegister', 'ConfirmarContrasena');
+
         });
     </script>
     @* Asegúrate de incluir los scripts de validación, que son esenciales *@

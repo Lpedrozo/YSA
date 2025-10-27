@@ -16,7 +16,10 @@ namespace YSA.Core.Services
             _usuarioRepository = usuarioRepository;
             _userManager = userManager;
         }
-
+        public async Task<int> GetTotalEstudiantesAsync()
+        {
+            return await _usuarioRepository.GetTotalEstudiantesAsync();
+        }
         public async Task<Usuario> GetUsuarioByIdAsync(string id)
         {
             return await _usuarioRepository.GetByIdAsync(id);

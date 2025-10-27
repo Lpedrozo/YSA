@@ -16,7 +16,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace YSA.Web.Controllers
 {
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Administrador, Asistente")]
     public class AdminController : Controller
     {
         private readonly ICursoService _cursoService;
@@ -31,7 +31,8 @@ namespace YSA.Web.Controllers
         private readonly IProductoService _productoService;
         private readonly IRecursoActividadService _recursoActividadService;
         private readonly IExchangeRateService _exchangeRateService;
-        private readonly IArticuloService _articuloService; // <--- Nuevo servicio inyectado
+        private readonly IArticuloService _articuloService; 
+        private readonly IUsuarioService _usuarioService; 
 
         public AdminController(ICursoService cursoService, 
             IModuloService moduloService, 
@@ -45,7 +46,8 @@ namespace YSA.Web.Controllers
             IProductoService productoService,
             IRecursoActividadService recursoActividadService,
             IExchangeRateService exchangeRateService,
-            IArticuloService articuloService)
+            IArticuloService articuloService,
+            IUsuarioService usuarioService)
         {
             _cursoService = cursoService;
             _moduloService = moduloService;
@@ -59,7 +61,8 @@ namespace YSA.Web.Controllers
             _productoService = productoService;
             _recursoActividadService = recursoActividadService;
             _exchangeRateService = exchangeRateService;
-            _articuloService = articuloService; // <--- Asignación
+            _articuloService = articuloService;
+            _usuarioService = usuarioService; 
         }
 
         [HttpGet]
@@ -80,12 +83,15 @@ namespace YSA.Web.Controllers
         public async Task<IActionResult> Panel() // Lo hacemos ASÍNCRONO
         {
             var tasaBcv = await _exchangeRateService.GetTasaToday();
+            var cursos = await _cursoService.GetTotalCursosAsync();
+            var pedidos = await _pedidoService.GetPedidosPendientesAsync();
+            var estudiantes = await _usuarioService.GetTotalEstudiantesAsync();
 
             var model = new DashboardViewModel
             {
-                TotalCursos = 120, 
-                TotalEstudiantes = 540,
-                PedidosPendientes = 8, 
+                TotalCursos = cursos, 
+                TotalEstudiantes = estudiantes,
+                PedidosPendientes = pedidos, 
                 TasaBCV = tasaBcv
             };
             return View(model);

@@ -35,5 +35,6 @@ namespace YSA.Core.Services
         Task<List<PreguntaRespuesta>> ObtenerPreguntasPendientesParaInstructorAsync(int instructorId);
         Task<List<Artista>> ObtenerArtistasAsociadosACursoAsync(int cursoId);
         Task DesasociarArtistaACursoAsync(int cursoId, int instructorId);
+        Task<int> GetTotalCursosAsync();
     }
 }

@@ -10,6 +10,7 @@ namespace YSA.Core.Services
         Task<Usuario> GetUsuarioByIdAsync(string id);
         Task<IdentityResult> UpdateUsuarioAsync(Usuario usuario);
         Task<IdentityResult> ChangePasswordAsync(Usuario usuario, string currentPassword, string newPassword);
+        Task<int> GetTotalEstudiantesAsync();
 
     }
 }

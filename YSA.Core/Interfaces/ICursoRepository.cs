@@ -26,5 +26,6 @@ namespace YSA.Core.Interfaces
         Task CrearAsociacionInstructor(int cursoId, int artistaId);
         Task<List<Artista>> ObtenerArtistasAsociadosACursoAsync(int cursoId);
         Task DesasociarArtistaACursoAsync(int cursoId, int instructorId);
+        Task<int> GetTotalCursosAsync();
     }
 }

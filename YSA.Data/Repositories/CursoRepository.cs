@@ -16,7 +16,10 @@ namespace YSA.Data.Repositories
         {
             _context = context;
         }
-
+        public async Task<int> GetTotalCursosAsync()
+        {
+            return await _context.Cursos.CountAsync();
+        }
         public async Task<List<Curso>> GetAllWithDetailsAsync()
         {
             return await _context.Cursos
