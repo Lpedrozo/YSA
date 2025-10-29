@@ -50,7 +50,6 @@
     /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
     .section-container {
         background: var(--color-section-bg);
-        border-radius: var(--border-radius-lg);
         padding: 3rem 2rem;
         margin: 2rem 0;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -96,7 +95,8 @@
         height: 100%;
         text-decoration: none;
         color: inherit;
-        display: block;
+        display: flex;
+        flex-direction: column;
         position: relative;
     }
 
@@ -109,6 +109,7 @@
     .magazine-card-img-container {
         overflow: hidden;
         border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+        flex-shrink: 0;
     }
 
     .magazine-card-img {
@@ -128,7 +129,8 @@
         text-align: left;
         display: flex;
         flex-direction: column;
-        height: 100%;
+        flex-grow: 1;
+        min-height: 0; /* Permite que el contenido se comprima */
     }
 
     .card-category {
@@ -141,6 +143,7 @@
         display: block;
         line-height: var(--line-height-tight);
         letter-spacing: 0.5px;
+        flex-shrink: 0;
     }
 
     .magazine-card-body h5 {
@@ -149,8 +152,8 @@
         font-size: 1.5rem;
         line-height: var(--line-height-normal);
         color: var(--color-secondary);
-        margin-bottom: 0.5rem;
-        flex-grow: 1;
+        margin-bottom: 0.75rem;
+        flex-shrink: 0;
     }
 
     .magazine-card-body .card-text {
@@ -159,6 +162,11 @@
         color: var(--color-accent);
         line-height: var(--line-height-normal);
         margin-bottom: 1rem;
+        flex-grow: 1;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
     }
 
     .card-price {
@@ -167,10 +175,12 @@
         font-weight: 700;
         color: var(--color-brand-primary);
         margin: 0.5rem 0;
+        flex-shrink: 0;
     }
 
     .card-categories {
         margin-bottom: 1rem;
+        flex-shrink: 0;
     }
 
         .card-categories .badge {
@@ -184,6 +194,11 @@
             margin-right: 0.5rem;
             margin-bottom: 0.5rem;
         }
+
+    .card-actions {
+        margin-top: auto;
+        flex-shrink: 0;
+    }
 
     /* BOTONES CON COLORES DE MARCA */
     .btn-primary {
@@ -475,7 +490,6 @@ else
     @if (Model.CursosDestacados.Any())
     {
         <div class="section-container">
-
             <div id="cursoCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     @for (int i = 0; i < Model.CursosDestacados.Count; i++)
@@ -564,9 +578,11 @@ else
                                                     </div>
                                                 }
 
-                                                <div class="d-flex justify-content-between align-items-center mt-auto">
-                                                    <div class="card-price">@curso.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</div>
-                                                    <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary">Ver Detalles</a>
+                                                <div class="card-actions">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div class="card-price">@curso.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</div>
+                                                        <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary">Ver Detalles</a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -677,10 +693,11 @@ else
                 if (data.cursos.length === 0) {
                     html = `<div class="alert alert-warning text-center" role="alert">No se encontraron cursos con los filtros aplicados.</div>`;
                 } else {
-                    html += `<div class="row g-4">`;
+                    // CORRECCIÓN: Usar clases responsivas de Bootstrap como en la vista anterior
+                    html += `<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">`;
                     data.cursos.forEach(curso => {
                         html += `
-                            <div class="col-lg-4 col-md-6 col-12">
+                            <div class="col">
                                 <div class="magazine-card h-100"
                                     data-bs-toggle="popover"
                                     data-bs-trigger="hover focus"
@@ -709,9 +726,11 @@ else
                                             </div>
                                         ` : ''}
 
-                                        <div class="d-flex justify-content-between align-items-center mt-auto">
-                                            <div class="card-price">${curso.precio}</div>
-                                            <a href="/Curso/Detalles?id=${curso.id}" class="btn btn-primary">Ver Detalles</a>
+                                        <div class="card-actions">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="card-price">${curso.precio}</div>
+                                                <a href="/Curso/Detalles?id=${curso.id}" class="btn btn-primary">Ver Detalles</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -722,7 +741,7 @@ else
 
                     // Paginación
                     if (data.totalPaginas > 1) {
-                        html += `<nav aria-label="Paginación de cursos" class="mt-5">
+                        html += `<nav aria-label="Paginación de cursos" class="mt-5 pb-5">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item ${data.paginaActual <= 1 ? 'disabled' : ''}">
                                     <a href="#" class="page-link" data-page="${data.paginaActual - 1}">Anterior</a>
@@ -780,7 +799,7 @@ else
             }
         }
 
-        // Event Listeners
+        // CORRECCIÓN: Mejorar la lógica de filtros como en la vista anterior
         document.getElementById('searchButton').addEventListener('click', function() {
             const searchString = document.getElementById('searchStringInput').value;
             const categoriaActual = document.querySelector('.filtro-btn.active[data-filtro-categoria]')?.dataset.filtroCategoria || '';
@@ -788,6 +807,7 @@ else
             cargarCursos(1, categoriaActual, nivelActual, searchString);
         });
 
+        // CORRECCIÓN: Mejor manejo de eventos de filtros
         document.querySelector('.filtro-menu').addEventListener('click', function(e) {
             if (e.target.classList.contains('filtro-btn')) {
                 e.preventDefault();
@@ -796,6 +816,7 @@ else
                 const categoria = e.target.dataset.filtroCategoria !== undefined ? e.target.dataset.filtroCategoria : null;
                 const nivel = e.target.dataset.filtroNivel !== undefined ? e.target.dataset.filtroNivel : null;
 
+                // Manejar activación de filtros como en la vista anterior
                 if (categoria !== null) {
                     document.querySelectorAll('.filtro-btn[data-filtro-categoria]').forEach(btn => btn.classList.remove('active'));
                 }
@@ -812,6 +833,7 @@ else
             }
         });
 
+        // CORRECCIÓN: Mejor manejo de paginación
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('page-link')) {
                 e.preventDefault();
@@ -828,7 +850,7 @@ else
             cargarCursos(1, '', '', '');
         });
 
-        // Inicializar popovers de los cursos recomendados
+        // CORRECCIÓN: Inicializar popovers de los cursos recomendados como en la vista anterior
         document.querySelectorAll('[data-bs-toggle="popover"]').forEach(popoverEl => {
             const popoverInstance = new bootstrap.Popover(popoverEl, {
                 content: function () {
@@ -856,6 +878,13 @@ else
                 html: true,
                 sanitize: false
             });
+        });
+
+        // CORRECCIÓN: Permitir búsqueda con Enter
+        document.getElementById('searchStringInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('searchButton').click();
+            }
         });
     </script>
 }

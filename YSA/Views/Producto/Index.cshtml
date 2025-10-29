@@ -166,7 +166,8 @@
         height: 100%;
         text-decoration: none;
         color: inherit;
-        display: block;
+        display: flex;
+        flex-direction: column;
         position: relative;
     }
 
@@ -179,6 +180,7 @@
     .magazine-card-img-container {
         overflow: hidden;
         border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+        flex-shrink: 0;
     }
 
     .magazine-card-img {
@@ -198,7 +200,8 @@
         text-align: left;
         display: flex;
         flex-direction: column;
-        height: 100%;
+        flex-grow: 1;
+        min-height: 0; /* Permite que el contenido se comprima */
     }
 
     .card-category {
@@ -211,6 +214,7 @@
         display: block;
         line-height: var(--line-height-tight);
         letter-spacing: 0.5px;
+        flex-shrink: 0;
     }
 
     .magazine-card-body h5 {
@@ -219,8 +223,8 @@
         font-size: 1.5rem;
         line-height: var(--line-height-normal);
         color: var(--color-secondary);
-        margin-bottom: 0.5rem;
-        flex-grow: 1;
+        margin-bottom: 0.75rem;
+        flex-shrink: 0;
     }
 
     .magazine-card-body .card-text {
@@ -229,6 +233,11 @@
         color: var(--color-accent);
         line-height: var(--line-height-normal);
         margin-bottom: 1rem;
+        flex-grow: 1;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
     }
 
     .card-price {
@@ -237,6 +246,7 @@
         font-weight: 700;
         color: var(--color-brand-primary);
         margin: 0.5rem 0;
+        flex-shrink: 0;
     }
 
     .card-author {
@@ -244,17 +254,12 @@
         font-size: 0.85rem;
         color: var(--color-accent);
         margin-bottom: 1rem;
+        flex-shrink: 0;
     }
 
-    .card-date {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        color: var(--color-brand-primary);
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+    .card-actions {
         margin-top: auto;
+        flex-shrink: 0;
     }
 
     /* BADGES Y ELEMENTOS DE ÉNFASIS CON NUEVA PALETA */
@@ -587,9 +592,34 @@
                 <p class="cover-subtitle">@Html.Raw(descripcionBanner)</p>
                 <div class="d-flex align-items-center gap-3 mt-3">
                     <span class="card-price">@string.Format("{0:C}", productoDestacado.Precio)</span>
-                    <a href="@Url.Action("DetalleProducto", "Producto", new { id = productoDestacado.Id })" class="btn btn-primary">
-                        Comprar Ahora
-                    </a>
+                    @if (User.Identity.IsAuthenticated && Model.ProductosCompradosIds.Contains(productoDestacado.Id))
+                    {
+                        <a asp-action="Descargar" asp-route-id="@productoDestacado.Id" class="btn btn-success">
+                            <i class="fas fa-download me-2"></i> Descargar
+                        </a>
+                    }
+                    else if (Model.ProductosEnValidacionIds.Contains(productoDestacado.Id))
+                    {
+                        <button class="btn btn-warning" disabled>
+                            <i class="fas fa-hourglass-half me-2"></i> En validación
+                        </button>
+                    }
+                    else
+                    {
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <form asp-controller="Producto" asp-action="ComprarProducto" method="post" class="d-inline">
+                                <input type="hidden" name="productoId" value="@productoDestacado.Id" />
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-shopping-cart me-2"></i> Comprar
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">Iniciar Sesión para Comprar</a>
+                        }
+                    }
                 </div>
                 <small style="color: rgba(255, 255, 255, 0.8);">
                     Por @(productoDestacado.Autor?.Usuario?.Nombre ?? "Autor Desconocido")
@@ -628,15 +658,43 @@ else
 
                     if (i >= 5) { break; }
 
-                    <a href="@Url.Action("DetalleProducto", "Producto", new { id = producto.Id })" class="grid-item @cssClass">
+                    <div class="grid-item @cssClass">
                         <img src="@Url.Content(producto.UrlImagen)" class="grid-item-img" alt="@producto.Titulo">
                         <div class="grid-item-overlay"></div>
                         <div class="grid-item-content">
                             <h4 class="grid-item-title">@producto.Titulo</h4>
                             <div class="grid-item-price">@string.Format("{0:C}", producto.Precio)</div>
-                            <button class="btn">Ver Producto</button>
+
+                            @if (User.Identity.IsAuthenticated && Model.ProductosCompradosIds.Contains(producto.Id))
+                            {
+                                <a asp-action="Descargar" asp-route-id="@producto.Id" class="btn">
+                                    <i class="fas fa-download me-2"></i> Descargar
+                                </a>
+                            }
+                            else if (Model.ProductosEnValidacionIds.Contains(producto.Id))
+                            {
+                                <button class="btn" disabled>
+                                    <i class="fas fa-hourglass-half me-2"></i> En validación
+                                </button>
+                            }
+                            else
+                            {
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <form asp-controller="Producto" asp-action="ComprarProducto" method="post" class="d-inline">
+                                        <input type="hidden" name="productoId" value="@producto.Id" />
+                                        <button type="submit" class="btn">
+                                            <i class="fas fa-shopping-cart me-2"></i> Comprar
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <a asp-area="Identity" asp-page="/Account/Login" class="btn">Iniciar Sesión para Comprar</a>
+                                }
+                            }
                         </div>
-                    </a>
+                    </div>
                 }
             </div>
         </div>
@@ -688,34 +746,36 @@ else
                                 <div class="card-price">@string.Format("{0:C}", producto.Precio)</div>
                                 <div class="card-author">Por @(producto.Autor?.Usuario?.Nombre ?? "Autor Desconocido")</div>
 
-                                @if (User.Identity.IsAuthenticated && Model.ProductosCompradosIds.Contains(producto.Id))
-                                {
-                                    <a asp-action="Descargar" asp-route-id="@producto.Id" class="btn btn-success w-100">
-                                        <i class="fas fa-download me-2"></i> Descargar
-                                    </a>
-                                }
-                                else if (Model.ProductosEnValidacionIds.Contains(producto.Id))
-                                {
-                                    <button class="btn btn-warning w-100" disabled>
-                                        <i class="fas fa-hourglass-half me-2"></i> En validación
-                                    </button>
-                                }
-                                else
-                                {
-                                    @if (User.Identity.IsAuthenticated)
+                                <div class="card-actions">
+                                    @if (User.Identity.IsAuthenticated && Model.ProductosCompradosIds.Contains(producto.Id))
                                     {
-                                        <form asp-controller="Producto" asp-action="ComprarProducto" method="post" class="w-100">
-                                            <input type="hidden" name="productoId" value="@producto.Id" />
-                                            <button type="submit" class="btn btn-primary w-100">
-                                                <i class="fas fa-shopping-cart me-2"></i> Comprar
-                                            </button>
-                                        </form>
+                                        <a asp-action="Descargar" asp-route-id="@producto.Id" class="btn btn-success w-100">
+                                            <i class="fas fa-download me-2"></i> Descargar
+                                        </a>
+                                    }
+                                    else if (Model.ProductosEnValidacionIds.Contains(producto.Id))
+                                    {
+                                        <button class="btn btn-warning w-100" disabled>
+                                            <i class="fas fa-hourglass-half me-2"></i> En validación
+                                        </button>
                                     }
                                     else
                                     {
-                                        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary w-100">Iniciar Sesión para Comprar</a>
+                                        @if (User.Identity.IsAuthenticated)
+                                        {
+                                            <form asp-controller="Producto" asp-action="ComprarProducto" method="post" class="w-100">
+                                                <input type="hidden" name="productoId" value="@producto.Id" />
+                                                <button type="submit" class="btn btn-primary w-100">
+                                                    <i class="fas fa-shopping-cart me-2"></i> Comprar
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary w-100">Iniciar Sesión para Comprar</a>
+                                        }
                                     }
-                                }
+                                </div>
                             </div>
                         </div>
                     </div>
