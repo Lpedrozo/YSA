@@ -2,317 +2,770 @@
 @{
     ViewData["Title"] = "Catálogo de productos";
 
-    // Asumo que el ViewModel ahora tendrá propiedades para Paginación/Filtros
     var totalPaginas = Model.TotalPaginas;
     var paginaActual = Model.PaginaActual;
     var currentSearch = Context.Request.Query["searchString"];
+
+    // 1. OBTENER LOS PRODUCTOS PARA EL BANNER Y LA NUEVA REJILLA
+    var todosLosProductos = Model.Productos?.ToList();
+
+    var productoDestacado = todosLosProductos.FirstOrDefault();
+    // AHORA TOMAMOS LOS SIGUIENTES 5 PRODUCTOS para asegurar el llenado de la rejilla 2x2
+    var productosParaGrid = todosLosProductos.Skip(1).Take(4).ToList();
+    // Los productos restantes para el catálogo normal
+    var productosSecundariosCatalogo = todosLosProductos.Skip(6).ToList();
 }
 
 <style>
-    /* VARIABLES DE COLOR */
+    /* IMPORTACIÓN DE TIPOGRAFÍAS */
+    @* Nota: Para usar las tipografías Bogart y Hey August, debes descargarlas y alojarlas en tu proyecto *@
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
     :root {
-        --color-primary: #000000; /* NEGRO PURO para acentos y CTA */
-        --color-secondary: #333333; /* Gris oscuro para títulos */
-        --color-accent: #666666; /* Gris medio para bordes o detalles */
-        --color-background: #ffffff; /* Fondo Blanco */
-        --color-card-bg: #f8f8f8; /* Gris muy claro para fondos de bloque */
-        --color-text-dark: #212529; /* Texto principal (negro) */
-        --color-text-muted: #999999; /* Texto sutil */
-        --color-text-light: #ffffff; /* Texto Claro */
-        /* Colores de estado ajustados para B/N */
-        --color-success: #333333;
-        --color-warning: #999999;
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f3f3f3; /* Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
     body {
-        font-family: 'Poppins', sans-serif;
+        font-family: var(--font-body);
         background-color: var(--color-background);
         color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
     }
 
-    /* TÍTULOS */
-    .section-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--color-primary);
-        padding-bottom: 0.5rem;
-        margin-bottom: 0.5rem;
-        display: inline-block;
-    }
-
-    .section-subtitle {
-        color: var(--color-secondary);
-        margin-bottom: 2rem;
-        font-weight: 400;
-        font-size: 1.1rem;
-    }
-
-    /* TARJETAS DE PRODUCTO AJUSTE CRÍTICO DEL BORDE */
-    .card {
-        border-radius: 0.5rem;
-        border: 1px solid var(--color-accent);
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease-in-out;
+    }
+
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    /* ------------------------------------- */
+    /* ESTILOS DEL BANNER PRINCIPAL (ACTUALIZADO) */
+    /* ------------------------------------- */
+    .magazine-cover {
+        width: 100%;
+        height: 85vh; /* Altura destacada como una portada */
+        background-color: #f4f4f4;
+        position: relative;
         overflow: hidden;
-        background-color: var(--color-background);
+        margin-bottom: 3rem;
+    }
+
+    .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .cover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
+        z-index: 2;
+        display: flex;
+        align-items: flex-end;
+        padding: 3rem;
+    }
+
+    .cover-title-block {
+        color: var(--color-text-light);
+        max-width: 700px;
+        z-index: 3;
+    }
+
+    .cover-title {
+        font-family: var(--font-heading);
+        font-size: 4rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 0.5rem;
+    }
+
+    .cover-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: var(--line-height-normal);
+    }
+
+    /* ESTILO DE TARJETA TIPO REJILLA DE REVISTA MEJORADO */
+    .magazine-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
         height: 100%;
         text-decoration: none;
         color: inherit;
+        display: block;
+        position: relative;
     }
 
-        .card:hover {
-            transform: translateY(-5px) scale(1.01);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
-            border-color: var(--color-primary);
+        .magazine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
         }
 
-    .card-img-top {
-        height: 300px;
-        object-fit: cover;
-        width: 100%;
+    .magazine-card-img-container {
+        overflow: hidden;
+        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
     }
 
-    .card-body {
+    .magazine-card-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .magazine-card:hover .magazine-card-img {
+        transform: scale(1.05);
+    }
+
+    .magazine-card-body {
         padding: 1.5rem;
-        /* MEJORA: Flexbox para centrar contenido */
+        position: relative;
+        text-align: left;
         display: flex;
         flex-direction: column;
-        align-items: center; /* Centra horizontalmente los elementos flexibles */
-        text-align: center; /* Centra el texto */
+        height: 100%;
     }
 
-    .card-text {
+    .card-category {
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--color-brand-primary);
+        text-transform: uppercase;
         margin-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+        letter-spacing: 0.5px;
     }
 
-    .card-title {
+    .magazine-card-body h5 {
+        font-family: var(--font-heading);
         font-weight: 700;
-        color: var(--color-primary);
+        font-size: 1.5rem;
+        line-height: var(--line-height-normal);
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+        flex-grow: 1;
     }
 
-    .price {
+    .magazine-card-body .card-text {
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
+        margin-bottom: 1rem;
+    }
+
+    .card-price {
+        font-family: var(--font-heading);
         font-size: 1.8rem;
         font-weight: 700;
-        color: var(--color-primary);
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
+        color: var(--color-brand-primary);
+        margin: 0.5rem 0;
     }
 
-    .text-muted {
-        color: var(--color-text-muted) !important;
+    .card-author {
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        color: var(--color-accent);
+        margin-bottom: 1rem;
     }
 
-    /* BOTONES MONOCROMÁTICOS */
-    .btn {
+    .card-date {
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        color: var(--color-brand-primary);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: auto;
+    }
+
+    /* BADGES Y ELEMENTOS DE ÉNFASIS CON NUEVA PALETA */
+    .badge.bg-light {
+        background-color: var(--color-brand-accent) !important; /* Amarillo para badges */
+        color: var(--color-brand-dark) !important;
+        font-family: var(--font-accent);
         font-weight: 600;
-        border-radius: 0.3rem;
-        text-transform: uppercase;
-        font-size: 0.9rem;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
     }
 
-    .btn-primary {
-        background-color: var(--color-primary) !important;
-        border-color: var(--color-primary) !important;
+    .badge.bg-dark {
+        background-color: var(--color-brand-secondary) !important; /* Rojo para badges oscuros */
         color: var(--color-text-light) !important;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    .alert-info {
+        background-color: rgba(109, 181, 62, 0.1); /* Verde suave para alertas */
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+    }
+
+    .alert-warning {
+        background-color: rgba(242, 229, 20, 0.1); /* Amarillo suave para alertas */
+        border-color: var(--color-brand-accent);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+    }
+
+    /* BOTONES CON COLORES DE MARCA */
+    .btn-primary {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: var(--color-text-light) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
     }
 
         .btn-primary:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+            transform: translateY(-2px);
         }
 
     .btn-success {
-        background-color: var(--color-success) !important;
-        border-color: var(--color-success) !important;
+        background-color: var(--color-brand-success) !important;
+        border-color: var(--color-brand-success) !important;
         color: var(--color-text-light) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1.5rem;
     }
 
-        .btn-success:hover {
-            background-color: #000000 !important;
-            border-color: #000000 !important;
-        }
-
     .btn-warning {
-        background-color: var(--color-warning) !important;
-        border-color: var(--color-warning) !important;
-        color: var(--color-text-light) !important;
+        background-color: var(--color-brand-accent) !important;
+        border-color: var(--color-brand-accent) !important;
+        color: var(--color-brand-dark) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1.5rem;
         cursor: not-allowed;
     }
 
-    /* Alerta de no productos */
-    .alert-warning {
-        background-color: var(--color-card-bg);
-        color: var(--color-text-dark);
-        border-color: var(--color-accent);
+    /* FORMULARIOS Y BÚSQUEDA */
+    .form-control {
+        border-radius: var(--border-radius-sm);
+        border: 1px solid var(--color-border);
+        font-family: var(--font-body);
+        padding: 0.75rem 1rem;
     }
 
-    /* Estilos de Paginación para B/N */
+        .form-control:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    /* PAGINACIÓN */
     .pagination .page-item .page-link {
         color: var(--color-secondary);
-        border: 1px solid var(--color-accent);
+        border: 1px solid var(--color-border);
         background-color: var(--color-background);
         transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
     }
 
     .pagination .page-item.active .page-link {
-        background-color: var(--color-primary);
-        border-color: var(--color-primary);
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
         color: var(--color-text-light);
     }
 
     .pagination .page-item .page-link:hover {
-        background-color: var(--color-card-bg);
-        border-color: var(--color-secondary);
-        color: var(--color-primary);
+        background-color: var(--color-section-bg);
+        border-color: var(--color-brand-primary);
+        color: var(--color-brand-primary);
     }
-    s
-    @@media (max-width: 575.98px) {
-        /* Reducir el tamaño de la imagen de la tarjeta en móviles */
-        .card-img-top {
-            height: 200px;
+
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* REJILLA DE PRODUCTOS DESTACADOS */
+    .product-grid-section {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        grid-template-rows: repeat(3, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 4rem;
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+    }
+
+    .grid-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--border-radius-md);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        align-items: flex-end;
+        text-decoration: none;
+        color: var(--color-text-light);
+    }
+
+        .grid-item:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
-        /* Ajustar el padding y el tamaño de fuente del título principal */
+
+    .grid-item-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: transform 0.5s ease;
+    }
+
+    .grid-item:hover .grid-item-img {
+        transform: scale(1.05);
+    }
+
+    .grid-item-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%);
+        z-index: 1;
+    }
+
+    .grid-item-content {
+        position: relative;
+        z-index: 2;
+        padding: 1.5rem;
+        text-align: left;
+        width: 100%;
+    }
+
+    .grid-item-title {
+        font-family: var(--font-heading);
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+    }
+
+    .grid-item-price {
+        font-family: var(--font-heading);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--color-brand-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .grid-item .btn {
+        background-color: var(--color-brand-primary);
+        color: var(--color-text-light);
+        border: none;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        border-radius: var(--border-radius-sm);
+        transition: all 0.3s ease;
+    }
+
+        .grid-item .btn:hover {
+            background-color: var(--color-brand-secondary);
+            transform: translateY(-2px);
+        }
+
+    /* Estilo específico para el producto principal del grid */
+    .grid-main-product {
+        grid-column: 1 / 2;
+        grid-row: 1 / 4;
+    }
+
+    /* Estilo para los productos pequeños */
+    .grid-small-product {
+        grid-column: 2 / 3;
+    }
+
+    /* ADAPTACIONES RESPONSIVE */
+
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        /* === AJUSTES DE PORTADA === */
+        .magazine-cover {
+            height: 65vh; /* Menos altura en tablet */
+        }
+
+        .cover-overlay {
+            padding: 2rem;
+        }
+
+        .cover-title {
+            font-size: 3rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1.25rem;
+        }
+        /* === AJUSTES SECCIONES === */
+        .section-container {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
         .section-title {
             font-size: 2rem;
         }
-        /* Fuerza a que los botones dentro de la tarjeta ocupen el ancho completo */
-        .card-body a.btn,
-        .card-body form,
-        .card-body button.btn {
-            width: 100% !important; /* Asegura el ancho completo en la columna de 1 producto */
-            max-width: 300px;
-            margin-left: auto;
-            margin-right: auto;
+
+        .latest-grid-header {
+            font-size: 1.5rem;
         }
-        /* Ajuste sutil del input de búsqueda */
-        .input-group .btn {
-            font-size: 0.8rem;
-            padding: 0.5rem 0.75rem;
+        /* === AJUSTES REJILLA PRODUCTOS === */
+        .product-grid-section {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
+        }
+
+        .grid-main-product {
+            grid-column: auto;
+            grid-row: auto;
+            height: 300px;
+        }
+
+        .grid-small-product {
+            grid-column: auto;
+            grid-row: auto;
+            height: 300px;
+        }
+
+        .grid-item-content {
+            text-align: center;
         }
     }
 
+    /* Mobile Pequeño (max-width: 575.98px) - Columna única para la mayoría de rejillas */
+    @@media (max-width: 575.98px) {
+        .cover-title {
+            font-size: 2rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1rem;
+        }
+
+        .cover-overlay {
+            padding: 1.5rem;
+        }
+        /* === AJUSTES SECCIONES === */
+        .section-container {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+        }
+
+        .latest-grid-header {
+            font-size: 1.3rem;
+        }
+
+        .magazine-card-img {
+            height: 200px;
+        }
+
+        .card-price {
+            font-size: 1.5rem;
+        }
+    }
 </style>
 
-<div class="container py-5">
-    <div class="row">
-        <div class="col-12 text-center mb-4">
-            <h1 class="section-title">Catálogo de productos digitales</h1>
-            <p class="section-subtitle">
-                Explora nuestra colección de libros y revistas digitales para inspirar tu arte.
-            </p>
-        </div>
-    </div>
-
-    <div class="row mb-5 justify-content-center">
-        <div class="col-12 col-lg-8">
-            <form asp-action="Index" method="get">
-                <div class="input-group">
-                    <input type="text" name="searchString" class="form-control" placeholder="Busca por título o descripción..." value="@currentSearch">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="fas fa-search me-2"></i> Buscar
-                    </button>
-                    @if (!string.IsNullOrEmpty(currentSearch))
-                    {
-                        <a asp-action="Index" class="btn btn-secondary" title="Limpiar Búsqueda">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    }
+@* === PORTADA PRINCIPAL DE PRODUCTOS === *@
+@if (productoDestacado != null)
+{
+    <div class="magazine-cover">
+        <img src="@Url.Content(productoDestacado.UrlImagen)"
+             alt="@productoDestacado.Titulo"
+             class="cover-image">
+        <div class="cover-overlay">
+            <div class="cover-title-block">
+                <span class="badge bg-light text-dark mb-2">PRODUCTO DESTACADO</span>
+                <h1 class="cover-title">@productoDestacado.Titulo</h1>
+                @{
+                    var descripcionBanner = productoDestacado.DescripcionCorta.Split('.').FirstOrDefault();
+                }
+                <p class="cover-subtitle">@Html.Raw(descripcionBanner)</p>
+                <div class="d-flex align-items-center gap-3 mt-3">
+                    <span class="card-price">@string.Format("{0:C}", productoDestacado.Precio)</span>
+                    <a href="@Url.Action("DetalleProducto", "Producto", new { id = productoDestacado.Id })" class="btn btn-primary">
+                        Comprar Ahora
+                    </a>
                 </div>
-                <input type="hidden" name="page" value="1" />
-            </form>
+                <small style="color: rgba(255, 255, 255, 0.8);">
+                    Por @(productoDestacado.Autor?.Usuario?.Nombre ?? "Autor Desconocido")
+                </small>
+            </div>
         </div>
     </div>
+}
+else
+{
+    <div class="magazine-cover">
+        <div class="cover-overlay">
+            <div class="cover-title-block">
+                <span class="badge bg-light text-dark mb-2">TIENDA YO SOY ARTE</span>
+                <h1 class="cover-title">Catálogo de Productos</h1>
+                <p class="cover-subtitle">Descubre obras únicas creadas por nuestros artistas</p>
+            </div>
+        </div>
+    </div>
+}
 
-    @if (Model.Productos != null && Model.Productos.Any())
+<div class="container px-0 py-5">
+    @* === SECCIÓN DE PRODUCTOS DESTACADOS EN REJILLA === *@
+    @if (productosParaGrid.Any())
     {
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-            @foreach (var producto in Model.Productos)
-            {
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <img src="@Url.Content(producto.UrlImagen)" class="card-img-top" alt="@producto.Titulo">
-                        <div class="card-body">
-                            <h5 class="card-title">@producto.Titulo</h5>
-                            <p class="card-text text-secondary">@Html.Raw(producto.DescripcionCorta)</p>
-                            <span class="price">@string.Format("{0:C}", producto.Precio)</span>
-                            <small class="text-muted">Por @(producto.Autor?.Usuario?.Nombre ?? "Autor Desconocido")</small>
+        <div class="section-container">
+            <div class="px-3">
+                <span class="latest-grid-header">LO MÁS RECIENTE</span>
+            </div>
 
-                            @if (User.Identity.IsAuthenticated && Model.ProductosCompradosIds.Contains(producto.Id))
+            <div class="product-grid-section">
+                @for (int i = 0; i < productosParaGrid.Count; i++)
+                {
+                    var producto = productosParaGrid[i];
+                    var cssClass = (i == 0) ? "grid-main-product" : "grid-small-product";
+
+                    if (i >= 5) { break; }
+
+                    <a href="@Url.Action("DetalleProducto", "Producto", new { id = producto.Id })" class="grid-item @cssClass">
+                        <img src="@Url.Content(producto.UrlImagen)" class="grid-item-img" alt="@producto.Titulo">
+                        <div class="grid-item-overlay"></div>
+                        <div class="grid-item-content">
+                            <h4 class="grid-item-title">@producto.Titulo</h4>
+                            <div class="grid-item-price">@string.Format("{0:C}", producto.Precio)</div>
+                            <button class="btn">Ver Producto</button>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+    <hr class="section-divider" />
+
+    @* === CATÁLOGO COMPLETO DE PRODUCTOS === *@
+    @if (productosSecundariosCatalogo.Any())
+    {
+        <div class="section-container">
+            <div class="px-3">
+                <span class="latest-grid-header">MÁS PRODUCTOS</span>
+            </div>
+
+            @* BÚSQUEDA Y FILTRO *@
+            <div class="row mb-5 justify-content-center">
+                <div class="col-12 col-lg-8">
+                    <form asp-action="Index" method="get">
+                        <div class="input-group">
+                            <input type="text" name="searchString" class="form-control" placeholder="Busca por título o descripción..." value="@currentSearch">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search me-2"></i> Buscar
+                            </button>
+                            @if (!string.IsNullOrEmpty(currentSearch))
                             {
-                                <a asp-action="Descargar" asp-route-id="@producto.Id" class="btn btn-success w-100 mt-3">
-                                    <i class="fas fa-download me-2"></i> Descargar
+                                <a asp-action="Index" class="btn btn-secondary" title="Limpiar Búsqueda">
+                                    <i class="fas fa-times"></i>
                                 </a>
                             }
-                            else if (Model.ProductosEnValidacionIds.Contains(producto.Id))
-                            {
-                                <button class="btn btn-warning w-100 mt-3" disabled>
-                                    <i class="fas fa-hourglass-half me-2"></i> En validación
-                                </button>
-                            }
-                            else
-                            {
-                                @if (User.Identity.IsAuthenticated)
+                        </div>
+                        <input type="hidden" name="page" value="1" />
+                    </form>
+                </div>
+            </div>
+
+            <div class="row g-4 px-3">
+                @foreach (var producto in productosSecundariosCatalogo)
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="magazine-card h-100">
+                            <div class="magazine-card-img-container">
+                                <img src="@Url.Content(producto.UrlImagen)" class="magazine-card-img" alt="@producto.Titulo">
+                            </div>
+                            <div class="magazine-card-body">
+                                <span class="card-category">PRODUCTO</span>
+                                <h5>@producto.Titulo</h5>
+                                <p class="card-text">@Html.Raw(producto.DescripcionCorta)</p>
+                                <div class="card-price">@string.Format("{0:C}", producto.Precio)</div>
+                                <div class="card-author">Por @(producto.Autor?.Usuario?.Nombre ?? "Autor Desconocido")</div>
+
+                                @if (User.Identity.IsAuthenticated && Model.ProductosCompradosIds.Contains(producto.Id))
                                 {
-                                    <form asp-controller="Producto" asp-action="ComprarProducto" method="post" class="mt-3 w-100">
-                                        <input type="hidden" name="productoId" value="@producto.Id" />
-                                        <button type="submit" class="btn btn-primary w-100">
-                                            <i class="fas fa-shopping-cart me-2"></i> Comprar
-                                        </button>
-                                    </form>
+                                    <a asp-action="Descargar" asp-route-id="@producto.Id" class="btn btn-success w-100">
+                                        <i class="fas fa-download me-2"></i> Descargar
+                                    </a>
+                                }
+                                else if (Model.ProductosEnValidacionIds.Contains(producto.Id))
+                                {
+                                    <button class="btn btn-warning w-100" disabled>
+                                        <i class="fas fa-hourglass-half me-2"></i> En validación
+                                    </button>
                                 }
                                 else
                                 {
-                                    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary w-100 mt-3">Iniciar Sesión para Comprar</a>
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <form asp-controller="Producto" asp-action="ComprarProducto" method="post" class="w-100">
+                                            <input type="hidden" name="productoId" value="@producto.Id" />
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class="fas fa-shopping-cart me-2"></i> Comprar
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary w-100">Iniciar Sesión para Comprar</a>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @* PAGINACIÓN *@
+            @if (totalPaginas > 1)
+            {
+                <div class="row mt-5">
+                    <div class="col-12 d-flex justify-content-center">
+                        <nav aria-label="Navegación de Productos">
+                            <ul class="pagination">
+                                <li class="page-item @(paginaActual == 1 ? "disabled" : "")">
+                                    <a class="page-link" asp-action="Index" asp-route-page="@(paginaActual - 1)" asp-route-searchString="@currentSearch" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+
+                                @for (int i = 1; i <= totalPaginas; i++)
+                                {
+                                    <li class="page-item @(i == paginaActual ? "active" : "")">
+                                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@currentSearch">@i</a>
+                                    </li>
                                 }
 
-                            }
-                        </div>
+                                <li class="page-item @(paginaActual == totalPaginas ? "disabled" : "")">
+                                    <a class="page-link" asp-action="Index" asp-route-page="@(paginaActual + 1)" asp-route-searchString="@currentSearch" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             }
         </div>
-
-        @if (totalPaginas > 1)
-        {
-            <div class="row mt-5 pb-5">
-                <div class="col-12 d-flex justify-content-center">
-                    <nav aria-label="Navegación de Productos">
-                        <ul class="pagination">
-                            <li class="page-item @(paginaActual == 1 ? "disabled" : "")">
-                                <a class="page-link" asp-action="Index" asp-route-page="@(paginaActual - 1)" asp-route-searchString="@currentSearch" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-
-                            @for (int i = 1; i <= totalPaginas; i++)
-                            {
-                                <li class="page-item @(i == paginaActual ? "active" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@currentSearch">@i</a>
-                                </li>
-                            }
-
-                            <li class="page-item @(paginaActual == totalPaginas ? "disabled" : "")">
-                                <a class="page-link" asp-action="Index" asp-route-page="@(paginaActual + 1)" asp-route-searchString="@currentSearch" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        }
-
     }
-    else
+    else if (productoDestacado == null && !productosParaGrid.Any())
     {
-        <div class="alert alert-warning text-center mt-5" role="alert">
-            No hay productos disponibles en este momento que coincidan con la búsqueda.
+        <div class="section-container">
+            <div class="alert alert-warning text-center" role="alert">
+                No hay productos disponibles en este momento que coincidan con la búsqueda.
+            </div>
         </div>
     }
 </div>
+
 @section Scripts {
     @{
-        // Esto asume que tienes la librería SweetAlert2 (Swal.fire) accesible globalmente
         var pagoRegistrado = TempData["PagoRegistrado"] as bool?;
     }
 

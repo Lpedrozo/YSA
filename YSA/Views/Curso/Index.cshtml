@@ -4,271 +4,521 @@
 }
 
 <style>
-
-    /* Estilos globales: Esquema Claro (Light Mode) con Blanco y Negro/Gris */
-        body {
-                font-family: 'Inter', sans-serif;
-                background-color: #ffffff; /* Fondo blanco */
-                color: #333333; /* Texto principal gris oscuro */
-
+    /* IMPORTACIÓN DE TIPOGRAFÍAS */
+    @* Nota: Para usar las tipografías Bogart y Hey August, debes descargarlas y alojarlas en tu proyecto *@
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
+    :root {
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f3f3f3; /* Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
-
-    /* Estilos para la sección de bienvenida (MANTENIDOS, PERO NO SE USAN EN EL HTML) */
-        .bienvenida-section {
-                background-color: #f7f7f7; /* Gris muy claro para el fondo de bienvenida */
-                color: #000;
-                border-bottom: 1px solid #ddd;
-
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
     }
 
-        .bienvenida-info p {
-                color: white;
-
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
 
-    /* Estilos para el carrusel de cursos */
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    /* ESTILO DE TARJETA TIPO REJILLA DE REVISTA MEJORADO */
+    .magazine-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+    }
+
+        .magazine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+    .magazine-card-img-container {
+        overflow: hidden;
+        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    }
+
+    .magazine-card-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .magazine-card:hover .magazine-card-img {
+        transform: scale(1.05);
+    }
+
+    .magazine-card-body {
+        padding: 1.5rem;
+        position: relative;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .card-category {
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--color-brand-primary);
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+        letter-spacing: 0.5px;
+    }
+
+    .magazine-card-body h5 {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 1.5rem;
+        line-height: var(--line-height-normal);
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+        flex-grow: 1;
+    }
+
+    .magazine-card-body .card-text {
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
+        margin-bottom: 1rem;
+    }
+
+    .card-price {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--color-brand-primary);
+        margin: 0.5rem 0;
+    }
+
+    .card-categories {
+        margin-bottom: 1rem;
+    }
+
+        .card-categories .badge {
+            font-family: var(--font-accent);
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: var(--color-section-bg) !important;
+            color: var(--color-brand-primary) !important;
+            border-radius: var(--border-radius-sm);
+            padding: 0.4rem 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+    /* BOTONES CON COLORES DE MARCA */
+    .btn-primary {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: var(--color-text-light) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+            transform: translateY(-2px);
+        }
+
+    /* FORMULARIOS Y BÚSQUEDA */
+    .form-control {
+        border-radius: var(--border-radius-sm);
+        border: 1px solid var(--color-border);
+        font-family: var(--font-body);
+        padding: 0.75rem 1rem;
+    }
+
+        .form-control:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    /* FILTROS MEJORADOS */
+    .filtro-menu {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 2rem 0;
+        gap: 0.75rem;
+    }
+
+    .filtro-item a {
+        padding: 0.75rem 1.5rem;
+        text-decoration: none;
+        color: var(--color-secondary);
+        background-color: var(--color-section-bg);
+        border-radius: var(--border-radius-sm);
+        transition: all 0.3s ease;
+        border: 1px solid var(--color-border);
+        font-family: var(--font-accent);
+        font-weight: 500;
+        display: block;
+    }
+
+        .filtro-item a.active,
+        .filtro-item a:hover {
+            background-color: var(--color-brand-primary);
+            color: var(--color-text-light);
+            border-color: var(--color-brand-primary);
+            transform: translateY(-2px);
+        }
+
+    /* PAGINACIÓN */
+    .pagination .page-item .page-link {
+        color: var(--color-secondary);
+        border: 1px solid var(--color-border);
+        background-color: var(--color-background);
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        padding: 0.75rem 1rem;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        color: var(--color-text-light);
+    }
+
+    .pagination .page-item .page-link:hover {
+        background-color: var(--color-section-bg);
+        border-color: var(--color-brand-primary);
+        color: var(--color-brand-primary);
+    }
+
+    /* CARRUSEL DE CURSOS DESTACADOS */
+    .carousel-item-custom {
+        position: relative;
+        height: 500px;
+        background-size: cover;
+        background-position: center;
+        color: var(--color-text-light);
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+    }
+
+    .carousel-overlay {
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 100%);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 3rem;
+    }
+
+    .carousel-content h2 {
+        font-family: var(--font-heading);
+        font-size: 3.5rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 1rem;
+    }
+
+    .carousel-content .lead {
+        font-family: var(--font-body);
+        font-size: 1.25rem;
+        line-height: var(--line-height-normal);
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+
+    /* CARRUSEL DE RECOMENDADOS */
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 5%;
+        opacity: 0.8;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: var(--color-brand-primary);
+        border-radius: 50%;
+        padding: 1.5rem;
+    }
+
+    /* ALERTAS */
+    .alert-info {
+        background-color: rgba(109, 181, 62, 0.1);
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    .alert-warning {
+        background-color: rgba(242, 229, 20, 0.1);
+        border-color: var(--color-brand-accent);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* POPOVERS MEJORADOS */
+    .popover {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .popover-header {
+        background-color: var(--color-section-bg);
+        border-bottom: 1px solid var(--color-border);
+        font-family: var(--font-heading);
+        font-weight: 700;
+        color: var(--color-secondary);
+    }
+
+    .popover-body {
+        font-family: var(--font-body);
+        color: var(--color-text-dark);
+    }
+
+    /* ADAPTACIONES RESPONSIVE */
+
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .section-container {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .section-title {
+            font-size: 2rem;
+        }
+
+        .latest-grid-header {
+            font-size: 1.5rem;
+        }
+
         .carousel-item-custom {
-                position: relative;
-                height: 500px; /* Ajusta la altura del carrusel */
-                background-size: cover;
-                background-position: center;
-                color: #fff; /* Texto blanco sobre la imagen del carrusel */
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Sombra más fuerte para contraste */
+            height: 400px;
+        }
 
+        .carousel-content h2 {
+            font-size: 2.5rem;
+        }
+
+        .carousel-content .lead {
+            font-size: 1.1rem;
+        }
+
+        .filtro-menu {
+            gap: 0.5rem;
+        }
+
+        .filtro-item a {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+        }
     }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .section-container {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+        }
+
+        .latest-grid-header {
+            font-size: 1.3rem;
+        }
+
+        .carousel-item-custom {
+            height: 300px;
+        }
 
         .carousel-overlay {
-                background-color: rgba(0, 0, 0, 0.4); /* Fondo semi-transparente oscuro */
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                padding: 20px;
-
-    }
-
-
-    /* Estilos para las tarjetas de curso */
-        .card {
-                transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-                border-radius: 12px;
-                border: 1px solid #e0e0e0; /* Borde muy sutil para tarjetas */
-                overflow: hidden;
-                background-color: #fff; /* Tarjeta blanca */
-                color: #000; /* Texto negro */
-
-    }
-
-                .card:hover {
-                        transform: translateY(-5px);
-                        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra visible en fondo blanco */
-
+            padding: 1.5rem;
         }
 
-        .card-img-top {
-                border-top-left-radius: 12px;
-                border-top-right-radius: 12px;
-
-    }
-
-
-    /* Contenido de la tarjeta */
-        .card-body h5 {
-                font-weight: 600;
-                color: #000; /* Título negro */
-
-    }
-
-        .card-text {
-                font-size: 0.9em;
-                color: #666; /* Descripción gris oscuro */
-
-    }
-
-        .card-categories {
-                font-size: 0.8em;
-                color: #999;
-                margin-bottom: 10px;
-
-    }
-
-            .card-categories .badge {
-                    padding: 5px 10px;
-                    margin-right: 5px;
-                    background-color: #e0e0e0 !important; /* Categoría gris claro */
-                    color: #333 !important;
-
-    }
-
-
-    /* Títulos de sección */
-        h2 {
-                color: #333333 !important; /* Títulos en gris oscuro para el fondo blanco */
-
-    }
-
-
-    /* Líneas divisorias */
-        hr {
-                border-top: 1px solid #cccccc; /* Línea gris */
-                opacity: 1; /* Asegura que sea visible */
-
-    }
-
-
-    /* Botón de acción principal (Black/White style) */
-        .btn-primary {
-                background-color: #333333; /* Gris oscuro para botón principal */
-                border-color: #333333;
-                color: white;
-
-    }
-
-                .btn-primary:hover {
-                        background-color: #000000; /* Negro en hover */
-                        border-color: #000000;
-                        color: #fff;
-
+        .carousel-content h2 {
+            font-size: 2rem;
         }
 
+        .carousel-content .lead {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
 
-    /* --- CORRECCIÓN 1: Filtros con mejor espaciado --- */
+        .magazine-card-img {
+            height: 200px;
+        }
+
+        .card-price {
+            font-size: 1.5rem;
+        }
+
         .filtro-menu {
-                display: flex;
-                justify-content: center;
-                flex-wrap: wrap;
-                margin-top: 20px;
-                margin-bottom: 30px;
-        /* Usa gap para un espaciado consistente entre elementos */
-        gap: 10px;
-
-    }
+            justify-content: flex-start;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
 
         .filtro-item {
-        /* Eliminar el margin-bottom para evitar duplicación, pero se mantiene la estructura */
-        /* Puede que no sea necesario un margin aquí si usamos gap en el padre, pero se mantiene para consistencia */
-        margin: 0;
-    }
-
-            .filtro-item a {
-                    padding: 8px 15px;
-            /* Eliminar el margin en 'a' para que 'gap' en .filtro-menu maneje el espaciado */
-
-            /* margin: 5px; */
-                    text-decoration: none;
-                    color: #333333; /* Texto gris oscuro por defecto */
-                    background-color: #f0f0f0; /* Fondo gris muy claro */
-                    border-radius: 20px;
-                    transition: background-color 0.2s, color 0.2s;
-                    border: 1px solid #cccccc;
-                    display: block; /* Asegura que el padding funcione bien */
-
+            flex-shrink: 0;
         }
-
-            .filtro-item a.active {
-                    background-color: #333333; /* Activo en gris oscuro */
-                    color: #fff; /* Texto blanco */
-                    border-color: #333333;
-
-    }
-
-
-    /* Fin Corrección 1 */
-
-    /* Paginación */
-        .pagination .page-link {
-                color: #333333; /* Enlaces de paginación gris oscuro */
-                border: 1px solid #cccccc;
-                background-color: #ffffff;
-
-    }
-
-        .pagination .page-item.active .page-link {
-                background-color: #333333;
-                border-color: #333333;
-                color: #fff;
-
-    }
-
-        .pagination .page-item.disabled .page-link {
-                color: #999999;
-                background-color: #f0f0f0;
-                border-color: #e0e0e0;
-
-    }
-
-
-    /* Placeholder para el input de búsqueda */
-        .form-control::placeholder {
-                color: #999999;
-                opacity: 1; /* Firefox */
-
-    }
-
-        .form-control {
-                border-color: #cccccc;
-                color: #333333;
-
     }
 </style>
 
 @if (Model == null || (!Model.CursosDestacados.Any() && !Model.CursosRecomendados.Any()))
 {
-    <div class="alert alert-info text-center" role="alert">
-        No hay cursos disponibles en este momento.
+    <div class="section-container">
+        <div class="alert alert-info text-center" role="alert">
+            No hay cursos disponibles en este momento.
+        </div>
     </div>
 }
 else
 {
-    @* Seccion para Cursos Destacados (Carrusel) *@
+    @* === CARRUSEL DE CURSOS DESTACADOS === *@
     @if (Model.CursosDestacados.Any())
     {
-        <div id="cursoCarousel" class="carousel slide mb-5" data-bs-ride="carousel" style="width:100%">
-            <div class="carousel-inner rounded">
-                @for (int i = 0; i < Model.CursosDestacados.Count; i++)
-                {
-                    var curso = Model.CursosDestacados[i];
-                    <div class="carousel-item @(i == 0 ? "active" : "") carousel-item-custom" style="background-image: url('@curso.UrlImagen');">
-                        <div class="carousel-overlay">
-                            <div class="container text-start">
-                                <h2 class="display-4 fw-bold text-white">@curso.Titulo</h2>
-                                <p class="lead">@Html.Raw(curso.DescripcionCorta)</p>
-                                <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary btn-lg mt-3">Ver Curso</a>
+        <div class="section-container">
+
+            <div id="cursoCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @for (int i = 0; i < Model.CursosDestacados.Count; i++)
+                    {
+                        var curso = Model.CursosDestacados[i];
+                        <div class="carousel-item @(i == 0 ? "active" : "") carousel-item-custom" style="background-image: url('@curso.UrlImagen');">
+                            <div class="carousel-overlay">
+                                <div class="container">
+                                    <div class="carousel-content">
+                                        <h2>@curso.Titulo</h2>
+                                        <p class="lead">@Html.Raw(curso.DescripcionCorta)</p>
+                                        <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary btn-lg">Ver Curso</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#cursoCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#cursoCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#cursoCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Anterior</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#cursoCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Siguiente</span>
-            </button>
         </div>
     }
 
-    @* Seccion para Cursos Recomendados (Carrusel de 3 cards) *@
+    <hr class="section-divider" />
+
+    @* === CARRUSEL DE CURSOS RECOMENDADOS === *@
     @if (Model.CursosRecomendados.Any())
     {
-        <div class="container mt-5 mb-5">
-            <h2 class="mb-4">Cursos recomendados para ti</h2>
-            <hr />
+        <div class="section-container">
+            <div class="px-3">
+                <span class="latest-grid-header">CURSOS RECOMENDADOS</span>
+            </div>
+
             <div id="recomendadosCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     @{
-                        // CORRECCIÓN 2: Se debe calcular el número de elementos a mostrar en base al tamaño de la pantalla
-                        // Sin embargo, esta lógica de Razor no tiene acceso al tamaño de la pantalla.
-                        // La corrección se hará en el HTML usando clases responsivas de Bootstrap.
-                        // Mantendremos itemsPorGiro=3 para el cálculo de los slides.
-
                         int itemsPorGiro = 3;
                         int totalCursosRecomendados = Model.CursosRecomendados.Count;
                         int totalGiro = (int)Math.Ceiling(totalCursosRecomendados / (double)itemsPorGiro);
@@ -276,16 +526,15 @@ else
                     @for (int i = 0; i < totalGiro; i++)
                     {
                         <div class="carousel-item @(i == 0 ? "active" : "")">
-                            @* CORRECCIÓN 2: Se cambia row-cols-1 row-cols-md-3 para 1 tarjeta en móvil y 3 en desktop *@
-                            <div class="row row-cols-1 row-cols-md-3 g-4">
+                            <div class="row g-4">
                                 @foreach (var curso in Model.CursosRecomendados.Skip(i * itemsPorGiro).Take(itemsPorGiro))
                                 {
-                                    <div class="col">
-                                        <div class="card h-100 shadow-sm"
-                                                                    data-bs-toggle="popover"
-                                                                    data-bs-trigger="hover focus"
-                                                                    data-bs-placement="right"
-                                                                    data-bs-html="true">
+                                    <div class="col-lg-4 col-md-6 col-12">
+                                        <div class="magazine-card h-100"
+                                             data-bs-toggle="popover"
+                                             data-bs-trigger="hover focus"
+                                             data-bs-placement="right"
+                                             data-bs-html="true">
 
                                             <div style="display: none;" class="popover-course-data">
                                                 <span data-course-id="@curso.Id"></span>
@@ -295,31 +544,29 @@ else
                                                 <span data-course-price="@curso.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))"></span>
                                             </div>
 
-                                            @if (!string.IsNullOrEmpty(curso.UrlImagen))
-                                            {
-                                                <img src="@curso.UrlImagen" class="card-img-top" alt="Imagen del curso: @curso.Titulo" style="height: 200px; object-fit: cover;">
-                                            }
-                                            else
-                                            {
-                                                <img src="https://via.placeholder.com/400x200.png?text=Sin+Imagen" class="card-img-top" alt="Imagen de marcador de posición" style="height: 200px; object-fit: cover;">
-                                            }
-                                            <div class="card-body d-flex flex-column">
-                                                <h5 class="card-title">@curso.Titulo</h5>
-                                                <p class="card-text text-muted flex-grow-1">@Html.Raw(curso.DescripcionCorta)</p>
+                                            <div class="magazine-card-img-container">
+                                                <img src="@(string.IsNullOrEmpty(curso.UrlImagen) ? "https://via.placeholder.com/400x200.png?text=Sin+Imagen" : curso.UrlImagen)"
+                                                     class="magazine-card-img"
+                                                     alt="Imagen del curso: @curso.Titulo">
+                                            </div>
+                                            <div class="magazine-card-body">
+                                                <span class="card-category">CURSO</span>
+                                                <h5>@curso.Titulo</h5>
+                                                <p class="card-text">@Html.Raw(curso.DescripcionCorta)</p>
 
                                                 @if (curso.ListaCategorias != null && curso.ListaCategorias.Any())
                                                 {
                                                     <div class="card-categories">
                                                         @foreach (var categoria in curso.ListaCategorias)
                                                         {
-                                                            <span class="badge bg-secondary">@categoria</span>
+                                                            <span class="badge">@categoria</span>
                                                         }
                                                     </div>
                                                 }
 
                                                 <div class="d-flex justify-content-between align-items-center mt-auto">
-                                                    <h6 class="card-subtitle mb-0" style="">@curso.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</h6>
-                                                    <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary text-white">Ver Detalles</a>
+                                                    <div class="card-price">@curso.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</div>
+                                                    <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary">Ver Detalles</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -341,23 +588,30 @@ else
         </div>
     }
 
-    @* Seccion para todos los cursos (con filtros y paginación) - Se carga con JSON *@
-    <div class="container mt-4 mb-5 pb-5">
-        <h2 class="text-center mt-5 mb-4">Explora todos los cursos</h2>
-        <hr />
+    <hr class="section-divider" />
 
+    @* === TODOS LOS CURSOS CON FILTROS === *@
+    <div class="section-container">
+        <div class="px-3">
+            <span class="latest-grid-header">EXPLORA TODOS LOS CURSOS</span>
+        </div>
+
+        @* BÚSQUEDA *@
         <div class="row justify-content-center mb-4">
             <div class="col-md-6">
                 <div class="input-group">
                     <input type="text" class="form-control" id="searchStringInput" placeholder="Buscar por título o descripción..." />
-                    <button class="btn btn-primary" type="button" id="searchButton">Buscar</button>
+                    <button class="btn btn-primary" type="button" id="searchButton">
+                        <i class="fas fa-search me-2"></i>Buscar
+                    </button>
                 </div>
             </div>
         </div>
 
+        @* FILTROS *@
         <div class="filtro-menu">
             <div class="filtro-item">
-                <a href="#" class="filtro-btn active" data-filtro-categoria="">Todas</a>
+                <a href="#" class="filtro-btn active" data-filtro-categoria="">Todas las Categorías</a>
             </div>
             @foreach (var categoria in Model.CategoriasDisponibles)
             {
@@ -376,21 +630,21 @@ else
             }
         </div>
 
+        @* CONTENEDOR DE CURSOS (CARGADO VÍA JSON) *@
         <div id="cursos-list-container">
+            @* Los cursos se cargarán aquí dinámicamente *@
         </div>
     </div>
 }
 
 @section Scripts {
     @{
-        // Verifica si el indicador de éxito existe en TempData
         var pagoRegistrado = TempData["PagoRegistrado"] as bool?;
     }
 
     @if (pagoRegistrado.HasValue && pagoRegistrado.Value)
     {
         <script>
-            // Usar un temporizador para asegurar que el DOM y las librerías se cargaron
             $(document).ready(function() {
                 Swal.fire({
                     title: '¡Pago Registrado!',
@@ -398,7 +652,7 @@ else
                     icon: 'success',
                     confirmButtonText: 'Entendido',
                     customClass: {
-                        confirmButton: 'btn-primary' // Si tienes una clase de estilo para botones primarios
+                        confirmButton: 'btn-primary'
                     }
                 });
             });
@@ -411,7 +665,7 @@ else
             const container = document.getElementById('cursos-list-container');
 
             // Muestra un indicador de carga
-            container.innerHTML = `<div class="text-center mt-5 mb-5"><div class="spinner-border text-dark" role="status"><span class="visually-hidden">Cargando...</span></div></div>`;
+            container.innerHTML = `<div class="text-center mt-5 mb-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>`;
 
             const url = `@Url.Action("ObtenerCursosJson", "Curso")?page=${page}&categoria=${categoria}&nivel=${nivel}&searchString=${searchString}`;
 
@@ -423,12 +677,11 @@ else
                 if (data.cursos.length === 0) {
                     html = `<div class="alert alert-warning text-center" role="alert">No se encontraron cursos con los filtros aplicados.</div>`;
                 } else {
-                    // El contenedor de cursos cargados asíncronamente ya tiene clases responsivas
-                    html += `<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">`;
+                    html += `<div class="row g-4">`;
                     data.cursos.forEach(curso => {
                         html += `
-                            <div class="col">
-                                <div class="card h-100 shadow-sm"
+                            <div class="col-lg-4 col-md-6 col-12">
+                                <div class="magazine-card h-100"
                                     data-bs-toggle="popover"
                                     data-bs-trigger="hover focus"
                                     data-bs-placement="right"
@@ -442,20 +695,23 @@ else
                                         <span data-course-price="${curso.precio}"></span>
                                     </div>
 
-                                    <img src="${curso.urlImagen || 'https://via.placeholder.com/400x200.png?text=Sin+Imagen'}" class="card-img-top" alt="Imagen del curso: ${curso.titulo}" style="height: 200px; object-fit: cover;">
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title">${curso.titulo}</h5>
-                                        <p class="card-text text-muted flex-grow-1">${curso.descripcionCorta}</p>
+                                    <div class="magazine-card-img-container">
+                                        <img src="${curso.urlImagen || 'https://via.placeholder.com/400x200.png?text=Sin+Imagen'}" class="magazine-card-img" alt="Imagen del curso: ${curso.titulo}">
+                                    </div>
+                                    <div class="magazine-card-body">
+                                        <span class="card-category">CURSO</span>
+                                        <h5>${curso.titulo}</h5>
+                                        <p class="card-text">${curso.descripcionCorta}</p>
 
                                         ${curso.categorias.length > 0 ? `
                                             <div class="card-categories">
-                                                ${curso.categorias.map(cat => `<span class="badge bg-secondary">${cat}</span>`).join('')}
+                                                ${curso.categorias.map(cat => `<span class="badge">${cat}</span>`).join('')}
                                             </div>
                                         ` : ''}
 
                                         <div class="d-flex justify-content-between align-items-center mt-auto">
-                                            <h6 class="card-subtitle mb-0">${curso.precio}</h6>
-                                            <a href="/Curso/Detalles?id=${curso.id}" class="btn btn-primary text-white">Ver Detalles</a>
+                                            <div class="card-price">${curso.precio}</div>
+                                            <a href="/Curso/Detalles?id=${curso.id}" class="btn btn-primary">Ver Detalles</a>
                                         </div>
                                     </div>
                                 </div>
@@ -465,21 +721,23 @@ else
                     html += `</div>`;
 
                     // Paginación
-                    html += `<nav aria-label="Paginación de cursos" class="mt-5 pb-5">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item ${data.paginaActual <= 1 ? 'disabled' : ''}">
-                                <a href="#" class="page-link" data-page="${data.paginaActual - 1}">Anterior</a>
+                    if (data.totalPaginas > 1) {
+                        html += `<nav aria-label="Paginación de cursos" class="mt-5">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item ${data.paginaActual <= 1 ? 'disabled' : ''}">
+                                    <a href="#" class="page-link" data-page="${data.paginaActual - 1}">Anterior</a>
+                                </li>`;
+                        for (let i = 1; i <= data.totalPaginas; i++) {
+                            html += `<li class="page-item ${i === data.paginaActual ? 'active' : ''}">
+                                <a href="#" class="page-link" data-page="${i}">${i}</a>
                             </li>`;
-                    for (let i = 1; i <= data.totalPaginas; i++) {
-                        html += `<li class="page-item ${i === data.paginaActual ? 'active' : ''}">
-                                        <a href="#" class="page-link" data-page="${i}">${i}</a>
-                                    </li>`;
-                    }
-                    html += `<li class="page-item ${data.paginaActual >= data.totalPaginas ? 'disabled' : ''}">
-                                <a href="#" class="page-link" data-page="${data.paginaActual + 1}">Siguiente</a>
-                            </li>
+                        }
+                        html += `<li class="page-item ${data.paginaActual >= data.totalPaginas ? 'disabled' : ''}">
+                            <a href="#" class="page-link" data-page="${data.paginaActual + 1}">Siguiente</a>
+                        </li>
                         </ul>
                     </nav>`;
+                    }
                 }
 
                 container.innerHTML = html;
@@ -496,7 +754,7 @@ else
                             const imagenUrl = dataElement.querySelector('[data-course-image]').getAttribute('data-course-image');
 
                             return `
-                                <div class="popover-content" style="color: #333;">
+                                <div class="popover-content">
                                     <div class="d-flex mb-3 align-items-center">
                                         <img src="${imagenUrl || 'https://via.placeholder.com/80x80.png?text=Sin+Imagen'}" class="me-3 rounded" style="width: 80px; height: 80px; object-fit: cover;" alt="Imagen del curso">
                                         <div>
@@ -522,6 +780,7 @@ else
             }
         }
 
+        // Event Listeners
         document.getElementById('searchButton').addEventListener('click', function() {
             const searchString = document.getElementById('searchStringInput').value;
             const categoriaActual = document.querySelector('.filtro-btn.active[data-filtro-categoria]')?.dataset.filtroCategoria || '';
@@ -564,11 +823,12 @@ else
             }
         });
 
+        // Cargar cursos al iniciar
         document.addEventListener('DOMContentLoaded', () => {
             cargarCursos(1, '', '', '');
         });
 
-        // Inicializar popovers de los cursos recomendados (código inicial de Razor)
+        // Inicializar popovers de los cursos recomendados
         document.querySelectorAll('[data-bs-toggle="popover"]').forEach(popoverEl => {
             const popoverInstance = new bootstrap.Popover(popoverEl, {
                 content: function () {
@@ -579,7 +839,7 @@ else
                     const imagenUrl = dataElement.querySelector('[data-course-image]').getAttribute('data-course-image');
 
                     return `
-                        <div class="popover-content" style="color: #333;">
+                        <div class="popover-content">
                             <div class="d-flex mb-3 align-items-center">
                                 <img src="${imagenUrl || 'https://via.placeholder.com/80x80.png?text=Sin+Imagen'}" class="me-3 rounded" style="width: 80px; height: 80px; object-fit: cover;" alt="Imagen del curso">
                                 <div>

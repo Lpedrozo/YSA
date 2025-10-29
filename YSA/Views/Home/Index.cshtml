@@ -2,541 +2,980 @@
 @model YSA.Web.Models.ViewModels.HomeViewModel
 @{
     ViewData["Title"] = "Yo Soy Arte | Tu Comunidad Artística";
+    // Crear una lista plana y ordenada de todos los eventos
+    var todosLosEventos = Model.EventosCategorizados
+            .SelectMany(kvp => kvp.Value)
+            .OrderByDescending(e => e.FechaEvento) // Asumimos que quieres los más recientes
+        .ToList();
+
+    // Eventos para el bloque "LO ÚLTIMO" (los 6 más recientes)
+    var ultimosEventos = todosLosEventos.Take(6).ToList();
+
+    // Eventos para el nuevo bloque "EVENTOS DESTACADOS" (todos los demás)
+    // Se toma el resto de eventos después de los 6 últimos
+    var eventosRestantes = todosLosEventos.Skip(6).ToList();
+
+    // 1. El primer evento es el Encabezado.
+    var eventoEncabezado = eventosRestantes.FirstOrDefault();
+
+    // 2. TODOS los eventos restantes (excluyendo el encabezado) son para la lista de abajo.
+    var eventosRestantesParaLista = eventosRestantes.Skip(1).ToList();
 }
 
 <style>
-    /* ---------------------------- */
-    /* ESTILOS CSS MEJORADOS - Revamped for Magazine Look */
-    /* ---------------------------- */
+    /* IMPORTACIÓN DE TIPOGRAFÍAS */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
     :root {
-        /* Paleta de Colores actualizada con el nuevo verde (#6db53e) */
-        --color-primary-action: #6db53e; /* ¡NUEVO VERDE DE IMPACTO! */
-        --color-secondary: #0A0A0A; /* Negro profundo para títulos */
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
         --color-accent: #6c757d; /* Gris para texto de soporte */
-        --color-background: #f4f4f4; /* Fondo más suave */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
         --color-card-bg: #ffffff;
         --color-text-dark: #212529;
         --color-text-light: #ffffff;
         --color-border: #E8E8E8;
-        --color-alert: #dc3545;
-        /* Nuevas variables */
-        --color-shadow-light: rgba(109, 181, 62, 0.15); /* Sombra ligera de acento VERDE */
-        --color-dark-green: #5A9933; /* Un tono un poco más oscuro para hover/active */
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
     body {
-        font-family: 'Poppins', sans-serif;
+        font-family: var(--font-body);
         background-color: var(--color-background);
         color: var(--color-text-dark);
-        line-height: 1.6;
+        line-height: var(--line-height-loose);
     }
 
-    /* --- Hero Section --- */
-    .hero-section {
-        /* Estilo más dramático */
-        background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/diseño/HeaderAcademia.jpg');
-        background-size: cover;
-        background-position: center;
-        height: 60vh; /* Aumentamos la altura */
+    /* ESTILO PORTADA DE REVISTA PRINCIPAL (BANNER) */
+    .magazine-cover {
+        width: 100%;
+        height: 85vh; /* Altura destacada como una portada */
+        background-color: #f4f4f4;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .cover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%); /* Degradado oscuro en la parte inferior */
+        z-index: 2;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        align-items: flex-end;
+        padding: 3rem;
+    }
+
+    .cover-title-block {
         color: var(--color-text-light);
+        max-width: 700px;
+        z-index: 3;
     }
 
-    .hero-title {
-        font-size: 4.5rem; /* Más grande */
-        font-weight: 900; /* Más audaz */
-        letter-spacing: 2px;
-        text-align: center;
-        text-transform: uppercase;
-        padding-bottom: 0.5rem;
+    .cover-title {
+        font-family: var(--font-heading);
+        font-size: 4rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 0.5rem;
     }
 
+    .cover-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: var(--line-height-normal);
+    }
+
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: #f3f3f3;
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA (Mantenido para otras secciones) */
     .section-title {
-        font-size: 3rem;
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
         font-weight: 800;
         color: var(--color-secondary);
         padding-bottom: 0.5rem;
         margin-bottom: 2.5rem;
         display: inline-block;
-        /* Cambiamos el acento: línea más gruesa y color de impacto VERDE */
-        border-bottom: 6px solid var(--color-primary-action);
+        border-bottom: 4px solid var(--color-brand-primary); /* Ahora usa el naranja */
         letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
     }
 
-    /* --- General Cards (Events/Artists) --- */
-    .card-evento {
-        border-radius: 0.75rem;
-        border: none;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    .section-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: var(--color-accent);
+        margin-top: -2rem;
+        margin-bottom: 3rem;
+        line-height: var(--line-height-normal);
+    }
+
+    /* === ESTILO ESPECÍFICO PARA EL BLOQUE DE LA IMAGEN (LO ÚLTIMO) === */
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    .latest-card-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 3 columnas en desktop */
+        grid-auto-rows: 400px; /* Altura fija para la rejilla principal */
+        gap: 0; /* Sin espacio entre las tarjetas */
+        border-radius: var(--border-radius-md);
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .latest-card-item {
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+        border-right: 1px solid var(--color-border); /* Separador vertical */
+        border-bottom: 1px solid var(--color-border); /* Separador horizontal */
+        transition: all 0.3s ease;
+    }
+
+        .latest-card-item:hover {
+            transform: translateY(-5px);
+            z-index: 2;
+        }
+
+        /* El último de cada fila y la última fila no llevan borde */
+        .latest-card-item:nth-child(3n) {
+            border-right: none;
+        }
+
+        .latest-card-item:nth-child(n + 4) {
+            border-top: none; /* No necesitamos doble borde superior */
+        }
+
+            .latest-card-item:nth-child(n + 4):nth-child(-n + 6) {
+                border-bottom: none; /* Quitamos el borde inferior de la última fila */
+            }
+
+        .latest-card-item:last-child {
+            border-right: none;
+            border-bottom: none;
+        }
+
+        /* FIN DE LA REJILLA */
+        .latest-card-item:hover .magazine-grid-img {
+            transform: scale(1.05);
+        }
+
+    .magazine-grid-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: transform 0.5s ease;
+    }
+
+    .grid-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 70%); /* Degradado oscuro en la parte inferior */
+        z-index: 2;
+        display: flex;
+        align-items: flex-end;
+        padding: 1.5rem;
+    }
+
+    .grid-title-block {
+        color: var(--color-text-light);
+        z-index: 3;
+    }
+
+    .grid-category {
+        font-family: var(--font-accent);
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.7);
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    .grid-title {
+        font-family: var(--font-heading);
+        font-size: 1.25rem;
+        font-weight: 800;
+        line-height: var(--line-height-tight);
+        margin-bottom: 0;
+    }
+
+    /* ESTILO DE TARJETA TIPO REJILLA DE REVISTA MEJORADO (Para eventos y artistas) */
+    .magazine-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
         overflow: hidden;
         background-color: var(--color-card-bg);
         height: 100%;
         text-decoration: none;
         color: inherit;
+        display: block;
+        position: relative;
     }
 
-        .card-evento:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 30px var(--color-shadow-light); /* Sombra que destaca VERDE */
-        }
-
-    .card-img-top {
-        height: 220px;
-        object-fit: cover;
-        width: 100%;
-        border-radius: 0;
-    }
-
-    .artist-card-img {
-        height: 200px; /* Reducido para hacerla más "tarjeta" */
-        border-radius: 0.5rem 0.5rem 0 0;
-    }
-
-    .card-body h5 {
-        font-weight: 700;
-        line-height: 1.3;
-        color: var(--color-secondary);
-    }
-
-    .badge-yso {
-        background-color: var(--color-primary-action) !important; /* VERDE */
-        color: var(--color-text-light) !important;
-        font-weight: 600;
-        padding: 0.4rem 0.8rem;
-        border-radius: 0.25rem;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-    }
-
-    /* --- Context Block (Magazine Recortado) --- */
-    .context-block {
-        padding: 2rem;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        border: 4px solid var(--color-secondary); /* Borde grueso tipo caja de texto de revista */
-        border-radius: 0.5rem;
-        background-color: var(--color-card-bg); /* Fondo blanco para contraste */
-        box-shadow: 5px 5px 0px var(--color-primary-action); /* Efecto de 'pop' VERDE */
-    }
-
-        .context-block h3 {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--color-primary-action); /* Título de acento VERDE */
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-        }
-
-        .context-block p {
-            color: var(--color-text-dark);
-            font-size: 1.1rem;
-            line-height: 1.5;
-            margin-bottom: 0.5rem;
-        }
-
-    /* --- Featured Card (Destacado Editorial) --- */
-    .featured-card {
-        border-radius: 0.75rem;
-        overflow: hidden;
-        border: 1px solid var(--color-border);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: row;
-        height: 100%;
-        text-decoration: none;
-        color: inherit;
-        transition: transform 0.3s ease;
-    }
-
-        .featured-card:hover {
+        .magazine-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
         }
 
-    .featured-img-container {
-        width: 40%;
-        min-height: 280px;
-        max-height: 350px;
+    .magazine-card-img-container {
         overflow: hidden;
+        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
     }
 
-    .featured-img {
+    .magazine-card-img {
         width: 100%;
-        height: 100%;
+        height: 250px;
         object-fit: cover;
         transition: transform 0.5s ease;
     }
 
-    .featured-card:hover .featured-img {
+    .magazine-card:hover .magazine-card-img {
         transform: scale(1.05);
     }
 
-    .featured-body {
-        width: 60%;
+    .magazine-card-body {
         padding: 1.5rem;
+        position: relative;
+        text-align: left; /* Aseguramos que el contenido de la tarjeta esté a la izquierda */
+    }
+
+    .card-category {
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--color-brand-primary); /* Ahora usa el naranja */
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+        letter-spacing: 0.5px;
+    }
+
+    .magazine-card-body h5 {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 1.5rem;
+        line-height: var(--line-height-normal);
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .magazine-card-body .card-text {
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
+        margin-bottom: 1rem;
+    }
+
+    .card-date {
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        color: var(--color-brand-primary);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* BLOQUE DE CONTEXTO TIPO ENCABEZADO DE REVISTA (Para Quienes Somos) */
+    .context-editorial {
+        padding: 0;
+        border: none;
+        background-color: transparent;
+        height: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        background-color: var(--color-card-bg);
+        margin-bottom: 1rem;
     }
 
-        .featured-body h5 {
-            font-size: 1.7rem;
-            font-weight: 900;
-            color: var(--color-secondary);
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
-        }
-
-    /* --- Carousel Controls --- */
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 4%;
+    .context-editorial-content {
+        /* Para simular la barra vertical negra junto al texto (como la imagen) */
+        border-left: 5px solid var(--color-brand-primary); /* Ahora usa el naranja */
+        padding-left: 1.5rem;
+        height: 100%;
+        /* Aseguramos que el botón quede abajo en desktop */
+        display: flex;
+        flex-direction: column;
     }
 
-    .carousel-control-prev-icon,
-    .carousel-control-next-icon {
-        background-color: var(--color-primary-action); /* VERDE */
-        border: 2px solid var(--color-text-light);
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    .context-editorial h3 {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: var(--color-secondary);
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
     }
 
-    /* --- Buttons and Links --- */
-    .btn-dark {
-        background-color: var(--color-secondary) !important;
-        border-color: var(--color-secondary) !important;
-        transition: background-color 0.3s, border-color 0.3s;
+    .context-editorial p {
+        font-family: var(--font-body);
+        color: var(--color-text-dark);
+        font-size: 1.1rem;
+        line-height: var(--line-height-normal);
+        margin-bottom: 0.5rem;
     }
 
-        .btn-dark:hover {
-            background-color: var(--color-primary-action) !important; /* VERDE */
-            border-color: var(--color-primary-action) !important; /* VERDE */
-        }
-
-    /* Para los checks de la sección Quiénes Somos */
-    .text-primary {
-        color: var(--color-primary-action) !important; /* VERDE */
+    /* ========================================================================= */
+    /* === NUEVO ESTILO ESPECÍFICO PARA EL BLOQUE DE ARTISTAS: MURAL PEGADO === */
+    /* ========================================================================= */
+    .artist-grid-container {
+        display: grid;
+        /* Utilizamos una rejilla de 5 columnas para poder hacer la distribución 2/3 en desktop */
+        grid-template-columns: repeat(5, 1fr);
+        grid-auto-rows: 400px; /* Altura base para las filas */
+        gap: 0; /* ¡CERO ESPACIO para el efecto mural pegado! */
+        /* Eliminamos el padding lateral para que se pegue a los bordes del contenedor */
+        padding: 0 !important;
+        border-radius: var(--border-radius-md);
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     }
 
+    .artist-mural-item {
+        position: relative;
+        overflow: hidden;
+        /* Por defecto, cada elemento ocupa 1 columna y la altura definida por grid-auto-rows */
+        transition: transform 0.3s ease;
+    }
 
-    /* --- Media Queries --- */
-    @@media (max-width: 991.98px) {
-        .featured-card {
-            flex-direction: column;
+        .artist-mural-item:hover {
+            z-index: 10; /* Para que la sombra no quede detrás de los demás */
+            transform: scale(1.02);
         }
 
-        .featured-img-container,
-        .featured-body {
-            width: 100%;
-        }
-
-        .featured-img-container {
-            height: 250px;
-            max-height: none;
-        }
-
-        .featured-body {
-            padding: 1rem;
-        }
-
-            .featured-body h5 {
-                font-size: 1.5rem;
+            .artist-mural-item:hover .artist-mural-img {
+                transform: scale(1.05);
             }
+
+    .artist-mural-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: transform 0.5s ease;
     }
 
-    @@media (max-width: 575.98px) {
-        .hero-section {
-            height: 40vh;
+    .mural-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        /* Degradado más fuerte para asegurar visibilidad del texto */
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 60%);
+        z-index: 2;
+        display: flex;
+        align-items: flex-end;
+        padding: 2rem;
+        cursor: pointer;
+    }
+
+    .mural-text-block {
+        color: var(--color-text-light);
+        text-align: left;
+    }
+
+        .mural-text-block h3 {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: var(--line-height-tight);
+            margin-bottom: 0.5rem;
         }
 
-        .hero-title {
-            font-size: 2.8rem;
-            border-bottom-width: 3px;
+        .mural-text-block .category {
+            font-family: var(--font-accent);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+            display: block;
+            line-height: var(--line-height-tight);
+        }
+
+    /* Reglas para simular el diseño 2/3 (Desktop) */
+    .artist-mural-item:nth-child(1) {
+        grid-column: span 3;
+    }
+
+    .artist-mural-item:nth-child(2) {
+        grid-column: span 2;
+    }
+
+    .artist-mural-item:nth-child(3) {
+        grid-column: span 2;
+    }
+
+    .artist-mural-item:nth-child(4) {
+        grid-column: span 3;
+    }
+
+    .artist-mural-item:nth-child(5) {
+        grid-column: span 3;
+    }
+
+    .artist-mural-item:nth-child(6) {
+        grid-column: span 2;
+    }
+
+    /* === ESTILO ESPECÍFICO PARA EL BLOQUE DE EVENTOS DESTACADOS (1+LISTA ABAJO) === */
+    .featured-event-header {
+        position: relative;
+        height: 400px; /* Altura del encabezado */
+        overflow: hidden;
+        margin-bottom: 2rem;
+        border-radius: var(--border-radius-md);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .featured-event-header-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: transform 0.5s ease;
+    }
+
+    .featured-event-header:hover .featured-event-header-img {
+        transform: scale(1.05);
+    }
+
+    /* Nueva clase para el bloque de la lista de eventos destacados */
+    .featured-list-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+
+    /* BADGES Y ELEMENTOS DE ÉNFASIS CON NUEVA PALETA */
+    .badge.bg-light {
+        background-color: var(--color-brand-accent) !important; /* Amarillo para badges */
+        color: var(--color-brand-dark) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    .badge.bg-dark {
+        background-color: var(--color-brand-secondary) !important; /* Rojo para badges oscuros */
+        color: var(--color-text-light) !important;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    .alert-info {
+        background-color: rgba(109, 181, 62, 0.1); /* Verde suave para alertas */
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+    }
+
+    /* ICONOS CON COLORES DE MARCA */
+    .icon-card .fas {
+        color: var(--color-brand-primary) !important; /* Naranja para iconos */
+    }
+
+    .list-unstyled .fas.fa-check-circle {
+        color: var(--color-brand-success) !important; /* Verde para checkmarks */
+    }
+
+    /* TARJETAS DE ICONOS MEJORADAS */
+    .icon-card {
+        border-radius: var(--border-radius-lg);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        background: var(--color-card-bg);
+    }
+
+        .icon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+    /* SECCIÓN QUIÉNES SOMOS MEJORADA */
+    .about-us-section {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .history-section {
+        background: var(--color-card-bg);
+        border-radius: var(--border-radius-md);
+        padding: 2.5rem;
+        margin-top: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* ADAPTACIONES RESPONSIVE */
+
+    /* Desktop/Laptop (min-width: 992px) */
+    @@media (min-width: 992px) {
+        .context-editorial {
+            margin-bottom: 0;
+            padding: 2rem 0; /* Espaciado vertical para alineación */
+        }
+        /* Ajustes menores para Desktop */
+        .featured-list-grid .magazine-card-img {
+            height: 200px; /* Mantenemos altura consistente en 3 columnas */
+        }
+    }
+
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        /* === AJUSTES DE PORTADA === */
+        .magazine-cover {
+            height: 65vh; /* Menos altura en tablet */
+        }
+
+        .cover-overlay {
+            padding: 2rem;
+        }
+
+        .cover-title {
+            font-size: 3rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1.25rem;
+        }
+        /* === AJUSTES SECCIONES === */
+        .section-container, .about-us-section {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+        /* === AJUSTES LO ÚLTIMO (REJILLA 2x3) === */
+        .latest-grid-header {
+            text-align: center;
+        }
+
+        .latest-card-container {
+            grid-template-columns: repeat(2, 1fr); /* 2 columnas en tablet */
+            grid-auto-rows: 300px;
+        }
+
+        .latest-card-item {
+            border-right: 1px solid var(--color-border); /* Aseguramos borde en tablet */
+            border-bottom: 1px solid var(--color-border);
+        }
+            /* Reglas de borde para la rejilla 2xN */
+            .latest-card-item:nth-child(2n) {
+                border-right: none; /* Quitamos el borde derecho del 2º y 4º elemento */
+            }
+
+            .latest-card-item:nth-child(3n) { /* Anulamos la regla de 3n para Desktop */
+                border-right: 1px solid var(--color-border);
+            }
+
+            .latest-card-item:nth-child(n + 5) {
+                border-bottom: none; /* Quitamos el borde inferior de la última fila (5 y 6) */
+            }
+        /* === AJUSTES EVENTOS DESTACADOS (1 columna) === */
+        .featured-event-header {
+            height: 300px;
+        }
+
+        .featured-list-grid {
+            /* 2 columnas en tablet */
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+            .featured-list-grid .magazine-card-img {
+                height: 150px; /* Imagen más pequeña para las 2 columnas */
+            }
+
+            .featured-list-grid .magazine-card-body {
+                padding: 1rem; /* Menos padding */
+            }
+
+                .featured-list-grid .magazine-card-body h5 {
+                    font-size: 1.1rem; /* Título más pequeño */
+                }
+        /* === AJUSTES ARTISTAS MURAL (2 columnas) === */
+        .artist-grid-container {
+            /* 2 columnas en tablet para un aspecto de mural más denso */
+            grid-template-columns: repeat(2, 1fr);
+            grid-auto-rows: 300px;
+            padding: 0 !important;
+        }
+        /* Reiniciamos las reglas de span para tablet/móvil */
+        .artist-mural-item:nth-child(n) {
+            grid-column: span 1 !important; /* Cada elemento ocupa 1 columna */
+        }
+
+        .mural-text-block h3 {
+            font-size: 1.5rem;
+        }
+        /* === AJUSTES QUIÉNES SOMOS === */
+        .context-editorial-content {
+            padding-left: 0.75rem;
+            border-left: 3px solid var(--color-brand-primary);
         }
 
         .section-title {
-            font-size: 2.2rem;
-            border-bottom-width: 4px;
-            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) - Columna única para la mayoría de rejillas */
+    @@media (max-width: 575.98px) {
+        .cover-title {
+            font-size: 2rem;
         }
 
-        .context-block {
-            box-shadow: 3px 3px 0px var(--color-primary-action); /* VERDE */
+        .cover-subtitle {
+            font-size: 1rem;
         }
 
-        .carousel-control-prev,
-        .carousel-control-next {
-            display: none;
+        .cover-overlay {
+            padding: 1.5rem;
+        }
+        /* === AJUSTES SECCIONES === */
+        .section-container, .about-us-section {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .latest-card-container {
+            grid-template-columns: 1fr; /* 1 columna en móvil */
+            grid-auto-rows: 250px;
+            border-right: none;
+        }
+        /* Reglas de borde para la rejilla 1xN */
+        .latest-card-item {
+            border-right: none !important;
+        }
+
+            .latest-card-item:last-child {
+                border-bottom: none;
+            }
+
+            .latest-card-item:nth-child(n) {
+                border-right: none;
+            }
+
+            .latest-card-item:nth-child(n + 1) {
+                border-bottom: 1px solid var(--color-border);
+            }
+
+            .latest-card-item:nth-child(6) {
+                border-bottom: none;
+            }
+
+            .latest-card-item:nth-child(2n) { /* Anulamos la regla de 2n de tablet */
+                border-right: none;
+            }
+        /* === AJUSTES EVENTOS DESTACADOS (Lista vertical) === */
+        .featured-list-grid {
+            display: block; /* Volvemos a un flujo normal (1 columna) */
+            gap: 0;
+        }
+            /* Usamos la estructura de tarjeta vertical para la lista */
+            .featured-list-grid .magazine-card-img-container {
+                width: 100%;
+            }
+
+            .featured-list-grid .magazine-card-img {
+                height: 180px; /* Imagen un poco más alta en 1 columna */
+            }
+
+            .featured-list-grid .magazine-card {
+                margin-bottom: 2rem;
+            }
+
+                .featured-list-grid .magazine-card:last-child {
+                    margin-bottom: 0;
+                }
+        /* === AJUSTES ARTISTAS MURAL (1 columna) === */
+        .artist-grid-container {
+            grid-template-columns: 1fr; /* 1 columna en móvil */
+            grid-auto-rows: 250px;
+        }
+
+        .mural-text-block h3 {
+            font-size: 1.25rem;
+        }
+        /* === AJUSTES GLOBAL === */
+        /* Reducir el padding horizontal general en el contenedor principal */
+        .container.px-0 > div.px-5 {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
         }
     }
 </style>
 
-<div class="hero-section">
-    <h1 class="hero-title">Yo Soy Arte</h1>
+<div class="magazine-cover">
+    @* Usamos la imagen que mencionaste para el banner principal *@
+    <img src="/diseño/HeaderAcademia.jpg" class="cover-image" alt="Portada de la revista Yo Soy Arte">
+    <div class="cover-overlay">
+        <div class="cover-title-block">
+            <span class="badge bg-light text-dark mb-2">REVISTA YO SOY ARTE</span>
+            <h1 class="cover-title">Yo Soy Arte | Noviembre/Diciembre 2025</h1>
+            <p class="cover-subtitle">Tu Comunidad Artística: Descubre los talentos y eventos más recientes.</p>
+        </div>
+    </div>
 </div>
 
-<div class="container px-5 pt-5">
+<div class="container px-0 py-5">
+    @* === INICIO DEL BLOQUE "LO ÚLTIMO" (REJILLA 3x2) === *@
+    <div class="section-container">
+        <div class="px-3">
+            <span class="latest-grid-header">LO ÚLTIMO</span>
+        </div>
 
-    @if (Model.EventosCategorizados.Any())
-    {
-        @foreach (var categoria in Model.EventosCategorizados)
+        @if (ultimosEventos.Any())
         {
-            string categoriaNombre = categoria.Key;
-            List<EventoHomeViewModel> eventos = categoria.Value;
-            string carouselId = "eventoCarousel" + categoriaNombre.Replace(" ", "");
-
-            // Lógica para obtener el evento destacado (el primero) y el resto de eventos
-            EventoHomeViewModel eventoDestacado = eventos.FirstOrDefault();
-            List<EventoHomeViewModel> eventosRestantes = eventos.Skip(1).ToList();
-
-            // Asignar el texto de contexto
-            string contextTitle = "";
-            string contextText = "";
-
-            switch (categoriaNombre)
-            {
-                case "Conferencia":
-                    contextTitle = "Conocimiento y Diálogo";
-                    contextText = "Únete a las charlas con líderes y expertos del arte. Espacios para el debate, el aprendizaje y la expansión de tu perspectiva creativa.";
-                    break;
-                case "Galería de Arte":
-                    contextTitle = "Explora el Arte Digital";
-                    contextText = "Nuestras galerías virtuales presentan obras impactantes de la comunidad. Sumérgete en colecciones curadas y descubre nuevos talentos.";
-                    break;
-                case "Exposición":
-                    contextTitle = "Muestras de Talento";
-                    contextText = "Sé testigo de las exposiciones colectivas e individuales. Una vitrina para el talento de nuestros artistas y alumnos más destacados.";
-                    break;
-                case "Taller":
-                    contextTitle = "Manos a la Obra";
-                    contextText = "Perfecciona tus técnicas con nuestros talleres prácticos. Sesiones interactivas guiadas por profesionales para desarrollar habilidades específicas.";
-                    break;
-                case "Seminario":
-                    contextTitle = "Inmersión Profunda";
-                    contextText = "Seminarios especializados para dominar temas complejos. Adquiere conocimientos avanzados que transformarán tu práctica artística.";
-                    break;
-                default:
-                    contextTitle = "Descubre y Aprende";
-                    contextText = "Explora los últimos eventos de nuestra comunidad, diseñados para inspirar y conectar a artistas de todas las disciplinas.";
-                    break;
-            }
-
-            <div class="row mb-5 align-items-stretch">
-                <div class="col-12 text-center mb-4">
-                    <h2 class="section-title">@categoriaNombre</h2>
-                </div>
-
-                @* Columna de Contexto Editorial (col-3) *@
-                <div class="col-lg-3 col-md-4 mb-4 mb-md-0 d-flex">
-                    <div class="context-block">
-                        <h3 class="text-center">@contextTitle</h3>
-                        <p class="text-center">@contextText</p>
-                        <p class="small text-muted mt-2 text-center">
-                            ¡Visita la sección de Revista para más!
-                        </p>
-                    </div>
-                </div>
-
-                @* Columna de Contenido (destacado + carrusel) (col-9) *@
-                <div class="col-lg-9 col-md-8">
-                    @if (eventoDestacado != null)
-                    {
-                        <div class="row g-4 h-100">
-                            @* Tarjeta Destacada (el primer evento) *@
-                            <div class="col-lg-6 col-12 d-flex">
-                                <a href="@Url.Action("DetalleEvento", "Revista", new { id = eventoDestacado.Id })" class="featured-card h-100">
-                                    <div class="featured-img-container">
-                                        <img src="@Url.Content(eventoDestacado.UrlImagen)" class="featured-img" alt="@eventoDestacado.Titulo" />
-                                    </div>
-                                    <div class="featured-body">
-                                        <span class="badge-yso mb-2">Destacado</span>
-                                        <h5 class="card-title">@eventoDestacado.Titulo</h5>
-                                        <p class="card-text text-muted">@eventoDestacado.FechaEvento.ToString("dd MMMM yyyy")</p>
-                                        <p class="card-text">@eventoDestacado.Lugar</p>
-                                        <small class="text-primary mt-auto">Ver detalles →</small>
-                                    </div>
-                                </a>
-                            </div>
-
-                            @* Carrusel de Eventos Restantes (Ocupa el resto del espacio) *@
-                            @if (eventosRestantes.Any())
-                            {
-                                <div class="col-lg-6 col-12 d-flex">
-                                    <div id="@carouselId" class="carousel slide evento-carousel w-100" data-items="2">
-                                        <div class="carousel-inner">
-                                            @{
-                                                // Lógica inicial de Razor para permitir la extracción de cards en JS
-                                                int itemsPerSlideEventsRazor = 2;
-                                                int totalSlidesEvents = (int)Math.Ceiling(eventosRestantes.Count / (double)itemsPerSlideEventsRazor);
-                                            }
-                                            @for (int i = 0; i < totalSlidesEvents; i++)
-                                            {
-                                                <div class="carousel-item @(i == 0 ? "active" : "")">
-                                                    <div class="row g-4">
-                                                        @foreach (var evento in eventosRestantes.Skip(i * itemsPerSlideEventsRazor).Take(itemsPerSlideEventsRazor))
-                                                        {
-                                                            <div class="col-12">
-                                                                @* Se asegura que ocupe todo el ancho de la col-lg-6 *@
-                                                                <a href="@Url.Action("DetalleEvento", "Revista", new { id = evento.Id })" class="card card-evento h-100 shadow-sm">
-                                                                    <img src="@Url.Content(evento.UrlImagen)" class="card-img-top" alt="@evento.Titulo">
-                                                                    <div class="card-body">
-                                                                        <h5 class="card-title">@evento.Titulo</h5>
-                                                                        <p class="card-text text-muted">@evento.FechaEvento.ToString("dd MMMM yyyy")</p>
-                                                                        <p>@evento.Lugar</p>
-                                                                    </div>
-                                                                </a>
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            }
-                                        </div>
-
-                                        @* Controles del Carrusel (Solo si hay más de 2) *@
-                                        @if (eventosRestantes.Count > itemsPerSlideEventsRazor)
-                                        {
-                                            <button class="carousel-control-prev" type="button" data-bs-target="#@carouselId" data-bs-slide="prev">
-                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                <span class="visually-hidden">Anterior</span>
-                                            </button>
-                                            <button class="carousel-control-next" type="button" data-bs-target="#@carouselId" data-bs-slide="next">
-                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                <span class="visually-hidden">Siguiente</span>
-                                            </button>
-                                        }
-                                    </div>
+            <div class="latest-card-container">
+                @foreach (var evento in ultimosEventos)
+                {
+                    <div class="latest-card-item">
+                        <a href="@Url.Action("DetalleEvento", "Revista", new { id = evento.Id })" class="w-100 h-100 position-relative d-block text-decoration-none">
+                            <img src="@Url.Content(evento.UrlImagen)" class="magazine-grid-img" alt="@evento.Titulo">
+                            <div class="grid-overlay">
+                                <div class="grid-title-block">
+                                    <span class="grid-category">@evento.TipoEventoNombre</span>
+                                    <h2 class="grid-title">@evento.Titulo</h2>
                                 </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-info text-center" role="alert">
-                            No hay eventos próximos de @categoriaNombre.
-                        </div>
-                    }
-                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="px-3"><div class="alert alert-info text-center" role="alert">No hay eventos recientes para mostrar.</div></div>
+        }
+    </div>
+    @* === FIN DEL BLOQUE "LO ÚLTIMO" === *@
+
+    <hr class="section-divider" />
+
+    @* === INICIO DEL NUEVO BLOQUE "EVENTOS DESTACADOS" === *@
+    @if (eventoEncabezado != null || eventosRestantesParaLista.Any())
+    {
+        <div class="section-container">
+            <div class="px-3">
+                <span class="latest-grid-header">EVENTOS DESTACADOS</span>
             </div>
 
-            <hr class="my-5" style="border-top: 1px solid var(--color-border);" />
-        }
-    }
-    else
-    {
-        <div class="alert alert-warning text-center my-5" role="alert">
-            Actualmente no hay eventos disponibles en ninguna categoría.
-        </div>
-        <hr class="my-5" style="border-top: 1px solid var(--color-border);" />
-    }
-
-
-    @* Sección de Artistas (Se mantiene la estructura original, usando card-evento) *@
-    <div class="row mb-5 align-items-center">
-        <div class="col-12 text-center mb-4">
-            <h2 class="section-title">Nuestros maestros</h2>
-        </div>
-
-        <div class="col-lg-9 col-md-8 order-md-1">
-            <div id="artistasCarousel" class="carousel slide artista-carousel">
-                <div class="carousel-inner">
-                    @{
-                        // Lógica inicial de Razor para permitir la extracción de cards en JS
-                        int itemsPerSlideArtistasRazor = 4;
-                        int totalArtists = Model.Artistas?.Count() ?? 0;
-                        int totalSlidesArtistas = (int)Math.Ceiling(totalArtists / (double)itemsPerSlideArtistasRazor);
-                    }
-                    @if (totalArtists > 0)
-                    {
-                        @for (int i = 0; i < totalSlidesArtistas; i++)
-                        {
-                            <div class="carousel-item @(i == 0 ? "active" : "")">
-                                <div class="row g-4">
-                                    @foreach (var artista in Model.Artistas.Skip(i * itemsPerSlideArtistasRazor).Take(itemsPerSlideArtistasRazor))
-                                    {
-                                        <div class="col-lg-3 col-md-6 col-12">
-                                            <a href="@Url.Action("Detalles", "Artista", new { id = artista.Id })" class="card card-evento artist-card h-100 shadow-sm" data-artista-id="@artista.Id">
-                                                <img src="@(string.IsNullOrEmpty(artista.Usuario?.UrlImagen) ? "https://via.placeholder.com/400x400?text=Sin+Foto" : Url.Content(artista.Usuario.UrlImagen))"
-                                                     class="card-img-top artist-card-img" alt="Foto de @artista.Usuario.Nombre" />
-                                                <div class="card-body text-center">
-                                                    <h5 class="card-title">@artista.Usuario.Nombre @artista.Usuario.Apellido</h5>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    }
+            <div class="row g-5 px-3">
+                @if (eventoEncabezado != null)
+                {
+                    @* 1. EVENTO ENCABEZADO (Columna 1: 12/12) *@
+                    <div class="col-12">
+                        <a href="@Url.Action("DetalleEvento", "Revista", new { id = eventoEncabezado.Id })" class="d-block text-decoration-none">
+                            <div class="featured-event-header mb-3">
+                                <img src="@Url.Content(eventoEncabezado.UrlImagen)" class="featured-event-header-img" alt="@eventoEncabezado.Titulo">
+                                <div class="grid-overlay align-items-start p-3">
+                                    <span class="badge bg-dark text-white">@eventoEncabezado.TipoEventoNombre</span>
                                 </div>
                             </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="carousel-item active">
-                            <div class="alert alert-info text-center" role="alert">
-                                No hay artistas destacados para mostrar.
-                            </div>
-                        </div>
-                    }
-                </div>
-                @if (totalSlidesArtistas > 1)
+                            <h3 class="h4" style="font-weight: 800; color: var(--color-secondary);">@eventoEncabezado.Titulo</h3>
+                            <p class="text-muted">@eventoEncabezado.FechaEvento.ToString("dd MMMM yyyy")</p>
+                        </a>
+                    </div>
+                }
+
+                @* 2. RESTO DE EVENTOS (Columna 2: 12/12 - Contiene una rejilla interna 3xN/2xN/1xN) *@
+                @if (eventosRestantesParaLista.Any())
                 {
-                    <button class="carousel-control-prev" type="button" data-bs-target="#artistasCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Anterior</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#artistasCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Siguiente</span>
-                    </button>
+                    <div class="col-12 mt-4">
+                        @* Agregamos un poco de margen superior para separarlo del encabezado *@
+                        <div class="featured-list-grid">
+                            @* Nueva rejilla para los eventos restantes (3 columnas en desktop) *@
+                            @foreach (var evento in eventosRestantesParaLista)
+                            {
+                                <a href="@Url.Action("DetalleEvento", "Revista", new { id = evento.Id })" class="magazine-card text-dark">
+                                    <div class="magazine-card-img-container">
+                                        <img src="@Url.Content(evento.UrlImagen)" class="magazine-card-img featured-list-img" alt="@evento.Titulo">
+                                    </div>
+                                    <div class="magazine-card-body">
+                                        <span class="card-category">@evento.TipoEventoNombre</span>
+                                        <h5 class="mb-1">@evento.Titulo</h5>
+                                        <div class="card-date">
+                                            <i class="far fa-calendar"></i>
+                                            <span>@evento.FechaEvento.ToString("dd/MM/yyyy")</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    </div>
                 }
             </div>
         </div>
+    }
+    @* === FIN DEL NUEVO BLOQUE "EVENTOS DESTACADOS" === *@
 
-        <div class="col-lg-3 col-md-4 order-md-2 mt-4 mt-md-0 d-flex">
-            <div class="context-block text-center">
-                <h3>Talento y perfiles</h3>
-                <p>
-                    Explora los portafolios de los creadores más brillantes de nuestra comunidad. Cada artista es una fuente de inspiración y creatividad única. Conoce sus obras y sus historias.
-                </p>
+    <hr class="section-divider" />
+
+    @* === INICIO DE LA SECCIÓN DE ARTISTAS (MURAL) === *@
+    <div class="section-container">
+        <div class="row mb-5 pb-3 g-0">
+            @* Título de la sección sobre la rejilla (necesita padding para separarse de los bordes) *@
+            <div class="col-12 text-start mb-4 px-3">
+                <span class="latest-grid-header">ARTISTAS DEL TATUAJE</span>
+            </div>
+
+            @* Rejilla 5xN para el mural (2/3) *@
+            <div class="col-12">
+                @if (Model.Artistas != null && Model.Artistas.Any())
+                {
+                    <div class="artist-grid-container">
+                        @foreach (var artista in Model.Artistas)
+                        {
+                            <div class="artist-mural-item">
+                                @* Nueva clase para el item del mural *@
+                                <a href="@Url.Action("Detalles", "Artista", new { id = artista.Id })" class="w-100 h-100 position-relative d-block text-decoration-none">
+                                    <img src="@(string.IsNullOrEmpty(artista.Usuario?.UrlImagen) ? "/diseño/placeholder-artist.jpg" : Url.Content(artista.Usuario.UrlImagen))"
+                                         class="artist-mural-img"
+                                         alt="Foto de @artista.Usuario.Nombre">
+                                    <div class="mural-overlay">
+                                        @* Nueva clase para la superposición de texto *@
+                                        <div class="mural-text-block">
+                                            <span class="category">@artista.EstiloPrincipal</span>
+                                            <h3>@artista.Usuario.Nombre @artista.Usuario.Apellido</h3>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="px-3"><div class="alert alert-info text-center" role="alert">No hay artistas registrados para mostrar.</div></div>
+                }
             </div>
         </div>
     </div>
+    @* === FIN DE LA SECCIÓN DE ARTISTAS === *@
 
-    @* Sección Quiénes Somos (Sin cambios estructurales) *@
-    <div class="about-us-section text-center mb-5 pb-5">
-        <h2 class="section-title">Quiénes somos</h2>
+    <hr class="section-divider" />
+
+    @* === INICIO DE LA SECCIÓN QUIÉNES SOMOS (MANTENIDA) === *@
+    <div class="about-us-section text-center">
+        @* Añadido padding horizontal para centrar el contenido *@
+        <h2 class="latest-grid-header">Quiénes somos</h2>
         <div class="container">
             <div class="row g-4 justify-content-center">
                 <div class="col-lg-3 col-md-6">
-                    <div class="card card-evento icon-card h-100">
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                            <i class="fas fa-bullseye fa-3x mb-3 text-secondary"></i>
+                    <div class="magazine-card icon-card h-100">
+                        <div class="magazine-card-body d-flex flex-column align-items-center justify-content-center text-center">
+                            <i class="fas fa-bullseye fa-3x mb-3"></i>
                             <h3 class="h5">Nuestra Misión</h3>
                             <p>Facilitar el aprendizaje y la expresión artística, conectando a creadores y entusiastas en una comunidad vibrante y colaborativa.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="card card-evento icon-card h-100">
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                            <i class="fas fa-gem fa-3x mb-3 text-secondary"></i>
+                    <div class="magazine-card icon-card h-100">
+                        <div class="magazine-card-body d-flex flex-column align-items-center justify-content-center">
+                            <i class="fas fa-gem fa-3x mb-3"></i>
                             <h3 class="h5">Nuestros valores</h3>
                             <ul class="list-unstyled mb-0 text-start">
-                                <li><i class="fas fa-check-circle me-2 text-primary"></i> Pasión por el Arte</li>
-                                <li><i class="fas fa-check-circle me-2 text-primary"></i> Innovación Continua</li>
-                                <li><i class="fas fa-check-circle me-2 text-primary"></i> Inclusión y Respeto</li>
-                                <li><i class="fas fa-check-circle me-2 text-primary"></i> Excelencia Educativa</li>
+                                <li><i class="fas fa-check-circle me-2"></i> Pasión por el Arte</li>
+                                <li><i class="fas fa-check-circle me-2"></i> Innovación Continua</li>
+                                <li><i class="fas fa-check-circle me-2"></i> Inclusión y Respeto</li>
+                                <li><i class="fas fa-check-circle me-2"></i> Excelencia Educativa</li>
                             </ul>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="card card-evento icon-card h-100">
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                            <i class="fas fa-map-marker-alt fa-3x mb-3 text-secondary"></i>
+                    <div class="magazine-card icon-card h-100">
+                        <div class="magazine-card-body d-flex flex-column align-items-center justify-content-center">
+                            <i class="fas fa-map-marker-alt fa-3x mb-3"></i>
                             <h3 class="h5">Ubicación y contacto</h3>
                             <p>Av. Principal #123, Ciudad Creativa, País Imaginario</p>
                             <p>Email: contacto@yosoyarte.com</p>
@@ -546,8 +985,8 @@
                 </div>
             </div>
 
-            <div class="mt-5 history-section pb-5 mb-5">
-                <h3 class="section-title">Nuestra historia</h3>
+            <div class="mt-5 history-section">
+                <h3 class="latest-grid-header">Nuestra historia</h3>
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <p class="fs-5">
@@ -561,146 +1000,12 @@
             </div>
         </div>
     </div>
+    @* === FIN DE LA SECCIÓN QUIÉNES SOMOS === *@
+
 </div>
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function () {
-
-            // --- Helper: Determinar cuántos ítems caben por slide según el tamaño de la ventana ---
-            function getItemsPerSlide(isArtistCarousel) {
-                if (window.innerWidth >= 992) { // Desktop (lg)
-                    // Para Artistas: 4 ítems (col-9), Para Eventos: 2 ítems (col-6)
-                    return isArtistCarousel ? 4 : 2;
-                } else if (window.innerWidth >= 768) { // Tablet (md)
-                    // Para Artistas: 2 ítems, Para Eventos: 1 ítem (en la columna col-md-8)
-                    return isArtistCarousel ? 2 : 1;
-                } else { // Mobile (sm, xs)
-                    return 1;
-                }
-            }
-
-            // --- Core: Función para reestructurar el carrusel de forma responsive ---
-            function restructureCarouselBootstrap(carouselId, rawItems, itemsPerSlide, isArtistCarousel) {
-                const $carouselInner = $(`#${carouselId} .carousel-inner`);
-                $carouselInner.empty();
-
-                if (rawItems.length === 0) {
-                    const alertMessage = isArtistCarousel
-                        ? 'No hay artistas destacados para mostrar.'
-                        : `No hay eventos próximos.`;
-                    $carouselInner.append(`<div class="carousel-item active"><div class="alert alert-info text-center" role="alert">${alertMessage}</div></div>`);
-                    $(`#${carouselId} .carousel-control-prev`).hide();
-                    $(`#${carouselId} .carousel-control-next`).hide();
-                    return;
-                }
-
-                const totalSlides = Math.ceil(rawItems.length / itemsPerSlide);
-
-                for (let i = 0; i < totalSlides; i++) {
-                    const $slide = $(`<div class="carousel-item ${i === 0 ? 'active' : ''}"><div class="row g-4 justify-content-center"></div></div>`);
-                    const $row = $slide.find('.row');
-                    const startIndex = i * itemsPerSlide;
-                    const itemsInSlide = rawItems.slice(startIndex, startIndex + itemsPerSlide);
-
-                    itemsInSlide.forEach(item => {
-                        const $card = $(item).clone();
-                        let colClass = 'col-12';
-
-                        // Determinar la clase de columna para la distribución actual
-                        if (isArtistCarousel) {
-                            if (itemsPerSlide === 2) colClass += ' col-md-6';
-                            else if (itemsPerSlide === 4) colClass += ' col-md-6 col-lg-3';
-                        } else {
-                            if (itemsPerSlide === 2) colClass += ' col-lg-6';
-                            else if (itemsPerSlide === 1) colClass += ' col-md-12';
-                        }
-
-                        const $colDiv = $('<div>').addClass(colClass).append($card);
-                        $row.append($colDiv);
-                    });
-
-                    $carouselInner.append($slide);
-                }
-
-                // Reiniciar el carrusel de Bootstrap
-                const carouselElement = document.getElementById(carouselId);
-
-                // 1. Dispose para evitar duplicados si ya existía
-                const bsCarousel = bootstrap.Carousel.getInstance(carouselElement);
-                if (bsCarousel) {
-                    bsCarousel.dispose();
-                }
-
-                // 2. Inicializar con intervalo: false para desactivar el autoplay.
-                if (rawItems.length > 0) {
-                    new bootstrap.Carousel(carouselElement, {
-                        interval: false // ESTA ES LA CLAVE PARA DETENER EL AUTOPLAY
-                    });
-                }
-
-                // Lógica de botones (mostrar/ocultar)
-                $(`#${carouselId} .carousel-control-prev`).toggle(totalSlides > 1);
-                $(`#${carouselId} .carousel-control-next`).toggle(totalSlides > 1);
-            }
-
-            // --- Extracción de Tarjetas Originales ---
-            const allEventCards = {};
-            $('.evento-carousel').each(function () {
-                const carouselId = $(this).attr('id');
-                allEventCards[carouselId] = [];
-
-                // Se extraen todos los <a> (tarjetas) de los carousel-item
-                $(this).find('.carousel-item').each(function() {
-                    $(this).find('.row > div > a').each(function () {
-                        allEventCards[carouselId].push(this);
-                    });
-                    $(this).remove(); // Vaciar el contenido original para que JS lo regenere
-                });
-
-                // Desactivar el data-bs-ride="carousel" para evitar inicialización automática
-                $(this).removeAttr('data-bs-ride');
-            });
-
-            // Extracción de tarjetas de Artistas
-            const originalArtistCards = [];
-            $('#artistasCarousel .carousel-item').each(function () {
-                $(this).find('.row > div > a').each(function () {
-                    originalArtistCards.push(this);
-                });
-                $(this).remove(); // Vaciar carrusel original
-            });
-            $('#artistasCarousel').removeAttr('data-bs-ride'); // Desactivar auto-inicialización
-
-            // --- Inicialización y Reestructuración ---
-            function initializeCarousels() {
-                // 1. Reestructurar carruseles de EVENTOS (recorriendo todas las categorías)
-                for (const carouselId in allEventCards) {
-                    const itemsConfig = getItemsPerSlide(false);
-                    const rawItems = allEventCards[carouselId];
-                    if (rawItems.length > 0) {
-                        $(`#${carouselId} .carousel-inner`).html('');
-                        restructureCarouselBootstrap(carouselId, rawItems, itemsConfig, false);
-                    }
-                }
-
-                // 2. Reestructurar carrusel de ARTISTAS (es único)
-                const itemsConfigArtistas = getItemsPerSlide(true);
-                restructureCarouselBootstrap('artistasCarousel', originalArtistCards, itemsConfigArtistas, true);
-            }
-
-            // Llamada inicial
-            initializeCarousels();
-
-            // Ejecutar la función cuando la ventana cambia de tamaño (debounce para rendimiento)
-            let resizeTimer;
-            $(window).on('resize', function (e) {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function () {
-                    initializeCarousels();
-                }, 250);
-            });
-        });
+        // Scripts opcionales aquí.
     </script>
 }

@@ -18,151 +18,345 @@
 }
 
 <style>
-    /* VARIABLES DE COLOR MONOCROMÁTICAS */
+    /* IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES COHERENTES CON EL DISEÑO EDITORIAL */
     :root {
-        --color-primary: #000000;
-        --color-secondary: #333333;
-        --color-accent: #cccccc;
-        --color-background: #ffffff;
-        --color-card-bg: #f8f8f8;
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
         --color-text-dark: #212529;
         --color-text-light: #ffffff;
-        --color-success: #333333; /* Usado para texto de éxito en B/N */
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Coherentes con el diseño editorial */
+        --font-heading: 'Georgia', 'Times New Roman', serif;
+        --font-body: 'Arial', 'Helvetica', sans-serif;
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
+    }
+
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
+    }
+
+    /* ESTILO DE CABECERA COHERENTE CON EL DISEÑO EDITORIAL */
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem 0;
+        border-bottom: 2px solid var(--color-brand-primary);
+    }
+
+    .page-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .page-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.2rem;
+        color: var(--color-accent);
+        font-weight: 300;
+    }
+
+    /* ESTILO DE TARJETA TIPO REVISTA MEJORADO */
+    .magazine-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+    }
+
+        .magazine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+    .card-header-editorial {
+        background-color: var(--color-secondary);
+        color: var(--color-text-light);
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 1.2rem;
+        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 3px solid var(--color-brand-primary);
+    }
+
+    .magazine-card-body {
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    /* ESTILOS PARA FORMULARIOS COHERENTES */
+    .form-control {
+        border-radius: var(--border-radius-sm);
+        border: 1px solid var(--color-border);
+        padding: 0.75rem 1rem;
+        font-family: var(--font-body);
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    .form-label {
+        font-family: var(--font-accent);
+        font-weight: 600;
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    /* BOTONES CON ESTILO EDITORIAL */
+    .btn-primary {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        color: var(--color-text-light);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+        .btn-primary:hover {
+            background-color: #e57a20;
+            border-color: #e57a20;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 136, 48, 0.3);
+        }
+
+    .btn-whatsapp-assistance {
+        background-color: #25d366;
+        border-color: #25d366;
+        color: white;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+        .btn-whatsapp-assistance:hover {
+            background-color: #1faa59;
+            border-color: #1faa59;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+
+    /* LISTAS Y BADGES ESTILO EDITORIAL */
+    .list-group-item {
+        background-color: var(--color-background);
+        border-color: var(--color-border);
+        padding: 1rem 1.25rem;
+        font-family: var(--font-body);
+    }
+
+    .badge.bg-primary {
+        background-color: var(--color-brand-primary) !important;
+        color: var(--color-text-light);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 0.75rem;
     }
 
     /* *** NUEVO ESTILO: Para resaltar el total en Bolívares *** */
     .text-ves {
-        color: #008000; /* Verde para destacar el monto en Bolívares */
+        color: var(--color-brand-success);
         font-weight: 700;
         font-size: 1.2em;
+        font-family: var(--font-heading);
     }
-
-    /* ... (Mantenemos el resto de sus estilos) ... */
-
-    body {
-        font-family: 'Poppins', sans-serif;
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-    }
-
-    h1 {
-        color: var(--color-primary);
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
-
-    /* ESTILO DE TARJETA Y CABECERAS */
-    .card {
-        border: 1px solid var(--color-accent);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        border-radius: 0.75rem;
-        background-color: var(--color-card-bg);
-    }
-
-    .card-header {
-        background-color: var(--color-secondary);
-        color: var(--color-text-light);
-        font-weight: 600;
-        border-radius: 0.7rem 0.7rem 0 0;
-    }
-
-    .list-group-item {
-        background-color: var(--color-background);
-        border-color: var(--color-accent);
-        /* Reducimos el padding en móviles para ahorrar espacio vertical */
-        padding: 0.75rem 1rem;
-    }
-
-    .badge.bg-primary {
-        background-color: var(--color-primary) !important;
-    }
-
-    /* BOTONES */
-    .btn-primary {
-        background-color: var(--color-primary) !important;
-        border-color: var(--color-primary) !important;
-        color: var(--color-text-light) !important;
-        font-weight: 600;
-        text-transform: uppercase;
-    }
-
-        .btn-primary:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
-        }
 
     /* CAJA DE INFORMACIÓN BANCARIA DINÁMICA */
     #payment-info-box {
-        border: 1px dashed var(--color-secondary); /* Borde punteado para destacar */
-        background-color: var(--color-background);
-        padding: 1rem;
-        border-radius: 0.5rem;
+        border: 2px dashed var(--color-brand-primary);
+        background-color: rgba(239, 136, 48, 0.05);
+        padding: 1.5rem;
+        border-radius: var(--border-radius-md);
         margin-top: 1rem;
+        transition: all 0.3s ease;
     }
 
         #payment-info-box h5 {
-            color: var(--color-primary);
+            color: var(--color-brand-primary);
             font-weight: 700;
+            font-family: var(--font-heading);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 0.5rem;
         }
 
     .info-item {
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
+        font-family: var(--font-body);
     }
 
         .info-item strong {
             display: inline-block;
-            min-width: 120px; /* Asegura alineación vertical en info bancaria */
+            min-width: 120px;
+            color: var(--color-secondary);
         }
 
-    .btn-whatsapp-assistance {
-        background-color: #25d366 !important; /* Verde WhatsApp */
-        border-color: #25d366 !important;
-        color: white !important;
-        font-weight: 600;
-        transition: background-color 0.3s ease;
+    /* ALERTAS Y NOTIFICACIONES ESTILO EDITORIAL */
+    .alert {
+        border-radius: var(--border-radius-md);
+        border: none;
+        padding: 1.25rem 1.5rem;
+        font-family: var(--font-body);
     }
 
-        .btn-whatsapp-assistance:hover {
-            background-color: #1faa59 !important; /* Un verde un poco más oscuro al hacer hover */
-            border-color: #1faa59 !important;
+    .alert-danger {
+        background-color: rgba(229, 54, 26, 0.1);
+        color: var(--color-brand-secondary);
+        border-left: 4px solid var(--color-brand-secondary);
+    }
+
+    .alert-warning {
+        background-color: rgba(242, 229, 20, 0.1);
+        color: #856404;
+        border-left: 4px solid var(--color-brand-accent);
+    }
+
+    .alert-secondary {
+        background-color: rgba(108, 117, 125, 0.1);
+        color: var(--color-accent);
+        border-left: 4px solid var(--color-accent);
+    }
+
+    /* SECCIÓN DE RESUMEN DE PEDIDO */
+    .summary-box {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .summary-title {
+        font-family: var(--font-heading);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-secondary);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        display: inline-block;
+    }
+
+    /* RESPONSIVE ADJUSTMENTS */
+    @@media (max-width: 767.98px) {
+        .page-title {
+            font-size: 2rem;
         }
+
+        .page-subtitle {
+            font-size: 1rem;
+        }
+
+        .magazine-card-body {
+            padding: 1.25rem;
+        }
+
+        .card-header-editorial {
+            padding: 1rem 1.25rem;
+            font-size: 1.1rem;
+        }
+
+        .summary-box {
+            padding: 1.5rem;
+        }
+    }
+
+    @@media (max-width: 575.98px) {
+        .page-header {
+            margin-bottom: 2rem;
+            padding: 1.5rem 0;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+        }
+
+        .magazine-card-body {
+            padding: 1rem;
+        }
+    }
 </style>
 
-<div class="container py-5 mb-5 pb-5">
-    <div class="row justify-content-center">
-        <div class="col-12 text-center mb-4">
-            <h1 class="text-center">Confirmar tu compra</h1>
-            <p class="lead">Revisa tu pedido y registra tu pago para finalizar la compra.</p>
-        </div>
+<div class="container py-5">
+    <!-- CABECERA ESTILO EDITORIAL -->
+    <div class="page-header">
+        <h1 class="page-title">Confirmar tu compra</h1>
+        <p class="page-subtitle">Revisa tu pedido y registra tu pago para finalizar la compra</p>
     </div>
 
     @if (TempData["Error"] != null)
     {
         <div class="alert alert-danger mb-4">
-            @TempData["Error"]
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["Error"]
         </div>
     }
 
     @if (TempData["ErrorMessage"] != null)
     {
-        // Se añade la lógica de manejo de errores de tasa de cambio
         <div class="alert alert-warning mb-4">
             <i class="fas fa-exclamation-triangle me-2"></i> @TempData["ErrorMessage"]
         </div>
     }
 
-    <div class="row mb-5 pb-5">
-
-        <div class="col-md-6 mb-4 order-1 order-md-2">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i> Registrar pago y comprobante</h5>
+    <div class="row mb-5">
+        <!-- FORMULARIO DE PAGO -->
+        <div class="col-lg-6 mb-4 order-2 order-lg-1">
+            <div class="magazine-card h-100">
+                <div class="card-header-editorial">
+                    <i class="fas fa-credit-card me-2"></i> Registrar pago y comprobante
                 </div>
-                <div class="card-body">
+                <div class="magazine-card-body">
                     <form asp-controller="Pedido" asp-action="ProcesarPago" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="pedidoId" value="@Model.PedidoId" />
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label for="MetodoPago" class="form-label">Método de pago</label>
                             <select class="form-control" id="MetodoPago" name="metodoPago" required>
                                 <option value="" disabled selected>Seleccione un método</option>
@@ -173,65 +367,75 @@
                         </div>
 
                         <div id="payment-info-box" style="display:none;">
-                            <h5>Datos para realizar el pago</h5>
+                            <h5><i class="fas fa-info-circle me-2"></i>Datos para realizar el pago</h5>
                             <div id="payment-details-content">
                             </div>
                         </div>
 
-                        <div class="mb-3 mt-4">
+                        <div class="mb-4">
                             <label for="ReferenciaPago" class="form-label">Referencia del pago</label>
                             <input type="text" class="form-control" id="ReferenciaPago" name="referenciaPago" placeholder="Ingrese N° de transacción o Hash" required>
                         </div>
-                        <div class="mb-3">
+
+                        <div class="mb-4">
                             <label for="comprobanteArchivo" class="form-label">Subir comprobante (PDF, JPG, PNG)</label>
                             <input type="file" class="form-control" id="comprobanteArchivo" name="comprobanteArchivo" accept=".pdf,.jpg,.jpeg,.png" required>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Enviar comprobante</button>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2">
+                            <i class="fas fa-paper-plane me-2"></i>Enviar comprobante
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 mb-4 order-2 order-md-1">
-            <h3 class="h4">Resumen del pedido (<span class="text-secondary fw-normal">#@Model.PedidoId</span>)</h3>
-            <ul class="list-group mb-3">
-                @foreach (var articulo in Model.Articulos)
-                {
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span class="text-truncate me-3">@articulo.TituloItem</span>
-                        <span class="badge bg-primary rounded-pill flex-shrink-0">@articulo.Precio.ToString("N2", cultureUS) USD</span>
-                    </li>
+        <!-- RESUMEN DEL PEDIDO -->
+        <div class="col-lg-6 mb-4 order-1 order-lg-2">
+            <div class="summary-box">
+                <h3 class="summary-title">Resumen del pedido <span class="text-muted">#@Model.PedidoId</span></h3>
+
+                <ul class="list-group mb-4">
+                    @foreach (var articulo in Model.Articulos)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-truncate me-3">@articulo.TituloItem</span>
+                            <span class="badge bg-primary rounded-pill flex-shrink-0">@articulo.Precio.ToString("N2", cultureUS) USD</span>
+                        </li>
+                    }
+                </ul>
+
+                <div class="p-3 bg-white border rounded">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="mb-0 text-secondary">Total en dólares (USD):</h5>
+                        <h5 class="mb-0" style="color:var(--color-brand-primary); font-weight:700;">@Model.Total.ToString("N2", cultureUS) USD</h5>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-3">
+                        <h4 class="mb-0">Total a pagar en VES:</h4>
+                        <h4 class="text-ves mb-0">@totalVes.ToString("N2", cultureVE) VES</h4>
+                    </div>
+                    <small class="text-muted d-block text-end mt-2">Tasa BCV del día: @Model.TasaBCV.Value.ToString("N4", cultureUS) VES/USD</small>
+                </div>
+
+                <!-- BOTÓN WHATSAPP -->
+                @{
+                    var whatsappNumber = "584241544523";
+                    var whatsappMessage = $"Hola, necesito asistencia con el pago del Pedido #{Model.PedidoId}. ¿Me pueden ayudar?";
+                    var encodedMessage = System.Web.HttpUtility.UrlEncode(whatsappMessage);
+                    var whatsappLink = $"https://wa.me/{whatsappNumber}?text={encodedMessage}";
                 }
-            </ul>
-
-            <div class="p-3 bg-white border rounded">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <h5 class="mb-0 text-secondary">Total en dólares (USD):</h5>
-                    <h5 class="mb-0" style="color:var(--color-primary); font-weight:700;">@Model.Total.ToString("N2", cultureUS) USD</h5>
+                <div class="d-grid gap-2 mt-4">
+                    <a href="@whatsappLink" target="_blank" class="btn btn-whatsapp-assistance btn-lg">
+                        <i class="fab fa-whatsapp me-2"></i> Pagar o consultar por WhatsApp
+                    </a>
                 </div>
-                <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
-                    <h4 class="mb-0">Total a pagar en VES:</h4>
-                    <h4 class="text-ves mb-0">@totalVes.ToString("N2", cultureVE) VES</h4>
-                </div>
-                <small class="text-muted d-block text-end">Tasa BCV del día: @Model.TasaBCV.Value.ToString("N4", cultureUS) VES/USD</small>
-            </div>
-            @{
-                var whatsappNumber = "584241544523"; // Tu número (Cod. País + Número sin 0 inicial)
-                var whatsappMessage = $"Hola, necesito asistencia con el pago del Pedido #{Model.PedidoId}. ¿Me pueden ayudar?";
-                var encodedMessage = System.Web.HttpUtility.UrlEncode(whatsappMessage);
-                var whatsappLink = $"https://wa.me/{whatsappNumber}?text={encodedMessage}";
-            }
-            <div class="d-grid gap-2 mt-4">
-                <a href="@whatsappLink" target="_blank" class="btn btn-whatsapp-assistance btn-lg">
-                    <i class="fab fa-whatsapp me-2"></i> Pagar o consultar por whatsApp
-                </a>
-            </div>
 
-            <div class="mt-4 p-3 alert alert-secondary text-center">
-                <i class="fas fa-clock me-2"></i> Una vez enviado el comprobante, validaremos el pago en un máximo de 24 horas. Recibirás un correo de confirmación.
+                <!-- INFORMACIÓN ADICIONAL -->
+                <div class="mt-4 p-3 alert alert-secondary">
+                    <i class="fas fa-clock me-2"></i> Una vez enviado el comprobante, validaremos el pago en un máximo de 24 horas. Recibirás un correo de confirmación.
+                </div>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -241,45 +445,41 @@
 
     <script>
         $(document).ready(function () {
-
-            // *** CAMBIO CLAVE: Variables JS con formato para USD, VES y Tasa ***
-            // Usamos un formato genérico (N2) con cultura Invariant para evitar problemas de comas/puntos en JS
+            // Variables con formato para USD, VES y Tasa
             const formattedTotalUSD = '@Html.Raw(Model.Total.ToString("N2", cultureUS))';
-            // Formateamos el total VES con su cultura
             const formattedTotalVES = '@Html.Raw(totalVes.ToString("N2", cultureVE))';
             const tasaHoy = '@Model.TasaBCV.Value.ToString("N4", cultureUS)';
 
-
             if (typeof jQuery == 'undefined') {
                 console.error('Error: jQuery no está cargado. La funcionalidad de cambio de método de pago no funcionará.');
-                return; // Detener el script si jQuery no está
+                return;
             }
 
-            // Objeto JSON con la información de pago
+            // Objeto JSON con la información de pago (estilo mejorado)
             const PAYMENT_DETAILS = {
                 "Transferencia Bancaria": `
-                    <p><strong>Monto a Pagar:</strong> <span class="text-ves">${formattedTotalVES} VES</span></p>
-                    <p class="mb-2"><small class="text-muted">Tasa Aplicada: ${tasaHoy} VES/USD</small></p>
-                    <hr class="my-2"/>
+                    <div class="info-item"><strong>Monto a Pagar:</strong> <span class="text-ves">${formattedTotalVES} VES</span></div>
+                    <div class="info-item"><small class="text-muted">Tasa Aplicada: ${tasaHoy} VES/USD</small></div>
+                    <hr class="my-3"/>
                     <div class="info-item"><strong>Banco:</strong> Banco Universal Monocromático</div>
                     <div class="info-item"><strong>RUC/C.I.:</strong> V-12.345.678</div>
                     <div class="info-item"><strong>N° Cuenta:</strong> 0102-0304-0506-0708-0910</div>
-                    <div class="info-item"><strong>Correo:</strong> pagos@miempresa.com</div>
+                    <div class="info-item"><strong>Correo:</strong> pagos@yosoyarte.com</div>
                 `,
                 "Pago Móvil": `
-                    <p><strong>Monto a Pagar:</strong> <span class="text-ves">${formattedTotalVES} VES</span></p>
-                    <p class="mb-2"><small class="text-muted">Tasa Aplicada: ${tasaHoy} VES/USD</small></p>
-                    <hr class="my-2"/>
+                    <div class="info-item"><strong>Monto a Pagar:</strong> <span class="text-ves">${formattedTotalVES} VES</span></div>
+                    <div class="info-item"><small class="text-muted">Tasa Aplicada: ${tasaHoy} VES/USD</small></div>
+                    <hr class="my-3"/>
                     <div class="info-item"><strong>Banco:</strong> Banco Móvil Digital</div>
                     <div class="info-item"><strong>C.I.:</strong> V-8.765.432</div>
                     <div class="info-item"><strong>Teléfono:</strong> 0412-1234567</div>
                 `,
                 "PayPal": `
-                    <p><strong>Monto a Pagar:</strong> <span class="text-primary">${formattedTotalUSD} USD</span></p>
-                    <p class="mb-2"><small class="text-muted">Tasa de Referencia: ${tasaHoy} VES/USD</small></p>
-                    <hr class="my-2"/>
-                    <div class="info-item"><strong>Cuenta PayPal:</strong> miempresa@paypal.com</div>
-                    <div class="info-item"><strong>Instrucciones:</strong> Debe realizar el pago directamente. Adjunte el comprobante de PayPal.</div>
+                    <div class="info-item"><strong>Monto a Pagar:</strong> <span style="color: var(--color-brand-primary); font-weight: 700;">${formattedTotalUSD} USD</span></div>
+                    <div class="info-item"><small class="text-muted">Tasa de Referencia: ${tasaHoy} VES/USD</small></div>
+                    <hr class="my-3"/>
+                    <div class="info-item"><strong>Cuenta PayPal:</strong> pagos@yosoyarte.com</div>
+                    <div class="info-item"><strong>Instrucciones:</strong> Realice el pago directamente en PayPal y adjunte el comprobante.</div>
                 `
             };
 
@@ -291,19 +491,15 @@
                 const selectedMethod = $select.val();
 
                 if (selectedMethod && PAYMENT_DETAILS[selectedMethod]) {
-                    // Si el contenido existe, lo insertamos
                     $content.html(PAYMENT_DETAILS[selectedMethod]);
-                    $infoBox.slideDown(200);
+                    $infoBox.slideDown(300);
                 } else {
-                    // Si no hay método o no hay detalles, lo ocultamos
-                    $infoBox.slideUp(200);
+                    $infoBox.slideUp(300);
                 }
             }
 
-            // Manejar el cambio de selección
             $select.on('change', updatePaymentInfo);
 
-            // Si hay un valor seleccionado al cargar (ej. después de un post fallido), mostrar la info
             if ($select.val()) {
                 updatePaymentInfo();
             }
