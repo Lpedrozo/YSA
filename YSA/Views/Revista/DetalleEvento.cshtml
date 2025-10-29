@@ -5,117 +5,397 @@
 }
 
 <style>
-    .event-header {
-        position: relative;
-        background-color: #f8f9fa;
-        padding-bottom: 2rem;
-        margin-bottom: 3rem;
+    /* IMPORTACIÓN DE TIPOGRAFÍAS */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
+    :root {
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f3f3f3; /* Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
+    }
+
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    /* BREADCRUMB ESTILO REVISTA */
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0;
+        margin-bottom: 2rem;
+    }
+
+    .breadcrumb-item a {
+        color: var(--color-brand-primary);
+        text-decoration: none;
+        font-family: var(--font-accent);
+        font-weight: 500;
+    }
+
+        .breadcrumb-item a:hover {
+            color: var(--color-brand-secondary);
+        }
+
+    .breadcrumb-item.active {
+        color: var(--color-accent);
+    }
+
+    /* ENCABEZADO DEL EVENTO */
+    .event-header {
+        margin-bottom: 3rem;
+        text-align: center;
+    }
+
+    .event-title {
+        font-family: var(--font-heading);
+        font-size: 3rem;
+        font-weight: 900;
+        color: var(--color-secondary);
+        line-height: var(--line-height-tight);
+        margin-bottom: 1.5rem;
+    }
+
+    .event-badges {
+        margin-bottom: 2rem;
+    }
+
+    /* BADGES Y ELEMENTOS DE ÉNFASIS CON NUEVA PALETA */
+    .badge.bg-warning {
+        background-color: var(--color-brand-accent) !important; /* Amarillo para badges destacados */
+        color: var(--color-brand-dark) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    .badge.bg-dark {
+        background-color: var(--color-brand-secondary) !important; /* Rojo para badges oscuros */
+        color: var(--color-text-light) !important;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    .badge.bg-primary {
+        background-color: var(--color-brand-primary) !important; /* Naranja para badges primarios */
+        color: var(--color-text-light) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    /* IMAGEN DEL EVENTO */
     .event-image {
         width: 100%;
-        max-height: 400px;
+        max-height: 500px;
         object-fit: cover;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: var(--border-radius-md);
+        margin-bottom: 3rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ESTILO DE TARJETA TIPO REVISTA MEJORADO */
+    .magazine-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        position: relative;
     }
 
     .info-box {
-        background-color: #fff;
-        border: 1px solid #eee;
-        border-radius: 8px;
+        background-color: var(--color-card-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-md);
         padding: 1.5rem;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
     }
 
+        .info-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-color: var(--color-brand-primary);
+        }
+
         .info-box h5 {
+            font-family: var(--font-heading);
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 0.75rem;
-            color: #333;
+            color: var(--color-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .info-box p {
             margin: 0;
+            font-family: var(--font-body);
             font-size: 1rem;
             font-weight: 400;
-            color: #555;
+            color: var(--color-text-dark);
+            line-height: var(--line-height-normal);
         }
 
-    /* Estilo para el contenido del editor (TinyMCE) */
+    /* CONTENIDO EDITORIAL */
     .event-description-content {
-        line-height: 1.8;
+        font-family: var(--font-body);
         font-size: 1.1rem;
-        color: #333;
+        line-height: var(--line-height-loose);
+        color: var(--color-text-dark);
+        margin-bottom: 3rem;
     }
 
-        /* Asegurar estilos para el contenido HTML renderizado */
-        .event-description-content h1,
-        .event-description-content h2,
+        .event-description-content h2 {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+            margin: 2rem 0 1rem 0;
+            border-bottom: 2px solid var(--color-brand-primary);
+            padding-bottom: 0.5rem;
+        }
+
         .event-description-content h3 {
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-secondary);
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        .event-description-content p {
+            margin-bottom: 1.5rem;
         }
 
         .event-description-content ul,
         .event-description-content ol {
-            padding-left: 20px;
-            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
         }
+
+        .event-description-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .event-description-content blockquote {
+            border-left: 4px solid var(--color-brand-primary);
+            padding-left: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: var(--color-accent);
+        }
+
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* ADAPTACIONES RESPONSIVE */
+
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .section-container {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .event-title {
+            font-size: 2.5rem;
+        }
+
+        .event-image {
+            max-height: 400px;
+        }
+
+        .event-description-content {
+            font-size: 1rem;
+        }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .section-container {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .event-title {
+            font-size: 2rem;
+        }
+
+        .event-image {
+            max-height: 300px;
+        }
+
+        .info-box {
+            padding: 1.25rem;
+        }
+
+            .info-box h5 {
+                font-size: 1rem;
+            }
+
+        .event-description-content {
+            font-size: 0.95rem;
+        }
+
+            .event-description-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .event-description-content h3 {
+                font-size: 1.25rem;
+            }
+    }
 </style>
 
-<div class="container py-5">
-    <div class="row event-header">
-        <div class="col-12 text-center">
-            <h1 class="fw-bold mb-3 display-4">@Model.Titulo</h1>
-            @if (Model.EsDestacado)
+<div class="container px-0 py-5 mb-5 pb-5">
+    <div class="section-container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">@Model.Titulo</li>
+            </ol>
+        </nav>
+
+        <!-- Encabezado del Evento -->
+        <div class="event-header">
+            <h1 class="event-title">@Model.Titulo</h1>
+            <div class="event-badges">
+                @if (Model.EsDestacado)
+                {
+                    <span class="badge bg-warning me-2">
+                        <i class="fas fa-star me-1"></i> Evento destacado
+                    </span>
+                }
+                <span class="badge bg-dark">
+                    <i class="fas fa-tag me-1"></i> @Model.TipoEventoNombre
+                </span>
+            </div>
+
+            <hr class="section-divider" />
+
+            <!-- Imagen del Evento -->
+            @if (!string.IsNullOrEmpty(Model.UrlImagen))
             {
-                <span class="badge bg-warning text-dark me-2"><i class="fas fa-star me-1"></i> Evento destacado</span>
+                <div class="text-center mb-4">
+                    <img src="@Model.UrlImagen" alt="@Model.Titulo" class="event-image">
+                </div>
             }
-            <span class="badge bg-dark"><i class="fas fa-tag me-1"></i> @Model.TipoEventoNombre</span>
-            <hr class="mt-4 mb-4 w-50 mx-auto" />
         </div>
 
-        @if (!string.IsNullOrEmpty(Model.UrlImagen))
-        {
-            <div class="col-lg-8 offset-lg-2 mb-4">
-                <img src="@Model.UrlImagen" alt="@Model.Titulo" class="event-image" />
-            </div>
-        }
-    </div>
+        <div class="row justify-content-center">
+            <!-- Columna de Información Rápida -->
+            <div class="col-lg-4 mb-4">
+                <h3 class="latest-grid-header">Detalles del evento</h3>
 
-    <div class="row justify-content-center">
+                <div class="info-box">
+                    <h5><i class="fas fa-calendar-alt" style="color: var(--color-brand-primary);"></i> Fecha y hora</h5>
+                    <p><strong>@Model.FechaEvento.ToString("dddd, dd MMMM yyyy")</strong></p>
+                    <p>@Model.FechaEvento.ToString("hh:mm tt")</p>
+                </div>
 
-        @* Columna de Información Rápida *@
-        <div class="col-lg-4 mb-4">
-            <h3 class="fw-bold mb-4">Detalles rápidos</h3>
+                <div class="info-box">
+                    <h5><i class="fas fa-map-marker-alt" style="color: var(--color-brand-primary);"></i> Lugar / Enlace</h5>
+                    <p>@Model.Lugar</p>
+                </div>
 
-            <div class="info-box">
-                <h5><i class="fas fa-calendar-alt me-2"></i> Fecha y hora</h5>
-                <p>@Model.FechaEvento.ToString("dddd, dd MMMM yyyy")</p>
-                <p>@Model.FechaEvento.ToString("hh:mm tt")</p>
-            </div>
-
-            <div class="info-box">
-                <h5><i class="fas fa-map-marker-alt me-2"></i> Lugar / Enlace</h5>
-                <p>@Model.Lugar</p>
+                <div class="info-box">
+                    <h5><i class="fas fa-satellite-dish" style="color: var(--color-brand-primary);"></i> Plataforma</h5>
+                    <p>@Model.TipoEventoPlataforma</p>
+                </div>
             </div>
 
-            <div class="info-box">
-                <h5><i class="fas fa-satellite-dish me-2"></i> Plataforma</h5>
-                <p>@Model.TipoEventoPlataforma</p>
-            </div>
-        </div>
+            <!-- Columna de Descripción -->
+            <div class="col-lg-8 mb-4">
+                <h3 class="latest-grid-header">Sobre el evento</h3>
 
-        @* Columna de Descripción (El contenido HTML renderizado) *@
-        <div class="col-lg-8 mb-4">
-            <h3 class="fw-bold mb-4">Sobre el evento</h3>
-
-            <div class="event-description-content">
-                @* CLAVE: Usar Html.Raw para renderizar el HTML (negritas, listas) de forma segura *@
-                @Html.Raw(Model.Descripcion)
+                <div class="event-description-content">
+                    @Html.Raw(Model.Descripcion)
+                </div>
             </div>
         </div>
     </div>

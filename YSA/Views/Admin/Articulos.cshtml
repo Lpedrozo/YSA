@@ -5,254 +5,675 @@
 }
 
 <style>
+    /* IMPORTACIÓN DE TIPOGRAFÍAS */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
     :root {
-        --color-secondary: #000000;
-        --color-primary: #333333;
-        --color-text-muted: #6a6a6a;
-        --color-background-light: #f7f7f7;
-        --color-background-white: #ffffff;
-        --color-border-light: #eeeeee;
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
     body {
-        background-color: var(--color-background-light);
-        color: var(--color-primary);
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
     }
 
-    h1 {
+    /* ESTILO PORTADA DE REVISTA PRINCIPAL (BANNER) */
+    .magazine-cover {
+        width: 100%;
+        height: 60vh; /* Altura reducida para esta vista */
+        background-color: #f4f4f4;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 3rem;
+    }
+
+    .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .cover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%); /* Degradado oscuro en la parte inferior */
+        z-index: 2;
+        display: flex;
+        align-items: flex-end;
+        padding: 3rem;
+    }
+
+    .cover-title-block {
+        color: var(--color-text-light);
+        max-width: 700px;
+        z-index: 3;
+    }
+
+    .cover-title {
+        font-family: var(--font-heading);
+        font-size: 3.5rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 0.5rem;
+    }
+
+    .cover-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: var(--line-height-normal);
+    }
+
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
         color: var(--color-secondary);
-        font-weight: 700;
+        padding-bottom: 0.5rem;
+        margin-bottom: 2.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary); /* Ahora usa el naranja */
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
     }
 
-    /* Estilos del botón de "Crear Artículo" (Green -> B&W) */
+    .section-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: var(--color-accent);
+        margin-top: -2rem;
+        margin-bottom: 3rem;
+        line-height: var(--line-height-normal);
+    }
+
+    /* === ESTILO ESPECÍFICO PARA EL BLOQUE DE LA IMAGEN (LO ÚLTIMO) === */
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    /* ESTILO DE TARJETA TIPO REJILLA DE REVISTA MEJORADO (Para artículos) */
+    .magazine-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+    }
+
+        .magazine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+    .magazine-card-img-container {
+        overflow: hidden;
+        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    }
+
+    .magazine-card-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .magazine-card:hover .magazine-card-img {
+        transform: scale(1.05);
+    }
+
+    .magazine-card-body {
+        padding: 1.5rem;
+        position: relative;
+        text-align: left; /* Aseguramos que el contenido de la tarjeta esté a la izquierda */
+    }
+
+    .card-category {
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--color-brand-primary); /* Ahora usa el naranja */
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+        letter-spacing: 0.5px;
+    }
+
+    .magazine-card-body h5 {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 1.5rem;
+        line-height: var(--line-height-normal);
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .magazine-card-body .card-text {
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
+        margin-bottom: 1rem;
+    }
+
+    .card-date {
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        color: var(--color-brand-primary);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* BOTONES CON NUEVA PALETA DE COLORES */
     .btn-create {
-        background-color: var(--color-primary) !important;
-        border-color: var(--color-primary) !important;
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
         color: white !important;
         font-weight: 600;
         transition: background-color 0.2s;
-        border-radius: 8px;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1.5rem;
+        font-family: var(--font-accent);
     }
 
         .btn-create:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-    /* ------------------------------------- */
-    /* 2. Estilos de las Cards de Artículo  */
-    /* ------------------------------------- */
-    .articulo-card {
-        border: 1px solid var(--color-border-light);
-        border-radius: 12px;
-        background-color: var(--color-background-white);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        transition: box-shadow 0.3s;
-    }
-
-        .articulo-card:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-
-    .card-title {
-        font-weight: 700;
-        color: var(--color-secondary);
-        font-size: 1.25rem;
-    }
-
-    .card-meta-text {
-        color: var(--color-text-muted);
-        font-size: 0.9rem;
-    }
-
-    /* Estilos de Botones de Acción dentro de la card (B&W) */
     .btn-action {
-        background-color: var(--color-primary) !important;
-        border-color: var(--color-primary) !important;
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
         color: white !important;
-        transition: background-color 0.2s;
-        border-radius: 5px; /* Ajuste para que los botones de acción sean menos redondos que la tarjeta */
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
     }
 
         .btn-action:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+            transform: translateY(-2px);
         }
 
-    /* BADGES DE ESTADO ACTUALIZADOS */
+    .btn-outline-dark {
+        border-color: var(--color-brand-dark) !important;
+        color: var(--color-brand-dark) !important;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+    }
+
+        .btn-outline-dark:hover {
+            background-color: var(--color-brand-dark) !important;
+            color: white !important;
+            transform: translateY(-2px);
+        }
+
+    .btn-danger {
+        background-color: var(--color-brand-secondary) !important;
+        border-color: var(--color-brand-secondary) !important;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+    }
+
+        .btn-danger:hover {
+            background-color: #c02a15 !important;
+            border-color: #c02a15 !important;
+            transform: translateY(-2px);
+        }
+
+    /* BADGES DE ESTADO CON NUEVA PALETA */
     .badge-estado-publicado {
-        background-color: #198754; /* Verde oscuro para publicado */
-        color: white;
+        background-color: var(--color-brand-success) !important;
+        color: white !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
     }
 
     .badge-estado-borrador {
-        background-color: #ffc107; /* Amarillo para borrador */
-        color: #333;
+        background-color: var(--color-brand-accent) !important;
+        color: var(--color-brand-dark) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
     }
 
     .badge-estado-guardado {
-        background-color: #0d6efd; /* Azul para guardado/revisión */
-        color: white;
+        background-color: var(--color-brand-primary) !important;
+        color: white !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
     }
 
-    /* ------------------------------------- */
-    /* 3. MEDIA QUERY RESPONSIVE (MÓVIL)   */
-    /* ------------------------------------- */
+    /* ALERTAS CON NUEVA PALETA */
+    .alert-success {
+        background-color: rgba(109, 181, 62, 0.1);
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    .alert-info {
+        background-color: rgba(239, 136, 48, 0.1);
+        border-color: var(--color-brand-primary);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* ADAPTACIONES RESPONSIVE */
+
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .magazine-cover {
+            height: 50vh;
+        }
+
+        .cover-overlay {
+            padding: 2rem;
+        }
+
+        .cover-title {
+            font-size: 2.5rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1.25rem;
+        }
+
+        .section-container {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .section-title {
+            font-size: 2rem;
+        }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
     @@media (max-width: 575.98px) {
+        .magazine-cover {
+            height: 40vh;
+        }
+
+        .cover-title {
+            font-size: 2rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1rem;
+        }
+
+        .cover-overlay {
+            padding: 1.5rem;
+        }
+
+        .section-container {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
         .btn-create {
             width: 100%;
         }
     }
 
+    .magazine-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .magazine-card-body {
+        padding: 1.5rem;
+        position: relative;
+        text-align: left;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* CONTENEDOR PRINCIPAL DEL CONTENIDO */
+    .magazine-card-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* GRUPO DE BOTONES DE ESTADO - NO FIJO */
+    .state-actions-group {
+        margin-bottom: 1rem;
+        flex-shrink: 0;
+    }
+
+    /* BOTONES PRINCIPALES (EDITAR/ELIMINAR) - SIEMPRE EN LA PARTE INFERIOR */
+    .card-main-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-border);
+        flex-shrink: 0;
+    }
+
+    /* MEJORAS PARA LOS BOTONES EXISTENTES */
+    .btn-action {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: white !important;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    .btn-outline-dark {
+        border-color: var(--color-brand-dark) !important;
+        color: var(--color-brand-dark) !important;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    .btn-danger {
+        background-color: var(--color-brand-secondary) !important;
+        border-color: var(--color-brand-secondary) !important;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    /* MEJORAS RESPONSIVE PARA BOTONES */
+    @@media (max-width: 768px) {
+        .card-main-actions
+
+    {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .card-main-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .state-actions-group {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+        .state-actions-group .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+    }
+
+    /* PARA TARJETAS CON CONTENIDO VARIABLE */
+    .magazine-card-body > *:not(.card-main-actions):not(.state-actions-group) {
+        flex-shrink: 0;
+    }
 </style>
-<div class="container mt-5 mb-5 pb-5">
-    <h1 class="text-center mb-5">Gestión de Artículos</h1>
-    <a asp-action="Panel" asp-controller="Admin" class="btn btn-dark">
-        <i class="fas fa-arrow-left me-2"></i> Regresar al panel
-    </a>
-    @* Botón de Crear Artículo *@
-    <div class="d-flex justify-content-end mb-4">
-        <a asp-action="CrearArticulo" class="btn btn-create">
-            <i class="fas fa-plus-circle me-2"></i> Crear Nuevo Artículo
-        </a>
-    </div>
 
-    @* Mensaje de Éxito (Adaptado a Bootstrap) *@
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 8px;">
-            @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="container px-0 py-5 pb-5 mb-5">
+    <div class="section-container">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <a asp-action="Panel" asp-controller="Admin" class="btn btn-outline-dark">
+                    <i class="fas fa-arrow-left me-2"></i> Regresar al panel
+                </a>
+            </div>
+            <div class="col-md-6 d-flex justify-content-end">
+                <a asp-action="CrearArticulo" class="btn btn-create">
+                    <i class="fas fa-plus-circle me-2"></i> Crear Nuevo Artículo
+                </a>
+            </div>
         </div>
-    }
 
-    @* Grid de Tarjetas *@
-    @if (Model == null || !Model.Any())
-    {
-        <div class="alert alert-info text-center" role="alert" style="border-radius: 8px;">
-            No hay artículos creados aún. Haz clic en **Crear Nuevo Artículo** para empezar.
-        </div>
-    }
-    else
-    {
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5 pb-5">
-            @foreach (var item in Model)
-            {
-                <div class="col">
-                    <div class="card articulo-card h-100 p-4">
-                        <div class="card-body d-flex flex-column">
+        @* Mensaje de Éxito *@
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
 
-                            @* Título y Estado *@
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title me-3">@item.Titulo</h5>
-                                @{
-                                    var badgeClass = item.Estado switch
+        @* Grid de Tarjetas *@
+        @if (Model == null || !Model.Any())
+        {
+            <div class="alert alert-info text-center" role="alert">
+                No hay artículos creados aún. Haz clic en <strong>Crear Nuevo Artículo</strong> para empezar.
+            </div>
+        }
+        else
+        {
+            <div class="px-3 mb-4">
+                <span class="latest-grid-header">ARTÍCULOS CREADOS</span>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @foreach (var item in Model)
+                {
+                    <div class="col">
+                        <div class="magazine-card h-100">
+
+                            <div class="magazine-card-body d-flex flex-column">
+                                @* Título y Estado *@
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="me-3">@item.Titulo</h5>
+                                    @{
+                                        var badgeClass = item.Estado switch
+                                        {
+                                            "Publicado" => "badge-estado-publicado",
+                                            "Guardado" => "badge-estado-guardado",
+                                            _ => "badge-estado-borrador", // Borrador (Default)
+                                        };
+                                    }
+                                    <span class="badge @badgeClass align-self-start">
+                                        @item.Estado
+                                    </span>
+                                </div>
+
+                                @* Metadatos (Destacado y Categoría) *@
+                                <p class="card-text mb-1">
+                                    <i class="fas fa-user-tag me-1"></i>
+                                    Destacado: @(string.IsNullOrEmpty(item.NombrePersonaDestacada) ? "N/A" : item.NombrePersonaDestacada)
+                                </p>
+                                <p class="card-text mb-3">
+                                    <i class="fas fa-tags me-1"></i>
+                                    Categoría: @item.Categoria
+                                </p>
+
+                                @* Acciones de Transición de Estado *@
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    @if (item.Estado == "Borrador")
                                     {
-                                        "Publicado" => "badge-estado-publicado",
-                                        "Guardado" => "badge-estado-guardado",
-                                        _ => "badge-estado-borrador", // Borrador (Default)
-                                    };
-                                }
-                                <span class="badge @badgeClass align-self-start">
-                                    @item.Estado
-                                </span>
-                            </div>
+                                        // Botón para Guardar (Mover a estado de Revisión/Guardado)
+                                        <form asp-action="GuardarArticulo" asp-route-id="@item.Id" method="post" class="m-0">
+                                            <button type="submit" class="btn btn-sm btn-action" title="Mover a Guardado">
+                                                <i class="fas fa-save"></i> Guardar
+                                            </button>
+                                        </form>
 
-                            @* Metadatos (Destacado y Categoría) *@
-                            <p class="card-meta-text mb-1">
-                                <i class="fas fa-user-tag me-1"></i>
-                                Destacado: @(string.IsNullOrEmpty(item.NombrePersonaDestacada) ? "N/A" : item.NombrePersonaDestacada)
-                            </p>
-                            <p class="card-meta-text mb-3">
-                                <i class="fas fa-tags me-1"></i>
-                                Categoría: @item.Categoria
-                            </p>
+                                        // Botón para Publicar (Solo desde Borrador, si se permite publicar directamente)
+                                        <form asp-action="PublicarArticulo" asp-route-id="@item.Id" method="post" class="m-0">
+                                            <button type="submit" class="btn btn-sm btn-action" title="Publicar inmediatamente">
+                                                <i class="fas fa-globe"></i> Publicar
+                                            </button>
+                                        </form>
+                                    }
+                                    else if (item.Estado == "Guardado" || item.Estado == "Publicado")
+                                    {
+                                        // Opción para Volver a Borrador (Permite editar de nuevo)
+                                        <form asp-action="VolverABorrador" asp-route-id="@item.Id" method="post" class="m-0">
+                                            <button type="submit" class="btn btn-sm btn-action" title="Volver a Borrador para editar">
+                                                <i class="fas fa-undo"></i> Editar de nuevo
+                                            </button>
+                                        </form>
+                                    }
 
-                            @* Acciones de Transición de Estado *@
-                            <div class="d-flex flex-wrap gap-2 mb-3">
-                                @if (item.Estado == "Borrador")
-                                {
-                                    // Botón para Guardar (Mover a estado de Revisión/Guardado)
-                                    <form asp-action="GuardarArticulo" asp-route-id="@item.Id" method="post" class="m-0">
-                                        <button type="submit" class="btn btn-sm btn-info btn-action" title="Mover a Guardado">
-                                            <i class="fas fa-save"></i> Guardar
-                                        </button>
-                                    </form>
+                                    @if (item.Estado == "Guardado")
+                                    {
+                                        // Opción para Publicar desde Guardado
+                                        <form asp-action="PublicarArticulo" asp-route-id="@item.Id" method="post" class="m-0">
+                                            <button type="submit" class="btn btn-sm btn-action" title="Publicar el artículo">
+                                                <i class="fas fa-globe"></i> Publicar
+                                            </button>
+                                        </form>
+                                    }
+                                    else if (item.Estado == "Publicado")
+                                    {
+                                        // Opción para Despublicar/Archivar (Se podría añadir un estado "Archivado" en el futuro)
+                                        <span class="text-success small align-self-center"><i class="fas fa-check-circle"></i> En línea</span>
+                                    }
+                                </div>
 
-                                    // Botón para Publicar (Solo desde Borrador, si se permite publicar directamente)
-                                    <form asp-action="PublicarArticulo" asp-route-id="@item.Id" method="post" class="m-0">
-                                        <button type="submit" class="btn btn-sm btn-success btn-action" title="Publicar inmediatamente">
-                                            <i class="fas fa-globe"></i> Publicar
-                                        </button>
-                                    </form>
-                                }
-                                else if (item.Estado == "Guardado" || item.Estado == "Publicado")
-                                {
-                                    // Opción para Volver a Borrador (Permite editar de nuevo)
-                                    <form asp-action="VolverABorrador" asp-route-id="@item.Id" method="post" class="m-0">
-                                        <button type="submit" class="btn btn-sm btn-warning btn-action" title="Volver a Borrador para editar">
-                                            <i class="fas fa-undo"></i> Editar de nuevo
-                                        </button>
-                                    </form>
-                                }
+                                @* Acciones principales: Editar y Eliminar *@
+                                <div class="mt-auto pt-3 border-top d-flex justify-content-end align-items-center">
+                                    @{
+                                        // Lógica: Solo se puede editar si el estado es "Borrador"
+                                        var canEdit = item.Estado == "Borrador";
+                                    }
+                                    <a asp-action="EditarArticulo" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-dark me-2 @(canEdit ? "" : "disabled")"
+                                       title="@(canEdit ? "Editar el contenido del artículo" : "Solo se puede editar en estado Borrador")"
+                                       aria-disabled="@(!canEdit ? "true" : "false")">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
 
-                                @if (item.Estado == "Guardado")
-                                {
-                                    // Opción para Publicar desde Guardado
-                                    <form asp-action="PublicarArticulo" asp-route-id="@item.Id" method="post" class="m-0">
-                                        <button type="submit" class="btn btn-sm btn-success btn-action" title="Publicar el artículo">
-                                            <i class="fas fa-globe"></i> Publicar
-                                        </button>
-                                    </form>
-                                }
-                                else if (item.Estado == "Publicado")
-                                {
-                                    // Opción para Despublicar/Archivar (Se podría añadir un estado "Archivado" en el futuro)
-                                    <span class="text-success small align-self-center"><i class="fas fa-check-circle"></i> En línea</span>
-                                }
-                            </div>
+                                    @* Nota: El atributo data-titulo se utiliza para la confirmación de SweetAlert2 *@
+                                    <button type="button" class="btn btn-sm btn-danger eliminar-articulo-btn" data-id="@item.Id" data-titulo="@item.Titulo">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </button>
 
-                            @* Acciones principales: Editar y Eliminar *@
-                            <div class="mt-3 pt-3 border-top d-flex justify-content-end align-items-center">
-                                @{
-                                    // Lógica: Solo se puede editar si el estado es "Borrador"
-                                    var canEdit = item.Estado == "Borrador";
-                                }
-                                <a asp-action="EditarArticulo" asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-outline-dark me-2 @(canEdit ? "" : "disabled")"
-                                   title="@(canEdit ? "Editar el contenido del artículo" : "Solo se puede editar en estado Borrador")"
-                                   aria-disabled="@(!canEdit ? "true" : "false")">
-                                    <i class="fas fa-edit"></i> Editar
-                                </a>
-
-                                @* Nota: El atributo data-titulo se utiliza para la confirmación de SweetAlert2 *@
-                                <button type="button" class="btn btn-sm btn-danger eliminar-articulo-btn" data-id="@item.Id" data-titulo="@item.Titulo">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
-                                </button>
-
-                                @* Formulario de eliminación para ser enviado vía JS (Swal) *@
-                                <form asp-action="EliminarArticulo" method="post" asp-route-id="@item.Id" id="eliminar-form-@item.Id" class="d-none"></form>
+                                    @* Formulario de eliminación para ser enviado vía JS (Swal) *@
+                                    <form asp-action="EliminarArticulo" method="post" asp-route-id="@item.Id" id="eliminar-form-@item.Id" class="d-none"></form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
-    }
-
-
+                }
+            </div>
+        }
+    </div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-
     <script>
-        // Añade iconos si no están cargados. Asumimos Bootstrap y Font Awesome ya están cargados.
-        // Si no tienes Font Awesome, usa la CDN: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css
-
         document.addEventListener('DOMContentLoaded', function () {
-
             // Lógica para SweetAlert2 (Reemplaza el confirm() nativo)
             document.querySelectorAll('.eliminar-articulo-btn').forEach(button => {
                 button.addEventListener('click', function(e) {
@@ -266,8 +687,8 @@
                         text: `¡No podrás revertir la eliminación del artículo: ${titulo}!`,
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#dc3545',
-                        cancelButtonColor: 'var(--color-primary)', // Usar el color B&W para Cancelar
+                        confirmButtonColor: '#e5361a',
+                        cancelButtonColor: '#6c757d',
                         confirmButtonText: 'Sí, ¡bórralo!',
                         cancelButtonText: 'Cancelar'
                     }).then((result) => {

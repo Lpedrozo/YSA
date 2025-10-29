@@ -2,935 +2,1263 @@
 @model YSA.Web.Models.ViewModels.CursoCompletoViewModel
 
 @{
-	ViewData["Title"] = Model.Titulo;
-	Layout = "_Layout";
+    ViewData["Title"] = Model.Titulo;
+    Layout = "_Layout";
 
-	// Lógica de Negocio en la vista
-	var estudianteIdActual = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-	int idEstudianteInt = 0;
-	int.TryParse(estudianteIdActual, out idEstudianteInt);
+    // Lógica de Negocio en la vista
+    var estudianteIdActual = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    int idEstudianteInt = 0;
+    int.TryParse(estudianteIdActual, out idEstudianteInt);
 
-	var yaHaHechoResena = Model.Resenas?.Any(r => r.EstudianteId == idEstudianteInt) ?? false;
-	var topResenas = Model.Resenas?.OrderByDescending(r => r.Fecha).Take(5).ToList() ?? new List<ResenaViewModel>();
-	var todasLasResenas = Model.Resenas?.OrderByDescending(r => r.Fecha).ToList() ?? new List<ResenaViewModel>();
+    var yaHaHechoResena = Model.Resenas?.Any(r => r.EstudianteId == idEstudianteInt) ?? false;
+    var topResenas = Model.Resenas?.OrderByDescending(r => r.Fecha).Take(5).ToList() ?? new List<ResenaViewModel>();
+    var todasLasResenas = Model.Resenas?.OrderByDescending(r => r.Fecha).ToList() ?? new List<ResenaViewModel>();
 }
 
-@* --- ESTILOS (Mantenidos) --- *@
 <style>
-	/* Estilos generales (Mantenidos) */
-	@@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    /* IMPORTACIÓN DE TIPOGRAFÍAS */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
+    :root {
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
+    }
 
-	body {
-		font-family: 'Inter', sans-serif;
-		background-color: #f7f9fa;
-		color: #212529;
-	}
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
+    }
 
-	.course-page-container {
-		padding: 2rem 0;
-	}
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: #f3f3f3;
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
 
-	.course-tabs-header {
-		background-color: #fff;
-		padding: 1rem;
-		border-radius: 8px;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-		margin-bottom: 2rem;
-	}
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
 
-	.nav-tabs .nav-link {
-		font-weight: 500;
-		color: #6c757d;
-		border-color: transparent;
-	}
+    /* === ESTILO ESPECÍFICO PARA EL BLOQUE DE LA IMAGEN === */
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
 
-		.nav-tabs .nav-link.active {
-			color: #212529;
-			border-color: #dee2e6 #dee2e6 #fff;
-			font-weight: 600;
-		}
+    /* ESTILO DE TARJETA TIPO REJILLA DE REVISTA MEJORADO */
+    .magazine-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+    }
 
+        .magazine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
 
-	/* Contenedor principal para el contenido */
-	.content-container {
-		background-color: #fff;
-		padding: 2rem;
-		border-radius: 8px;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	}
+    .magazine-card-img-container {
+        overflow: hidden;
+        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    }
 
-	.lesson-info-container {
-		margin-bottom: 2rem;
-	}
+    .magazine-card-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
 
-		.lesson-info-container h3 {
-			font-size: 1.5rem;
-			font-weight: 600;
-		}
+    .magazine-card:hover .magazine-card-img {
+        transform: scale(1.05);
+    }
 
-		.lesson-info-container p {
-			font-size: 1rem;
-			color: #6c757d;
-			line-height: 1.6;
-		}
+    .magazine-card-body {
+        padding: 1.5rem;
+        position: relative;
+        text-align: left;
+    }
 
-	.main-video-player {
-		position: relative;
-		width: 100%;
-		padding-bottom: 56.25%;
-		background-color: #000;
-		border-radius: 8px;
-		overflow: hidden;
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	}
+    .card-category {
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--color-brand-primary);
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+        letter-spacing: 0.5px;
+    }
 
-	.video-frame,
-	.course-image {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		border: none;
-	}
+    .magazine-card-body h5 {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 1.5rem;
+        line-height: var(--line-height-normal);
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+    }
 
+    .magazine-card-body .card-text {
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
+        margin-bottom: 1rem;
+    }
 
-	/* Estilos del acordeón para módulos y lecciones */
-	.accordion-item {
-		border: none;
-		border-bottom: 1px solid #e9ecef;
-	}
+    /* BOTONES CON ESTILO REVISTA */
+    .btn-action {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: var(--color-text-light) !important;
+        font-weight: 600;
+        padding: 12px 24px;
+        border-radius: var(--border-radius-sm);
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        font-family: var(--font-accent);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
 
-	.accordion-button {
-		background-color: #fff;
-		color: #212529;
-		font-weight: 600;
-		font-size: 1.1em;
-		padding: 1rem;
-	}
+        .btn-action:hover {
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
 
-		.accordion-button:not(.collapsed) {
-			color: #007bff;
-			background-color: #f8f9fa;
-			box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-		}
+    /* ACORDEÓN CON ESTILO REVISTA */
+    .accordion-item {
+        border: 1px solid var(--color-border);
+        margin-bottom: 12px;
+        border-radius: var(--border-radius-md);
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
 
-	.accordion-body {
-		padding: 0;
-	}
+    .accordion-button {
+        background-color: var(--color-card-bg);
+        color: var(--color-text-dark);
+        font-weight: 600;
+        font-family: var(--font-heading);
+        font-size: 1.1rem;
+        padding: 1.25rem 1.5rem;
+        border: none;
+    }
 
-	.lesson-item {
-		display: flex;
-		align-items: center;
-		padding: 1rem;
-		text-decoration: none;
-		color: #495057;
-		transition: background-color 0.2s;
-	}
+        .accordion-button:not(.collapsed) {
+            background-color: var(--color-brand-primary);
+            color: var(--color-text-light);
+            box-shadow: none;
+        }
 
-		.lesson-item:hover {
-			background-color: #f1f1f1;
-		}
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: var(--color-brand-primary);
+        }
 
-		.lesson-item.active {
-			background-color: #e9ecef;
-			font-weight: 500;
-			color: #212529;
-		}
+    /* NAV TABS CON ESTILO REVISTA */
+    .course-tabs-header {
+        background-color: var(--color-card-bg);
+        padding: 2rem;
+        border-radius: var(--border-radius-lg);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
 
-		.lesson-item.completed {
-			color: #28a745;
-		}
+    .nav-tabs {
+        border-bottom: 2px solid var(--color-border);
+    }
 
-	.lesson-icon {
-		margin-right: 15px;
-		font-size: 1.2em;
-	}
+        .nav-tabs .nav-link {
+            font-weight: 600;
+            color: var(--color-accent);
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 1rem 1.5rem;
+            font-family: var(--font-accent);
+            transition: all 0.3s ease;
+        }
 
-	/* Estilos para Reseñas */
-	.review-card {
-		border: 1px solid #e9ecef;
-		border-radius: 6px;
-		padding: 1rem;
-		margin-bottom: 1rem;
-		background-color: #fff;
-	}
+            .nav-tabs .nav-link:hover {
+                color: var(--color-brand-primary);
+                border-bottom: 3px solid var(--color-brand-primary);
+            }
 
-	.review-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 0.5rem;
-	}
+            .nav-tabs .nav-link.active {
+                color: var(--color-brand-primary);
+                border-bottom: 3px solid var(--color-brand-primary);
+                background-color: transparent;
+                font-weight: 700;
+            }
 
-	.review-date {
-		font-size: 0.85rem;
-		color: #6c757d;
-	}
+    /* CONTENEDOR DE CONTENIDO */
+    .content-container {
+        background-color: var(--color-card-bg);
+        padding: 2.5rem;
+        border-radius: var(--border-radius-lg);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
 
-	.review-rating .fas {
-		color: #ffc107; /* Color amarillo de Bootstrap para estrellas */
-	}
+    /* VIDEO PLAYER Y CONTENIDO MULTIMEDIA */
+    .main-video-player {
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%;
+        background-color: #000;
+        border-radius: var(--border-radius-md);
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
 
-	/* Estilos para Anuncios */
-	.announcement-card {
-		border-left: 5px solid #007bff; /* Un color de acento azul */
-		padding: 1.5rem;
-		margin-bottom: 1.5rem;
-		background-color: #e9f5ff; /* Fondo ligeramente azulado */
-		border-radius: 4px;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-	}
+    .video-frame,
+    .course-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        object-fit: cover;
+    }
 
-		.announcement-card h4 {
-			color: #007bff;
-			margin-bottom: 0.5rem;
-		}
+    /* LECCIONES Y CONTENIDO */
+    .lesson-info-container {
+        margin-bottom: 2rem;
+    }
 
-	.announcement-date {
-		font-size: 0.8rem;
-		color: #6c757d;
-		display: block;
-		margin-bottom: 0.8rem;
-	}
+        .lesson-info-container h3 {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+            margin-bottom: 1rem;
+        }
 
-	/* Estilos para el formulario de reseña */
-	.star-rating label {
-		font-size: 1.5rem;
-		color: #e9ecef;
-		cursor: pointer;
-		padding: 0 2px;
-	}
+        .lesson-info-container p {
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            color: var(--color-accent);
+            line-height: var(--line-height-normal);
+        }
 
-		.star-rating input:checked ~ label,
-		.star-rating label:hover,
-		.star-rating label:hover ~ label {
-			color: #ffc107;
-		}
+    .lesson-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        text-decoration: none;
+        color: var(--color-text-dark);
+        transition: background-color 0.2s;
+        border-bottom: 1px solid var(--color-border);
+    }
 
-	.star-rating input {
-		display: none;
-	}
+        .lesson-item:hover {
+            background-color: var(--color-section-bg);
+            text-decoration: none;
+            color: var(--color-text-dark);
+        }
+
+        .lesson-item.active {
+            background-color: var(--color-brand-primary);
+            color: var(--color-text-light);
+            font-weight: 600;
+        }
+
+        .lesson-item.completed {
+            color: var(--color-brand-success);
+        }
+
+    .lesson-icon {
+        margin-right: 15px;
+        font-size: 1.2em;
+    }
+
+    /* RESEÑAS Y CALIFICACIONES */
+    .review-card {
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        background-color: var(--color-card-bg);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .review-date {
+        font-size: 0.85rem;
+        color: var(--color-accent);
+    }
+
+    .review-rating .fas {
+        color: var(--color-brand-accent);
+    }
+
+    /* ANUNCIOS */
+    .announcement-card {
+        border-left: 5px solid var(--color-brand-primary);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        background-color: rgba(239, 136, 48, 0.05);
+        border-radius: var(--border-radius-md);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+        .announcement-card h4 {
+            color: var(--color-brand-primary);
+            margin-bottom: 0.5rem;
+            font-family: var(--font-heading);
+        }
+
+    .announcement-date {
+        font-size: 0.8rem;
+        color: var(--color-accent);
+        display: block;
+        margin-bottom: 0.8rem;
+    }
+
+    /* FORMULARIO DE RESEÑAS */
+    .star-rating label {
+        font-size: 1.5rem;
+        color: var(--color-border);
+        cursor: pointer;
+        padding: 0 2px;
+    }
+
+        .star-rating input:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: var(--color-brand-accent);
+        }
+
+    .star-rating input {
+        display: none;
+    }
+
+    /* BADGES Y ALERTAS */
+    .badge.bg-light {
+        background-color: var(--color-brand-accent) !important;
+        color: var(--color-brand-dark) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    .badge.bg-secondary {
+        background-color: var(--color-accent) !important;
+        color: var(--color-text-light) !important;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    .badge.bg-warning {
+        background-color: var(--color-brand-accent) !important;
+        color: var(--color-brand-dark) !important;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    .alert-info {
+        background-color: rgba(109, 181, 62, 0.1);
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+    }
+
+    .alert-success {
+        background-color: rgba(109, 181, 62, 0.1);
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1rem;
+    }
+
+    .alert-warning {
+        background-color: rgba(242, 229, 20, 0.1);
+        border-color: var(--color-brand-accent);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+    }
+
+    .alert-danger {
+        background-color: rgba(229, 54, 26, 0.1);
+        border-color: var(--color-brand-secondary);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+    }
+
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* MODALES CON ESTILO REVISTA */
+    .modal-content {
+        border-radius: var(--border-radius-lg);
+        border: none;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header {
+        background-color: var(--color-brand-primary);
+        color: var(--color-text-light);
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+        padding: 1.5rem 2rem;
+    }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+    /* ADAPTACIONES RESPONSIVE */
+
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .section-container {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .content-container {
+            padding: 2rem;
+        }
+
+        .course-tabs-header {
+            padding: 1.5rem;
+        }
+
+        .nav-tabs .nav-link {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .magazine-card-body {
+            padding: 1.25rem;
+        }
+
+            .magazine-card-body h5 {
+                font-size: 1.35rem;
+            }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .section-container {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .content-container {
+            padding: 1.5rem;
+        }
+
+        .course-tabs-header {
+            padding: 1rem;
+        }
+
+        .nav-tabs .nav-link {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .magazine-card-body {
+            padding: 1rem;
+        }
+
+            .magazine-card-body h5 {
+                font-size: 1.25rem;
+            }
+
+        .accordion-button {
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+        }
+
+        .lesson-item {
+            padding: 0.75rem 1rem;
+        }
+    }
 </style>
 
-<div class="container course-page-container pb-5 mb-5">
+<div class="container px-0 py-5">
 
-	@* Mostrar mensajes temporales de éxito o error *@
-	@if (TempData["Success"] != null)
-	{
-		<div class="alert alert-success alert-dismissible fade show" role="alert">
-			<i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
-			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-		</div>
-	}
-	@if (TempData["Error"] != null)
-	{
-		<div class="alert alert-danger alert-dismissible fade show" role="alert">
-			<i class="bi bi-x-octagon-fill me-2"></i> @TempData["Error"]
-			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-		</div>
-	}
+    <!-- === HERO SECTION DEL CURSO === -->
+    <div class="section-container">
+        <div class="px-3">
+            <span class="latest-grid-header">@Model.Titulo</span>
+        </div>
+        <div class="row g-5 px-3">
+            <div class="col-lg-8">
+                <div class="main-video-player">
+                    <img class="course-image" src="@Model.UrlImagen" alt="Imagen de presentación del curso">
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="content-container h-100">
+                    <h3 class="mb-3">Descripción del Curso</h3>
+                    <p class="text-muted mb-4">@Html.Raw(Model.DescripcionCorta)</p>
 
-	<div class="course-tabs-header">
-		<ul class="nav nav-tabs" id="courseTabs" role="tablist">
-			<li class="nav-item" role="presentation">
-				<button class="nav-link active" id="presentacion-tab" data-bs-toggle="tab" data-bs-target="#presentacion-tab-pane" type="button" role="tab">Presentación</button>
-			</li>
-			<li class="nav-item" role="presentation">
-				<button class="nav-link" id="contenido-tab" data-bs-toggle="tab" data-bs-target="#contenido-tab-pane" type="button" role="tab">Contenido</button>
-			</li>
-			<li class="nav-item" role="presentation">
-				<button class="nav-link" id="comunidad-tab" data-bs-toggle="tab" data-bs-target="#comunidad-tab-pane" type="button" role="tab">Comunidad</button>
-			</li>
-			<li class="nav-item" role="presentation">
-				<button class="nav-link" id="preguntas-tab" data-bs-toggle="tab" data-bs-target="#preguntas-tab-pane" type="button" role="tab">Preguntas <span class="badge bg-secondary">@(Model.Preguntas?.Count ?? 0)</span></button>
-			</li>
-			<li class="nav-item" role="presentation">
-				<button class="nav-link" id="proyectos-tab" data-bs-toggle="tab" data-bs-target="#proyectos-tab-pane" type="button" role="tab">Actividades <span class="badge bg-warning">@Model.Actividades.Count()</span></button>
-			</li>
-		</ul>
-	</div>
+                    <div class="mb-4">
+                        <h5 class="mb-2">Calificación del Curso</h5>
+                        @{
+                            var avgRating = Model.Resenas.Any() ? Model.Resenas.Average(r => r.Calificacion) : 0;
+                            var roundedRating = (int)Math.Round(avgRating);
+                        }
+                        <span class="text-warning mb-2 d-block">
+                            @for (int i = 0; i < roundedRating; i++)
+                            {
+                                <i class="fas fa-star"></i>
+                            }
+                            @for (int i = 0; i < 5 - roundedRating; i++)
+                            {
+                                <i class="far fa-star"></i>
+                            }
+                        </span>
+                        <span class="text-muted">@avgRating.ToString("F1") de 5 estrellas (@Model.Resenas.Count() reseñas)</span>
+                    </div>
 
-	<div class="tab-content pb-5 mb-5" id="courseTabContent">
-		@* TAB 1: PRESENTACIÓN *@
-		<div class="tab-pane fade show active" id="presentacion-tab-pane" role="tabpanel" tabindex="0">
-			@* Se mantiene la división 4/8, la cual se apila en móvil por defecto. *@
-			<div class="row">
-				<div class="col-lg-4 col-md-5">
-					@* Añadido col-md-5 para tablet *@
-					<div class="main-video-player">
-						<img class="course-image" src="@Model.UrlImagen" alt="Imagen de presentación del curso">
-					</div>
-				</div>
-				<div class="col-lg-8 col-md-7">
-					@* Añadido col-md-7 para tablet *@
-					<div class="content-container">
-						<h2 class="mb-3">@Model.Titulo</h2>
-						<p class="text-muted">@Html.Raw(Model.DescripcionLarga)</p>
-						<hr />
-						<p><strong>Maestro:</strong></p>
-						<div class="d-flex align-items-center">
-							@{
-								var avgRating = Model.Resenas.Any() ? Model.Resenas.Average(r => r.Calificacion) : 0;
-								var roundedRating = (int)Math.Round(avgRating);
-							}
-							<span class="text-warning">
-								@for (int i = 0; i < roundedRating; i++)
-								{
-									<i class="fas fa-star"></i>
-								}
-								@for (int i = 0; i < 5 - roundedRating; i++)
-								{
-									<i class="far fa-star"></i>
-								}
-							</span>
-							<span class="ms-2">@avgRating.ToString("F1") de 5 estrellas (@Model.Resenas.Count() reseñas)</span>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+                    <div class="mt-4 pt-3 border-top">
+                        <h5 class="mb-3">Contenido del Curso</h5>
+                        <p class="mb-1"><i class="fas fa-play-circle text-primary me-2"></i> @Model.Modulos?.Sum(m => m.Lecciones?.Count ?? 0) lecciones</p>
+                        <p class="mb-0"><i class="fas fa-clock text-primary me-2"></i> Acceso de por vida</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-		@* TAB 2: CONTENIDO *@
-		<div class="tab-pane fade pb-5" id="contenido-tab-pane" role="tabpanel" tabindex="0">
-			<div class="row">
-				@* MODIFICADO: De col-lg-8 a col-md-7 col-lg-8 (Video principal/Contenido) *@
-				<div class="col-md-7 col-lg-8">
-					<div class="content-container">
-						<div class="lesson-info-container">
-							<h3 id="lessonTitle">Selecciona una lección para empezar</h3>
-							<p class="text-muted" id="lessonContent">Usa la lista de lecciones a continuación para navegar por el contenido del curso.</p>
-						</div>
-						<div class="main-video-player">
-							<iframe class="video-frame d-none" id="mainVideoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-							<img class="course-image" id="mainCourseImage" src="@Model.UrlImagen" alt="Imagen de presentación del curso">
-						</div>
-					</div>
-				</div>
+    <!-- === NAVEGACIÓN POR TABS === -->
+    <div class="course-tabs-header">
+        <ul class="nav nav-tabs" id="courseTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="presentacion-tab" data-bs-toggle="tab" data-bs-target="#presentacion-tab-pane" type="button" role="tab">Presentación</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="contenido-tab" data-bs-toggle="tab" data-bs-target="#contenido-tab-pane" type="button" role="tab">Contenido</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="comunidad-tab" data-bs-toggle="tab" data-bs-target="#comunidad-tab-pane" type="button" role="tab">Comunidad</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="preguntas-tab" data-bs-toggle="tab" data-bs-target="#preguntas-tab-pane" type="button" role="tab">Preguntas <span class="badge bg-secondary">@(Model.Preguntas?.Count ?? 0)</span></button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="proyectos-tab" data-bs-toggle="tab" data-bs-target="#proyectos-tab-pane" type="button" role="tab">Actividades <span class="badge bg-warning">@Model.Actividades.Count()</span></button>
+            </li>
+        </ul>
+    </div>
 
-				@* MODIFICADO: De col-lg-4 a col-md-5 col-lg-4 (Lista de Lecciones) *@
-				<div class="col-md-5 col-lg-4">
-					<div class="accordion" id="courseAccordion">
-						@foreach (var modulo in Model.Modulos ?? Enumerable.Empty<ModuloConLeccionesViewModel>())
-						{
-							<div class="accordion-item">
-								<p class="accordion-header" id="heading_@modulo.Id">
-									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
-										@modulo.Titulo
-									</button>
-								</p>
-								<div id="collapse_@modulo.Id" class="accordion-collapse collapse" aria-labelledby="heading_@modulo.Id" data-bs-parent="#courseAccordion">
-									<div class="accordion-body">
-										<ul class="list-group list-group-flush">
-											@foreach (var leccion in modulo.Lecciones ?? Enumerable.Empty<LeccionViewModel>())
-											{
-												<li class="list-group-item">
-													<a href="#" class="lesson-item @(leccion.CompletadaPorEstudiante ? "completed" : "")"
-													   data-video-url="@leccion.UrlVideo"
-													   data-lesson-id="@leccion.Id"
-													   data-lesson-title="@leccion.Titulo"
-													   data-lesson-content="@leccion.Contenido">
-														<i class="lesson-icon @(leccion.CompletadaPorEstudiante ? "fas fa-check-circle" : "fas fa-play-circle")"></i>
-														<span class="lesson-title">@leccion.Titulo</span>
-													</a>
-												</li>
-											}
-										</ul>
-									</div>
-								</div>
-							</div>
-						}
-					</div>
-				</div>
-			</div>
-		</div>
+    <!-- === CONTENIDO DE LOS TABS === -->
+    <div class="tab-content pb-5 mb-5" id="courseTabContent">
 
-		@* TAB 3: COMUNIDAD (ANUNCIOS, RESEÑAS Y FORMULARIO) *@
-		<div class="tab-pane fade pb-5" id="comunidad-tab-pane" role="tabpanel" tabindex="0">
-			<div class="row">
-				@* MODIFICADO: De col-lg-8 a col-md-7 col-lg-8 (Anuncios/Formulario) *@
-				<div class="col-md-7 col-lg-8">
-					<div class="content-container mb-4">
-						<h3 class="mb-4">Anuncios del curso</h3>
+        <!-- TAB 1: PRESENTACIÓN -->
+        <div class="tab-pane fade show active" id="presentacion-tab-pane" role="tabpanel" tabindex="0">
+            <div class="section-container">
+                <div class="px-3">
+                    <span class="latest-grid-header">ACERCA DE ESTE CURSO</span>
+                </div>
+                <div class="px-3">
+                    <div class="content-container">
+                        <div class="text-dark fs-5 lh-base">
+                            @Html.Raw(Model.DescripcionLarga)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-						@if (Model.Anuncios != null && Model.Anuncios.Any())
-						{
-							foreach (var anuncio in Model.Anuncios.OrderByDescending(a => a.FechaPublicacion))
-							{
-								<div class="announcement-card">
-									<h4>@anuncio.Titulo</h4>
-									<span class="announcement-date">Publicado el @anuncio.FechaPublicacion.ToString("dd MMMM yyyy")</span>
-									@Html.Raw(anuncio.Contenido)
-								</div>
-							}
-						}
-						else
-						{
-							<p class="text-muted">No hay anuncios publicados para este curso.</p>
-						}
-					</div>
+        <!-- TAB 2: CONTENIDO -->
+        <div class="tab-pane fade" id="contenido-tab-pane" role="tabpanel" tabindex="0">
+            <div class="section-container">
+                <div class="row g-5">
+                    <div class="col-lg-8">
+                        <div class="content-container">
+                            <div class="lesson-info-container">
+                                <h3 id="lessonTitle">Selecciona una lección para empezar</h3>
+                                <p class="text-muted" id="lessonContent">Usa la lista de lecciones a continuación para navegar por el contenido del curso.</p>
+                            </div>
+                            <div class="main-video-player">
+                                <iframe class="video-frame d-none" id="mainVideoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                <img class="course-image" id="mainCourseImage" src="@Model.UrlImagen" alt="Imagen de presentación del curso">
+                            </div>
+                        </div>
+                    </div>
 
-					@if (User.Identity.IsAuthenticated && !yaHaHechoResena)
-					{
-						<div class="content-container mt-4">
-							<h3 class="mb-3">Deja tu reseña</h3>
-							<form asp-action="CrearResena" asp-controller="Curso" method="post">
-								<input type="hidden" name="CursoId" value="@Model.Id" />
-								<div class="mb-3">
-									<label class="form-label">Calificación</label>
-									<div class="star-rating d-flex flex-row-reverse justify-content-end">
-										@for (int i = 5; i >= 1; i--)
-										{
-											<input type="radio" id="star@(i)" name="Calificacion" value="@i" required />
-											<label for="star@(i)"><i class="fas fa-star"></i></label>
-										}
-									</div>
-								</div>
-								<div class="mb-3">
-									<label for="Comentario" class="form-label">Comentario</label>
-									<textarea class="form-control" id="Comentario" name="Comentario" rows="3" required placeholder="Cuéntanos tu experiencia con el curso..."></textarea>
-								</div>
-								<button type="submit" class="btn btn-primary">Enviar reseña</button>
-							</form>
-						</div>
-					}
-					else if (User.Identity.IsAuthenticated && yaHaHechoResena)
-					{
-						<div class="alert alert-info mt-4" role="alert">
-							Ya has dejado una reseña para este curso. ¡Gracias por tu opinión!
-						</div>
-					}
-				</div>
+                    <div class="col-lg-4">
+                        <div class="content-container">
+                            <h4 class="mb-3">Módulos del Curso</h4>
+                            <div class="accordion" id="courseAccordion">
+                                @foreach (var modulo in Model.Modulos ?? Enumerable.Empty<ModuloConLeccionesViewModel>())
+                                {
+                                    <div class="accordion-item">
+                                        <p class="accordion-header" id="heading_@modulo.Id">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
+                                                @modulo.Titulo
+                                            </button>
+                                        </p>
+                                        <div id="collapse_@modulo.Id" class="accordion-collapse collapse" aria-labelledby="heading_@modulo.Id" data-bs-parent="#courseAccordion">
+                                            <div class="accordion-body">
+                                                <ul class="list-group list-group-flush">
+                                                    @foreach (var leccion in modulo.Lecciones ?? Enumerable.Empty<LeccionViewModel>())
+                                                    {
+                                                        <li class="list-group-item p-0">
+                                                            <a href="#" class="lesson-item @(leccion.CompletadaPorEstudiante ? "completed" : "")"
+                                                               data-video-url="@leccion.UrlVideo"
+                                                               data-lesson-id="@leccion.Id"
+                                                               data-lesson-title="@leccion.Titulo"
+                                                               data-lesson-content="@leccion.Contenido">
+                                                                <i class="lesson-icon @(leccion.CompletadaPorEstudiante ? "fas fa-check-circle" : "fas fa-play-circle")"></i>
+                                                                <span class="lesson-title">@leccion.Titulo</span>
+                                                            </a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-				@* MODIFICADO: De col-lg-4 a col-md-5 col-lg-4 (Reseñas) *@
-				<div class="col-md-5 col-lg-4">
-					<div class="content-container">
-						<h3 class="mb-4">Reseñas de estudiantes</h3>
+        <!-- TAB 3: COMUNIDAD -->
+        <div class="tab-pane fade" id="comunidad-tab-pane" role="tabpanel" tabindex="0">
+            <div class="section-container">
+                <div class="row g-5">
+                    <div class="col-lg-8">
+                        <div class="content-container mb-4">
+                            <h3 class="mb-4">Anuncios del Curso</h3>
 
-						@if (Model.Resenas != null && Model.Resenas.Any())
-						{
-							var promedio = Model.Resenas.Average(r => r.Calificacion);
-							<div class="text-center mb-4 p-3 bg-light rounded">
-								<h4 class="mb-1">@promedio.ToString("F1") / 5</h4>
-								<span class="text-warning review-rating">
-									@for (int i = 0; i < Math.Round(promedio); i++)
-									{
-										<i class="fas fa-star"></i>
-									}
-									@for (int i = 0; i < 5 - Math.Round(promedio); i++)
-									{
-										<i class="far fa-star"></i>
-									}
-								</span>
-								<p class="text-muted mt-2">Basado en @Model.Resenas.Count() reseñas</p>
-							</div>
+                            @if (Model.Anuncios != null && Model.Anuncios.Any())
+                            {
+                                foreach (var anuncio in Model.Anuncios.OrderByDescending(a => a.FechaPublicacion))
+                                {
+                                    <div class="announcement-card">
+                                        <h4>@anuncio.Titulo</h4>
+                                        <span class="announcement-date">Publicado el @anuncio.FechaPublicacion.ToString("dd MMMM yyyy")</span>
+                                        @Html.Raw(anuncio.Contenido)
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted">No hay anuncios publicados para este curso.</p>
+                            }
+                        </div>
 
-							@foreach (var resena in topResenas)
-							{
-								<div class="review-card">
-									<div class="review-header">
-										<p class="mb-0"><strong>@resena.NombreUsuario</strong></p>
-										<span class="review-rating">
-											@for (int i = 0; i < resena.Calificacion; i++)
-											{
-												<i class="fas fa-star"></i>
-											}
-											@for (int i = 0; i < 5 - resena.Calificacion; i++)
-											{
-												<i class="far fa-star"></i>
-											}
-										</span>
-									</div>
-									<p class="review-date">@resena.Fecha.ToString("dd/MM/yyyy")</p>
-									<p class="mb-0">@resena.Comentario</p>
-								</div>
-							}
+                        @if (User.Identity.IsAuthenticated && !yaHaHechoResena)
+                        {
+                            <div class="content-container mt-4">
+                                <h3 class="mb-3">Deja tu Reseña</h3>
+                                <form asp-action="CrearResena" asp-controller="Curso" method="post">
+                                    <input type="hidden" name="CursoId" value="@Model.Id" />
+                                    <div class="mb-3">
+                                        <label class="form-label">Calificación</label>
+                                        <div class="star-rating d-flex flex-row-reverse justify-content-end">
+                                            @for (int i = 5; i >= 1; i--)
+                                            {
+                                                <input type="radio" id="star@(i)" name="Calificacion" value="@i" required />
+                                                <label for="star@(i)"><i class="fas fa-star"></i></label>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="Comentario" class="form-label">Comentario</label>
+                                        <textarea class="form-control" id="Comentario" name="Comentario" rows="3" required placeholder="Cuéntanos tu experiencia con el curso..."></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-action">Enviar Reseña</button>
+                                </form>
+                            </div>
+                        }
+                        else if (User.Identity.IsAuthenticated && yaHaHechoResena)
+                        {
+                            <div class="alert alert-info mt-4" role="alert">
+                                Ya has dejado una reseña para este curso. ¡Gracias por tu opinión!
+                            </div>
+                        }
+                    </div>
 
-							<button type="button" class="btn btn-outline-primary btn-sm mt-2 d-block w-100" data-bs-toggle="modal" data-bs-target="#allReviewsModal">
-								Ver todas las reseñas (@Model.Resenas.Count())
-							</button>
-						}
-						else
-						{
-							<p class="text-muted">Este curso aún no tiene reseñas. ¡Sé el primero en dejar una!</p>
-						}
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="tab-pane fade pb-5" id="preguntas-tab-pane" role="tabpanel" tabindex="0">
-			<div class="content-container">
+                    <div class="col-lg-4">
+                        <div class="content-container">
+                            <h3 class="mb-4">Reseñas de Estudiantes</h3>
 
-				<h3 class="mb-4">Preguntas y respuestas (Q&A)</h3>
-				<div class="card card-body mb-5 shadow-sm">
-					<h5 class="card-title">Hacer una nueva pregunta</h5>
+                            @if (Model.Resenas != null && Model.Resenas.Any())
+                            {
+                                var promedio = Model.Resenas.Average(r => r.Calificacion);
+                                <div class="text-center mb-4 p-3 bg-light rounded">
+                                    <h4 class="mb-1">@promedio.ToString("F1") / 5</h4>
+                                    <span class="text-warning review-rating">
+                                        @for (int i = 0; i < Math.Round(promedio); i++)
+                                        {
+                                            <i class="fas fa-star"></i>
+                                        }
+                                        @for (int i = 0; i < 5 - Math.Round(promedio); i++)
+                                        {
+                                            <i class="far fa-star"></i>
+                                        }
+                                    </span>
+                                    <p class="text-muted mt-2">Basado en @Model.Resenas.Count() reseñas</p>
+                                </div>
 
-					<form id="formHacerPregunta" action="@Url.Action("CrearPregunta", "Curso", new { tab = "preguntas-tab" })" method="post">
-						@Html.AntiForgeryToken()
-						<input type="hidden" name="cursoId" value="@Model.Id" />
+                                @foreach (var resena in topResenas)
+                                {
+                                    <div class="review-card">
+                                        <div class="review-header">
+                                            <p class="mb-0"><strong>@resena.NombreUsuario</strong></p>
+                                            <span class="review-rating">
+                                                @for (int i = 0; i < resena.Calificacion; i++)
+                                                {
+                                                    <i class="fas fa-star"></i>
+                                                }
+                                                @for (int i = 0; i < 5 - resena.Calificacion; i++)
+                                                {
+                                                    <i class="far fa-star"></i>
+                                                }
+                                            </span>
+                                        </div>
+                                        <p class="review-date">@resena.Fecha.ToString("dd/MM/yyyy")</p>
+                                        <p class="mb-0">@resena.Comentario</p>
+                                    </div>
+                                }
 
-						<div class="mb-3">
-							<label for="preguntaInput" class="form-label">Tu pregunta:</label>
-							<textarea class="form-control" id="preguntaInput" name="pregunta" rows="3" required placeholder="Escribe tu duda o consulta aquí..."></textarea>
-						</div>
+                                <button type="button" class="btn btn-outline-primary btn-sm mt-2 d-block w-100" data-bs-toggle="modal" data-bs-target="#allReviewsModal">
+                                    Ver todas las reseñas (@Model.Resenas.Count())
+                                </button>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Este curso aún no tiene reseñas. ¡Sé el primero en dejar una!</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-						<button type="submit" class="btn btn-primary">Enviar pregunta</button>
-					</form>
-				</div>
+        <!-- TAB 4: PREGUNTAS -->
+        <div class="tab-pane fade" id="preguntas-tab-pane" role="tabpanel" tabindex="0">
+            <div class="section-container">
+                <div class="content-container">
+                    <h3 class="mb-4">Preguntas y Respuestas</h3>
 
-				<hr />
+                    <div class="magazine-card mb-5">
+                        <div class="magazine-card-body">
+                            <h5 class="mb-3">Hacer una Nueva Pregunta</h5>
+                            <form id="formHacerPregunta" action="@Url.Action("CrearPregunta", "Curso", new { tab = "preguntas-tab" })" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="cursoId" value="@Model.Id" />
 
-				<h4 class="mb-4">Consultas Recientes (@(Model.Preguntas?.Count ?? 0))</h4>
+                                <div class="mb-3">
+                                    <label for="preguntaInput" class="form-label">Tu Pregunta:</label>
+                                    <textarea class="form-control" id="preguntaInput" name="pregunta" rows="3" required placeholder="Escribe tu duda o consulta aquí..."></textarea>
+                                </div>
 
-				@if (Model.Preguntas != null && Model.Preguntas.Any())
-				{
-					@foreach (var p in Model.Preguntas.OrderByDescending(p => p.FechaPregunta))
-					{
-						<div class="card mb-3 border-secondary">
-							<div class="card-header bg-secondary text-white">
-								<i class="fas fa-question-circle me-1"></i>
-								Pregunta de @p.NombreEstudiante
-								<small class="float-end">@p.FechaPregunta.ToString("dd/MM/yyyy HH:mm")</small>
-							</div>
-							<div class="card-body">
-								<p class="card-text">@p.Pregunta</p>
+                                <button type="submit" class="btn btn-action">Enviar Pregunta</button>
+                            </form>
+                        </div>
+                    </div>
 
-								@if (!string.IsNullOrEmpty(p.Respuesta))
-								{
-									<hr />
-									<div class="alert alert-light border-start border-primary border-4 py-2">
-										<h6 class="alert-heading text-primary">
-											<i class="fas fa-reply me-1"></i> Respuesta de @p.NombreInstructor
-											<small class="float-end text-muted">@p.FechaRespuesta?.ToString("dd/MM/yyyy HH:mm")</small>
-										</h6>
-										<p class="mb-0">@p.Respuesta</p>
-									</div>
-								}
-								else
-								{
-									<div class="alert alert-warning py-2 mt-3">
-										<i class="fas fa-hourglass-half me-1"></i> Pendiente de respuesta del instructor.
-									</div>
-								}
-							</div>
-						</div>
-					}
-				}
-				else
-				{
-					<div class="alert alert-info" role="alert">
-						Aún no hay preguntas para este curso. ¡Sé el primero en preguntar!
-					</div>
-				}
-			</div>
-		</div>
+                    <h4 class="mb-4">Consultas Recientes (@(Model.Preguntas?.Count ?? 0))</h4>
 
-		@* TAB 4: ACTIVIDADES Y PROYECTOS (Mantenido al 100% de ancho) *@
-		<div class="tab-pane fade pb-5" id="proyectos-tab-pane" role="tabpanel" tabindex="0">
-			<div class="content-container">
+                    @if (Model.Preguntas != null && Model.Preguntas.Any())
+                    {
+                        @foreach (var p in Model.Preguntas.OrderByDescending(p => p.FechaPregunta))
+                        {
+                            <div class="magazine-card mb-3">
+                                <div class="magazine-card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <h6 class="mb-0"><i class="fas fa-question-circle me-2 text-primary"></i>Pregunta de @p.NombreEstudiante</h6>
+                                        <small class="text-muted">@p.FechaPregunta.ToString("dd/MM/yyyy HH:mm")</small>
+                                    </div>
+                                    <p class="card-text mb-3">@p.Pregunta</p>
 
-				<h3 class="mt-0 mb-4">Actividades</h3>
+                                    @if (!string.IsNullOrEmpty(p.Respuesta))
+                                    {
+                                        <div class="alert alert-light border-start border-primary border-4 py-3">
+                                            <h6 class="alert-heading text-primary mb-2">
+                                                <i class="fas fa-reply me-1"></i> Respuesta de @p.NombreInstructor
+                                                <small class="float-end text-muted">@p.FechaRespuesta?.ToString("dd/MM/yyyy HH:mm")</small>
+                                            </h6>
+                                            <p class="mb-0">@p.Respuesta</p>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-warning py-2">
+                                            <i class="fas fa-hourglass-half me-1"></i> Pendiente de respuesta del instructor.
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-info" role="alert">
+                            Aún no hay preguntas para este curso. ¡Sé el primero en preguntar!
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
 
-				@if (Model.Actividades != null && Model.Actividades.Any())
-				{
-					@foreach (var actividad in Model.Actividades)
-					{
-						<div class="card mb-4 shadow-sm">
-							<div class="card-header bg-light d-flex justify-content-between align-items-center">
-								<h5 class="mb-0">@actividad.Titulo</h5>
-								@if (actividad.EntregaEstudiante != null)
-								{
-									var badgeClass = actividad.EntregaEstudiante.Estado == "Calificado" ? "bg-success" :
-									actividad.EntregaEstudiante.Estado == "Rechazado" ? "bg-danger" :
-									"bg-warning text-dark";
-									<span class="badge @badgeClass fs-6">@actividad.EntregaEstudiante.Estado</span>
-								}
-							</div>
-							<div class="card-body">
-								<p>@Html.Raw(actividad.Descripcion)</p>
+        <!-- TAB 5: ACTIVIDADES -->
+        <div class="tab-pane fade" id="proyectos-tab-pane" role="tabpanel" tabindex="0">
+            <div class="section-container">
+                <div class="content-container">
+                    <h3 class="mb-4">Actividades del Curso</h3>
 
-								@if (!string.IsNullOrEmpty(actividad.Url))
-								{
-									<a href="@actividad.Url" target="_blank" class="btn btn-sm btn-outline-info me-2">
-										<i class="fas fa-download me-1"></i> Descargar material adicional
-									</a>
-								}
+                    @if (Model.Actividades != null && Model.Actividades.Any())
+                    {
+                        @foreach (var actividad in Model.Actividades)
+                        {
+                            <div class="magazine-card mb-4">
+                                <div class="magazine-card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">@actividad.Titulo</h5>
+                                        @if (actividad.EntregaEstudiante != null)
+                                        {
+                                            var badgeClass = actividad.EntregaEstudiante.Estado == "Calificado" ? "bg-success" :
+                                            actividad.EntregaEstudiante.Estado == "Rechazado" ? "bg-danger" :
+                                            "bg-warning text-dark";
+                                            <span class="badge @badgeClass">@actividad.EntregaEstudiante.Estado</span>
+                                        }
+                                    </div>
+                                    <p>@Html.Raw(actividad.Descripcion)</p>
 
-								<hr class="mt-3 mb-3" />
+                                    @if (!string.IsNullOrEmpty(actividad.Url))
+                                    {
+                                        <a href="@actividad.Url" target="_blank" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                                            <i class="fas fa-download me-1"></i> Material Adicional
+                                        </a>
+                                    }
 
-								@if (actividad.RequiereEntrega)
-								{
-									@if (actividad.EntregaEstudiante == null)
-									{
-										// --- Primera Entrega ---
-										<button type="button" class="btn btn-success btn-sm"
-												data-bs-toggle="modal" data-bs-target="#entregaModal"
-												data-actividad-id="@actividad.Id"
-												data-actividad-titulo="@actividad.Titulo">
-											<i class="fas fa-upload me-1"></i> Subir Mi Entrega
-										</button>
-										<small class="text-muted ms-3">Sube el archivo de tu proyecto.</small>
-									}
-									else
-									{
-										// --- Entrega Existente ---
-										<a href="@actividad.EntregaEstudiante.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-primary me-2">
-											<i class="fas fa-file-alt me-1"></i> Ver mi Archivo
-										</a>
+                                    @if (actividad.RequiereEntrega)
+                                    {
+                                        @if (actividad.EntregaEstudiante == null)
+                                        {
+                                            <button type="button" class="btn btn-action btn-sm"
+                                                    data-bs-toggle="modal" data-bs-target="#entregaModal"
+                                                    data-actividad-id="@actividad.Id"
+                                                    data-actividad-titulo="@actividad.Titulo">
+                                                <i class="fas fa-upload me-1"></i> Subir Mi Entrega
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <a href="@actividad.EntregaEstudiante.UrlArchivoEntrega" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                                                <i class="fas fa-file-alt me-1"></i> Ver Archivo
+                                            </a>
 
-										@if (actividad.EntregaEstudiante.Estado == "Calificado")
-										{
-											// --- Calificado ---
-											<button type="button" class="btn btn-sm btn-primary"
-													data-bs-toggle="modal" data-bs-target="#calificacionModal"
-													data-calificacion="@actividad.EntregaEstudiante.Calificacion"
-													data-observacion="@actividad.EntregaEstudiante.ObservacionInstructor"
-													data-fecha="@actividad.EntregaEstudiante.FechaCalificacion?.ToString("dd/MM/yyyy")"
-													data-actividad-titulo="@actividad.Titulo">
-												<i class="fas fa-star me-1"></i> Calificación: @actividad.EntregaEstudiante.Calificacion.GetValueOrDefault(0).ToString("F0")/100
-											</button>
-										}
-										else if (actividad.EntregaEstudiante.Estado == "Pendiente" || actividad.EntregaEstudiante.Estado == "Rechazado")
-										{
-											// --- Pendiente o Rechazado (Permitir Re-entrega) ---
-											<button type="button" class="btn btn-sm btn-warning"
-													data-bs-toggle="modal" data-bs-target="#entregaModal"
-													data-actividad-id="@actividad.Id"
-													data-actividad-titulo="@actividad.Titulo"
-													data-comentario-previo="@actividad.EntregaEstudiante.ComentarioEstudiante">
-												<i class="fas fa-redo me-1"></i> Reemplazar Entrega
-											</button>
-											<small class="text-muted ms-3">Tu entrega está pendiente de revisión o requiere ajustes.</small>
-										}
-									}
-								}
-								else
-								{
-									<div class="alert alert-info mt-3" role="alert">
-										Esta actividad **no requiere entrega** para ser evaluada. Es para práctica.
-									</div>
-								}
-							</div>
-						</div>
-					}
-				}
-				else
-				{
-					<p class="text-muted">No hay actividades publicadas para este curso.</p>
-				}
-
-			</div>
-		</div>
-	</div>
+                                            @if (actividad.EntregaEstudiante.Estado == "Calificado")
+                                            {
+                                                <button type="button" class="btn btn-primary btn-sm"
+                                                        data-bs-toggle="modal" data-bs-target="#calificacionModal"
+                                                        data-calificacion="@actividad.EntregaEstudiante.Calificacion"
+                                                        data-observacion="@actividad.EntregaEstudiante.ObservacionInstructor"
+                                                        data-fecha="@actividad.EntregaEstudiante.FechaCalificacion?.ToString("dd/MM/yyyy")"
+                                                        data-actividad-titulo="@actividad.Titulo">
+                                                    <i class="fas fa-star me-1"></i> Calificación: @actividad.EntregaEstudiante.Calificacion.GetValueOrDefault(0).ToString("F0")/100
+                                                </button>
+                                            }
+                                            else if (actividad.EntregaEstudiante.Estado == "Pendiente" || actividad.EntregaEstudiante.Estado == "Rechazado")
+                                            {
+                                                <button type="button" class="btn btn-warning btn-sm"
+                                                        data-bs-toggle="modal" data-bs-target="#entregaModal"
+                                                        data-actividad-id="@actividad.Id"
+                                                        data-actividad-titulo="@actividad.Titulo"
+                                                        data-comentario-previo="@actividad.EntregaEstudiante.ComentarioEstudiante">
+                                                    <i class="fas fa-redo me-1"></i> Reemplazar Entrega
+                                                </button>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-info mt-3" role="alert">
+                                            Esta actividad no requiere entrega para ser evaluada. Es para práctica.
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No hay actividades publicadas para este curso.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-@* ------------------------------------------------------------- *@
-@* --- MODALES DE LA VISTA --- *@
-@* ------------------------------------------------------------- *@
-
-@* Modal para Ver Todas las Reseñas (Mantenido) *@
+<!-- MODALES (mantenidos con el mismo estilo) -->
 <div class="modal fade" id="allReviewsModal" tabindex="-1" aria-labelledby="allReviewsModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-scrollable modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="allReviewsModalLabel">Todas las Reseñas de "@Model.Titulo" (@Model.Resenas.Count() en total)</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				@if (Model.Resenas != null && Model.Resenas.Any())
-				{
-					var promedio = Model.Resenas.Average(r => r.Calificacion);
-					<div class="text-center mb-4 p-3 bg-light rounded">
-						<h4 class="mb-1">@promedio.ToString("F1") / 5</h4>
-						<span class="text-warning review-rating">
-							@for (int i = 0; i < Math.Round(promedio); i++)
-							{
-								<i class="fas fa-star"></i>
-							}
-							@for (int i = 0; i < 5 - Math.Round(promedio); i++)
-							{
-								<i class="far fa-star"></i>
-							}
-						</span>
-						<p class="text-muted mt-2">Puntuación promedio</p>
-					</div>
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="allReviewsModalLabel">Todas las Reseñas de "@Model.Titulo" (@Model.Resenas.Count() en total)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (Model.Resenas != null && Model.Resenas.Any())
+                {
+                    var promedio = Model.Resenas.Average(r => r.Calificacion);
+                    <div class="text-center mb-4 p-3 bg-light rounded">
+                        <h4 class="mb-1">@promedio.ToString("F1") / 5</h4>
+                        <span class="text-warning review-rating">
+                            @for (int i = 0; i < Math.Round(promedio); i++)
+                            {
+                                <i class="fas fa-star"></i>
+                            }
+                            @for (int i = 0; i < 5 - Math.Round(promedio); i++)
+                            {
+                                <i class="far fa-star"></i>
+                            }
+                        </span>
+                        <p class="text-muted mt-2">Puntuación promedio</p>
+                    </div>
 
-					@foreach (var resena in todasLasResenas)
-					{
-						<div class="review-card">
-							<div class="review-header">
-								<p class="mb-0"><strong>@resena.NombreUsuario</strong></p>
-								<span class="review-rating">
-									@for (int i = 0; i < resena.Calificacion; i++)
-									{
-										<i class="fas fa-star"></i>
-									}
-									@for (int i = 0; i < 5 - resena.Calificacion; i++)
-									{
-										<i class="far fa-star"></i>
-									}
-								</span>
-							</div>
-							<p class="review-date">@resena.Fecha.ToString("dd/MM/yyyy")</p>
-							<p class="mb-0">@resena.Comentario</p>
-						</div>
-					}
-				}
-				else
-				{
-					<p class="text-muted">Este curso aún no tiene reseñas.</p>
-				}
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-			</div>
-		</div>
-	</div>
+                    @foreach (var resena in todasLasResenas)
+                    {
+                        <div class="review-card">
+                            <div class="review-header">
+                                <p class="mb-0"><strong>@resena.NombreUsuario</strong></p>
+                                <span class="review-rating">
+                                    @for (int i = 0; i < resena.Calificacion; i++)
+                                    {
+                                        <i class="fas fa-star"></i>
+                                    }
+                                    @for (int i = 0; i < 5 - resena.Calificacion; i++)
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
+                                </span>
+                            </div>
+                            <p class="review-date">@resena.Fecha.ToString("dd/MM/yyyy")</p>
+                            <p class="mb-0">@resena.Comentario</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">Este curso aún no tiene reseñas.</p>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-@* Modal para Subir/Reemplazar Entrega (NUEVO) *@
 <div class="modal fade" id="entregaModal" tabindex="-1" aria-labelledby="entregaModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header bg-success text-white">
-				<h5 class="modal-title" id="entregaModalLabel">Subir entrega</h5>
-				<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<form asp-action="SubirEntregaActividad" asp-controller="Curso" method="post" enctype="multipart/form-data">
-				<input type="hidden" id="actividadIdInput" name="recursoActividadId" />
-				<input type="hidden" id="cursoId" name="cursoId" value="@Model.Id" />
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="entregaModalLabel">Subir entrega</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="SubirEntregaActividad" asp-controller="Curso" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="actividadIdInput" name="recursoActividadId" />
+                <input type="hidden" id="cursoId" name="cursoId" value="@Model.Id" />
 
-				@Html.AntiForgeryToken()
-				<div class="modal-body">
-					<p class="mb-3">Actividad: <strong id="actividadTituloPlaceholder"></strong></p>
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <p class="mb-3">Actividad: <strong id="actividadTituloPlaceholder"></strong></p>
 
-					<div class="mb-3">
-						<label for="archivoEntrega" class="form-label">Archivo de la tarea</label>
-						<input class="form-control" type="file" id="archivoEntrega" name="archivoEntrega" required>
-						<div class="form-text">Formatos aceptados: PDF, ZIP, DOCX, JPG, etc.</div>
-					</div>
+                    <div class="mb-3">
+                        <label for="archivoEntrega" class="form-label">Archivo de la tarea</label>
+                        <input class="form-control" type="file" id="archivoEntrega" name="archivoEntrega" required>
+                        <div class="form-text">Formatos aceptados: PDF, ZIP, DOCX, JPG, etc.</div>
+                    </div>
 
-					<div class="mb-3">
-						<label for="comentarioEstudiante" class="form-label">Comentarios para el maestro (Opcional)</label>
-						<textarea class="form-control" id="comentarioEstudiante" name="comentario" rows="3" placeholder="Escribe cualquier nota sobre tu entrega..."></textarea>
-						<div class="form-text">Si estás reemplazando una entrega, tu nuevo comentario sobrescribirá el anterior.</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-					<button type="submit" class="btn btn-success"><i class="fas fa-check-circle me-1"></i> Confirmar entrega</button>
-				</div>
-			</form>
-		</div>
-	</div>
+                    <div class="mb-3">
+                        <label for="comentarioEstudiante" class="form-label">Comentarios para el maestro (Opcional)</label>
+                        <textarea class="form-control" id="comentarioEstudiante" name="comentario" rows="3" placeholder="Escribe cualquier nota sobre tu entrega..."></textarea>
+                        <div class="form-text">Si estás reemplazando una entrega, tu nuevo comentario sobrescribirá el anterior.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-action"><i class="fas fa-check-circle me-1"></i> Confirmar entrega</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
-@* Modal para Ver Calificación (NUEVO) *@
 <div class="modal fade" id="calificacionModal" tabindex="-1" aria-labelledby="calificacionModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header bg-primary text-white">
-				<h5 class="modal-title" id="calificacionModalLabel"><i class="fas fa-trophy me-2"></i> Calificación de actividad</h5>
-				<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<p class="mb-3">Actividad: <strong id="calificacionActividadTituloPlaceholder"></strong></p>
-				<div class="text-center mb-4 p-4 border rounded bg-light">
-					<p class="mb-0 text-muted">Tu puntuación final:</p>
-					<h1 class="display-3 fw-bold text-primary" id="calificacionPlaceholder">--</h1>
-				</div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="calificacionModalLabel"><i class="fas fa-trophy me-2"></i> Calificación de actividad</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">Actividad: <strong id="calificacionActividadTituloPlaceholder"></strong></p>
+                <div class="text-center mb-4 p-4 border rounded bg-light">
+                    <p class="mb-0 text-muted">Tu puntuación final:</p>
+                    <h1 class="display-3 fw-bold text-primary" id="calificacionPlaceholder">--</h1>
+                </div>
 
-				<h6 class="text-primary mt-4 border-bottom pb-2">Retroalimentación del maestro:</h6>
-				<blockquote class="blockquote border-start border-3 ps-3" id="observacionPlaceholder">
-					<p class="mb-0 fst-italic text-dark"></p>
-				</blockquote>
+                <h6 class="text-primary mt-4 border-bottom pb-2">Retroalimentación del maestro:</h6>
+                <blockquote class="blockquote border-start border-3 ps-3" id="observacionPlaceholder">
+                    <p class="mb-0 fst-italic text-dark"></p>
+                </blockquote>
 
-				<small class="text-muted d-block text-end">Calificado el: <span id="fechaCalificacionPlaceholder"></span></small>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-			</div>
-		</div>
-	</div>
+                <small class="text-muted d-block text-end">Calificado el: <span id="fechaCalificacionPlaceholder"></span></small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
 </div>
+
 @section Scripts {
-	<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			const mainVideoFrame = document.getElementById('mainVideoFrame');
-			const mainCourseImage = document.getElementById('mainCourseImage');
-			const lessonTitleEl = document.getElementById('lessonTitle');
-			const lessonContentEl = document.getElementById('lessonContent');
-			const progresoEndpoint = '@Url.Action("MarcarLeccionComoCompletada", "Curso")';
-			const initialLessonTitle = 'Selecciona una lección para empezar';
-			const initialLessonContent = 'Usa la lista de lecciones a continuación para navegar por el contenido del curso.';
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainVideoFrame = document.getElementById('mainVideoFrame');
+            const mainCourseImage = document.getElementById('mainCourseImage');
+            const lessonTitleEl = document.getElementById('lessonTitle');
+            const lessonContentEl = document.getElementById('lessonContent');
+            const progresoEndpoint = '@Url.Action("MarcarLeccionComoCompletada", "Curso")';
+            const initialLessonTitle = 'Selecciona una lección para empezar';
+            const initialLessonContent = 'Usa la lista de lecciones a continuación para navegar por el contenido del curso.';
 
-			// Función para actualizar la vista de la lección
-			function updateLessonView(lessonLink) {
-				// 1. Manejo de la clase 'active'
-				document.querySelectorAll('.lesson-item').forEach(l => l.classList.remove('active'));
-				lessonLink.classList.add('active');
+            // Función para actualizar la vista de la lección
+            function updateLessonView(lessonLink) {
+                // 1. Manejo de la clase 'active'
+                document.querySelectorAll('.lesson-item').forEach(l => l.classList.remove('active'));
+                lessonLink.classList.add('active');
 
-				// 2. Obtener los datos
-				const videoUrl = lessonLink.dataset.videoUrl;
-				const lessonId = lessonLink.dataset.lessonId;
-				const lessonTitle = lessonLink.dataset.lessonTitle;
-				const lessonContent = lessonLink.dataset.lessonContent;
+                // 2. Obtener los datos
+                const videoUrl = lessonLink.dataset.videoUrl;
+                const lessonId = lessonLink.dataset.lessonId;
+                const lessonTitle = lessonLink.dataset.lessonTitle;
+                const lessonContent = lessonLink.dataset.lessonContent;
 
-				// 3. Actualizar el reproductor
-				if (videoUrl) {
+                // 3. Actualizar el reproductor
+                if (videoUrl) {
+                    const videoIdMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})(?:\S+)?/);
+                    const videoId = videoIdMatch ? videoIdMatch[1] : null;
 
-					// Extracción del ID de YouTube
-					// MODIFICADO: Se añadió '|shorts\/' al patrón para capturar URLs de YouTube Shorts.
-					const videoIdMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})(?:\S+)?/);
-					const videoId = videoIdMatch ? videoIdMatch[1] : null;
+                    if (videoId) {
+                        mainCourseImage.classList.add('d-none');
+                        mainVideoFrame.classList.remove('d-none');
+                        const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`;
+                        mainVideoFrame.src = embedUrl;
+                    } else {
+                        mainVideoFrame.classList.add('d-none');
+                        mainCourseImage.classList.remove('d-none');
+                        mainVideoFrame.src = '';
+                        console.error("URL de YouTube inválida o no reconocida:", videoUrl);
+                    }
+                } else {
+                    mainVideoFrame.classList.add('d-none');
+                    mainCourseImage.classList.remove('d-none');
+                    mainVideoFrame.src = '';
+                }
 
-					if (videoId) {
-						// Si se encuentra un ID válido, incrustar
-						mainCourseImage.classList.add('d-none');
-						mainVideoFrame.classList.remove('d-none');
-						const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`;
-						mainVideoFrame.src = embedUrl;
-					} else {
-						// Si no se pudo obtener un ID de 11 caracteres (URL inválida), mostrar la imagen
-						mainVideoFrame.classList.add('d-none');
-						mainCourseImage.classList.remove('d-none');
-						mainVideoFrame.src = ''; // Limpiar el iframe
-						console.error("URL de YouTube inválida o no reconocida:", videoUrl);
-					}
+                // 4. Actualizar el contenido de la lección
+                lessonTitleEl.textContent = lessonTitle;
+                lessonContentEl.innerHTML = lessonContent;
 
-				} else {
-					// Si no hay video, mostrar la imagen y un mensaje.
-					mainVideoFrame.classList.add('d-none');
-					mainCourseImage.classList.remove('d-none');
-					mainVideoFrame.src = ''; // Limpiar el iframe
-				}
+                // 5. Llamada a la API para marcar como completada (SOLO SI NO ESTÁ COMPLETA)
+                if (lessonId && !lessonLink.classList.contains('completed')) {
+                    fetch(`${progresoEndpoint}?leccionId=${lessonId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Lección marcada como completada con éxito.');
+                            lessonLink.classList.add('completed');
+                            const icon = lessonLink.querySelector('.lesson-icon');
+                            if (icon) {
+                                icon.classList.remove('fa-play-circle');
+                                icon.classList.add('fa-check-circle');
+                            }
+                        } else {
+                            console.error('Error al marcar la lección:', data.message);
+                        }
+                    })
+                    .catch(error => console.error('Hubo un error en la solicitud:', error));
+                }
+            }
 
-				// 4. Actualizar el contenido de la lección
-				lessonTitleEl.textContent = lessonTitle;
-				lessonContentEl.innerHTML = lessonContent;
+            // Delegación de eventos para manejar clics en las lecciones
+            document.getElementById('courseAccordion').addEventListener('click', function(e) {
+                const lessonLink = e.target.closest('.lesson-item');
+                if (!lessonLink) return;
+                e.preventDefault();
+                updateLessonView(lessonLink);
+            });
 
-				// 5. Llamada a la API para marcar como completada (SOLO SI NO ESTÁ COMPLETA)
-				if (lessonId && !lessonLink.classList.contains('completed')) {
-					fetch(`${progresoEndpoint}?leccionId=${lessonId}`, {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-					})
-					.then(response => response.json())
-					.then(data => {
-						if (data.success) {
-							console.log('Lección marcada como completada con éxito.');
-							lessonLink.classList.add('completed');
-							const icon = lessonLink.querySelector('.lesson-icon');
-							if (icon) {
-								icon.classList.remove('fa-play-circle');
-								icon.classList.add('fa-check-circle');
-							}
-						} else {
-							console.error('Error al marcar la lección:', data.message);
-						}
-					})
-					.catch(error => console.error('Hubo un error en la solicitud:', error));
-				}
-			}
+            // Lógica para el cambio de tabs (mantener el estado inicial en contenido)
+            const contenidoTabButton = document.getElementById('contenido-tab');
+            if (contenidoTabButton) {
+                contenidoTabButton.addEventListener('shown.bs.tab', function () {
+                    mainVideoFrame.classList.add('d-none');
+                    mainCourseImage.classList.remove('d-none');
+                    mainVideoFrame.src = '';
+                    lessonTitleEl.textContent = initialLessonTitle;
+                    lessonContentEl.innerHTML = initialLessonContent;
+                    document.querySelectorAll('.lesson-item').forEach(l => l.classList.remove('active'));
+                });
+            }
 
-			// Delegación de eventos para manejar clics en las lecciones
-			document.getElementById('courseAccordion').addEventListener('click', function(e) {
-				const lessonLink = e.target.closest('.lesson-item');
-				if (!lessonLink) return;
-				e.preventDefault();
-				updateLessonView(lessonLink);
-			});
+            // Lógica para preseleccionar la estrella al hacer clic en el formulario
+            const starRating = document.querySelector('.star-rating');
+            if (starRating) {
+                starRating.addEventListener('click', function(e) {
+                    const label = e.target.closest('label');
+                    if (label) {
+                        document.getElementById(label.getAttribute('for')).checked = true;
+                    }
+                });
+            }
 
-			// Lógica para el cambio de tabs (mantener el estado inicial en contenido)
-			const contenidoTabButton = document.getElementById('contenido-tab');
-			if (contenidoTabButton) {
-				contenidoTabButton.addEventListener('shown.bs.tab', function () {
-					// Cuando se muestra el tab de contenido, asegurar que el reproductor muestre el estado inicial
-					mainVideoFrame.classList.add('d-none');
-					mainCourseImage.classList.remove('d-none');
-					mainVideoFrame.src = '';
-					lessonTitleEl.textContent = initialLessonTitle;
-					lessonContentEl.innerHTML = initialLessonContent;
-					document.querySelectorAll('.lesson-item').forEach(l => l.classList.remove('active'));
-				});
-			}
+            // Manejar el hash de la URL para activar el tab correcto al recargar
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
 
-			// Lógica para preseleccionar la estrella al hacer clic en el formulario
-			const starRating = document.querySelector('.star-rating');
-			if (starRating) {
-				starRating.addEventListener('click', function(e) {
-					const label = e.target.closest('label');
-					if (label) {
-						document.getElementById(label.getAttribute('for')).checked = true;
-					}
-				});
-			}
+            if (tabParam) {
+                const tabButton = document.getElementById(tabParam + '-tab');
+                if (tabButton) {
+                    const bsTab = new bootstrap.Tab(tabButton);
+                    bsTab.show();
+                }
+            }
 
-			// Manejar el hash de la URL para activar el tab correcto al recargar
-			const urlParams = new URLSearchParams(window.location.search);
-			const tabParam = urlParams.get('tab');
+            // LÓGICA DE MODALES DE ACTIVIDADES
+            const entregaModal = document.getElementById('entregaModal');
+            if (entregaModal) {
+                entregaModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const actividadId = button.getAttribute('data-actividad-id');
+                    const actividadTitulo = button.getAttribute('data-actividad-titulo');
+                    const comentarioPrevio = button.getAttribute('data-comentario-previo');
 
-			if (tabParam) {
-				const tabButton = document.getElementById(tabParam + '-tab'); // Asume que el parámetro es 'presentacion', 'contenido', etc.
-				if (tabButton) {
-					const bsTab = new bootstrap.Tab(tabButton);
-					bsTab.show();
-				}
-			}
+                    const modalTitle = entregaModal.querySelector('#entregaModalLabel');
+                    const actividadIdInput = entregaModal.querySelector('#actividadIdInput');
+                    const actividadTituloPlaceholder = entregaModal.querySelector('#actividadTituloPlaceholder');
+                    const comentarioEstudiante = entregaModal.querySelector('#comentarioEstudiante');
 
-			// ----------------------------------------------------------------------
-			// LÓGICA DE MODALES DE ACTIVIDADES
-			// ----------------------------------------------------------------------
+                    actividadIdInput.value = actividadId;
+                    actividadTituloPlaceholder.textContent = actividadTitulo;
+                    comentarioEstudiante.value = comentarioPrevio || '';
 
-			// Modal de Entrega (Subir/Reemplazar)
-			const entregaModal = document.getElementById('entregaModal');
-			if (entregaModal) {
-				entregaModal.addEventListener('show.bs.modal', function (event) {
-					const button = event.relatedTarget;
-					const actividadId = button.getAttribute('data-actividad-id');
-					const actividadTitulo = button.getAttribute('data-actividad-titulo');
-					const comentarioPrevio = button.getAttribute('data-comentario-previo');
+                    if (comentarioPrevio) {
+                        modalTitle.textContent = 'Reemplazar Entrega';
+                    } else {
+                        modalTitle.textContent = 'Subir Entrega';
+                    }
 
-					const modalTitle = entregaModal.querySelector('#entregaModalLabel');
-					const actividadIdInput = entregaModal.querySelector('#actividadIdInput');
-					const actividadTituloPlaceholder = entregaModal.querySelector('#actividadTituloPlaceholder');
-					const comentarioEstudiante = entregaModal.querySelector('#comentarioEstudiante');
+                    entregaModal.querySelector('#archivoEntrega').value = '';
+                });
+            }
 
-					// 1. Pre-cargar datos
-					actividadIdInput.value = actividadId;
-					actividadTituloPlaceholder.textContent = actividadTitulo;
-					comentarioEstudiante.value = comentarioPrevio || '';
+            const calificacionModal = document.getElementById('calificacionModal');
+            if (calificacionModal) {
+                calificacionModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const calificacion = button.getAttribute('data-calificacion');
+                    const observacion = button.getAttribute('data-observacion');
+                    const fecha = button.getAttribute('data-fecha');
+                    const actividadTitulo = button.getAttribute('data-actividad-titulo');
 
-					// 2. Cambiar título si es re-entrega
-					if (comentarioPrevio) {
-						modalTitle.textContent = 'Reemplazar Entrega';
-					} else {
-						modalTitle.textContent = 'Subir Entrega';
-					}
-
-					// Limpiar el campo de archivo
-					entregaModal.querySelector('#archivoEntrega').value = '';
-				});
-			}
-
-			// Modal de Calificación (Ver Nota)
-			const calificacionModal = document.getElementById('calificacionModal');
-			if (calificacionModal) {
-				calificacionModal.addEventListener('show.bs.modal', function (event) {
-					const button = event.relatedTarget;
-					const calificacion = button.getAttribute('data-calificacion');
-					const observacion = button.getAttribute('data-observacion');
-					const fecha = button.getAttribute('data-fecha');
-					const actividadTitulo = button.getAttribute('data-actividad-titulo');
-
-					calificacionModal.querySelector('#calificacionPlaceholder').textContent = calificacion + '/100';
-					calificacionModal.querySelector('#observacionPlaceholder p').textContent = observacion;
-					calificacionModal.querySelector('#fechaCalificacionPlaceholder').textContent = fecha;
-					calificacionModal.querySelector('#calificacionActividadTituloPlaceholder').textContent = actividadTitulo;
-				});
-			}
-
-		});
-	</script>
+                    calificacionModal.querySelector('#calificacionPlaceholder').textContent = calificacion + '/100';
+                    calificacionModal.querySelector('#observacionPlaceholder p').textContent = observacion;
+                    calificacionModal.querySelector('#fechaCalificacionPlaceholder').textContent = fecha;
+                    calificacionModal.querySelector('#calificacionActividadTituloPlaceholder').textContent = actividadTitulo;
+                });
+            }
+        });
+    </script>
 }

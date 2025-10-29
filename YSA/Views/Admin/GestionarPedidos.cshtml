@@ -4,204 +4,555 @@
 }
 
 <style>
-    /* ------------------------------------- */
-    /* 1. Variables B&W y Estilos Generales  */
-    /* ------------------------------------- */
+    /* IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES COHERENTES CON EL DISEÑO EDITORIAL */
     :root {
-        --color-secondary: #000000; /* Negro Puro (Título, Hover) */
-        --color-primary: #333333; /* Gris Oscuro (Botones, Acentos) */
-        --color-secondary-light: #5a5a5a; /* Gris Medio para acciones secundarias */
-        --color-text-muted: #6a6a6a; /* Gris medio (Descripción) */
-        --color-background-light: #f7f7f7; /* Fondo general de la página */
-        --color-background-white: #ffffff; /* Fondo para las tarjetas */
-        --color-border-light: #e0e0e0; /* Borde sutil */
-        --color-danger: #cc0000; /* Rojo sutil para acciones peligrosas */
+        --color-primary-action: #ef8830;
+        --color-secondary: #212529;
+        --color-accent: #6c757d;
+        --color-background: #ffffff;
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a;
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa;
+        --color-brand-primary: #ef8830;
+        --color-brand-secondary: #e5361a;
+        --color-brand-accent: #f2e514;
+        --color-brand-success: #6db53e;
+        --color-brand-dark: #08080a;
+        --font-heading: 'Georgia', 'Times New Roman', serif;
+        --font-body: 'Arial', 'Helvetica', sans-serif;
+        --font-accent: 'Poppins', sans-serif;
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
     body {
-        background-color: var(--color-background-light);
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
     }
 
-    h1 {
-        color: var(--color-secondary);
-        font-weight: 700;
-        font-size: 2rem;
+    /* PORTADA DE REVISTA PARA GESTIÓN */
+    .management-cover {
+        width: 100%;
+        height: 35vh;
+        background-color: #f4f4f4;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 3rem;
     }
 
-    /* Botón "Aprobar Pago" (Estilo principal) */
-    .btn-aprobar {
-        background-color: var(--color-primary) !important;
-        border-color: var(--color-primary) !important;
-        color: white !important;
-        font-weight: 600;
-        transition: background-color 0.2s;
-        border-radius: 6px;
+    .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
     }
 
-        .btn-aprobar:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
-        }
-
-    /* Botón Secundario (Ver/Rechazar) */
-    .btn-detalle {
-        color: var(--color-secondary-light) !important;
-        border-color: var(--color-border-light) !important;
-        background-color: transparent !important;
-        font-weight: 600;
-        border-radius: 6px;
-    }
-
-        .btn-detalle:hover {
-            color: var(--color-primary) !important;
-            background-color: var(--color-border-light) !important;
-        }
-
-    /* -------------------------- */
-    /* 2. Estilos de Cards        */
-    /* -------------------------- */
-    .pedido-card {
-        border: 1px solid var(--color-border-light);
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        transition: transform 0.2s, box-shadow 0.2s;
-        margin-bottom: 20px;
-        background-color: var(--color-background-white);
-        height: 100%; /* Asegura que todas las tarjetas tengan la misma altura */
+    .cover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
+        z-index: 2;
         display: flex;
-        flex-direction: column;
+        align-items: flex-end;
+        padding: 3rem;
+    }
+
+    .cover-title-block {
+        color: var(--color-text-light);
+        max-width: 700px;
+        z-index: 3;
+    }
+
+    .cover-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 0.5rem;
+    }
+
+    .cover-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.3rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: var(--line-height-normal);
+    }
+
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    /* BOTONES CON ESTILO EDITORIAL */
+    .btn-primary {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        color: var(--color-text-light);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+        .btn-primary:hover {
+            background-color: #e57a20;
+            border-color: #e57a20;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 136, 48, 0.3);
+        }
+
+    .btn-dark {
+        background-color: var(--color-secondary);
+        border-color: var(--color-secondary);
+        color: var(--color-text-light);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-dark:hover {
+            background-color: #000;
+            border-color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 37, 41, 0.3);
+        }
+
+    .btn-info {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        color: var(--color-text-light);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-info:hover {
+            background-color: #e57a20;
+            border-color: #e57a20;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 136, 48, 0.3);
+        }
+
+    .btn-outline-primary {
+        border-color: var(--color-brand-primary);
+        color: var(--color-brand-primary);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-primary:hover {
+            background-color: var(--color-brand-primary);
+            border-color: var(--color-brand-primary);
+            color: var(--color-text-light);
+            transform: translateY(-2px);
+        }
+
+    /* PESTAÑAS ESTILO EDITORIAL */
+    .nav-tabs {
+        border-bottom: 3px solid var(--color-border);
+        margin-bottom: 2rem;
+    }
+
+        .nav-tabs .nav-link {
+            font-family: var(--font-accent);
+            font-weight: 600;
+            color: var(--color-accent);
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 1rem 1.5rem;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+            .nav-tabs .nav-link:hover {
+                color: var(--color-brand-primary);
+                border-color: transparent;
+            }
+
+            .nav-tabs .nav-link.active {
+                color: var(--color-brand-primary);
+                background-color: transparent;
+                border-color: var(--color-brand-primary);
+                font-weight: 700;
+            }
+
+    .nav-wrapper {
+        overflow-x: auto;
+        background: var(--color-card-bg);
+        border-radius: var(--border-radius-md);
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    /* CONTADORES DE PESTAÑAS */
+    .tab-badge {
+        background-color: var(--color-brand-primary);
+        color: var(--color-text-light);
+        border-radius: 50%;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+        margin-left: 0.5rem;
+    }
+
+    /* TARJETAS DE PEDIDOS ESTILO EDITORIAL */
+    .pedido-card {
+        background-color: var(--color-card-bg);
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        position: relative;
     }
 
         .pedido-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
         }
 
-    .card-title-lg {
-        font-size: 1.5rem;
+    .pedido-header {
+        background-color: var(--color-section-bg);
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .pedido-body {
+        padding: 1.5rem;
+    }
+
+    .pedido-title {
+        font-family: var(--font-heading);
+        font-size: 1.4rem;
         font-weight: 700;
         color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+        line-height: var(--line-height-normal);
+    }
+
+    .pedido-info {
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        color: var(--color-accent);
         margin-bottom: 0.25rem;
     }
 
-    .card-info-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 5px 0;
-        border-bottom: 1px dashed var(--color-border-light);
-    }
-
-        .card-info-item:last-child {
-            border-bottom: none;
+        .pedido-info strong {
+            color: var(--color-secondary);
+            font-weight: 600;
         }
 
-    .card-info-label {
+    .pedido-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-top: 1px dashed var(--color-border);
+        margin-top: 1rem;
+    }
+
+    .pedido-amount {
+        font-family: var(--font-heading);
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--color-brand-primary);
+    }
+
+    .pedido-status {
+        font-family: var(--font-accent);
+        font-size: 0.8rem;
         font-weight: 600;
-        color: var(--color-text-muted);
+        padding: 0.3rem 0.7rem;
+        border-radius: var(--border-radius-sm);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    .card-info-value {
-        color: var(--color-primary);
-        font-weight: 500;
+    .status-validando {
+        background-color: rgba(242, 229, 20, 0.2);
+        color: #856404;
+        border: 1px solid var(--color-brand-accent);
     }
 
-    .card-body-scroll {
-        /* Permite que el cuerpo principal crezca y empuje el footer */
-        flex-grow: 1;
+    .status-pendiente {
+        background-color: rgba(239, 136, 48, 0.2);
+        color: var(--color-brand-primary);
+        border: 1px solid var(--color-brand-primary);
     }
 
-    /* Estilo para la lista de artículos (si se incluyera) */
+    .status-completado {
+        background-color: rgba(109, 181, 62, 0.2);
+        color: var(--color-brand-success);
+        border: 1px solid var(--color-brand-success);
+    }
+
+    .status-cancelado {
+        background-color: rgba(229, 54, 26, 0.2);
+        color: var(--color-brand-secondary);
+        border: 1px solid var(--color-brand-secondary);
+    }
+
+    /* LISTA DE ARTÍCULOS */
     .item-list {
         list-style: none;
         padding-left: 0;
         margin-bottom: 1rem;
-        max-height: 100px;
-        overflow-y: auto; /* Scroll si hay muchos ítems */
-        border: 1px solid var(--color-border-light);
-        padding: 10px;
-        border-radius: 4px;
-        background-color: var(--color-background-light);
+        max-height: 120px;
+        overflow-y: auto;
+        border: 1px solid var(--color-border);
+        padding: 1rem;
+        border-radius: var(--border-radius-sm);
+        background-color: var(--color-section-bg);
     }
 
         .item-list li {
+            font-family: var(--font-body);
             font-size: 0.9rem;
-            color: var(--color-text-muted);
+            color: var(--color-accent);
             line-height: 1.4;
+            padding: 0.25rem 0;
+            border-bottom: 1px dashed var(--color-border);
         }
 
-    .btn-comprobante {
-        color: #0d6efd !important; /* Azul para distinguirlo */
-        border-color: #0d6efd !important;
-        background-color: transparent !important;
-        font-weight: 600;
-        border-radius: 6px;
+            .item-list li:last-child {
+                border-bottom: none;
+            }
+
+    /* ESTADO VACÍO */
+    .empty-state {
+        padding: 3rem 2rem;
+        text-align: center;
+        color: var(--color-accent);
     }
 
-        .btn-comprobante:hover {
-            background-color: #0d6efd !important;
-            color: white !important;
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--color-border);
+            margin-bottom: 1rem;
         }
 
-    /* Estilo para manejar el scroll horizontal en pestañas para móviles */
-    .nav-wrapper {
-        overflow-x: auto;
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* RESPONSIVE ADJUSTMENTS */
+    @@media (max-width: 991.98px) {
+        .management-cover {
+            height: 30vh;
+        }
+
+        .cover-overlay {
+            padding: 2rem;
+        }
+
+        .cover-title {
+            font-size: 2rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .section-container {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .pedido-header, .pedido-body {
+            padding: 1.25rem;
+        }
+    }
+
+    @@media (max-width: 767.98px) {
+        .management-cover {
+            height: 25vh;
+        }
+
+        .cover-title {
+            font-size: 1.75rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+        }
+
+        .pedido-title {
+            font-size: 1.2rem;
+        }
+
+        .nav-tabs .nav-link {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    @@media (max-width: 575.98px) {
+        .management-cover {
+            height: 20vh;
+        }
+
+        .cover-overlay {
+            padding: 1.5rem;
+        }
+
+        .cover-title {
+            font-size: 1.5rem;
+        }
+
+        .section-container {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .pedido-header, .pedido-body {
+            padding: 1rem;
+        }
+
+        .btn-primary, .btn-dark {
+            padding: 0.625rem 1.25rem;
+            font-size: 0.9rem;
+        }
+
+        .nav-wrapper {
+            padding: 0.5rem;
+        }
     }
 </style>
 
-<div class="container mt-5 mb-5 pb-5">
-    <h1 class="mb-4">Gestión de Pedidos y Pagos</h1>
-    <hr style="border-top: 2px solid var(--color-border-light); opacity: 1; margin-bottom: 2rem;" />
+<div class="container px-0 py-5 pb-5 mb-5">
+    <!-- SECCIÓN PRINCIPAL DE GESTIÓN -->
+    <div class="section-container">
+        <!-- ENCABEZADO Y CONTROLES -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+            <div class="mb-3 mb-md-0">
+                <span class="latest-grid-header">PEDIDOS Y PAGOS</span>
+                <p class="text-muted mt-2 mb-0">Administra el flujo completo de pedidos y transacciones</p>
+            </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <a asp-action="Panel" asp-controller="Admin" class="btn btn-dark">
-            <i class="fas fa-arrow-left me-2"></i> Regresar al panel
-        </a>
-    </div>
-
-    <div class="nav-wrapper">
-        <ul class="nav nav-tabs nav-fill flex-nowrap" id="pedidosTabs" role="tablist" style="min-width: 500px;">
-            <li class="nav-item flex-shrink-0" role="presentation">
-                <button class="nav-link active" id="validando-tab" data-bs-toggle="tab" data-bs-target="#validando" type="button" role="tab" aria-controls="validando" aria-selected="true">
-                    <i class="fas fa-clock me-1"></i> Validando (@Model.PedidosValidando.Count)
-                </button>
-            </li>
-            <li class="nav-item flex-shrink-0" role="presentation">
-                <button class="nav-link" id="pendiente-tab" data-bs-toggle="tab" data-bs-target="#pendiente" type="button" role="tab" aria-controls="pendiente" aria-selected="false">
-                    <i class="fas fa-wallet me-1"></i> Pendiente (@Model.PedidosPendientes.Count)
-                </button>
-            </li>
-            <li class="nav-item flex-shrink-0" role="presentation">
-                <button class="nav-link" id="completado-tab" data-bs-toggle="tab" data-bs-target="#completado" type="button" role="tab" aria-controls="completado" aria-selected="false">
-                    <i class="fas fa-check-circle me-1"></i> Completados (@Model.PedidosCompletados.Count)
-                </button>
-            </li>
-            <li class="nav-item flex-shrink-0" role="presentation">
-                <button class="nav-link" id="cancelado-tab" data-bs-toggle="tab" data-bs-target="#cancelado" type="button" role="tab" aria-controls="cancelado" aria-selected="false">
-                    <i class="fas fa-times-circle me-1"></i> Anulados (@Model.PedidosCancelados.Count)
-                </button>
-            </li>
-        </ul>
-    </div>
-
-
-    <div class="tab-content" id="pedidosTabsContent">
-
-        <div class="tab-pane fade show active" id="validando" role="tabpanel" aria-labelledby="validando-tab">
-            @await Html.PartialAsync("_ListaPedidosPartial", Model.PedidosValidando)
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-action="Panel" asp-controller="Admin" class="btn btn-dark">
+                    <i class="fas fa-arrow-left me-2"></i> Regresar al panel
+                </a>
+            </div>
         </div>
 
-        <div class="tab-pane fade" id="pendiente" role="tabpanel" aria-labelledby="pendiente-tab">
-            @await Html.PartialAsync("_ListaPedidosPartial", Model.PedidosPendientes)
+        <hr class="section-divider" />
+
+        <!-- PESTAÑAS DE ESTADO -->
+        <div class="nav-wrapper">
+            <ul class="nav nav-tabs nav-fill flex-nowrap" id="pedidosTabs" role="tablist" style="min-width: 500px;">
+                <li class="nav-item flex-shrink-0" role="presentation">
+                    <button class="nav-link active" id="validando-tab" data-bs-toggle="tab" data-bs-target="#validando" type="button" role="tab" aria-controls="validando" aria-selected="true">
+                        <i class="fas fa-clock me-1"></i> Validando
+                        <span class="tab-badge">@Model.PedidosValidando.Count</span>
+                    </button>
+                </li>
+                <li class="nav-item flex-shrink-0" role="presentation">
+                    <button class="nav-link" id="pendiente-tab" data-bs-toggle="tab" data-bs-target="#pendiente" type="button" role="tab" aria-controls="pendiente" aria-selected="false">
+                        <i class="fas fa-wallet me-1"></i> Pendiente
+                        <span class="tab-badge">@Model.PedidosPendientes.Count</span>
+                    </button>
+                </li>
+                <li class="nav-item flex-shrink-0" role="presentation">
+                    <button class="nav-link" id="completado-tab" data-bs-toggle="tab" data-bs-target="#completado" type="button" role="tab" aria-controls="completado" aria-selected="false">
+                        <i class="fas fa-check-circle me-1"></i> Completados
+                        <span class="tab-badge">@Model.PedidosCompletados.Count</span>
+                    </button>
+                </li>
+                <li class="nav-item flex-shrink-0" role="presentation">
+                    <button class="nav-link" id="cancelado-tab" data-bs-toggle="tab" data-bs-target="#cancelado" type="button" role="tab" aria-controls="cancelado" aria-selected="false">
+                        <i class="fas fa-times-circle me-1"></i> Anulados
+                        <span class="tab-badge">@Model.PedidosCancelados.Count</span>
+                    </button>
+                </li>
+            </ul>
         </div>
 
-        <div class="tab-pane fade" id="completado" role="tabpanel" aria-labelledby="completado-tab">
-            @await Html.PartialAsync("_ListaPedidosPartial", Model.PedidosCompletados)
-        </div>
+        <!-- CONTENIDO DE PESTAÑAS -->
+        <div class="tab-content" id="pedidosTabsContent">
+            <div class="tab-pane fade show active" id="validando" role="tabpanel" aria-labelledby="validando-tab">
+                @await Html.PartialAsync("_ListaPedidosPartial", Model.PedidosValidando)
+            </div>
 
-        <div class="tab-pane fade" id="cancelado" role="tabpanel" aria-labelledby="cancelado-tab">
-            @await Html.PartialAsync("_ListaPedidosPartial", Model.PedidosCancelados)
-        </div>
+            <div class="tab-pane fade" id="pendiente" role="tabpanel" aria-labelledby="pendiente-tab">
+                @await Html.PartialAsync("_ListaPedidosPartial", Model.PedidosPendientes)
+            </div>
 
+            <div class="tab-pane fade" id="completado" role="tabpanel" aria-labelledby="completado-tab">
+                @await Html.PartialAsync("_ListaPedidosPartial", Model.PedidosCompletados)
+            </div>
+
+            <div class="tab-pane fade" id="cancelado" role="tabpanel" aria-labelledby="cancelado-tab">
+                @await Html.PartialAsync("_ListaPedidosPartial", Model.PedidosCancelados)
+            </div>
+        </div>
     </div>
 </div>
 
@@ -230,6 +581,14 @@
             document.querySelectorAll('#pedidosTabs button').forEach(function(tabEl) {
                 tabEl.addEventListener('shown.bs.tab', function (event) {
                     localStorage.setItem('activePedidoTab', event.target.getAttribute('data-bs-target'));
+                });
+            });
+
+            // Efecto hover mejorado para las tarjetas
+            const pedidoCards = document.querySelectorAll('.pedido-card');
+            pedidoCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.3s ease';
                 });
             });
         });

@@ -5,145 +5,463 @@
 }
 
 <style>
-    /* ---------------------------------- */
-    /* Estilos Generales y Contenedor */
-    /* ---------------------------------- */
-    .portafolio-manager {
-        /* Se mantiene el max-width para centrar y ordenar el contenido principal */
-        max-width: 900px;
-        margin: 0 auto;
-        padding-top: 2rem;
+    /* IMPORTACIÓN DE TIPOGRAFÍAS */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
+    :root {
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
-    /* ---------------------------------- */
-    /* Sección de Subida */
-    /* ---------------------------------- */
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
+    }
+
+    /* ESTILO PORTADA DE REVISTA PRINCIPAL (BANNER) */
+    .magazine-cover {
+        width: 100%;
+        height: 60vh; /* Altura reducida para esta vista */
+        background-color: #f4f4f4;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 3rem;
+    }
+
+    .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .cover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%); /* Degradado oscuro en la parte inferior */
+        z-index: 2;
+        display: flex;
+        align-items: flex-end;
+        padding: 3rem;
+    }
+
+    .cover-title-block {
+        color: var(--color-text-light);
+        max-width: 700px;
+        z-index: 3;
+    }
+
+    .cover-title {
+        font-family: var(--font-heading);
+        font-size: 3.5rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 0.5rem;
+    }
+
+    .cover-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: var(--line-height-normal);
+    }
+
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    /* ESTILO DE TARJETA TIPO REVISTA MEJORADO (Para fotos del portafolio) */
+    .magazine-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+    }
+
+        .magazine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+    .magazine-card-img-container {
+        overflow: hidden;
+        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    }
+
+    .magazine-card-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .magazine-card:hover .magazine-card-img {
+        transform: scale(1.05);
+    }
+
+    .magazine-card-body {
+        padding: 1.5rem;
+        position: relative;
+        text-align: left;
+    }
+
+    .card-title-portafolio {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 1.3rem;
+        line-height: var(--line-height-normal);
+        color: var(--color-secondary);
+        margin-bottom: 1rem;
+    }
+
+    /* SECCIÓN DE SUBIDA CON ESTILO EDITORIAL */
     .upload-section {
-        background-color: #f8f9fa; /* Gris claro sutil */
-        border: 1px dashed #ced4da; /* Borde punteado para el área de carga */
-        border-radius: 12px;
-        padding: 30px;
-        transition: border-color 0.3s;
+        background-color: var(--color-section-bg);
+        border: 2px dashed var(--color-border);
+        border-radius: var(--border-radius-lg);
+        padding: 2.5rem;
+        transition: all 0.3s ease;
+        text-align: center;
     }
 
         .upload-section:hover {
-            border-color: #000; /* Borde oscuro al pasar el ratón */
+            border-color: var(--color-brand-primary);
+            background-color: rgba(239, 136, 48, 0.05);
         }
 
-    .upload-btn {
-        background-color: black;
-        border-color: black;
-        transition: background-color 0.3s;
-    }
-
-        .upload-btn:hover {
-            background-color: #333;
-            border-color: #333;
-        }
-
-    /* ---------------------------------- */
-    /* Galería de Fotos (Cards) */
-    /* ---------------------------------- */
-    .foto-card {
-        border: none;
-        border-radius: 8px;
-        overflow: hidden;
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-        .foto-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .foto-card img {
-            height: 250px; /* Altura fija para todas las imágenes */
-            object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
-            width: 100%;
-            transition: transform 0.3s;
-        }
-
-        .foto-card:hover img {
-            transform: scale(1.05); /* Zoom ligero al pasar el ratón */
-        }
-
-    .card-title-portafolio {
+    /* BOTONES CON NUEVA PALETA DE COLORES */
+    .btn-upload {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: white !important;
         font-weight: 600;
-        font-size: 1.1rem;
-        color: #333;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        padding: 0.75rem 1.5rem;
+    }
+
+        .btn-upload:hover {
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    .btn-delete {
+        background-color: var(--color-brand-secondary) !important;
+        border-color: var(--color-brand-secondary) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+        .btn-delete:hover {
+            background-color: #c02a15 !important;
+            border-color: #c02a15 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    /* FORMULARIOS CON ESTILO EDITORIAL */
+    .form-control {
+        border-radius: var(--border-radius-sm);
+        border: 1px solid var(--color-border);
+        padding: 0.75rem 1rem;
+        font-family: var(--font-body);
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    .form-label {
+        font-family: var(--font-accent);
+        font-weight: 600;
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    /* BADGES Y ELEMENTOS DE ÉNFASIS CON NUEVA PALETA */
+    .badge.bg-light {
+        background-color: var(--color-brand-accent) !important;
+        color: var(--color-brand-dark) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    /* ALERTAS CON NUEVA PALETA */
+    .alert-info {
+        background-color: rgba(239, 136, 48, 0.1);
+        border-color: var(--color-brand-primary);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    .alert-secondary {
+        background-color: var(--color-section-bg);
+        border-color: var(--color-border);
+        color: var(--color-accent);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* MODAL CON ESTILO EDITORIAL */
+    .modal-content {
+        border-radius: var(--border-radius-lg);
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--color-border);
+        background-color: var(--color-section-bg);
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    }
+
+    .modal-title {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        color: var(--color-secondary);
+    }
+
+    /* ADAPTACIONES RESPONSIVE */
+
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .magazine-cover {
+            height: 50vh;
+        }
+
+        .cover-overlay {
+            padding: 2rem;
+        }
+
+        .cover-title {
+            font-size: 2.5rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1.25rem;
+        }
+
+        .section-container {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .upload-section {
+            padding: 2rem;
+        }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .magazine-cover {
+            height: 40vh;
+        }
+
+        .cover-title {
+            font-size: 2rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1rem;
+        }
+
+        .cover-overlay {
+            padding: 1.5rem;
+        }
+
+        .section-container {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .upload-section {
+            padding: 1.5rem;
+        }
+
+        .magazine-card-img {
+            height: 200px;
+        }
     }
 </style>
 
+<div class="container px-0 py-5 pb-5 mb-5">
+    <!-- SECCIÓN DE SUBIDA DE NUEVA OBRA -->
+    <div class="section-container">
+        <div class="px-3 mb-4">
+            <span class="latest-grid-header">SUBIR NUEVA OBRA</span>
+        </div>
 
-<div class="portafolio-manager mb-5 pb-5">
-    <h1 class="text-center fw-bold mb-4">Gestionar mi portafolio</h1>
-    <hr class="mb-5" />
-
-    <div class="row mb-5">
-        <div class="col-12">
-            <h2 class="h4 mb-4 fw-bold text-center">
-                <i class="fas fa-upload me-2"></i>Subir nueva obra
-            </h2>
-            <div class="upload-section text-center">
-                <form id="uploadForm" enctype="multipart/form-data">
-                    <div class="row justify-content-center">
-                        <div class="col-sm-12 col-md-6 form-group mb-3">
-                            <label for="titulo" class="form-label fw-semibold">Título de la obra</label>
-                            <input type="text" class="form-control" id="titulo" name="titulo" maxlength="100" placeholder="Ej: Retrato en Carboncillo">
-                        </div>
-                        <div class="col-sm-12 col-md-6 form-group mb-3">
-                            <label for="archivo" class="form-label fw-semibold">Selecciona una imagen (PNG o JPG)</label>
-                            <input type="file" class="form-control" id="archivo" name="archivo" accept="image/png, image/jpeg, image/jpg" required>
-                        </div>
+        <div class="upload-section">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="row justify-content-center">
+                    <div class="col-sm-12 col-md-6 form-group mb-3">
+                        <label for="titulo" class="form-label">Título de la obra</label>
+                        <input type="text" class="form-control" id="titulo" name="titulo" maxlength="100" placeholder="Ej: Retrato en Carboncillo">
                     </div>
+                    <div class="col-sm-12 col-md-6 form-group mb-3">
+                        <label for="archivo" class="form-label">Selecciona una imagen (PNG o JPG)</label>
+                        <input type="file" class="form-control" id="archivo" name="archivo" accept="image/png, image/jpeg, image/jpg" required>
+                    </div>
+                </div>
 
-                    <button type="submit" class="btn upload-btn text-white mt-3 w-100 w-sm-auto">
-                        <i class="fas fa-plus-circle me-2"></i> Subir al portafolio
-                    </button>
-                </form>
-                <div id="uploadMessage" class="mt-3 fw-semibold"></div>
-            </div>
+                <button type="submit" class="btn btn-upload text-white mt-3">
+                    <i class="fas fa-plus-circle me-2"></i> Subir al portafolio
+                </button>
+            </form>
+            <div id="uploadMessage" class="mt-3 fw-semibold"></div>
         </div>
     </div>
 
-    <h2 class="h4 mb-4 fw-bold text-center">
-        <i class="fas fa-images me-2"></i> Mi portafolio actual
-    </h2>
+    <hr class="section-divider" />
 
-    <div id="portafolio-container" class="row g-4 pb-5 mb-5">
-        @if (Model.Fotos != null && Model.Fotos.Any())
-        {
-            @foreach (var foto in Model.Fotos)
+    <!-- SECCIÓN DEL PORTAFOLIO ACTUAL -->
+    <div class="section-container">
+        <div class="px-3 mb-4">
+            <span class="latest-grid-header">MI PORTAFOLIO ACTUAL</span>
+        </div>
+
+        <div id="portafolio-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+            @if (Model.Fotos != null && Model.Fotos.Any())
             {
-                <div class="col-12 col-sm-6 col-md-6 col-lg-4 foto-item pb-5" data-id="@foto.Id">
-                    <div class="card foto-card shadow-sm h-100">
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#fotoModal" data-foto-url="@Url.Content(foto.UrlImagen)" data-foto-titulo="@foto.Titulo" class="d-block">
-                            <img src="@Url.Content(foto.UrlImagen)" class="card-img-top" alt="@foto.Titulo">
-                        </a>
-                        <div class="card-body d-flex flex-column justify-content-between">
-                            <h5 class="card-title card-title-portafolio mb-3">@foto.Titulo</h5>
+                @foreach (var foto in Model.Fotos)
+                {
+                    <div class="col foto-item" data-id="@foto.Id">
+                        <div class="magazine-card h-100">
+                            <div class="magazine-card-img-container">
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#fotoModal" data-foto-url="@Url.Content(foto.UrlImagen)" data-foto-titulo="@foto.Titulo" class="d-block">
+                                    <img src="@Url.Content(foto.UrlImagen)" class="magazine-card-img" alt="@foto.Titulo">
+                                </a>
+                            </div>
+                            <div class="magazine-card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title-portafolio">@foto.Titulo</h5>
 
-                            <form asp-controller="Artista" asp-action="EliminarFoto" method="post" class="eliminar-form">
-                                <input type="hidden" name="fotoId" value="@foto.Id" />
-                                <button type="submit" class="btn btn-outline-danger btn-sm w-100 delete-btn">
-                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
-                                </button>
-                            </form>
+                                <form asp-controller="Artista" asp-action="EliminarFoto" method="post" class="eliminar-form mt-auto">
+                                    <input type="hidden" name="fotoId" value="@foto.Id" />
+                                    <button type="submit" class="btn btn-delete w-100">
+                                        <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                    </button>
+                                </form>
+                            </div>
                         </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <div class="alert alert-secondary text-center p-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Aún no tienes ninguna obra en tu portafolio. ¡Sube la primera ahora!
                     </div>
                 </div>
             }
-        }
-        else
-        {
-            <div class="col-12 text-center alert alert-secondary p-4">
-                <i class="fas fa-info-circle me-2"></i>
-                Aún no tienes ninguna obra en tu portafolio. ¡Sube la primera ahora!
-            </div>
-        }
+        </div>
     </div>
 </div>
 
+<!-- MODAL PARA VISTA AMPLIADA -->
 <div class="modal fade" id="fotoModal" tabindex="-1" aria-labelledby="fotoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
@@ -160,7 +478,6 @@
         </div>
     </div>
 </div>
-
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -239,7 +556,7 @@
                         text: "¡Esta acción es irreversible y la foto se eliminará permanentemente!",
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#dc3545',
+                        confirmButtonColor: '#e5361a',
                         cancelButtonColor: '#6c757d',
                         confirmButtonText: 'Sí, ¡Eliminar!',
                         cancelButtonText: 'Cancelar'
@@ -255,7 +572,7 @@
                                         Swal.fire('¡Eliminada!', 'La obra ha sido eliminada de tu portafolio.', 'success');
                                         // Comprueba si quedan fotos y actualiza el mensaje si es necesario
                                         if ($('#portafolio-container .foto-item').length === 0) {
-                                            $('#portafolio-container').html('<div class="col-12 text-center alert alert-secondary p-4"><i class="fas fa-info-circle me-2"></i> Aún no tienes ninguna obra en tu portafolio. ¡Sube la primera ahora!</div>');
+                                            $('#portafolio-container').html('<div class="col-12"><div class="alert alert-secondary text-center p-4"><i class="fas fa-info-circle me-2"></i> Aún no tienes ninguna obra en tu portafolio. ¡Sube la primera ahora!</div></div>');
                                         }
                                     });
                                 },
@@ -276,7 +593,7 @@
                                     form.closest('.foto-item').fadeOut('slow', function() {
                                         $(this).remove();
                                         if ($('#portafolio-container .foto-item').length === 0) {
-                                            $('#portafolio-container').html('<div class="col-12 text-center"><p>Aún no tienes fotos en tu portafolio.</p></div>');
+                                            $('#portafolio-container').html('<div class="col-12"><div class="alert alert-secondary text-center p-4"><i class="fas fa-info-circle me-2"></i> Aún no tienes ninguna obra en tu portafolio. ¡Sube la primera ahora!</div></div>');
                                         }
                                     });
                                 },

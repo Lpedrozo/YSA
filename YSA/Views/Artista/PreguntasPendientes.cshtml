@@ -3,200 +3,524 @@
 
 @{
     ViewData["Title"] = "Panel del maestro | Preguntas pendientes";
-    // Se asume que los iconos de FontAwesome (fas) están incluidos en el layout o se incluirán.
 }
 
 <style>
-    /* ------------------------------------- */
-    /* 1. Estilos Base y Comunes (Sin cambios) */
-    /* ------------------------------------- */
-    .instructor-qa-container {
-        padding: 30px;
-        background-color: #f7f9fc;
+    /* IMPORTACIÓN DE TIPOGRAFÍAS */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
+    :root {
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
+    }
+
+    /* ESTILO PORTADA DE REVISTA PRINCIPAL (BANNER) */
+    .magazine-cover {
+        width: 100%;
+        height: 60vh; /* Altura reducida para esta vista */
+        background-color: #f4f4f4;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 3rem;
+    }
+
+    .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .cover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%); /* Degradado oscuro en la parte inferior */
+        z-index: 2;
+        display: flex;
+        align-items: flex-end;
+        padding: 3rem;
+    }
+
+    .cover-title-block {
+        color: var(--color-text-light);
+        max-width: 700px;
+        z-index: 3;
+    }
+
+    .cover-title {
+        font-family: var(--font-heading);
+        font-size: 3.5rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 0.5rem;
+    }
+
+    .cover-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: var(--line-height-normal);
+    }
+
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    /* ESTILO DE TARJETA TIPO REVISTA MEJORADO (Para preguntas) */
+    .magazine-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+    }
+
+        .magazine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+    .magazine-card-body {
+        padding: 1.5rem;
+        position: relative;
+        text-align: left;
+    }
+
+    /* ENCABEZADO DE PREGUNTA CON ESTILO EDITORIAL */
+    .question-header {
+        background: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-accent));
+        color: var(--color-text-light);
+        padding: 1.5rem;
+        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+        font-family: var(--font-accent);
+        font-weight: 600;
+    }
+
+    .question-meta {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.9);
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+        flex-wrap: wrap;
+        font-family: var(--font-body);
+    }
+
+        .question-meta span {
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+    /* TEXTO DE PREGUNTA CON ESTILO EDITORIAL */
+    .question-text {
+        font-family: var(--font-body);
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--color-text-dark);
+        margin-bottom: 1.5rem;
+        padding: 1rem 1rem 1rem 1.5rem;
+        border-left: 4px solid var(--color-brand-primary);
+        background-color: rgba(239, 136, 48, 0.05);
+        border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+        line-height: var(--line-height-normal);
+    }
+
+    /* FORMULARIO DE RESPUESTA CON ESTILO EDITORIAL */
+    .response-form-title {
+        font-family: var(--font-accent);
+        font-weight: 700;
+        color: var(--color-secondary);
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    /* BOTONES CON NUEVA PALETA DE COLORES */
+    .btn-primary {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        padding: 0.75rem 1.5rem;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    /* FORMULARIOS CON ESTILO EDITORIAL */
+    .form-control {
+        border-radius: var(--border-radius-sm);
+        border: 1px solid var(--color-border);
+        padding: 0.75rem 1rem;
+        font-family: var(--font-body);
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    /* BADGES Y ELEMENTOS DE ÉNFASIS CON NUEVA PALETA */
+    .badge.bg-warning {
+        background-color: var(--color-brand-accent) !important;
+        color: var(--color-brand-dark) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    /* ALERTAS CON NUEVA PALETA */
+    .alert-success {
+        background-color: rgba(109, 181, 62, 0.1);
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    .alert-danger {
+        background-color: rgba(229, 54, 26, 0.1);
+        border-color: var(--color-brand-secondary);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* ENCABEZADO DE SECCIÓN CON ESTILO EDITORIAL */
     .qa-header {
-        border-bottom: 2px solid #e9ecef;
-        padding-bottom: 15px;
-        margin-bottom: 30px;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 1.5rem;
+        margin-bottom: 2rem;
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
     }
 
-    .question-card {
-        border: none;
-        border-radius: 8px;
+        .qa-header h1 {
+            font-family: var(--font-heading);
+            font-weight: 800;
+            color: var(--color-secondary);
+            font-size: 2.5rem;
+            margin-bottom: 0;
+        }
+
+        .qa-header h3 {
+            font-family: var(--font-accent);
+            font-weight: 600;
+            color: var(--color-accent);
+            font-size: 1.25rem;
+            margin-bottom: 0;
+        }
+
+    /* ESTADO VACÍO CON ESTILO EDITORIAL */
+    .empty-state {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        text-align: center;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        transition: transform 0.2s;
     }
 
-        .question-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    /* ADAPTACIONES RESPONSIVE */
+
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .magazine-cover {
+            height: 50vh;
         }
 
-    .question-header {
-        background-color: #fce7b7; /* Un amarillo suave/naranja claro */
-        color: #333;
-        padding: 15px 20px;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
-        border-bottom: 1px solid #f8d7a1;
-    }
-
-        .question-header strong {
-            font-weight: 700;
-            color: #d9534f; /* Color de acento para el curso */
+        .cover-overlay {
+            padding: 2rem;
         }
 
-    .question-meta {
-        font-size: 0.9em;
-        color: #6c757d;
-        display: flex;
-        justify-content: space-between;
-        margin-top: 5px;
-        flex-wrap: wrap; /* Asegura que los metadatos se envuelvan en móvil */
-    }
-
-        .question-meta span {
-            margin-right: 10px;
+        .cover-title {
+            font-size: 2.5rem;
         }
 
-    .question-body {
-        padding: 20px;
-    }
+        .cover-subtitle {
+            font-size: 1.25rem;
+        }
 
-    .question-text {
-        font-size: 1.1em;
-        font-weight: 500;
-        color: #212529;
-        margin-bottom: 15px;
-        padding-left: 10px;
-        border-left: 3px solid #007bff; /* Un color de acento para la pregunta */
-    }
+        .section-container {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
 
-    .response-form-title {
-        font-weight: 600;
-        margin-top: 10px;
-        color: #495057;
-    }
-
-    /* ------------------------------------- */
-    /* 2. Responsive Overrides (Mejoras) */
-    /* ------------------------------------- */
-
-    /* Encabezado: Ajustar el título y el contador en móvil */
-    @@media (max-width: 575.98px) {
         .qa-header {
-            flex-direction: column; /* Apila el título y el contador */
+            flex-direction: column;
             align-items: flex-start;
-            margin-bottom: 20px;
+            gap: 1rem;
         }
 
             .qa-header h1 {
-                font-size: 1.8rem;
-                margin-bottom: 10px;
+                font-size: 2rem;
             }
 
             .qa-header h3 {
                 font-size: 1.1rem;
             }
-        /* En móvil, la pregunta y los metadatos deben ser más compactos */
-        .question-header {
-            padding: 10px 15px;
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .magazine-cover {
+            height: 40vh;
         }
 
-        .question-meta span {
-            width: 100%; /* Cada meta-ítem en una línea separada */
-            margin-bottom: 5px;
+        .cover-title {
+            font-size: 2rem;
         }
 
-        .question-body {
-            padding: 15px;
+        .cover-subtitle {
+            font-size: 1rem;
+        }
+
+        .cover-overlay {
+            padding: 1.5rem;
+        }
+
+        .section-container {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .qa-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .question-meta {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+            .question-meta span {
+                margin-right: 0;
+            }
+
+        .question-text {
+            padding: 0.75rem 0.75rem 0.75rem 1rem;
+            font-size: 1rem;
         }
     }
 </style>
 
-<div class="container instructor-qa-container mb-5 pb-5">
 
-    <div class="qa-header">
-        <h1><i class="fas fa-headset text-primary me-2"></i> Preguntas pendientes</h1>
-        @if (Model != null && Model.Any())
-        {
-            <h3 class="text-secondary">
-                <span class="badge bg-warning text-dark shadow-sm">@Model.Count</span>
-                Pendientes por responder
-            </h3>
-        }
-    </div>
-
-    @* Mensajes de retroalimentación (Se mantienen sin cambios) *@
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i> @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-
-    <div class="row mb-5 pb-5">
-        @if (Model != null && Model.Any())
-        {
-            @foreach (var pregunta in Model)
+<div class="container px-0 py-5 pb-5 mb-5">
+    <!-- SECCIÓN PRINCIPAL DE PREGUNTAS -->
+    <div class="section-container">
+        <div class="qa-header">
+            <h1><i class="fas fa-headset me-2"></i> Preguntas pendientes</h1>
+            @if (Model != null && Model.Any())
             {
-                <div class="col-12 col-md-6 col-lg-4 d-flex">
-                    <div class="question-card mb-4 flex-fill">
-                        <div class="question-header">
-                            <i class="fas fa-book-open me-1"></i> Curso: <strong>@pregunta.CursoTitulo</strong>
-                            <div class="question-meta">
-                                <span><i class="fas fa-user-circle me-1"></i> Estudiante: @pregunta.EstudianteNombre</span>
-                                <span><i class="fas fa-clock me-1"></i> @pregunta.FechaPregunta.ToString("dd MMM, HH:mm")</span>
+                <h3 class="text-secondary">
+                    <span class="badge bg-warning text-dark shadow-sm">@Model.Count</span>
+                    Pendientes por responder
+                </h3>
+            }
+        </div>
+
+        <!-- Mensajes de retroalimentación -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i> @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var pregunta in Model)
+                {
+                    <div class="col">
+                        <div class="magazine-card h-100">
+                            <div class="question-header">
+                                <div>
+                                    <i class="fas fa-book-open me-1"></i> Curso: <strong>@pregunta.CursoTitulo</strong>
+                                </div>
+                                <div class="question-meta">
+                                    <span><i class="fas fa-user-circle me-1"></i> @pregunta.EstudianteNombre</span>
+                                    <span><i class="fas fa-clock me-1"></i> @pregunta.FechaPregunta.ToString("dd MMM, HH:mm")</span>
+                                </div>
+                            </div>
+                            <div class="magazine-card-body">
+                                <p class="question-text">@pregunta.Pregunta</p>
+
+                                <hr class="section-divider" />
+
+                                <p class="response-form-title"><i class="fas fa-reply me-2"></i>Responder:</p>
+
+                                <form asp-action="ResponderPregunta" asp-controller="Artista" method="post">
+                                    <input type="hidden" name="preguntaId" value="@pregunta.Id" />
+
+                                    <div class="mb-3">
+                                        <textarea id="respuesta_@pregunta.Id" name="respuesta" class="form-control" rows="4" required placeholder="Escribe tu respuesta clara y útil aquí..."></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-paper-plane me-1"></i> Enviar respuesta
+                                    </button>
+                                </form>
                             </div>
                         </div>
-                        <div class="card-body question-body">
-                            <p class="question-text">@pregunta.Pregunta</p>
-
-                            <hr />
-
-                            <p class="response-form-title">Responder:</p>
-
-                            <form asp-action="ResponderPregunta" asp-controller="Artista" method="post">
-                                <input type="hidden" name="preguntaId" value="@pregunta.Id" />
-
-                                <div class="mb-3">
-                                    <textarea id="respuesta_@pregunta.Id" name="respuesta" class="form-control" rows="3" required placeholder="Escribe tu respuesta clara y útil aquí..."></textarea>
-                                </div>
-
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-paper-plane me-1"></i> Enviar respuesta
-                                </button>
-                            </form>
-                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <div class="empty-state">
+                        <i class="fas fa-medal fa-4x mb-3" style="color: var(--color-brand-success);"></i>
+                        <h3 class="latest-grid-header">¡Felicidades, Artista!</h3>
+                        <p class="fs-5 text-muted">Tu bandeja de preguntas está vacía. ¡Excelente gestión!</p>
                     </div>
                 </div>
             }
-        }
-        else
-        {
-            <div class="col-12">
-                <div class="alert alert-success p-4 shadow-sm text-center" role="alert">
-                    <i class="fas fa-medal fa-3x mb-3 text-success"></i>
-                    <h4>¡Felicidades, Artista!</h4>
-                    <p class="mb-0">Tu bandeja de preguntas está vacía. ¡Excelente gestión!</p>
-                </div>
-            </div>
-        }
+        </div>
     </div>
 </div>
 
 @section Scripts {
-@* <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> *@
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Efectos de hover mejorados para las tarjetas
+            const cards = document.querySelectorAll('.magazine-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px)';
+                    this.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.15)';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.12)';
+                });
+            });
+
+            // Validación básica de formularios
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const textarea = this.querySelector('textarea');
+                    if (textarea && textarea.value.trim().length < 10) {
+                        e.preventDefault();
+                        alert('Por favor, escribe una respuesta más detallada (mínimo 10 caracteres).');
+                        textarea.focus();
+                    }
+                });
+            });
+        });
+    </script>
 }

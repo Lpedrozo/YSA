@@ -6,174 +6,401 @@
 
 <style>
     /* ------------------------------------- */
-    /* 1. Variables B&W y Estilos Generales  */
+    /* 1. IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES EDITORIAL */
     /* ------------------------------------- */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
     :root {
-        --color-secondary: #000000; /* Negro Puro (Título) */
-        --color-primary: #333333; /* Gris Oscuro (Botones, Acentos) */
-        --color-secondary-light: #5a5a5a; /* Gris Medio para acciones secundarias */
-        --color-text-muted: #6a6a6a; /* Gris medio (Descripción) */
-        --color-background-light: #f7f7f7; /* Fondo general de la página */
-        --color-background-white: #ffffff; /* Fondo para las tarjetas */
-        --color-border-light: #e0e0e0; /* Borde sutil */
-        --color-danger: #cc0000; /* Rojo sutil para acciones peligrosas */
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
     body {
-        background-color: var(--color-background-light);
-        color: var(--color-primary);
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
     }
 
-    h1 {
+    /* ------------------------------------- */
+    /* 2. CABECERA ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .editorial-header {
+        background-color: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 2.5rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .editorial-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
         color: var(--color-secondary);
-        font-weight: 700;
-        font-size: 2rem;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
     }
 
-    hr {
-        border-top: 2px solid var(--color-border-light);
-        opacity: 1;
-        margin-bottom: 1.5rem;
+    .editorial-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
     }
 
-    /* Botón "Volver" */
-    .btn-secondary {
-        background-color: var(--color-text-muted) !important;
-        border-color: var(--color-text-muted) !important;
+    /* ------------------------------------- */
+    /* 3. BOTONES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .btn-editorial-secondary {
+        background-color: var(--color-accent) !important;
+        border-color: var(--color-accent) !important;
         color: white !important;
         transition: background-color 0.2s;
-        border-radius: 8px;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
     }
 
-        .btn-secondary:hover {
-            background-color: var(--color-primary) !important;
-            border-color: var(--color-primary) !important;
+        .btn-editorial-secondary:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
         }
 
-    /* Botón "Nueva Lección" */
-    .btn-success {
-        background-color: var(--color-primary) !important;
-        border-color: var(--color-primary) !important;
+    .btn-editorial-primary {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
         color: white !important;
         font-weight: 600;
         transition: background-color 0.2s;
-        border-radius: 8px;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        padding: 0.75rem 1.5rem;
     }
 
-        .btn-success:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
+        .btn-editorial-primary:hover {
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
         }
 
-    /* Botón "Editar" (Icono) */
-    .btn-primary {
-        background-color: var(--color-primary) !important;
-        border-color: var(--color-primary) !important;
+    /* ------------------------------------- */
+    /* 4. TARJETAS DE LECCIÓN ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .leccion-card-editorial {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+        padding: 1.5rem;
+    }
+
+        .leccion-card-editorial:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+    .leccion-orden-editorial {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--color-brand-primary);
+        line-height: 1;
+        margin-right: 15px;
+        padding-right: 15px;
+        border-right: 2px solid var(--color-border);
+        font-family: var(--font-heading);
+        min-width: 50px;
+    }
+
+    .card-title-leccion-editorial {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        color: var(--color-secondary);
+        font-size: 1.5rem;
+        margin: 0 0 0.5rem 0;
+        line-height: var(--line-height-normal);
+    }
+
+    .card-text-leccion-editorial {
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
+        margin-bottom: 0;
+    }
+
+    /* Botón "Recursos" */
+    .btn-editorial-resources {
+        background-color: #008CBA !important;
+        border-color: #008CBA !important;
         color: white !important;
+        font-weight: 500;
+        transition: background-color 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
     }
 
-        .btn-primary:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
+        .btn-editorial-resources:hover {
+            background-color: #006a8e !important;
+            border-color: #006a8e !important;
         }
 
-    /* Botón "Eliminar" (Icono) */
-    .btn-danger {
-        background-color: var(--color-danger) !important;
-        border-color: var(--color-danger) !important;
-        color: white !important;
-    }
-
-        .btn-danger:hover {
-            background-color: #a30000 !important; /* Tono más oscuro de rojo */
-            border-color: #a30000 !important;
-        }
-
-    /* Botones de Icono (Para hacerlos cuadrados y compactos) */
-    .btn-icon {
+    /* Botones de Icono (Editar) */
+    .btn-icon-editorial {
         width: 36px;
         height: 36px;
         padding: 0;
-        display: inline-flex;
+        display: flex;
         justify-content: center;
         align-items: center;
         flex-shrink: 0;
-        border-radius: 6px;
+        border-radius: var(--border-radius-sm);
     }
 
-    /* -------------------------- */
-    /* 2. Estilos de Cards        */
-    /* -------------------------- */
-    .card-style {
-        border: 1px solid var(--color-border-light);
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        transition: transform 0.2s, box-shadow 0.2s;
-        margin-bottom: 20px; /* Espacio entre las tarjetas */
+    /* Botón "Editar" (Icono) */
+    .btn-primary-editorial {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: white !important;
     }
 
-        .card-style:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .btn-primary-editorial:hover {
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
         }
 
-    .card-title-custom {
-        color: var(--color-primary);
+    /* ------------------------------------- */
+    /* 5. MODALES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .modal-editorial .modal-content {
+        border-radius: var(--border-radius-lg);
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-editorial .modal-header {
+        border-bottom: 2px solid var(--color-border);
+        background-color: var(--color-section-bg);
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+        padding: 1.5rem 2rem;
+    }
+
+    .modal-editorial .modal-title {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        color: var(--color-secondary);
+        font-size: 1.5rem;
+    }
+
+    .modal-editorial .modal-body {
+        padding: 2rem;
+    }
+
+    .modal-editorial .modal-footer {
+        border-top: 1px solid var(--color-border);
+        padding: 1.5rem 2rem;
+    }
+
+    .modal-editorial .form-label {
+        font-family: var(--font-accent);
         font-weight: 600;
-        font-size: 1.25rem;
-        margin-bottom: 5px;
-    }
-
-    .leccion-orden {
-        font-size: 1.8rem;
-        font-weight: 700;
         color: var(--color-secondary);
-        display: flex;
-        align-items: center;
-        margin-right: 15px;
+        margin-bottom: 0.5rem;
     }
 
-    /* -------------------------- */
-    /* 3. Estilos de Modal y Título */
-    /* -------------------------- */
-    /* Se cambió el max-width en el HTML del modal a modal-lg (800px) */
-
-    h1 {
-        color: var(--color-secondary);
-        font-weight: 700;
-        font-size: 2rem;
+    .modal-editorial .form-control {
+        border-radius: var(--border-radius-sm);
+        border: 1px solid var(--color-border);
+        padding: 0.75rem 1rem;
+        font-family: var(--font-body);
+        transition: border-color 0.3s, box-shadow 0.3s;
     }
 
-    hr {
-        border-top: 2px solid var(--color-border-light);
-        opacity: 1;
-        margin-bottom: 1.5rem;
+        .modal-editorial .form-control:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    .modal-editorial textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    /* ------------------------------------- */
+    /* 6. ALERTAS ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .alert-editorial-info {
+        background-color: rgba(109, 181, 62, 0.1);
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+        text-align: center;
+    }
+
+    .alert-editorial-danger {
+        background-color: rgba(229, 54, 26, 0.1);
+        border-color: var(--color-brand-secondary);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1rem;
+        font-family: var(--font-body);
+    }
+
+    /* ------------------------------------- */
+    /* 7. SEPARADORES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .section-divider-editorial {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 2rem 0;
+    }
+
+    /* ------------------------------------- */
+    /* 8. RESPONSIVE ADAPTATIONS */
+    /* ------------------------------------- */
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .editorial-header {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .editorial-title {
+            font-size: 2rem;
+        }
+
+        .editorial-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .card-title-leccion-editorial {
+            font-size: 1.3rem;
+        }
+
+        .leccion-orden-editorial {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            padding-right: 10px;
+            min-width: 40px;
+        }
+
+        .modal-editorial .modal-header,
+        .modal-editorial .modal-body,
+        .modal-editorial .modal-footer {
+            padding: 1.25rem;
+        }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .editorial-header {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .editorial-title {
+            font-size: 1.7rem;
+        }
+
+        .editorial-subtitle {
+            font-size: 1rem;
+        }
+
+        .leccion-card-editorial {
+            padding: 1rem;
+        }
+
+        .leccion-orden-editorial {
+            font-size: 1.25rem;
+            margin-right: 8px;
+            padding-right: 8px;
+            min-width: 35px;
+        }
+
+        .card-title-leccion-editorial {
+            font-size: 1.1rem;
+        }
+
+        .btn-icon-editorial {
+            width: 32px;
+            height: 32px;
+        }
     }
 </style>
 
-<div class="container mt-5 mb-5 pb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-center" style="margin-right: 1.5rem;">Lecciones para el módulo: @ViewBag.ModuloTitulo</h1>
+<div class="container mt-4 mb-5 pb-5">
+    <!-- CABECERA ESTILO EDITORIAL -->
+    <div class="editorial-header text-center">
+        <h1 class="editorial-title">Gestión de Lecciones</h1>
+        <p class="editorial-subtitle">Módulo: @ViewBag.ModuloTitulo</p>
     </div>
 
+    <!-- BOTONES DE ACCIÓN PRINCIPAL -->
     <div class="row mb-4 g-2">
         <div class="col-12 col-sm-6">
-            <a asp-action="GestionarModulos" asp-route-cursoId="@ViewBag.CursoId" class="btn btn-secondary w-100">
+            <a asp-action="GestionarModulos" asp-route-cursoId="@ViewBag.CursoId" class="btn btn-editorial-secondary w-100">
                 <i class="fas fa-arrow-left me-2"></i> Volver a módulos
             </a>
         </div>
         <div class="col-12 col-sm-6">
-            <button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#crearLeccionModal">
+            <button type="button" class="btn btn-editorial-primary w-100" data-bs-toggle="modal" data-bs-target="#crearLeccionModal">
                 <i class="fas fa-plus-circle me-2"></i> Nueva lección
             </button>
         </div>
     </div>
-    <hr style="margin-top: 0;" />
 
+    <hr class="section-divider-editorial" />
 
+    <!-- CONTENEDOR DE LECCIONES -->
     @if (Model == null || !Model.Any())
     {
-        <div class="alert alert-info text-center" role="alert" style="border-radius: 8px; margin-top: 3rem;">
+        <div class="alert-editorial-info text-center" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
             Este módulo no tiene lecciones creadas. ¡Empieza a añadir contenido!
         </div>
     }
@@ -182,29 +409,35 @@
         <div class="row mb-5" id="contenedorLecciones">
             @foreach (var leccion in Model.OrderBy(l => l.Orden))
             {
-                <div class="col-12 col-md-6">
-                    <div class="card card-style p-3">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center">
-                                <span class="leccion-orden">@leccion.Orden.</span>
-                                <div>
-                                    <h5 class="card-title-custom mb-0">@leccion.Titulo</h5>
-                                    <p class="card-text text-muted small mb-0">
-                                        @Html.Raw(leccion.Contenido?.Length > 70 ? leccion.Contenido.Substring(0, 70) + "..." : leccion.Contenido)
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="leccion-card-editorial h-100">
+                        <div class="d-flex align-items-start justify-content-between h-100">
+                            <div class="d-flex align-items-start flex-grow-1">
+                                <span class="leccion-orden-editorial">@leccion.Orden</span>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title-leccion-editorial">@leccion.Titulo</h5>
+                                    <p class="card-text-leccion-editorial">
+                                        @if (!string.IsNullOrEmpty(leccion.Contenido))
+                                        {
+                                            @Html.Raw(leccion.Contenido.Length > 70 ? leccion.Contenido.Substring(0, 70) + "..." : leccion.Contenido)
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Sin contenido</span>
+                                        }
                                     </p>
                                 </div>
                             </div>
 
-                            <div class="d-flex align-items-center flex-shrink-0 ms-3">
+                            <div class="d-flex flex-column align-items-end ms-3 flex-shrink-0">
                                 <a asp-action="GestionarRecursosActividades"
                                    asp-route-tipoEntidad="Leccion"
                                    asp-route-entidadId="@leccion.Id"
-                                   class="btn btn-sm btn-icon me-2"
-                                   style="background-color: #008CBA !important; border-color: #008CBA !important; color: white;"
+                                   class="btn btn-sm btn-editorial-resources btn-icon-editorial mb-2"
                                    title="Gestionar Recursos y Actividades">
                                     <i class="fas fa-paperclip"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-primary btn-icon editar-btn me-2"
+                                <button type="button" class="btn btn-sm btn-primary-editorial btn-icon-editorial editar-btn"
                                         data-id="@leccion.Id"
                                         data-bs-toggle="modal"
                                         data-bs-target="#editarLeccionModal"
@@ -220,75 +453,95 @@
     }
 </div>
 
-<div class="modal fade" id="crearLeccionModal" tabindex="-1" aria-labelledby="crearLeccionModalLabel" aria-hidden="true">
+<!-- MODAL CREAR LECCIÓN -->
+<div class="modal fade modal-editorial" id="crearLeccionModal" tabindex="-1" aria-labelledby="crearLeccionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="crearLeccionModalLabel" style="color:var(--color-secondary);">Crear lección</h5>
+                <h5 class="modal-title" id="crearLeccionModalLabel">Crear Lección</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formCrearLeccion" asp-action="CrearLeccion" method="post">
                 <div class="modal-body">
-                    <div id="crear-leccion-validation-errors" class="alert alert-danger d-none"></div>
+                    <div id="crear-leccion-validation-errors" class="alert-editorial-danger d-none"></div>
                     <input type="hidden" name="ModuloId" value="@ViewBag.ModuloId" />
-                    <div class="form-group mb-3">
-                        <label for="Crear_Titulo" class="form-label" style="color:var(--color-primary);">Título</label>
-                        <input type="text" id="Crear_Titulo" name="Titulo" class="form-control" required />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="Crear_Titulo" class="form-label">Título</label>
+                                <input type="text" id="Crear_Titulo" name="Titulo" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="Crear_Orden" class="form-label">Orden</label>
+                                <input type="number" id="Crear_Orden" name="Orden" class="form-control" required />
+                            </div>
+                        </div>
                     </div>
+
                     <div class="form-group mb-3">
-                        <label for="Crear_Orden" class="form-label" style="color:var(--color-primary);">Orden</label>
-                        <input type="number" id="Crear_Orden" name="Orden" class="form-control" required />
+                        <label for="Crear_UrlVideo" class="form-label">URL del Video</label>
+                        <input type="text" id="Crear_UrlVideo" name="UrlVideo" class="form-control" placeholder="https://..." />
                     </div>
+
                     <div class="form-group mb-3">
-                        <label for="Crear_UrlVideo" class="form-label" style="color:var(--color-primary);">URL del video</label>
-                        <input type="text" id="Crear_UrlVideo" name="UrlVideo" class="form-control" />
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="Crear_Contenido" class="form-label" style="color:var(--color-primary);">Contenido</label>
-                        <textarea id="Crear_Contenido" name="Contenido" class="form-control" rows="5"></textarea>
+                        <label for="Crear_Contenido" class="form-label">Contenido</label>
+                        <textarea id="Crear_Contenido" name="Contenido" class="form-control" rows="8" placeholder="Describe el contenido de esta lección..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-editorial-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-editorial-primary">Guardar Lección</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="editarLeccionModal" tabindex="-1" aria-labelledby="editarLeccionModalLabel" aria-hidden="true">
+<!-- MODAL EDITAR LECCIÓN -->
+<div class="modal fade modal-editorial" id="editarLeccionModal" tabindex="-1" aria-labelledby="editarLeccionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editarLeccionModalLabel" style="color:var(--color-secondary);">Editar lección</h5>
+                <h5 class="modal-title" id="editarLeccionModalLabel">Editar Lección</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formEditarLeccion" asp-action="EditarLeccion" method="post">
                 <div class="modal-body">
-                    <div id="editar-leccion-validation-errors" class="alert alert-danger d-none"></div>
+                    <div id="editar-leccion-validation-errors" class="alert-editorial-danger d-none"></div>
                     <input type="hidden" id="Editar_Id" name="Id" />
                     <input type="hidden" id="Editar_ModuloId" name="ModuloId" value="@ViewBag.ModuloId" />
-                    <div class="form-group mb-3">
-                        <label for="Editar_Titulo" class="form-label" style="color:var(--color-primary);">Título</label>
-                        <input type="text" id="Editar_Titulo" name="Titulo" class="form-control" required />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="Editar_Titulo" class="form-label">Título</label>
+                                <input type="text" id="Editar_Titulo" name="Titulo" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="Editar_Orden" class="form-label">Orden</label>
+                                <input type="number" id="Editar_Orden" name="Orden" class="form-control" required />
+                            </div>
+                        </div>
                     </div>
+
                     <div class="form-group mb-3">
-                        <label for="Editar_Orden" class="form-label" style="color:var(--color-primary);">Orden</label>
-                        <input type="number" id="Editar_Orden" name="Orden" class="form-control" required />
+                        <label for="Editar_UrlVideo" class="form-label">URL del Video</label>
+                        <input type="text" id="Editar_UrlVideo" name="UrlVideo" class="form-control" placeholder="https://..." />
                     </div>
+
                     <div class="form-group mb-3">
-                        <label for="Editar_UrlVideo" class="form-label" style="color:var(--color-primary);">URL del video</label>
-                        <input type="text" id="Editar_UrlVideo" name="UrlVideo" class="form-control" />
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="Editar_Contenido" class="form-label" style="color:var(--color-primary);">Contenido</label>
-                        <textarea id="Editar_Contenido" name="Contenido" class="form-control" rows="5"></textarea>
+                        <label for="Editar_Contenido" class="form-label">Contenido</label>
+                        <textarea id="Editar_Contenido" name="Contenido" class="form-control" rows="8" placeholder="Describe el contenido de esta lección..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                    <button type="button" class="btn btn-editorial-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-editorial-primary">Actualizar Lección</button>
                 </div>
             </form>
         </div>
@@ -473,30 +726,16 @@
             });
 
             function attachEventListeners() {
-                // Re-adjunta los listeners para los botones de eliminar después de recargar el contenedor
-                document.querySelectorAll('.eliminar-btn').forEach(button => {
-                    button.removeEventListener('click', handleEliminarClick); // Remueve el listener previo
-                    button.addEventListener('click', handleEliminarClick); // Adjunta el nuevo listener
+                // Re-adjunta los listeners para los botones de editar después de recargar el contenedor
+                document.querySelectorAll('.editar-btn').forEach(button => {
+                    button.removeEventListener('click', handleEditarClick);
+                    button.addEventListener('click', handleEditarClick);
                 });
             }
 
-            function handleEliminarClick(e) {
-                e.preventDefault();
-                const form = this.closest('form');
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¡No podrás revertir esto!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6a6a6a',
-                    confirmButtonText: 'Sí, ¡bórralo!',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                });
+            function handleEditarClick(e) {
+                // El evento ya está manejado por el listener del modal
+                // Esta función se mantiene para consistencia con la estructura existente
             }
 
             // Llamar al adjuntar eventos al inicio

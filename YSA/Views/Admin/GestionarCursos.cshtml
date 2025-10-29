@@ -2,128 +2,599 @@
 @{
     ViewData["Title"] = "Gestión de Cursos";
 }
+
 <style>
-    .card {
-        transition: transform 0.2s, box-shadow 0.2s;
-        border-radius: 10px; 
-        overflow: hidden;
-    }
-        .card:hover {
-            transform: translateY(-5px); 
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
-        }
-    .card-img-top {
-        height: 200px;
-        object-fit: cover;
-    }
-    .card-body .btn {
-        padding: 5px 8px;
+    /* ------------------------------------- */
+    /* 1. IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES EDITORIAL */
+    /* ------------------------------------- */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
+    :root {
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
-    /* Ajuste para los modales */
-    .modal-dialog {
-        max-width: 800px;
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
+    }
+
+    /* ------------------------------------- */
+    /* 2. CABECERA ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .editorial-header {
+        background-color: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 2.5rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        text-align: center;
+    }
+
+    .editorial-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    /* ------------------------------------- */
+    /* 3. BOTONES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .btn-editorial-secondary {
+        background-color: var(--color-accent) !important;
+        border-color: var(--color-accent) !important;
+        color: white !important;
+        transition: background-color 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+    }
+
+        .btn-editorial-secondary:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    .btn-editorial-primary {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        padding: 0.75rem 1.5rem;
+    }
+
+        .btn-editorial-primary:hover {
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+        }
+
+    /* ------------------------------------- */
+    /* 4. TARJETAS DE CURSO ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .curso-card-editorial {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+        .curso-card-editorial:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+    .curso-card-img-editorial {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+        transition: transform 0.5s ease;
+        flex-shrink: 0; /* Evita que la imagen se reduzca */
+    }
+
+    .curso-card-editorial:hover .curso-card-img-editorial {
+        transform: scale(1.05);
+    }
+
+    .curso-card-body-editorial {
+        padding: 1.5rem;
+        position: relative;
+        flex: 1; /* Ocupa todo el espacio disponible */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-title-curso-editorial {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        color: var(--color-secondary);
+        font-size: 1.5rem;
+        margin: 0 0 0.5rem 0;
+        line-height: var(--line-height-normal);
+        flex-shrink: 0; /* Evita que el título se reduzca */
+    }
+
+    .card-instructor-editorial {
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--color-accent);
+        margin-bottom: 1rem;
+        line-height: var(--line-height-normal);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0; /* Evita que el instructor se reduzca */
+    }
+
+    .card-meta-editorial {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        flex-shrink: 0; /* Evita que la meta info se reduzca */
+    }
+
+    .badge-nivel-editorial {
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        background-color: var(--color-accent) !important;
+        color: white !important;
+    }
+
+    .precio-editorial {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--color-brand-success);
+        line-height: var(--line-height-tight);
+    }
+
+    .card-descripcion-editorial {
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
+        margin-bottom: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        flex: 1; /* La descripción ocupa el espacio disponible */
+        min-height: 60px; /* Altura mínima para consistencia */
+    }
+
+    .card-badges-editorial {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .badge-destacado-editorial {
+        background-color: var(--color-brand-accent) !important;
+        color: var(--color-brand-dark) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .badge-recomendado-editorial {
+        background-color: var(--color-brand-primary) !important;
+        color: white !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .card-actions-editorial {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto; /* Empuja los botones hacia abajo */
+        flex-shrink: 0; /* Evita que los botones se reduzcan */
+        padding-top: 1rem; /* Espacio adicional arriba de los botones */
+        border-top: 1px solid var(--color-border); /* Línea separadora opcional */
+    }
+
+    .actions-left-editorial {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .actions-right-editorial {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    /* Botones de Acción */
+    .btn-action-editorial {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+        border-radius: var(--border-radius-sm);
+        transition: all 0.2s ease;
+    }
+
+    .btn-info-editorial {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: white !important;
+    }
+
+        .btn-info-editorial:hover {
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+        }
+
+    .btn-secondary-editorial {
+        background-color: var(--color-accent) !important;
+        border-color: var(--color-accent) !important;
+        color: white !important;
+    }
+
+        .btn-secondary-editorial:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    .btn-resources-editorial {
+        background-color: #008CBA !important;
+        border-color: #008CBA !important;
+        color: white !important;
+    }
+
+        .btn-resources-editorial:hover {
+            background-color: #006a8e !important;
+            border-color: #006a8e !important;
+        }
+
+    .btn-warning-editorial {
+        background-color: var(--color-brand-accent) !important;
+        border-color: var(--color-brand-accent) !important;
+        color: var(--color-brand-dark) !important;
+    }
+
+        .btn-warning-editorial:hover {
+            background-color: #e0d012 !important;
+            border-color: #e0d012 !important;
+        }
+
+    /* ------------------------------------- */
+    /* 5. MODALES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .modal-editorial .modal-content {
+        border-radius: var(--border-radius-lg);
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-editorial .modal-header {
+        border-bottom: 2px solid var(--color-border);
+        background-color: var(--color-section-bg);
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+        padding: 1.5rem 2rem;
+    }
+
+    .modal-editorial .modal-title {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        color: var(--color-secondary);
+        font-size: 1.5rem;
+    }
+
+    .modal-editorial .modal-body {
+        padding: 2rem;
+    }
+
+    .modal-editorial .modal-footer {
+        border-top: 1px solid var(--color-border);
+        padding: 1.5rem 2rem;
+    }
+
+    .modal-editorial .form-label {
+        font-family: var(--font-accent);
+        font-weight: 600;
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-editorial .form-control {
+        border-radius: var(--border-radius-sm);
+        border: 1px solid var(--color-border);
+        padding: 0.75rem 1rem;
+        font-family: var(--font-body);
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+        .modal-editorial .form-control:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    .modal-editorial .form-check-input:checked {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+    }
+
+    /* ------------------------------------- */
+    /* 6. SEPARADORES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .section-divider-editorial {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 2rem 0;
+    }
+
+    /* ------------------------------------- */
+    /* 7. RESPONSIVE ADAPTATIONS */
+    /* ------------------------------------- */
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .editorial-header {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .editorial-title {
+            font-size: 2rem;
+        }
+
+        .card-title-curso-editorial {
+            font-size: 1.3rem;
+        }
+
+        .curso-card-body-editorial {
+            padding: 1.25rem;
+        }
+
+        .card-actions-editorial {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+        }
+
+        .actions-left-editorial,
+        .actions-right-editorial {
+            justify-content: center;
+        }
+
+        .modal-editorial .modal-header,
+        .modal-editorial .modal-body,
+        .modal-editorial .modal-footer {
+            padding: 1.25rem;
+        }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .editorial-header {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .editorial-title {
+            font-size: 1.7rem;
+        }
+
+        .curso-card-body-editorial {
+            padding: 1rem;
+        }
+
+        .card-title-curso-editorial {
+            font-size: 1.2rem;
+        }
+
+        .card-meta-editorial {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .btn-action-editorial {
+            width: 36px;
+            height: 36px;
+        }
+
+        .card-badges-editorial {
+            top: 0.5rem;
+            left: 0.5rem;
+        }
     }
 </style>
 
-<div class="container mt-4 mb-5">
-    <h1 class="text-center mb-4">Gestión de Cursos</h1>
-    <hr />
-    <div class="d-flex justify-content-between mb-3">
-        <a asp-action="Panel" asp-controller="Admin" class="btn btn-dark">
+<div class="container mt-4 mb-5 pb-5">
+    <!-- CABECERA ESTILO EDITORIAL -->
+    <div class="editorial-header">
+        <h1 class="editorial-title">Gestión de Cursos</h1>
+    </div>
+
+    <!-- BOTONES DE ACCIÓN PRINCIPAL -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <a asp-action="Panel" asp-controller="Admin" class="btn btn-editorial-secondary">
             <i class="fas fa-arrow-left me-2"></i> Regresar al Panel
         </a>
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearCursoModal">
-            <i class="fas fa-plus-circle"></i> Nuevo curso
+        <button type="button" class="btn btn-editorial-primary" data-bs-toggle="modal" data-bs-target="#crearCursoModal">
+            <i class="fas fa-plus-circle me-2"></i> Nuevo Curso
         </button>
     </div>
 
+    <hr class="section-divider-editorial" />
+
+    <!-- CONTENEDOR DE CURSOS -->
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 pb-5 mb-5" id="tablaCursos">
         @foreach (var curso in Model)
         {
             <div class="col">
-                <div class="card h-100 shadow-sm border-0 position-relative pb-5">
-                    @if (curso.EsDestacado)
-                    {
-                        <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2" style="z-index: 1;">
-                            <i class="fas fa-star me-1"></i> Destacado
-                        </span>
-                    }
-                    else if (curso.EsRecomendado)
-                    {
-                        <span class="badge bg-info position-absolute top-0 start-0 m-2" style="z-index: 1;">
-                            <i class="fas fa-thumbs-up me-1"></i> Recomendado
-                        </span>
-                    }
+                <div class="curso-card-editorial h-100">
+                    <!-- Badges de Estado -->
+                    <div class="card-badges-editorial">
+                        @if (curso.EsDestacado)
+                        {
+                            <span class="badge-destacado-editorial">
+                                <i class="fas fa-star me-1"></i> Destacado
+                            </span>
+                        }
+                        else if (curso.EsRecomendado)
+                        {
+                            <span class="badge-recomendado-editorial">
+                                <i class="fas fa-thumbs-up me-1"></i> Recomendado
+                            </span>
+                        }
+                    </div>
 
-                    <img src="@curso.UrlImagen" class="card-img-top" alt="@curso.Titulo" style="height: 200px; object-fit: cover;">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title mb-1">@curso.Titulo</h5>
-                        <p class="card-text text-muted small mb-2">
-                            <i class="fas fa-chalkboard-teacher me-1"></i>
+                    <!-- Imagen del Curso -->
+                    <img src="@curso.UrlImagen" class="curso-card-img-editorial" alt="@curso.Titulo">
 
+                    <div class="curso-card-body-editorial">
+                        <!-- Información del Curso -->
+                        <h5 class="card-title-curso-editorial">@curso.Titulo</h5>
+
+                        <div class="card-instructor-editorial">
+                            <i class="fas fa-chalkboard-teacher"></i>
                             @if (curso.InstructoresNombres != null && curso.InstructoresNombres.Any())
                             {
                                 @(string.Join(", ", curso.InstructoresNombres))
                             }
                             else
                             {
-                                @:Sin Artistas Asociados
+                                <span class="text-muted">Sin Artistas Asociados</span>
                             }
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="badge bg-secondary">@curso.Nivel</span>
-                            <span class="fs-5 fw-bold text-success">@curso.Precio.ToString("C")</span>
                         </div>
 
-                        <div class="card-text text-truncate mb-3" style="font-size: 0.9rem;">
+                        <!-- Meta información -->
+                        <div class="card-meta-editorial">
+                            <span class="badge-nivel-editorial">@curso.Nivel</span>
+                            <span class="precio-editorial">@curso.Precio.ToString("C")</span>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="card-descripcion-editorial">
                             @Html.Raw(curso.DescripcionCorta)
                         </div>
 
-                        <div class="mt-auto d-flex flex-wrap gap-1">
+                        <!-- Acciones -->
+                        <div class="card-actions-editorial">
+                            <div class="actions-left-editorial">
+                                <button type="button" class="btn btn-secondary-editorial btn-action-editorial asociar-artista-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#asociarArtistaModal"
+                                        data-cursoid="@curso.Id"
+                                        title="Asociar Artista">
+                                    <i class="fas fa-user-plus"></i>
+                                </button>
 
-                            <button type="button" class="btn btn-sm btn-dark asociar-artista-btn"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#asociarArtistaModal"
-                                    data-cursoid="@curso.Id"
-                                    title="Asociar Artista">
-                                <i class="fas fa-user-plus"></i>
-                            </button>
+                                <a asp-action="GestionarAnuncios" asp-route-cursoId="@curso.Id"
+                                   class="btn btn-secondary-editorial btn-action-editorial"
+                                   title="Anuncios">
+                                    <i class="fas fa-bullhorn"></i>
+                                </a>
 
-                            <a asp-action="GestionarAnuncios" asp-route-cursoId="@curso.Id" class="btn btn-sm btn-dark" title="Anuncios">
-                                <i class="fas fa-bullhorn"></i>
-                            </a>
-                            <a asp-action="GestionarModulos" asp-route-cursoId="@curso.Id" class="btn btn-sm btn-info" title="Módulos">
-                                <i class="fas fa-cubes"></i>
-                            </a>
-                            <a asp-action="GestionarRecursosActividades"
-                               asp-route-tipoEntidad="Curso"
-                               asp-route-entidadId="@curso.Id"
-                               class="btn btn-sm text-white"
-                               title="Recursos/Actividades del Curso"
-                               style="background-color: #008CBA !important; border-color: #008CBA !important;">
-                                <i class="fas fa-paperclip"></i>
-                            </a>
-                            <button type="button" class="btn btn-sm btn-primary editar-btn"
-                                    data-id="@curso.Id"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#editarCursoModal"
-                                    data-titulo="@curso.Titulo"
-                                    data-descripcioncorta="@curso.DescripcionCorta"
-                                    data-descripcionlarga="@curso.DescripcionLarga"
-                                    data-precio="@curso.Precio"
-                                    data-urlimagen="@curso.UrlImagen"
-                                    data-nivel="@((int)curso.Nivel)"
-                                    data-categorias="@string.Join(",", curso.CategoriasSeleccionadas)" title="Editar">
-                                <i class="fas fa-edit"></i>
-                            </button>
+                                <a asp-action="GestionarModulos" asp-route-cursoId="@curso.Id"
+                                   class="btn btn-info-editorial btn-action-editorial"
+                                   title="Módulos">
+                                    <i class="fas fa-cubes"></i>
+                                </a>
 
-                            <div class="ms-auto d-flex gap-1">
+                                <a asp-action="GestionarRecursosActividades"
+                                   asp-route-tipoEntidad="Curso"
+                                   asp-route-entidadId="@curso.Id"
+                                   class="btn btn-resources-editorial btn-action-editorial"
+                                   title="Recursos/Actividades del Curso">
+                                    <i class="fas fa-paperclip"></i>
+                                </a>
+
+                                <button type="button" class="btn btn-info-editorial btn-action-editorial editar-btn"
+                                        data-id="@curso.Id"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editarCursoModal"
+                                        data-titulo="@curso.Titulo"
+                                        data-descripcioncorta="@curso.DescripcionCorta"
+                                        data-descripcionlarga="@curso.DescripcionLarga"
+                                        data-precio="@curso.Precio"
+                                        data-urlimagen="@curso.UrlImagen"
+                                        data-nivel="@((int)curso.Nivel)"
+                                        data-categorias="@string.Join(",", curso.CategoriasSeleccionadas)"
+                                        title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+
+                            <div class="actions-right-editorial">
                                 @if (curso.EsDestacado)
                                 {
                                     <form asp-action="QuitarDestacado" asp-route-id="@curso.Id" method="post" class="d-inline">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-warning" title="Quitar Destacado">
+                                        <button type="submit" class="btn btn-warning-editorial btn-action-editorial" title="Quitar Destacado">
                                             <i class="fas fa-star-half-alt"></i>
                                         </button>
                                     </form>
@@ -132,7 +603,7 @@
                                 {
                                     <form asp-action="QuitarRecomendado" asp-route-id="@curso.Id" method="post" class="d-inline">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-info" title="Quitar Recomendado">
+                                        <button type="submit" class="btn btn-info-editorial btn-action-editorial" title="Quitar Recomendado">
                                             <i class="fas fa-thumbs-down"></i>
                                         </button>
                                     </form>
@@ -141,13 +612,13 @@
                                 {
                                     <form asp-action="DestacarCurso" asp-route-id="@curso.Id" method="post" class="d-inline">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-warning" title="Destacar">
+                                        <button type="submit" class="btn btn-warning-editorial btn-action-editorial" title="Destacar">
                                             <i class="fas fa-star"></i>
                                         </button>
                                     </form>
                                     <form asp-action="RecomendarCurso" asp-route-id="@curso.Id" method="post" class="d-inline">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-info" title="Recomendar">
+                                        <button type="submit" class="btn btn-info-editorial btn-action-editorial" title="Recomendar">
                                             <i class="fas fa-thumbs-up"></i>
                                         </button>
                                     </form>
@@ -161,7 +632,8 @@
     </div>
 </div>
 
-<div class="modal fade" id="asociarArtistaModal" tabindex="-1" aria-labelledby="asociarArtistaModalLabel" aria-hidden="true">
+<!-- MODALES (mantienen la misma estructura pero con clases editorial) -->
+<div class="modal fade modal-editorial" id="asociarArtistaModal" tabindex="-1" aria-labelledby="asociarArtistaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -169,7 +641,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
+                <!-- Contenido del modal se mantiene igual -->
                 <h6>Artistas Asociados:</h6>
                 <div id="artistas-asociados-lista" class="mb-4">
                     <p class="text-muted">Cargando lista...</p>
@@ -177,21 +649,21 @@
                 <hr />
                 <input type="hidden" id="asociar-curso-id" name="CursoId" />
                 <div class="form-group mb-3">
-                    <label for="artista-select">Seleccionar Artista para asociar</label>
+                    <label for="artista-select" class="form-label">Seleccionar Artista para asociar</label>
                     <select id="artista-select" name="InstructorId" class="form-control">
                         <option value="">-- Seleccione un Artista --</option>
                     </select>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="guardarAsociacionBtn">Asociar</button>
+                <button type="button" class="btn btn-editorial-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-editorial-primary" id="guardarAsociacionBtn">Asociar</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="crearCursoModal" tabindex="-1" aria-labelledby="crearCursoModalLabel" aria-hidden="true">
+<div class="modal fade modal-editorial" id="crearCursoModal" tabindex="-1" aria-labelledby="crearCursoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -200,25 +672,26 @@
             </div>
             <form id="formCrearCurso" asp-action="CrearCurso" method="post" enctype="multipart/form-data">
                 <div class="modal-body">
+                    <!-- Contenido del formulario se mantiene igual -->
                     <div id="crear-curso-validation-errors" class="alert alert-danger d-none"></div>
                     <div class="form-group mb-3">
-                        <label for="Titulo">Título</label>
+                        <label for="Titulo" class="form-label">Título</label>
                         <input type="text" id="Crear_Titulo" name="Titulo" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="DescripcionCorta">Descripción Corta</label>
+                        <label for="DescripcionCorta" class="form-label">Descripción Corta</label>
                         <textarea id="Crear_DescripcionCorta" name="DescripcionCorta" class="form-control" rows="3"></textarea>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="DescripcionLarga">Descripción Larga</label>
+                        <label for="DescripcionLarga" class="form-label">Descripción Larga</label>
                         <textarea id="Crear_DescripcionLarga" name="DescripcionLarga" class="form-control" rows="5"></textarea>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Precio">Precio</label>
+                        <label for="Precio" class="form-label">Precio</label>
                         <input type="number" id="Crear_Precio" name="Precio" class="form-control" step="0.01" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Nivel">Nivel</label>
+                        <label for="Nivel" class="form-label">Nivel</label>
                         <select id="Crear_Nivel" name="Nivel" class="form-control">
                             @foreach (var nivel in ViewBag.Niveles)
                             {
@@ -227,11 +700,11 @@
                         </select>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="imagenArchivo">Imagen del Curso</label>
+                        <label for="imagenArchivo" class="form-label">Imagen del Curso</label>
                         <input type="file" id="Crear_imagenArchivo" name="imagenArchivo" class="form-control" accept=".jpg,.jpeg,.png" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label>Categorías</label>
+                        <label class="form-label">Categorías</label>
                         <div id="crear-categorias-checkboxes">
                             @foreach (var categoria in ViewBag.CategoriasCrear)
                             {
@@ -246,15 +719,15 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-editorial-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-editorial-primary">Guardar</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="editarCursoModal" tabindex="-1" aria-labelledby="editarCursoModalLabel" aria-hidden="true">
+<div class="modal fade modal-editorial" id="editarCursoModal" tabindex="-1" aria-labelledby="editarCursoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -263,26 +736,27 @@
             </div>
             <form id="formEditarCurso" asp-action="EditarCurso" method="post" enctype="multipart/form-data">
                 <div class="modal-body">
+                    <!-- Contenido del formulario se mantiene igual -->
                     <div id="editar-curso-validation-errors" class="alert alert-danger d-none"></div>
                     <input type="hidden" id="Editar_Id" name="Id" />
                     <div class="form-group mb-3">
-                        <label for="Titulo">Título</label>
+                        <label for="Titulo" class="form-label">Título</label>
                         <input type="text" id="Editar_Titulo" name="Titulo" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="DescripcionCorta">Descripción Corta</label>
+                        <label for="DescripcionCorta" class="form-label">Descripción Corta</label>
                         <textarea id="Editar_DescripcionCorta" name="DescripcionCorta" class="form-control" rows="3"></textarea>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="DescripcionLarga">Descripción Larga</label>
+                        <label for="DescripcionLarga" class="form-label">Descripción Larga</label>
                         <textarea id="Editar_DescripcionLarga" name="DescripcionLarga" class="form-control" rows="5"></textarea>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Precio">Precio</label>
+                        <label for="Precio" class="form-label">Precio</label>
                         <input type="number" id="Editar_Precio" name="Precio" class="form-control" step="0.01" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Nivel">Nivel</label>
+                        <label for="Nivel" class="form-label">Nivel</label>
                         <select id="Editar_Nivel" name="Nivel" class="form-control">
                             @foreach (var nivel in ViewBag.Niveles)
                             {
@@ -291,13 +765,13 @@
                         </select>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="imagenArchivo">Imagen del Curso</label>
+                        <label for="imagenArchivo" class="form-label">Imagen del Curso</label>
                         <input type="file" id="Editar_imagenArchivo" name="imagenArchivo" class="form-control" accept=".jpg,.jpeg,.png" />
                         <small class="form-text text-muted">Deja este campo vacío para conservar la imagen actual.</small>
                         <img id="Editar_PreviewImagen" src="" class="img-thumbnail mt-2" style="max-height: 150px; display: none;" alt="Imagen actual del curso" />
                     </div>
                     <div class="form-group mb-3">
-                        <label>Categorías</label>
+                        <label class="form-label">Categorías</label>
                         <div id="editar-categorias-checkboxes">
                             @foreach (var categoria in ViewBag.CategoriasEditar)
                             {
@@ -312,8 +786,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                    <button type="button" class="btn btn-editorial-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-editorial-primary">Actualizar</button>
                 </div>
             </form>
         </div>

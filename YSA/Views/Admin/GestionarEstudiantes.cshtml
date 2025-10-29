@@ -5,51 +5,354 @@
     ViewData["Title"] = "Gestión de estudiantes";
 }
 
-<div class="container pt-5 mb-5">
-    
-    <div class="row">
-        <div class="col-12 text-center">
-            <h2 class="display-4">Gestión de estudiantes y cursos</h2>
-            <p class="lead">Lista de todos los estudiantes y los cursos que han adquirido.</p>
-        </div>
+<style>
+    /* ------------------------------------- */
+    /* 1. IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES EDITORIAL */
+    /* ------------------------------------- */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
+    :root {
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
+    }
+
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
+    }
+
+    /* ------------------------------------- */
+    /* 2. CABECERA ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .editorial-header {
+        background-color: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 2.5rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        text-align: center;
+    }
+
+    .editorial-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    .editorial-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
+        margin-top: 1rem;
+    }
+
+    /* ------------------------------------- */
+    /* 3. BOTONES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .btn-editorial-secondary {
+        background-color: var(--color-accent) !important;
+        border-color: var(--color-accent) !important;
+        color: white !important;
+        transition: background-color 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+    }
+
+        .btn-editorial-secondary:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    /* ------------------------------------- */
+    /* 4. TARJETAS DE ESTUDIANTE ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .estudiante-card-editorial {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+    }
+
+        .estudiante-card-editorial:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+    .estudiante-card-body-editorial {
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    .card-title-estudiante-editorial {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        color: var(--color-secondary);
+        font-size: 1.5rem;
+        margin: 0 0 0.5rem 0;
+        line-height: var(--line-height-normal);
+    }
+
+    .card-subtitle-estudiante-editorial {
+        font-family: var(--font-body);
+        font-size: 1rem;
+        color: var(--color-accent);
+        margin-bottom: 1rem;
+        line-height: var(--line-height-normal);
+    }
+
+    .card-divider-editorial {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 1.5rem 0;
+    }
+
+    .card-section-title-editorial {
+        font-family: var(--font-accent);
+        font-weight: 600;
+        color: var(--color-secondary);
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* ------------------------------------- */
+    /* 5. LISTAS ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .list-group-editorial {
+        border: none;
+        margin-bottom: 0;
+    }
+
+    .list-group-item-editorial {
+        border: none;
+        border-bottom: 1px solid var(--color-border);
+        padding: 0.75rem 0;
+        font-family: var(--font-body);
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        color: var(--color-text-dark);
+        transition: background-color 0.2s ease;
+    }
+
+        .list-group-item-editorial:last-child {
+            border-bottom: none;
+        }
+
+        .list-group-item-editorial:hover {
+            background-color: rgba(239, 136, 48, 0.05);
+        }
+
+    .list-group-icon-editorial {
+        color: var(--color-brand-primary);
+        font-size: 0.9rem;
+        margin-top: 0.2rem;
+        flex-shrink: 0;
+    }
+
+    .list-group-text-editorial {
+        flex-grow: 1;
+        line-height: var(--line-height-normal);
+    }
+
+    /* ------------------------------------- */
+    /* 6. ALERTAS ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .alert-editorial-info {
+        background-color: rgba(109, 181, 62, 0.1);
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+        text-align: center;
+    }
+
+    .alert-editorial-warning {
+        background-color: rgba(242, 229, 20, 0.1);
+        border-color: var(--color-brand-accent);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1rem;
+        font-family: var(--font-body);
+        text-align: left;
+    }
+
+    /* ------------------------------------- */
+    /* 7. SEPARADORES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .section-divider-editorial {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 2rem 0;
+    }
+
+    /* ------------------------------------- */
+    /* 8. RESPONSIVE ADAPTATIONS */
+    /* ------------------------------------- */
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .editorial-header {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .editorial-title {
+            font-size: 2rem;
+        }
+
+        .editorial-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .card-title-estudiante-editorial {
+            font-size: 1.3rem;
+        }
+
+        .estudiante-card-body-editorial {
+            padding: 1.25rem;
+        }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .editorial-header {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .editorial-title {
+            font-size: 1.7rem;
+        }
+
+        .editorial-subtitle {
+            font-size: 1rem;
+        }
+
+        .estudiante-card-body-editorial {
+            padding: 1rem;
+        }
+
+        .card-title-estudiante-editorial {
+            font-size: 1.2rem;
+        }
+
+        .list-group-item-editorial {
+            padding: 0.5rem 0;
+        }
+    }
+</style>
+
+<div class="container mt-4 mb-5 pb-5">
+    <!-- CABECERA ESTILO EDITORIAL -->
+    <div class="editorial-header">
+        <h1 class="editorial-title">Gestión de Estudiantes</h1>
+        <p class="editorial-subtitle">Lista de todos los estudiantes y los cursos que han adquirido</p>
     </div>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <a asp-action="Panel" asp-controller="Admin" class="btn btn-dark">
+
+    <!-- BOTÓN DE REGRESO -->
+    <div class="d-flex justify-content-start align-items-center mb-4">
+        <a asp-action="Panel" asp-controller="Admin" class="btn btn-editorial-secondary">
             <i class="fas fa-arrow-left me-2"></i> Regresar al panel
         </a>
     </div>
+
+    <hr class="section-divider-editorial" />
+
+    <!-- CONTENEDOR DE ESTUDIANTES -->
     <div class="row mt-4 mb-5">
         @if (Model != null && Model.Any())
         {
             @foreach (var estudiante in Model)
             {
                 <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">@estudiante.Nombre</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">@estudiante.Email</h6>
+                    <div class="estudiante-card-editorial h-100">
+                        <div class="estudiante-card-body-editorial">
+                            <!-- Información del Estudiante -->
+                            <h5 class="card-title-estudiante-editorial">@estudiante.Nombre</h5>
+                            <h6 class="card-subtitle-estudiante-editorial">
+                                <i class="fas fa-envelope me-2"></i>@estudiante.Email
+                            </h6>
 
-                            <hr />
+                            <hr class="card-divider-editorial" />
 
-                            <p class="card-text">
-                                <span class="font-weight-bold">Cursos adquiridos:</span>
-                            </p>
+                            <!-- Cursos Adquiridos -->
+                            <div class="card-section-title-editorial">
+                                <i class="fas fa-book-open"></i>
+                                <span>Cursos adquiridos:</span>
+                            </div>
 
                             @if (estudiante.CursosComprados != null && estudiante.CursosComprados.Any())
                             {
-                                <ul class="list-group list-group-flush">
+                                <ul class="list-group list-group-editorial">
                                     @foreach (var curso in estudiante.CursosComprados)
                                     {
-                                        <li class="list-group-item">
-                                            <i class="fas fa-book-open"></i> @curso
+                                        <li class="list-group-item-editorial">
+                                            <i class="fas fa-book list-group-icon-editorial"></i>
+                                            <span class="list-group-text-editorial">@curso</span>
                                         </li>
                                     }
                                 </ul>
                             }
                             else
                             {
-                                <div class="alert alert-warning" role="alert">
-                                    No ha adquirido ningún curso.
+                                <div class="alert-editorial-warning" role="alert">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    Este estudiante no ha adquirido ningún curso aún.
                                 </div>
                             }
                         </div>
@@ -60,7 +363,8 @@
         else
         {
             <div class="col-12">
-                <div class="alert alert-info text-center" role="alert">
+                <div class="alert-editorial-info text-center" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
                     No se encontraron estudiantes para mostrar.
                 </div>
             </div>

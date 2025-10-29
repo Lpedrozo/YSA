@@ -2,227 +2,452 @@
 
 @{
     ViewData["Title"] = "Editar evento";
-    // Si usas TempData para la URL existente, es mejor moverla al ViewModel o
-    // usar un Input Hidden aquí para la URL, para evitar perder el valor en recargas.
-    // Asumo que tienes una propiedad UrlImagenExistente en tu ViewModel para esto.
-    // NOTA: Para edición, asumo que el ViewModel trae la URL existente
     string currentImageUrl = Model.UrlImagenExistente ?? TempData["UrlImagenExistente"]?.ToString();
 }
 
 <style>
-
-    /* ... (Estilos CSS sin cambios) ... */
-        .form-container {
-                max-width: 800px; /* Limita el ancho del formulario */
-                margin: 0 auto; /* Centra el contenedor */
-                padding: 2rem;
-                background-color: #ffffff;
-                border-radius: 12px;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-
+    /* IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES DEL ESTILO EDITORIAL */
+    :root {
+        --color-primary-action: #ef8830;
+        --color-secondary: #212529;
+        --color-accent: #6c757d;
+        --color-background: #ffffff;
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a;
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa;
+        --color-brand-primary: #ef8830;
+        --color-brand-secondary: #e5361a;
+        --color-brand-accent: #f2e514;
+        --color-brand-success: #6db53e;
+        --color-brand-dark: #08080a;
+        --font-heading: 'Georgia', 'Times New Roman', serif;
+        --font-body: 'Arial', 'Helvetica', sans-serif;
+        --font-accent: 'Poppins', sans-serif;
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
-        .form-group label {
-                font-weight: 600;
-                margin-bottom: 0.5rem;
-                color: #333; /* Color de etiqueta más oscuro */
-
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
     }
 
-        .form-control:focus {
-                border-color: #000;
-                box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
-
+    /* PORTADA DE REVISTA PARA EL HEADER */
+    .magazine-admin-header {
+        width: 100%;
+        height: 30vh;
+        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--color-text-light);
     }
 
-        .form-control-lg {
-                height: calc(1.5em + 1rem + 2px); /* Ajuste de altura para campos clave */
-
+    .admin-cover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
     }
 
-        .main-btn {
-                background-color: black;
-                border-color: black;
-                transition: background-color 0.3s;
-
+    .admin-cover-title-block {
+        z-index: 3;
+        max-width: 800px;
     }
 
-            .main-btn:hover {
-                    background-color: #333;
-                    border-color: #333;
-
+    .admin-cover-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
     }
 
-        .form-switch .form-check-input:checked {
-                background-color: black;
-                border-color: black;
-
+    .admin-cover-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.1rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: var(--line-height-normal);
     }
 
-
-    /* Estilo para la imagen de previsualización */
-        .current-image-preview {
-                max-height: 200px; /* Altura máxima para la imagen de previsualización */
-                width: auto;
-                max-width: 100%; /* Asegura que no se desborde en pantallas grandes */
-                border: 1px solid #ccc;
-                border-radius: 8px;
-                margin-top: 10px;
-                object-fit: contain; /* Asegura que la imagen completa se vea dentro del max-height */
-                display: block;
-
+    /* CONTENEDOR PRINCIPAL ESTILO REVISTA */
+    .form-container-editorial {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+        background-color: var(--color-card-bg);
+        border-radius: var(--border-radius-lg);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--color-border);
     }
 
-
-    /* ------------------------------------- */
-
-    /* MEDIA QUERY RESPONSIVE (MÓVIL)        */
-
-    /* ------------------------------------- */
-        @@media (max-width: 767.98px) {
-                .form-container
-
-    {
-
-        /* Reduce el padding interno en móvil */
-                    padding: 1rem;
-
-        /* Elimina el max-width efectivo en pantallas pequeñas */
-                    max-width: 100%;
-
+    /* TÍTULOS PRINCIPALES */
+    .main-title-editorial {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: var(--color-secondary);
+        text-align: center;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
-            .container {
-
-        /* Reduce el padding del contenedor principal */
-                    padding: 1rem 0.5rem !important;
-
+    .main-subtitle-editorial {
+        font-family: var(--font-body);
+        font-size: 1.2rem;
+        color: var(--color-accent);
+        text-align: center;
+        margin-bottom: 3rem;
     }
 
-            .fw-bold {
-                    font-size: 1.75rem; /* Título ligeramente más pequeño */
-                    margin-bottom: 1rem !important;
-
+    /* FORMULARIOS ESTILO REVISTA */
+    .form-label-editorial {
+        font-family: var(--font-accent);
+        font-weight: 600;
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
     }
 
-            .form-group .row > div {
-
-        /* Asegura un poco de espacio si hay columnas anidadas en el row */
-                    padding-bottom: 0.5rem;
-
+    .form-control-editorial {
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1rem;
+        font-family: var(--font-body);
+        transition: all 0.3s ease;
+        background-color: var(--color-card-bg);
     }
 
-            .current-image-preview {
-                    width: 100%; /* CLAVE: La imagen ocupa el ancho completo de su columna en móvil */
-                    height: auto;
+        .form-control-editorial:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+            background-color: var(--color-card-bg);
+        }
 
+    .form-select-editorial {
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1rem;
+        font-family: var(--font-body);
+        transition: all 0.3s ease;
+        background-color: var(--color-card-bg);
     }
 
-            .btn-lg {
+        .form-select-editorial:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
 
-        /* Hace que los botones sean de ancho completo y se apilen */
-                    width: 100%;
-                    margin-bottom: 0.5rem;
-                    margin-right: 0 !important; /* Elimina el margen derecho del botón Guardar */
-
+    /* BOTONES ESTILO REVISTA */
+    .btn-magazine-primary {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        color: white;
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 2rem;
+        transition: all 0.3s ease;
+        font-family: var(--font-accent);
     }
 
-            .form-group.text-center.mt-5 {
+        .btn-magazine-primary:hover {
+            background-color: var(--color-brand-secondary);
+            border-color: var(--color-brand-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
 
-        /* Asegura que los botones se apilen y ocupen el ancho total */
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-
+    .btn-magazine-secondary {
+        background-color: transparent;
+        border: 2px solid var(--color-brand-primary);
+        color: var(--color-brand-primary);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 2rem;
+        transition: all 0.3s ease;
+        font-family: var(--font-accent);
     }
 
+        .btn-magazine-secondary:hover {
+            background-color: var(--color-brand-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
 
+    .btn-magazine-back {
+        background-color: var(--color-secondary);
+        border-color: var(--color-secondary);
+        color: white;
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        font-family: var(--font-accent);
+    }
+
+        .btn-magazine-back:hover {
+            background-color: var(--color-brand-primary);
+            border-color: var(--color-brand-primary);
+            transform: translateY(-2px);
+        }
+
+    /* BADGES ESTILO REVISTA */
+    .badge-magazine {
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    .badge-primary {
+        background-color: var(--color-brand-primary) !important;
+        color: white !important;
+    }
+
+    /* PREVIEW DE IMAGENES */
+    .current-image-preview {
+        max-height: 200px;
+        width: auto;
+        max-width: 100%;
+        border: 2px solid var(--color-border);
+        border-radius: var(--border-radius-sm);
+        margin-top: 10px;
+        object-fit: contain;
+        display: block;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ALERTAS Y MENSAJES */
+    .alert-editorial {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        padding: 1.5rem;
+    }
+
+    .alert-danger {
+        background-color: rgba(229, 54, 26, 0.1);
+        border-color: var(--color-brand-secondary);
+        color: var(--color-text-dark);
+    }
+
+    /* FORM SWITCH ESTILIZADO */
+    .form-switch-editorial .form-check-input {
+        width: 3em;
+        height: 1.5em;
+        background-color: var(--color-border);
+        border: 1px solid var(--color-border);
+    }
+
+        .form-switch-editorial .form-check-input:checked {
+            background-color: var(--color-brand-primary);
+            border-color: var(--color-brand-primary);
+        }
+
+    .form-switch-editorial .form-check-label {
+        font-family: var(--font-accent);
+        font-weight: 600;
+        color: var(--color-secondary);
+    }
+
+    /* SEPARADORES */
+    .divider-editorial {
+        border: none;
+        height: 2px;
+        background: linear-gradient(to right, transparent, var(--color-brand-primary), transparent);
+        margin: 2rem 0;
+        opacity: 0.6;
+    }
+
+    /* GRUPOS DE FORMULARIO */
+    .form-group-editorial {
+        margin-bottom: 1.5rem;
+    }
+
+    /* RESPONSIVE */
+    @@media (max-width: 768px) {
+        .magazine-admin-header {
+            height: 25vh;
+        }
+
+        .admin-cover-title {
+            font-size: 2rem;
+        }
+
+        .admin-cover-subtitle {
+            font-size: 1rem;
+        }
+
+        .form-container-editorial {
+            padding: 1.5rem;
+            margin: 1rem;
+        }
+
+        .main-title-editorial {
+            font-size: 2rem;
+        }
+
+        .main-subtitle-editorial {
+            font-size: 1rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .admin-cover-title {
+            font-size: 1.6rem;
+        }
+
+        .form-container-editorial {
+            padding: 1rem;
+            margin: 0.5rem;
+        }
+
+        .main-title-editorial {
+            font-size: 1.8rem;
+        }
+
+        .btn-magazine-primary,
+        .btn-magazine-secondary {
+            width: 100%;
+            margin-bottom: 1rem;
+            margin-right: 0 !important;
+        }
     }
 </style>
 
-<div class="container py-4 mb-5">
-    <a asp-action="Panel" asp-controller="Admin" class="btn btn-dark">
-        <i class="fas fa-arrow-left me-2"></i> Regresar al panel
-    </a>
-    <h1 class="fw-bold mb-4 text-center">
-        <i class="fas fa-edit me-2 text-primary"></i> @ViewData["Title"]
-    </h1>
-    <hr class="mb-5" />
 
-    <div class="form-container pb-5 mb-5">
+<div class="container px-0 py-4 pb-5 mb-5">
+    <!-- BOTÓN DE REGRESO -->
+    <div class="mb-4">
+        <a asp-action="Panel" asp-controller="Admin" class="btn btn-magazine-back">
+            <i class="fas fa-arrow-left me-2"></i> Regresar al Panel
+        </a>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="form-container-editorial mb-5">
+        <h1 class="main-title-editorial">
+            <i class="fas fa-edit me-2"></i> @ViewData["Title"]
+        </h1>
+        <p class="main-subtitle-editorial">Modifica los detalles de tu evento</p>
+
+        <hr class="divider-editorial" />
+
         <form asp-action="EditarEvento" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-editorial" role="alert"></div>
 
             <input type="hidden" asp-for="Id" />
 
             <div class="row">
+                <!-- COLUMNA IZQUIERDA -->
                 <div class="col-md-6">
-
-                    <div class="form-group mb-4">
-                        <label asp-for="Titulo" class="control-label"></label>
-                        <input asp-for="Titulo" class="form-control form-control-lg" placeholder="Ej: Webinar de Acuarelas Pro" />
-                        <span asp-validation-for="Titulo" class="text-danger"></span>
+                    <div class="form-group-editorial">
+                        <label asp-for="Titulo" class="form-label-editorial">Título del Evento</label>
+                        <input asp-for="Titulo" class="form-control-editorial form-control-lg"
+                               placeholder="Ej: Taller Avanzado de Acuarelas Digitales" />
+                        <span asp-validation-for="Titulo" class="text-danger small"></span>
                     </div>
 
-                    <div class="form-group mb-4">
-                        <label asp-for="TipoEventoId" class="control-label"></label>
-                        <select asp-for="TipoEventoId" class="form-select" asp-items="@Model.TiposEventoDisponibles">
-                            <option value="">-- Seleccione un tipo --</option>
+                    <div class="form-group-editorial">
+                        <label asp-for="TipoEventoId" class="form-label-editorial">Tipo de Evento</label>
+                        <select asp-for="TipoEventoId" class="form-select-editorial" asp-items="@Model.TiposEventoDisponibles">
+                            <option value="">-- Seleccione un tipo de evento --</option>
                         </select>
-                        <span asp-validation-for="TipoEventoId" class="text-danger"></span>
+                        <span asp-validation-for="TipoEventoId" class="text-danger small"></span>
                     </div>
 
-                    <div class="form-group mb-4">
-                        <label asp-for="Lugar" class="control-label"></label>
-                        <input asp-for="Lugar" class="form-control" placeholder="Ej: Enlace de Zoom, o Dirección Física" />
-                        <span asp-validation-for="Lugar" class="text-danger"></span>
+                    <div class="form-group-editorial">
+                        <label asp-for="Lugar" class="form-label-editorial">Lugar o Enlace</label>
+                        <input asp-for="Lugar" class="form-control-editorial"
+                               placeholder="Ej: Enlace de Zoom, Dirección Física o Plataforma Online" />
+                        <span asp-validation-for="Lugar" class="text-danger small"></span>
                     </div>
 
-                    <div class="form-check form-switch mb-4 mt-4">
-                        <input class="form-check-input" type="checkbox" role="switch" asp-for="EsDestacado" id="EsDestacadoSwitch" />
-                        <label class="form-check-label" for="EsDestacadoSwitch">
-                            <i class="fas fa-star text-warning me-1"></i> @Html.DisplayNameFor(model => model.EsDestacado)
-                        </label>
+                    <div class="form-group-editorial">
+                        <div class="form-check form-switch form-switch-editorial">
+                            <input class="form-check-input" type="checkbox" role="switch" asp-for="EsDestacado" id="EsDestacadoSwitch" />
+                            <label class="form-check-label" for="EsDestacadoSwitch">
+                                <i class="fas fa-star text-warning me-2"></i>
+                                <strong>Destacar Evento</strong>
+                                <small class="text-muted d-block">Marcar como evento destacado en la portada</small>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
+                <!-- COLUMNA DERECHA -->
                 <div class="col-md-6">
-
-                    <div class="form-group mb-4">
-                        <label asp-for="FechaEvento" class="control-label"></label>
-                        <input asp-for="FechaEvento" type="datetime-local" class="form-control" />
-                        <span asp-validation-for="FechaEvento" class="text-danger"></span>
+                    <div class="form-group-editorial">
+                        <label asp-for="FechaEvento" class="form-label-editorial">Fecha y Hora del Evento</label>
+                        <input asp-for="FechaEvento" type="datetime-local" class="form-control-editorial" />
+                        <span asp-validation-for="FechaEvento" class="text-danger small"></span>
                     </div>
 
-                    <div class="form-group mb-4">
-                        <label asp-for="ImagenPortada" class="control-label">Cambiar imagen de portada</label>
-                        <input asp-for="ImagenPortada" type="file" class="form-control" accept="image/*" />
-                        <span asp-validation-for="ImagenPortada" class="text-danger"></span>
+                    <div class="form-group-editorial">
+                        <label asp-for="ImagenPortada" class="form-label-editorial">Imagen de Portada</label>
+                        <input asp-for="ImagenPortada" type="file" class="form-control-editorial" accept="image/*" />
+                        <span asp-validation-for="ImagenPortada" class="text-danger small"></span>
 
                         @if (!string.IsNullOrEmpty(currentImageUrl))
                         {
-                            <p class="text-muted small mt-2 mb-1">Imagen actual:</p>
-                            <img src="@currentImageUrl" alt="Imagen del evento" class="current-image-preview" />
-                            <small class="form-text text-muted">Sube un nuevo archivo para reemplazar la imagen actual.</small>
+                            <div class="mt-3">
+                                <p class="form-label-editorial mb-2">Vista previa actual:</p>
+                                <img src="@currentImageUrl" alt="Imagen actual del evento" class="current-image-preview" />
+                                <small class="form-text text-muted d-block mt-2">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Sube una nueva imagen solo si deseas reemplazar la actual.
+                                </small>
+                            </div>
                         }
                     </div>
-
                 </div>
             </div>
 
-            @* CAMBIO CLAVE 1: Reemplazamos DescripcionTextarea por DescripcionEditor y eliminamos el contador/maxlength *@
-            <div class="form-group mb-4">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <textarea asp-for="Descripcion" class="form-control" rows="10" id="DescripcionEditor" placeholder="Describe el evento usando formato enriquecido (negritas, listas, enlaces, etc.)."></textarea>
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            <!-- DESCRIPCIÓN CON EDITOR RICO -->
+            <div class="form-group-editorial">
+                <label asp-for="Descripcion" class="form-label-editorial">Descripción del Evento</label>
+                <textarea asp-for="Descripcion" class="form-control-editorial" rows="10" id="DescripcionEditor"
+                          placeholder="Describe el evento usando formato enriquecido (negritas, listas, enlaces, etc.)..."></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                <small class="form-text text-muted">
+                    <i class="fas fa-lightbulb me-1"></i>
+                    Utiliza el editor para formatear tu contenido con negritas, listas y enlaces.
+                </small>
             </div>
 
-            <div class="form-group text-center mt-5">
-                <button type="submit" class="btn main-btn text-white shadow-sm me-3">
-                    <i class="fas fa-save me-2"></i> Guardar cambios
+            <!-- BOTONES DE ACCIÓN -->
+            <div class="form-group text-center mt-5 pt-4">
+                <button type="submit" class="btn btn-magazine-primary btn-lg me-3">
+                    <i class="fas fa-save me-2"></i> Guardar Cambios
                 </button>
-                <a asp-action="GestionarEventos" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i> Volver a la lista
+                <a asp-action="GestionarEventos" class="btn btn-magazine-secondary btn-lg">
+                    <i class="fas fa-arrow-left me-2"></i> Volver a la Lista
                 </a>
             </div>
         </form>
@@ -237,23 +462,29 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-
-            // CAMBIO CLAVE 3: Inicializamos TinyMCE en el nuevo ID #DescripcionEditor
+            // Inicializar TinyMCE para el editor de descripción
             tinymce.init({
                 selector: '#DescripcionEditor',
-                plugins: 'lists link code autoresize',
-                toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link code',
+                plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+                toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
                 menubar: false,
-                branding: false,
-                height: 300
+                height: 300,
+                content_style: `
+                    body {
+                        font-family: 'Arial', 'Helvetica', sans-serif;
+                        font-size: 14px;
+                        line-height: 1.6;
+                        color: #212529;
+                    }
+                `
             });
 
-            // Lógica para FechaEvento (sin cambios)
+            // Lógica para formatear FechaEvento
             var fechaEventoInput = document.getElementById('@Html.IdFor(model => model.FechaEvento)');
             if (fechaEventoInput) {
                 fechaEventoInput.type = 'datetime-local';
 
-                // Intenta formatear el valor que viene del servidor si no tiene el formato 'T' (tiempo)
+                // Formatear el valor que viene del servidor si no tiene el formato 'T'
                 if (fechaEventoInput.value && !fechaEventoInput.value.includes('T')) {
                     var date = new Date(fechaEventoInput.value);
                     if (!isNaN(date)) {

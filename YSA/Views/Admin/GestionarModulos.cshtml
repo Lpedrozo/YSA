@@ -5,176 +5,389 @@
 
 <style>
     /* ------------------------------------- */
-    /* 1. Variables B&W y Estilos Generales  */
+    /* 1. IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES EDITORIAL */
     /* ------------------------------------- */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
     :root {
-        --color-secondary: #000000; /* Negro Puro (Título) */
-        --color-primary: #333333; /* Gris Oscuro (Botones, Acentos) */
-        --color-secondary-light: #5a5a5a; /* Gris Medio para acciones secundarias */
-        --color-text-muted: #6a6a6a; /* Gris medio (Descripción) */
-        --color-background-light: #f7f7f7; /* Fondo general de la página */
-        --color-background-white: #ffffff; /* Fondo para las tarjetas */
-        --color-border-light: #eeeeee; /* Borde sutil */
-        --color-danger: #cc0000; /* Rojo sutil para acciones peligrosas */
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
     body {
-        background-color: var(--color-background-light);
-        color: var(--color-primary);
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
     }
 
-    h1 {
+    /* ------------------------------------- */
+    /* 2. CABECERA ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .editorial-header {
+        background-color: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 2.5rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .editorial-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
         color: var(--color-secondary);
-        font-weight: 700;
-        font-size: 2rem;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
     }
 
-    hr {
-        border-top: 2px solid var(--color-border-light);
-        opacity: 1;
-        margin-bottom: 1.5rem;
+    .editorial-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
     }
 
-    /* Botón "Volver" */
-    .btn-secondary {
-        background-color: var(--color-text-muted) !important;
-        border-color: var(--color-text-muted) !important;
+    /* ------------------------------------- */
+    /* 3. BOTONES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .btn-editorial-secondary {
+        background-color: var(--color-accent) !important;
+        border-color: var(--color-accent) !important;
         color: white !important;
         transition: background-color 0.2s;
-        border-radius: 8px;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
     }
 
-        .btn-secondary:hover {
-            background-color: var(--color-primary) !important;
-            border-color: var(--color-primary) !important;
+        .btn-editorial-secondary:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
         }
 
-    /* Botón "Nuevo Módulo" */
-    .btn-success {
-        background-color: var(--color-primary) !important;
-        border-color: var(--color-primary) !important;
+    .btn-editorial-primary {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
         color: white !important;
         font-weight: 600;
         transition: background-color 0.2s;
-        border-radius: 8px;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        padding: 0.75rem 1.5rem;
     }
 
-        .btn-success:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
+        .btn-editorial-primary:hover {
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
         }
 
     /* ------------------------------------- */
-    /* 2. Estilos de las Cards de Módulo     */
+    /* 4. TARJETAS DE MÓDULO ESTILO EDITORIAL */
     /* ------------------------------------- */
-    .modulo-card {
-        border: 1px solid var(--color-border-light);
-        border-radius: 12px;
-        background-color: var(--color-background-white);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
-        transition: box-shadow 0.3s, transform 0.3s;
+    .modulo-card-editorial {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
     }
 
-        .modulo-card:hover {
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
+        .modulo-card-editorial:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
         }
 
-    .modulo-order {
-        font-size: 1.5rem;
+    .modulo-order-editorial {
+        font-size: 2rem;
         font-weight: 800;
-        color: var(--color-primary);
+        color: var(--color-brand-primary);
         line-height: 1;
         margin-right: 15px;
         padding-right: 15px;
-        border-right: 2px solid var(--color-border-light);
+        border-right: 2px solid var(--color-border);
+        font-family: var(--font-heading);
     }
 
-    .card-title-modulo {
+    .card-title-modulo-editorial {
+        font-family: var(--font-heading);
         font-weight: 700;
         color: var(--color-secondary);
-        font-size: 1.2rem;
+        font-size: 1.5rem;
         margin: 0;
+        line-height: var(--line-height-normal);
     }
 
-    .card-body .text-muted {
-        font-size: 0.85rem;
+    .card-text-editorial {
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
     }
 
-    /* Botón "Lecciones" (Ancho completo, más destacado) */
-    .btn-info {
-        background-color: var(--color-secondary-light) !important;
-        border-color: var(--color-secondary-light) !important;
+    /* Botón "Lecciones" */
+    .btn-editorial-info {
+        background-color: var(--color-accent) !important;
+        border-color: var(--color-accent) !important;
         color: white !important;
         font-weight: 500;
         transition: background-color 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
     }
 
-        .btn-info:hover {
+        .btn-editorial-info:hover {
             background-color: var(--color-secondary) !important;
             border-color: var(--color-secondary) !important;
         }
 
+    /* Botón "Recursos" */
+    .btn-editorial-resources {
+        background-color: #008CBA !important;
+        border-color: #008CBA !important;
+        color: white !important;
+        font-weight: 500;
+        transition: background-color 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+    }
+
+        .btn-editorial-resources:hover {
+            background-color: #006a8e !important;
+            border-color: #006a8e !important;
+        }
+
     /* Botones de Icono (Editar y Eliminar) */
-    .btn-icon {
-        width: 36px; /* Ancho fijo para hacerlos cuadrados */
-        height: 36px; /* Alto fijo */
+    .btn-icon-editorial {
+        width: 36px;
+        height: 36px;
         padding: 0;
         display: flex;
         justify-content: center;
         align-items: center;
-        flex-shrink: 0; /* Evita que se encojan */
-        border-radius: 6px;
+        flex-shrink: 0;
+        border-radius: var(--border-radius-sm);
     }
 
     /* Botón "Editar" (Icono) */
-    .btn-primary.btn-icon {
-        background-color: var(--color-primary) !important;
-        border-color: var(--color-primary) !important;
-    }
-
-        .btn-primary.btn-icon:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
-        }
-
-    /* Botón "Eliminar" (Icono) */
-    .btn-danger {
-        background-color: var(--color-danger) !important;
-        border-color: var(--color-danger) !important;
+    .btn-primary-editorial {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
         color: white !important;
     }
 
-        .btn-danger:hover {
-            background-color: #a30000 !important; /* Tono más oscuro de rojo */
+        .btn-primary-editorial:hover {
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+        }
+
+    /* Botón "Eliminar" (Icono) */
+    .btn-danger-editorial {
+        background-color: var(--color-brand-secondary) !important;
+        border-color: var(--color-brand-secondary) !important;
+        color: white !important;
+    }
+
+        .btn-danger-editorial:hover {
+            background-color: #a30000 !important;
             border-color: #a30000 !important;
         }
+
+    /* ------------------------------------- */
+    /* 5. MODALES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .modal-editorial .modal-content {
+        border-radius: var(--border-radius-lg);
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-editorial .modal-header {
+        border-bottom: 2px solid var(--color-border);
+        background-color: var(--color-section-bg);
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    }
+
+    .modal-editorial .modal-title {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        color: var(--color-secondary);
+        font-size: 1.5rem;
+    }
+
+    .modal-editorial .form-label {
+        font-family: var(--font-accent);
+        font-weight: 600;
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-editorial .form-control {
+        border-radius: var(--border-radius-sm);
+        border: 1px solid var(--color-border);
+        padding: 0.75rem 1rem;
+        font-family: var(--font-body);
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+        .modal-editorial .form-control:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    /* ------------------------------------- */
+    /* 6. ALERTAS ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .alert-editorial-info {
+        background-color: rgba(109, 181, 62, 0.1);
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    .alert-editorial-danger {
+        background-color: rgba(229, 54, 26, 0.1);
+        border-color: var(--color-brand-secondary);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1rem;
+        font-family: var(--font-body);
+    }
+
+    /* ------------------------------------- */
+    /* 7. SEPARADORES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .section-divider-editorial {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 2rem 0;
+    }
+
+    /* ------------------------------------- */
+    /* 8. RESPONSIVE ADAPTATIONS */
+    /* ------------------------------------- */
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .editorial-header {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .editorial-title {
+            font-size: 2rem;
+        }
+
+        .editorial-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .card-title-modulo-editorial {
+            font-size: 1.3rem;
+        }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .editorial-header {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .editorial-title {
+            font-size: 1.7rem;
+        }
+
+        .editorial-subtitle {
+            font-size: 1rem;
+        }
+
+        .modulo-order-editorial {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            padding-right: 10px;
+        }
+
+        .card-title-modulo-editorial {
+            font-size: 1.1rem;
+        }
+    }
 </style>
 
-<div class="container mt-5 mb-5 pb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-center" style="margin-right: 1.5rem;">Módulos para: @ViewBag.CursoTitulo</h1>
+<div class="container mt-4 mb-5 pb-5">
+    <!-- CABECERA ESTILO EDITORIAL -->
+    <div class="editorial-header text-center">
+        <h1 class="editorial-title">Gestión de Módulos</h1>
+        <p class="editorial-subtitle">Curso: @ViewBag.CursoTitulo</p>
     </div>
 
+    <!-- BOTONES DE ACCIÓN PRINCIPAL -->
     <div class="row mb-4 g-2">
         <div class="col-12 col-sm-6">
-            <a asp-action="GestionarCursos" class="btn btn-secondary w-100">
+            <a asp-action="GestionarCursos" class="btn btn-editorial-secondary w-100">
                 <i class="fas fa-arrow-left me-2"></i> Volver a cursos
             </a>
         </div>
         <div class="col-12 col-sm-6">
-            <button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#crearModuloModal">
+            <button type="button" class="btn btn-editorial-primary w-100" data-bs-toggle="modal" data-bs-target="#crearModuloModal">
                 <i class="fas fa-plus-circle me-2"></i> Nuevo módulo
             </button>
         </div>
     </div>
-    <hr style="margin-top: 0;" />
 
+    <hr class="section-divider-editorial" />
+
+    <!-- CUADRÍCULA DE MÓDULOS -->
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5 pb-5" id="cardsModulos">
         @if (Model == null || !Model.Any())
         {
             <div class="col-12" id="no-modulos-alert">
-                <div class="alert alert-info text-center" role="alert" style="border-radius: 8px; margin-top: 3rem;">
+                <div class="alert-editorial-info text-center" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
                     Este curso no tiene módulos creados. ¡Empieza a estructurar tu contenido!
                 </div>
             </div>
@@ -184,14 +397,13 @@
             @foreach (var modulo in Model.OrderBy(m => m.Orden))
             {
                 <div class="col" data-id="@modulo.Id">
-                    <div class="card modulo-card h-100 p-3">
+                    <div class="modulo-card-editorial h-100 p-3">
                         <div class="card-body d-flex align-items-center justify-content-between p-0">
-
                             <div class="d-flex align-items-center">
-                                <div class="modulo-order">@modulo.Orden</div>
+                                <div class="modulo-order-editorial">@modulo.Orden</div>
                                 <div>
-                                    <h5 class="card-title-modulo">@modulo.Titulo</h5>
-                                    <p class="card-text text-muted mb-0">Total Lecciones: N/A</p>
+                                    <h5 class="card-title-modulo-editorial">@modulo.Titulo</h5>
+                                    <p class="card-text-editorial mb-0">Total Lecciones: N/A</p>
                                 </div>
                             </div>
 
@@ -199,22 +411,27 @@
                                 <a asp-action="GestionarRecursosActividades"
                                    asp-route-tipoEntidad="Modulo"
                                    asp-route-entidadId="@modulo.Id"
-                                   class="btn btn-sm btn-recurso w-100 mb-2"
-                                   style="background-color: #008CBA !important; border-color: #008CBA !important; color: white;">
+                                   class="btn btn-sm btn-editorial-resources w-100 mb-2">
                                     <i class="fas fa-paperclip me-1"></i> Recursos
                                 </a>
 
-                                <a asp-action="GestionarLecciones" asp-route-moduloId="@modulo.Id" class="btn btn-sm btn-info w-100 mb-2">
+                                <a asp-action="GestionarLecciones" asp-route-moduloId="@modulo.Id" class="btn btn-sm btn-editorial-info w-100 mb-2">
                                     <i class="fas fa-list me-1"></i> Lecciones
                                 </a>
 
                                 <div class="d-flex">
-                                    <button type="button" class="btn btn-sm btn-primary btn-icon editar-btn me-2"
+                                    <button type="button" class="btn btn-sm btn-primary-editorial btn-icon-editorial editar-btn me-2"
                                             data-id="@modulo.Id"
                                             data-bs-toggle="modal"
                                             data-bs-target="#editarModuloModal">
                                         <i class="fas fa-edit"></i>
                                     </button>
+                                    <form action="/Admin/EliminarModulo?id=@modulo.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-danger-editorial btn-icon-editorial eliminar-btn">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -225,59 +442,61 @@
     </div>
 </div>
 
-<div class="modal fade" id="crearModuloModal" tabindex="-1" aria-labelledby="crearModuloModalLabel" aria-hidden="true">
+<!-- MODAL CREAR MÓDULO -->
+<div class="modal fade modal-editorial" id="crearModuloModal" tabindex="-1" aria-labelledby="crearModuloModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="crearModuloModalLabel" style="color:var(--color-secondary);">Crear Módulo</h5>
+                <h5 class="modal-title" id="crearModuloModalLabel">Crear Módulo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formCrearModulo" asp-action="CrearModulo" method="post">
                 <div class="modal-body">
-                    <div id="crear-modulo-validation-errors" class="alert alert-danger d-none"></div>
+                    <div id="crear-modulo-validation-errors" class="alert-editorial-danger d-none"></div>
                     <input type="hidden" name="CursoId" value="@ViewBag.CursoId" />
                     <div class="form-group mb-3">
-                        <label for="Crear_Titulo" style="color:var(--color-primary);">Título</label>
+                        <label for="Crear_Titulo" class="form-label">Título</label>
                         <input type="text" id="Crear_Titulo" name="Titulo" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Crear_Orden" style="color:var(--color-primary);">Orden</label>
+                        <label for="Crear_Orden" class="form-label">Orden</label>
                         <input type="number" id="Crear_Orden" name="Orden" class="form-control" required />
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-editorial-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-editorial-primary">Guardar</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="editarModuloModal" tabindex="-1" aria-labelledby="editarModuloModalLabel" aria-hidden="true">
+<!-- MODAL EDITAR MÓDULO -->
+<div class="modal fade modal-editorial" id="editarModuloModal" tabindex="-1" aria-labelledby="editarModuloModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editarModuloModalLabel" style="color:var(--color-secondary);">Editar Módulo</h5>
+                <h5 class="modal-title" id="editarModuloModalLabel">Editar Módulo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formEditarModulo" asp-action="EditarModulo" method="post">
                 <div class="modal-body">
-                    <div id="editar-modulo-validation-errors" class="alert alert-danger d-none"></div>
+                    <div id="editar-modulo-validation-errors" class="alert-editorial-danger d-none"></div>
                     <input type="hidden" id="Editar_Id" name="Id" />
                     <input type="hidden" id="Editar_CursoId" name="CursoId" value="@ViewBag.CursoId" />
                     <div class="form-group mb-3">
-                        <label for="Editar_Titulo" style="color:var(--color-primary);">Título</label>
+                        <label for="Editar_Titulo" class="form-label">Título</label>
                         <input type="text" id="Editar_Titulo" name="Titulo" class="form-control" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Editar_Orden" style="color:var(--color-primary);">Orden</label>
+                        <label for="Editar_Orden" class="form-label">Orden</label>
                         <input type="number" id="Editar_Orden" name="Orden" class="form-control" required />
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                    <button type="button" class="btn btn-editorial-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-editorial-primary">Actualizar</button>
                 </div>
             </form>
         </div>
@@ -338,25 +557,25 @@
 
                             const cardHtml = `
                                 <div class="col" data-id="${modulo.id}">
-                                    <div class="card modulo-card h-100 p-3">
+                                    <div class="modulo-card-editorial h-100 p-3">
                                         <div class="card-body d-flex align-items-center justify-content-between p-0">
                                             <div class="d-flex align-items-center">
-                                                <div class="modulo-order">${modulo.orden}</div>
+                                                <div class="modulo-order-editorial">${modulo.orden}</div>
                                                 <div>
-                                                    <h5 class="card-title-modulo">${modulo.titulo}</h5>
-                                                    <p class="card-text text-muted mb-0">Total Lecciones: N/A</p>
+                                                    <h5 class="card-title-modulo-editorial">${modulo.titulo}</h5>
+                                                    <p class="card-text-editorial mb-0">Total Lecciones: N/A</p>
                                                 </div>
                                             </div>
                                             <div class="d-flex flex-column align-items-end ms-3">
-                                                <a href="${recursosLink}" class="btn btn-sm btn-recurso w-100 mb-2" style="background-color: #008CBA !important; border-color: #008CBA !important; color: white;">
+                                                <a href="${recursosLink}" class="btn btn-sm btn-editorial-resources w-100 mb-2">
                                                      <i class="fas fa-paperclip me-1"></i> Recursos
                                                 </a>
 
-                                                <a href="/Admin/GestionarLecciones?moduloId=${modulo.id}" class="btn btn-sm btn-info w-100 mb-2">
+                                                <a href="/Admin/GestionarLecciones?moduloId=${modulo.id}" class="btn btn-sm btn-editorial-info w-100 mb-2">
                                                     <i class="fas fa-list me-1"></i> Lecciones
                                                 </a>
                                                 <div class="d-flex">
-                                                    <button type="button" class="btn btn-sm btn-primary btn-icon editar-btn me-2"
+                                                    <button type="button" class="btn btn-sm btn-primary-editorial btn-icon-editorial editar-btn me-2"
                                                              data-id="${modulo.id}"
                                                              data-bs-toggle="modal"
                                                              data-bs-target="#editarModuloModal">
@@ -364,7 +583,7 @@
                                                      </button>
                                                      <form action="/Admin/EliminarModulo?id=${modulo.id}" method="post" class="d-inline">
                                                          <input type="hidden" name="__RequestVerificationToken" value="${getAntiForgeryToken()}" />
-                                                         <button type="submit" class="btn btn-sm btn-danger btn-icon eliminar-btn">
+                                                         <button type="submit" class="btn btn-sm btn-danger-editorial btn-icon-editorial eliminar-btn">
                                                              <i class="fas fa-trash-alt"></i>
                                                          </button>
                                                      </form>
@@ -380,7 +599,8 @@
                         // Si no hay módulos después de la operación, muestra el mensaje de alerta
                         const noModulosAlert = `
                             <div class="col-12" id="no-modulos-alert">
-                                <div class="alert alert-info text-center" role="alert" style="border-radius: 8px; margin-top: 3rem;">
+                                <div class="alert-editorial-info text-center" role="alert">
+                                    <i class="fas fa-info-circle me-2"></i>
                                     Este curso no tiene módulos creados. ¡Empieza a estructurar tu contenido!
                                 </div>
                             </div>

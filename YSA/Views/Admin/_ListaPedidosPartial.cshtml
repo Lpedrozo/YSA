@@ -1,69 +1,345 @@
 ﻿@model IEnumerable<YSA.Web.Models.ViewModels.PedidoPendienteViewModel>
 
+<style>
+    /* IMPORTACIÓN DE TIPOGRAFÍAS */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
+    :root {
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
+    }
+
+    /* ESTILO DE TARJETA TIPO REVISTA MEJORADO (Para pedidos) */
+    .pedido-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+        padding: 1.5rem;
+    }
+
+        .pedido-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+    .card-title-lg {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 1.5rem;
+        line-height: var(--line-height-normal);
+        color: var(--color-secondary);
+        margin-bottom: 0;
+    }
+
+    .card-info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+        .card-info-item:last-child {
+            border-bottom: none;
+        }
+
+    .card-info-label {
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--color-accent);
+        font-weight: 500;
+    }
+
+    .card-info-value {
+        font-family: var(--font-accent);
+        font-size: 0.95rem;
+        color: var(--color-text-dark);
+        font-weight: 600;
+    }
+
+    .card-body-scroll {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    /* BADGES CON NUEVA PALETA */
+    .badge.bg-secondary {
+        background-color: var(--color-brand-primary) !important; /* Naranja para badges */
+        color: var(--color-text-light) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    /* BOTONES CON NUEVA PALETA DE COLORES */
+    .btn-aprobar {
+        background-color: var(--color-brand-success) !important;
+        border-color: var(--color-brand-success) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        padding: 0.75rem 1.5rem;
+    }
+
+        .btn-aprobar:hover {
+            background-color: #5a9c35 !important;
+            border-color: #5a9c35 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    .btn-comprobante {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        padding: 0.75rem 1.5rem;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+    }
+
+        .btn-comprobante:hover {
+            background-color: #d97a29 !important;
+            border-color: #d97a29 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: white !important;
+        }
+
+    .btn-danger-custom {
+        background-color: var(--color-brand-secondary) !important;
+        border-color: var(--color-brand-secondary) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        padding: 0.75rem 1.5rem;
+    }
+
+        .btn-danger-custom:hover {
+            background-color: #c02a15 !important;
+            border-color: #c02a15 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    /* ALERTAS CON NUEVA PALETA */
+    .alert-info {
+        background-color: rgba(239, 136, 48, 0.1);
+        border-color: var(--color-brand-primary);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* ADAPTACIONES RESPONSIVE */
+
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .pedido-card {
+            padding: 1.25rem;
+        }
+
+        .card-title-lg {
+            font-size: 1.3rem;
+        }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .pedido-card {
+            padding: 1rem;
+        }
+
+        .card-title-lg {
+            font-size: 1.2rem;
+        }
+
+        .card-info-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+
+        .card-info-value {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
 @if (!Model.Any())
 {
-    <div class="alert alert-info text-center py-4" role="alert" style="border-radius: 8px;">
+    <div class="alert alert-info text-center py-4" role="alert">
         <i class="fas fa-info-circle me-2"></i> No hay pedidos en este estado en este momento.
     </div>
 }
 else
 {
-    <div class="row mb-5 pb-5">
-        @foreach (var pedido in Model)
-        {
-            <div class="col-12 col-md-6 col-lg-4 mb-4">
-                <div class="card pedido-card p-4">
+    <div class="section-container">
+        <div class="px-3 mb-4">
+            <span class="latest-grid-header">PEDIDOS PENDIENTES</span>
+        </div>
 
-                    <div class="card-header border-0 bg-transparent p-0 mb-3 d-flex justify-content-between align-items-center">
-                        <span class="card-title-lg">Pedido #@pedido.PedidoId</span>
-                        <span class="badge bg-secondary">@pedido.Estado</span>
-                    </div>
-
-                    <div class="card-body card-body-scroll p-0 mb-3">
-                        <div class="card-info-item">
-                            <span class="card-info-label">Estudiante:</span>
-                            <span class="card-info-value">@pedido.NombreEstudiante</span>
-                        </div>
-                        <div class="card-info-item">
-                            <span class="card-info-label">Fecha:</span>
-                            <span class="card-info-value">@pedido.FechaPedido.ToShortDateString()</span>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var pedido in Model)
+            {
+                <div class="col">
+                    <div class="pedido-card">
+                        @* Encabezado de la tarjeta *@
+                        <div class="card-header border-0 bg-transparent p-0 mb-3 d-flex justify-content-between align-items-center">
+                            <span class="card-title-lg">Pedido #@pedido.PedidoId</span>
+                            <span class="badge bg-secondary">@pedido.Estado</span>
                         </div>
 
-                        <div class="card-info-item mt-3" style="border-top: 1px solid var(--color-secondary-light); border-bottom: none; padding-top: 10px;">
-                            <span class="card-info-label" style="font-size: 1.1rem; color: var(--color-secondary);">Total a pagar:</span>
-                            <span class="card-info-value" style="color:var(--color-danger); font-size: 1.3rem; font-weight: 700;">
-                                @pedido.Total.ToString("C", new System.Globalization.CultureInfo("es-VE"))
-                            </span>
+                        @* Cuerpo de la tarjeta *@
+                        <div class="card-body card-body-scroll p-0 mb-3">
+                            <div class="card-info-item">
+                                <span class="card-info-label">Estudiante:</span>
+                                <span class="card-info-value">@pedido.NombreEstudiante</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-label">Fecha:</span>
+                                <span class="card-info-value">@pedido.FechaPedido.ToShortDateString()</span>
+                            </div>
+
+                            <div class="card-info-item mt-3" style="border-top: 2px solid var(--color-brand-primary); border-bottom: none; padding-top: 10px;">
+                                <span class="card-info-label" style="font-size: 1.1rem; color: var(--color-secondary);">Total a pagar:</span>
+                                <span class="card-info-value" style="color: var(--color-brand-success); font-size: 1.3rem; font-weight: 700;">
+                                    @pedido.Total.ToString("C", new System.Globalization.CultureInfo("es-VE"))
+                                </span>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="card-footer bg-transparent border-0 p-0 d-grid gap-2">
+                        @* Pie de la tarjeta con acciones *@
+                        <div class="card-footer bg-transparent border-0 p-0 d-grid gap-2">
+                            @if (pedido.Estado == "Validando")
+                            {
+                                <form asp-controller="Admin" asp-action="AprobarPedido" method="post">
+                                    <input type="hidden" name="pedidoId" value="@pedido.PedidoId" />
+                                    <button type="submit" class="btn btn-aprobar w-100">
+                                        <i class="fas fa-check-circle me-2"></i> Aprobar pago
+                                    </button>
+                                </form>
+                                <form asp-controller="Admin" asp-action="AnularPedido" method="post" onsubmit="return confirm('¿Está seguro de que desea ANULAR el pedido #@pedido.PedidoId? Esta acción no se puede deshacer.');">
+                                    <input type="hidden" name="pedidoId" value="@pedido.PedidoId" />
+                                    <button type="submit" class="btn btn-danger-custom w-100">
+                                        <i class="fas fa-times-circle me-2"></i> Anular Pago
+                                    </button>
+                                </form>
+                            }
 
-                        @if (pedido.Estado == "Validando")
-                        {
-                            <form asp-controller="Admin" asp-action="AprobarPedido" method="post">
-                                <input type="hidden" name="pedidoId" value="@pedido.PedidoId" />
-                                <button type="submit" class="btn btn-aprobar w-100">
-                                    <i class="fas fa-check-circle me-2"></i> Aprobar pago
-                                </button>
-                            </form>
-                            <form asp-controller="Admin" asp-action="AnularPedido" method="post" onsubmit="return confirm('¿Está seguro de que desea ANULAR el pedido #@pedido.PedidoId? Esta acción no se puede deshacer.');">
-                                <input type="hidden" name="pedidoId" value="@pedido.PedidoId" />
-                                <button type="submit" class="btn w-100 mt-2" style="background-color: var(--color-danger); color: white; border-color: var(--color-danger); font-weight: 600; border-radius: 6px;">
-                                    <i class="fas fa-times-circle me-2"></i> Anular Pago
-                                </button>
-                            </form>
-                        }
-
-                        @if (!string.IsNullOrEmpty(pedido.UrlComprobante))
-                        {
-                            <a href="@Url.Content(pedido.UrlComprobante)" target="_blank" class="btn btn-comprobante w-100 mt-2">
-                                <i class="fas fa-file-image me-2"></i> Ver comprobante
-                            </a>
-                        }
+                            @if (!string.IsNullOrEmpty(pedido.UrlComprobante))
+                            {
+                                <a href="@Url.Content(pedido.UrlComprobante)" target="_blank" class="btn btn-comprobante w-100">
+                                    <i class="fas fa-file-image me-2"></i> Ver comprobante
+                                </a>
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     </div>
+}
+
+@section Scripts {
+    <script>
+        // Script para confirmación de anulación con SweetAlert2 (opcional)
+        document.addEventListener('DOMContentLoaded', function () {
+            // Puedes reemplazar el confirm nativo por SweetAlert2 si lo prefieres
+            const anularForms = document.querySelectorAll('form[onsubmit*="confirm"]');
+
+            anularForms.forEach(form => {
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    const pedidoId = this.querySelector('input[name="pedidoId"]').value;
+
+                    Swal.fire({
+                        title: '¿Está seguro?',
+                        text: `¿Está seguro de que desea ANULAR el pedido #${pedidoId}? Esta acción no se puede deshacer.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#e5361a',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Sí, anular pedido',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            this.submit();
+                        }
+                    });
+                };
+            });
+        });
+    </script>
 }

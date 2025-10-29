@@ -5,110 +5,517 @@
 }
 
 <style>
-    .event-card {
-        border-radius: 12px;
-        overflow: hidden;
-        transition: transform 0.3s, box-shadow 0.3s;
-        height: 100%;
-        border: 1px solid #e0e0e0;
+    /* ------------------------------------- */
+    /* 1. IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES EDITORIAL */
+    /* ------------------------------------- */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
+    :root {
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
-        .event-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
+    }
+
+    /* ------------------------------------- */
+    /* 2. CABECERA ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .editorial-header {
+        background-color: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 2.5rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .editorial-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    .editorial-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
+    }
+
+    /* ------------------------------------- */
+    /* 3. BOTONES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .btn-editorial-secondary {
+        background-color: var(--color-accent) !important;
+        border-color: var(--color-accent) !important;
+        color: white !important;
+        transition: background-color 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+    }
+
+        .btn-editorial-secondary:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
         }
 
-    .event-card-img {
-        height: 180px; /* Altura fija para la imagen del evento */
-        object-fit: cover;
-        width: 100%;
+    .btn-editorial-primary {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        padding: 0.75rem 1.5rem;
     }
 
-    .card-meta {
+        .btn-editorial-primary:hover {
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+        }
+
+    /* ------------------------------------- */
+    /* 4. TARJETAS DE EVENTO ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .event-card-editorial {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+        .event-card-editorial:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+    .event-card-img-editorial {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+        transition: transform 0.5s ease;
+        flex-shrink: 0;
+    }
+
+    .event-card-editorial:hover .event-card-img-editorial {
+        transform: scale(1.05);
+    }
+
+    .event-card-body-editorial {
+        padding: 1.5rem;
+        position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-title-event-editorial {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        color: var(--color-secondary);
+        font-size: 1.5rem;
+        margin: 0 0 1rem 0;
+        line-height: var(--line-height-normal);
+        flex-shrink: 0;
+    }
+
+    .card-meta-editorial {
+        font-family: var(--font-body);
         font-size: 0.9rem;
-        color: #6c757d;
+        color: var(--color-accent);
         display: flex;
         justify-content: space-between;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    .list-group-editorial {
+        border: none;
+        margin-bottom: 1.5rem;
+        flex: 1;
+    }
+
+    .list-group-item-editorial {
+        border: none;
+        border-bottom: 1px solid var(--color-border);
+        padding: 0.75rem 0;
+        font-family: var(--font-body);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .list-group-item-editorial:last-child {
+            border-bottom: none;
+        }
+
+    .list-group-label {
+        color: var(--color-accent);
+        font-weight: 500;
+    }
+
+    .list-group-value {
+        color: var(--color-secondary);
+        font-weight: 600;
+        text-align: right;
+    }
+
+    /* CONTENEDOR DE BOTONES FIJO EN LA PARTE INFERIOR */
+    .card-footer-actions-editorial {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: flex-start;
+        margin-top: auto;
+        padding-top: 1rem;
+        flex-shrink: 0;
+    }
+
+    /* Botones de Acción */
+    .btn-action-editorial {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+        border-radius: var(--border-radius-sm);
+        transition: all 0.2s ease;
+    }
+
+    .btn-info-editorial {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: white !important;
+    }
+
+        .btn-info-editorial:hover {
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+        }
+
+    .btn-secondary-editorial {
+        background-color: var(--color-accent) !important;
+        border-color: var(--color-accent) !important;
+        color: white !important;
+    }
+
+        .btn-secondary-editorial:hover {
+            background-color: var(--color-secondary) !important;
+            border-color: var(--color-secondary) !important;
+        }
+
+    .btn-warning-editorial {
+        background-color: var(--color-brand-accent) !important;
+        border-color: var(--color-brand-accent) !important;
+        color: var(--color-brand-dark) !important;
+    }
+
+        .btn-warning-editorial:hover {
+            background-color: #e0d012 !important;
+            border-color: #e0d012 !important;
+        }
+
+    /* ------------------------------------- */
+    /* 5. MODALES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .modal-editorial .modal-content {
+        border-radius: var(--border-radius-lg);
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-editorial .modal-header {
+        border-bottom: 2px solid var(--color-border);
+        background-color: var(--color-section-bg);
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+        padding: 1.5rem 2rem;
+    }
+
+    .modal-editorial .modal-title {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        color: var(--color-secondary);
+        font-size: 1.5rem;
+    }
+
+    .modal-editorial .modal-body {
+        padding: 2rem;
+    }
+
+    .modal-editorial .modal-footer {
+        border-top: 1px solid var(--color-border);
+        padding: 1.5rem 2rem;
+    }
+
+    .modal-editorial .form-label {
+        font-family: var(--font-accent);
+        font-weight: 600;
+        color: var(--color-secondary);
         margin-bottom: 0.5rem;
     }
 
-    .card-footer-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px; /* Espacio entre los botones */
+    .modal-editorial .form-control {
+        border-radius: var(--border-radius-sm);
+        border: 1px solid var(--color-border);
+        padding: 0.75rem 1rem;
+        font-family: var(--font-body);
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+        .modal-editorial .form-control:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    /* ------------------------------------- */
+    /* 6. ALERTAS ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .alert-editorial-info {
+        background-color: rgba(109, 181, 62, 0.1);
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+        text-align: center;
+    }
+
+    /* ------------------------------------- */
+    /* 7. SEPARADORES ESTILO EDITORIAL */
+    /* ------------------------------------- */
+    .section-divider-editorial {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 2rem 0;
+    }
+
+    /* ------------------------------------- */
+    /* 8. RESPONSIVE ADAPTATIONS */
+    /* ------------------------------------- */
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .editorial-header {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .editorial-title {
+            font-size: 2rem;
+        }
+
+        .editorial-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .card-title-event-editorial {
+            font-size: 1.3rem;
+        }
+
+        .card-footer-actions-editorial {
+            justify-content: center;
+        }
+
+        .modal-editorial .modal-header,
+        .modal-editorial .modal-body,
+        .modal-editorial .modal-footer {
+            padding: 1.25rem;
+        }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .editorial-header {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .editorial-title {
+            font-size: 1.7rem;
+        }
+
+        .editorial-subtitle {
+            font-size: 1rem;
+        }
+
+        .event-card-body-editorial {
+            padding: 1rem;
+        }
+
+        .card-title-event-editorial {
+            font-size: 1.2rem;
+        }
+
+        .card-meta-editorial {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .card-footer-actions-editorial {
+            justify-content: space-between;
+        }
+
+        .btn-action-editorial {
+            width: 36px;
+            height: 36px;
+        }
     }
 </style>
 
-<div class="container py-4 mb-5">
+<div class="container mt-4 mb-5 pb-5">
+    <!-- CABECERA ESTILO EDITORIAL -->
+    <div class="editorial-header text-center">
+        <h1 class="editorial-title">Gestión de Eventos</h1>
+        <p class="editorial-subtitle">Administra y organiza todos los eventos de la comunidad</p>
+    </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <a asp-action="Panel" asp-controller="Admin" class="btn btn-dark ">
+    <!-- BOTONES DE ACCIÓN PRINCIPAL -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <a asp-action="Panel" asp-controller="Admin" class="btn btn-editorial-secondary">
             <i class="fas fa-arrow-left me-2"></i> Regresar al panel
-        </a>        
-        <a asp-action="CrearEvento" class="btn btn-dark shadow-sm">
+        </a>
+        <a asp-action="CrearEvento" class="btn btn-editorial-primary">
             <i class="fas fa-plus-circle me-2"></i> Crear nuevo evento
         </a>
     </div>
 
+    <hr class="section-divider-editorial" />
+
+    <!-- CONTENEDOR DE EVENTOS -->
     @if (Model.Any())
     {
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 pb-5 mb-5">
-
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 pb-5 mb-5">
             @foreach (var item in Model)
             {
                 <div class="col">
-                    <div class="card event-card pb-5">
-
+                    <div class="event-card-editorial">
+                        <!-- Imagen del Evento -->
                         @if (!string.IsNullOrEmpty(item.UrlImagen))
                         {
-                            <img src="@Url.Content(item.UrlImagen)" class="card-img-top event-card-img" alt="@item.Titulo">
+                            <img src="@Url.Content(item.UrlImagen)" class="event-card-img-editorial" alt="@item.Titulo">
                         }
                         else
                         {
-                            <div class="event-card-img d-flex align-items-center justify-content-center bg-light text-secondary">
-                                <i class="fas fa-image fa-3x"></i>
+                            <div class="event-card-img-editorial d-flex align-items-center justify-content-center bg-light text-secondary">
+                                <i class="fas fa-image fa-2x"></i>
                             </div>
                         }
 
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">@item.Titulo</h5>
+                        <div class="event-card-body-editorial">
+                            <!-- Título del Evento -->
+                            <h5 class="card-title-event-editorial">@item.Titulo</h5>
 
-                            <div class="card-meta">
-                                <div><i class="far fa-clock me-1"></i> @item.FechaEvento.ToString("dd MMM yyyy HH:mm")</div>
+                            <!-- Meta información -->
+                            <div class="card-meta-editorial">
+                                <div>
+                                    <i class="far fa-clock me-1"></i>
+                                    @item.FechaEvento.ToString("dd MMM yyyy HH:mm")
+                                </div>
                                 @if (item.EstaActivo)
                                 {
-                                    <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Activo</span>
+                                    <span class="badge badge-status-editorial badge-success-editorial">
+                                        <i class="fas fa-check-circle me-1"></i> Activo
+                                    </span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i> Inactivo</span>
+                                    <span class="badge badge-status-editorial badge-danger-editorial">
+                                        <i class="fas fa-times-circle me-1"></i> Inactivo
+                                    </span>
                                 }
                             </div>
 
-                            <ul class="list-group list-group-flush mb-3">
-                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                    Tipo:
-                                    <span class="fw-semibold">@item.TipoEvento</span>
+                            <!-- Detalles del Evento -->
+                            <ul class="list-group list-group-editorial">
+                                <li class="list-group-item-editorial">
+                                    <span class="list-group-label">Tipo:</span>
+                                    <span class="list-group-value">@item.TipoEvento</span>
                                 </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                    Lugar/Plataforma:
-                                    <span class="fw-semibold">@item.Lugar (@item.Plataforma)</span>
+                                <li class="list-group-item-editorial">
+                                    <span class="list-group-label">Lugar:</span>
+                                    <span class="list-group-value">@item.Lugar</span>
+                                </li>
+                                <li class="list-group-item-editorial">
+                                    <span class="list-group-label">Plataforma:</span>
+                                    <span class="list-group-value">@item.Plataforma</span>
                                 </li>
                             </ul>
 
-                            <div class="card-footer-actions">
-
-                                <a asp-action="EditarEvento" asp-route-id="@item.Id" class="btn btn-info text-white" title="Editar">
+                            <!-- Acciones -->
+                            <div class="card-footer-actions-editorial">
+                                <a asp-action="EditarEvento" asp-route-id="@item.Id"
+                                   class="btn btn-info-editorial btn-action-editorial"
+                                   title="Editar Evento">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a asp-controller="Revista" asp-action="DetalleEvento" asp-route-id="@item.Id" class="btn btn-secondary" title="Ver Detalles">
+                                <a asp-controller="Revista" asp-action="DetalleEvento" asp-route-id="@item.Id"
+                                   class="btn btn-secondary-editorial btn-action-editorial"
+                                   title="Ver Detalles">
                                     <i class="fas fa-eye"></i>
                                 </a>
-
-                                <button type="button" class="btn btn-warning" onclick="openUploadModal('@item.Id')" title="Subir Imagen">
+                                <button type="button"
+                                        class="btn btn-warning-editorial btn-action-editorial"
+                                        onclick="openUploadModal('@item.Id')"
+                                        title="Subir Imagen">
                                     <i class="fas fa-image"></i>
                                 </button>
-
                             </div>
                         </div>
                     </div>
@@ -118,13 +525,15 @@
     }
     else
     {
-        <div class="alert alert-info text-center mt-5">
-            <i class="fas fa-exclamation-circle me-2"></i> No hay eventos registrados aún. ¡Comienza creando el primero!
+        <div class="alert-editorial-info text-center">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            No hay eventos registrados aún. ¡Comienza creando el primero!
         </div>
     }
 </div>
 
-<div class="modal fade" id="uploadImageModal" tabindex="-1" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
+<!-- MODAL SUBIR IMAGEN -->
+<div class="modal fade modal-editorial" id="uploadImageModal" tabindex="-1" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -135,13 +544,17 @@
                 <div class="modal-body">
                     <input type="hidden" name="EventoId" id="modalEventoId" />
                     <div class="form-group">
-                        <label for="foto">Seleccionar imagen</label>
-                        <input type="file" name="Foto" id="foto" class="form-control" required />
+                        <label for="foto" class="form-label">Seleccionar imagen</label>
+                        <input type="file" name="Foto" id="foto" class="form-control" required
+                               accept="image/*" />
+                        <div class="form-text">
+                            Formatos aceptados: JPG, PNG, GIF. Tamaño máximo: 5MB.
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Subir</button>
+                    <button type="button" class="btn btn-editorial-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-editorial-primary">Subir Imagen</button>
                 </div>
             </form>
         </div>
@@ -155,7 +568,6 @@
     <script>
         function openUploadModal(eventoId) {
             document.getElementById('modalEventoId').value = eventoId;
-            // Asegúrate de usar Bootstrap 5 para este modal
             var myModal = new bootstrap.Modal(document.getElementById('uploadImageModal'));
             myModal.show();
         }

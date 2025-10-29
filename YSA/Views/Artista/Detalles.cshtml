@@ -5,125 +5,497 @@
 }
 
 <style>
-    /* ------------------------------------- */
-    /* 1. Estilos Base */
-    /* ------------------------------------- */
+    /* IMPORTACIÓN DE TIPOGRAFÍAS */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
+    :root {
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
+    }
 
-    /* Estilo para la imagen de perfil del artista */
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
+    }
+
+    /* ESTILO PORTADA DE REVISTA PRINCIPAL (BANNER) */
+    .magazine-cover {
+        width: 100%;
+        height: 60vh; /* Altura reducida para esta vista */
+        background-color: #f4f4f4;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 3rem;
+    }
+
+    .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .cover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%); /* Degradado oscuro en la parte inferior */
+        z-index: 2;
+        display: flex;
+        align-items: flex-end;
+        padding: 3rem;
+    }
+
+    .cover-title-block {
+        color: var(--color-text-light);
+        max-width: 700px;
+        z-index: 3;
+    }
+
+    .cover-title {
+        font-family: var(--font-heading);
+        font-size: 3.5rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 0.5rem;
+    }
+
+    .cover-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: var(--line-height-normal);
+    }
+
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    /* ESTILO DE PERFIL DEL ARTISTA */
+    .artist-profile-section {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
     .perfil-img {
         width: 200px;
         height: 200px;
         object-fit: cover;
-        border: 5px solid #fff;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border: 5px solid var(--color-background);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        border-radius: 50%;
+        transition: all 0.3s ease;
     }
 
-    /* Estilo para las imágenes del portafolio */
-    .portafolio-img {
-        height: 300px; /* Altura fija para uniformidad */
-        width: 100%; /* Asegura que ocupe todo el ancho de su contenedor */
-        object-fit: cover;
-    }
-
-    .card-portafolio {
-        cursor: pointer; /* Indica que es clickeable, aunque la lógica no esté en esta vista */
-    }
-
-        .card-portafolio:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
-            transition: all 0.3s ease;
+        .perfil-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
         }
 
-    .biografia-text {
-        white-space: pre-wrap; /* Mantiene saltos de línea y espacios del texto */
-        font-size: 1.1rem;
-        line-height: 1.8;
-        color: #555;
+    .artist-name {
+        font-family: var(--font-heading);
+        font-size: 3rem;
+        font-weight: 900;
+        color: var(--color-secondary);
+        line-height: var(--line-height-tight);
+        margin-bottom: 0.5rem;
     }
 
-    @@media (max-width: 767.98px) {
-        /* Encabezado: Reducir tamaño de imagen y asegurar centrado */
+    .artist-title {
+        font-family: var(--font-accent);
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--color-brand-primary);
+        line-height: var(--line-height-normal);
+    }
+
+    /* ESTILO DE TARJETA TIPO REVISTA MEJORADO (Para cursos) */
+    .magazine-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+    }
+
+        .magazine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+    .magazine-card-img-container {
+        overflow: hidden;
+        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    }
+
+    .magazine-card-img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .magazine-card:hover .magazine-card-img {
+        transform: scale(1.05);
+    }
+
+    .magazine-card-body {
+        padding: 1.5rem;
+        position: relative;
+        text-align: left;
+    }
+
+        .magazine-card-body h5 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.5rem;
+            line-height: var(--line-height-normal);
+            color: var(--color-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .magazine-card-body .card-text {
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--color-accent);
+            line-height: var(--line-height-normal);
+            margin-bottom: 1rem;
+        }
+
+    /* BOTONES CON NUEVA PALETA DE COLORES */
+    .btn-primary {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        padding: 0.75rem 1.5rem;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    /* BIOGRAFÍA CON ESTILO EDITORIAL */
+    .biografia-text {
+        white-space: pre-wrap;
+        font-family: var(--font-body);
+        font-size: 1.1rem;
+        line-height: var(--line-height-loose);
+        color: var(--color-text-dark);
+        background: var(--color-card-bg);
+        border-radius: var(--border-radius-md);
+        border-left: 4px solid var(--color-brand-primary);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* BADGES Y ELEMENTOS DE ÉNFASIS CON NUEVA PALETA */
+    .badge.bg-light {
+        background-color: var(--color-brand-accent) !important;
+        color: var(--color-brand-dark) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    /* PRECIOS CON ESTILO EDITORIAL */
+    .price-tag {
+        font-family: var(--font-accent);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-brand-success);
+        background: rgba(109, 181, 62, 0.1);
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius-sm);
+        display: inline-block;
+    }
+
+    /* ADAPTACIONES RESPONSIVE */
+
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .magazine-cover {
+            height: 50vh;
+        }
+
+        .cover-overlay {
+            padding: 2rem;
+        }
+
+        .cover-title {
+            font-size: 2.5rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1.25rem;
+        }
+
+        .section-container, .artist-profile-section {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .artist-name {
+            font-size: 2.5rem;
+        }
+
+        .artist-title {
+            font-size: 1.25rem;
+        }
+
+        .perfil-img {
+            width: 180px;
+            height: 180px;
+        }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .magazine-cover {
+            height: 40vh;
+        }
+
+        .cover-title {
+            font-size: 2rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1rem;
+        }
+
+        .cover-overlay {
+            padding: 1.5rem;
+        }
+
+        .section-container, .artist-profile-section {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .artist-name {
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .artist-title {
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
         .perfil-img {
             width: 150px;
             height: 150px;
-            /* El text-center del padre ya centra la imagen en móvil */
         }
-        /* Encabezado: Reducir el tamaño del título principal para que no sea abrumador */
-        .display-4 {
-            font-size: 2.5rem;
-        }
-        /* Portafolio: Reducir la altura de las imágenes para que no ocupen toda la pantalla verticalmente */
-        .portafolio-img {
+
+        .magazine-card-img {
             height: 200px;
+        }
+
+        .biografia-text {
+            font-size: 1rem;
         }
     }
 </style>
 
-<div class="container py-5 mb-5 pb-5">
 
-    <div class="row mb-5 align-items-center bg-light p-4 rounded-3 shadow-sm">
+<div class="container px-0 pb-5 mb-5">
+    <!-- SECCIÓN DE PERFIL DEL ARTISTA -->
+    <div class="artist-profile-section">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-3 text-center mb-4 mb-md-0">
+                @if (!string.IsNullOrEmpty(Model.UrlFotoPerfil))
+                {
+                    <img src="@Model.UrlFotoPerfil" alt="Foto de Perfil de @Model.NombreCompleto" class="perfil-img">
+                }
+                else
+                {
+                    <div class="perfil-img d-flex align-items-center justify-content-center bg-light">
+                        <i class="fas fa-user-circle fa-6x text-muted"></i>
+                    </div>
+                }
+            </div>
 
-        <div class="col-12 col-md-3 text-center">
-            @if (!string.IsNullOrEmpty(Model.UrlFotoPerfil))
-            {
-                <img src="@Model.UrlFotoPerfil" alt="Foto de Perfil" class="img-fluid rounded-circle perfil-img">
-            }
-            else
-            {
-                <i class="fas fa-user-circle fa-8x text-secondary"></i>
-            }
-        </div>
-
-        <div class="col-12 col-md-9 mt-3 mt-md-0 text-center text-md-start">
-            <h1 class="display-4 fw-bold mb-0">@Model.NombreCompleto</h1>
-            <p class="lead text-primary fw-semibold">Maestro en YoSoyArte</p>
-        </div>
-    </div>
-
-    <hr class="mb-5">
-
-    <div class="row mb-5">
-        <div class="col-12">
-            <h2 class="h3 mb-4 fw-bold border-bottom pb-2">Biografía</h2>
-            @if (!string.IsNullOrWhiteSpace(Model.Biografia))
-            {
-                <p class="biografia-text">@Html.Raw(Model.Biografia)</p>
-            }
-            else
-            {
-                <p class="text-muted fst-italic">Este artista aún no ha compartido su biografía detallada.</p>
-            }
-        </div>
-    </div>
-
-    @if (Model.Cursos != null && Model.Cursos.Any())
-    {
-        <div class="row mt-5 pb-5">
-            <div class="col-12">
-                <h2>Cursos impartidos por @Model.NombreCompleto</h2>
-                <hr />
+            <div class="col-12 col-md-9 text-center text-md-start">
+                <h1 class="artist-name">@Model.NombreCompleto</h1>
+                <p class="artist-title">Maestro en Yo Soy Arte</p>
             </div>
         </div>
+    </div>
 
-        <div class="row g-4 mb-5">
-            @foreach (var curso in Model.Cursos)
-            {
-                <div class="col-lg-4 col-md-6 col-sm-12">
-                    <div class="card h-100 shadow-sm">
-                        <img src="@Url.Content(curso.UrlImagen)" class="card-img-top" alt="Portada de @curso.Titulo">
-                        <div class="card-body">
-                            <h5 class="card-title">@curso.Titulo</h5>
-                            <p class="card-text text-muted">@Html.Raw(curso.DescripcionCorta)</p>
-                            <p class="fw-bold">
-                                @curso.Precio.ToString("C", new System.Globalization.CultureInfo("es-VE"))
-                            </p>
-                            <a href="@Url.Action("Detalles", "Curso", new { id = curso.Id })" class="btn btn-primary w-100">Ver curso</a>
+    <hr class="section-divider" />
+
+    <!-- SECCIÓN DE BIOGRAFÍA -->
+    <div class="section-container">
+        <div class="px-3 mb-4">
+            <span class="latest-grid-header">BIOGRAFÍA</span>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                @if (!string.IsNullOrWhiteSpace(Model.Biografia))
+                {
+                    <p class="biografia-text">@Html.Raw(Model.Biografia)</p>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                        <p class="text-muted fst-italic fs-5">Este artista aún no ha compartido su biografía detallada.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN DE CURSOS IMPARTIDOS -->
+    @if (Model.Cursos != null && Model.Cursos.Any())
+    {
+        <hr class="section-divider" />
+
+        <div class="section-container">
+            <div class="px-3 mb-4">
+                <span class="latest-grid-header">CURSOS IMPARTIDOS POR @Model.NombreCompleto.ToUpper()</span>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @foreach (var curso in Model.Cursos)
+                {
+                    <div class="col">
+                        <div class="magazine-card h-100">
+                            <div class="magazine-card-img-container">
+                                <img src="@Url.Content(curso.UrlImagen)" class="magazine-card-img" alt="Portada de @curso.Titulo">
+                            </div>
+                            <div class="magazine-card-body d-flex flex-column">
+                                <h5 class="mb-3">@curso.Titulo</h5>
+                                <p class="card-text flex-grow-1">@Html.Raw(curso.DescripcionCorta)</p>
+                                <div class="mt-auto">
+                                    <div class="price-tag mb-3">
+                                        @curso.Precio.ToString("C", new System.Globalization.CultureInfo("es-VE"))
+                                    </div>
+                                    <a href="@Url.Action("Detalles", "Curso", new { id = curso.Id })" class="btn btn-primary w-100">
+                                        <i class="fas fa-eye me-2"></i> Ver curso
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
+                }
+            </div>
         </div>
     }
-
 </div>
+
+@section Scripts {
+    <script>
+        // Scripts opcionales aquí
+        document.addEventListener('DOMContentLoaded', function() {
+            // Efectos de hover mejorados para las tarjetas
+            const cards = document.querySelectorAll('.magazine-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px)';
+                    this.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.15)';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.12)';
+                });
+            });
+        });
+    </script>
+}

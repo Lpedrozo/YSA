@@ -4,223 +4,537 @@
 }
 
 <style>
-    /* ------------------------------------- */
-    /* 1. Variables B&W y Estilos Generales  */
-    /* ------------------------------------- */
+    /* IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES DEL ESTILO EDITORIAL */
     :root {
-        --color-secondary: #000000; /* Negro Puro (Título) */
-        --color-primary: #333333; /* Gris Oscuro (Botones, Acentos) */
-        --color-text-muted: #6a6a6a; /* Gris medio (Descripción) */
-        --color-background-light: #f7f7f7; /* Fondo general de la página */
-        --color-background-white: #ffffff; /* Fondo para las tarjetas */
-        --color-border-light: #eeeeee; /* Borde sutil */
+        --color-primary-action: #ef8830;
+        --color-secondary: #212529;
+        --color-accent: #6c757d;
+        --color-background: #ffffff;
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a;
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa;
+        --color-brand-primary: #ef8830;
+        --color-brand-secondary: #e5361a;
+        --color-brand-accent: #f2e514;
+        --color-brand-success: #6db53e;
+        --color-brand-dark: #08080a;
+        --font-heading: 'Georgia', 'Times New Roman', serif;
+        --font-body: 'Arial', 'Helvetica', sans-serif;
+        --font-accent: 'Poppins', sans-serif;
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
     body {
-        background-color: var(--color-background-light);
-        color: var(--color-primary);
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
     }
 
-    h1 {
-        color: var(--color-secondary);
-        font-weight: 700;
+    /* PORTADA DE REVISTA PARA EL HEADER */
+    .magazine-admin-header {
+        width: 100%;
+        height: 35vh;
+        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--color-text-light);
     }
 
-    hr {
-        border-top: 2px solid var(--color-border-light);
-        opacity: 1;
+    .admin-cover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
     }
 
-    /* Estilos del botón de "Nuevo Anuncio" (Green -> B&W) */
-    .btn-success {
-        background-color: var(--color-primary) !important;
-        border-color: var(--color-primary) !important;
-        color: white !important;
-        font-weight: 600;
-        transition: background-color 0.2s;
-        border-radius: 8px;
+    .admin-cover-title-block {
+        z-index: 3;
+        max-width: 800px;
     }
 
-        .btn-success:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
-        }
+    .admin-cover-title {
+        font-family: var(--font-heading);
+        font-size: 3rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
 
-    /* ------------------------------------- */
-    /* 2. Estilos de las Cards de Anuncio    */
-    /* ------------------------------------- */
-    .anuncio-card {
-        border: 1px solid var(--color-border-light);
-        border-radius: 12px;
-        background-color: var(--color-background-white);
+    .admin-cover-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.2rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: var(--line-height-normal);
+    }
+
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        transition: box-shadow 0.3s;
     }
 
-        .anuncio-card:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    .section-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: var(--color-accent);
+        margin-top: -2rem;
+        margin-bottom: 3rem;
+        line-height: var(--line-height-normal);
+    }
+
+    /* HEADER DE GRID ESTILO REVISTA */
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    /* TARJETAS DE ANUNCIOS ESTILO REVISTA */
+    .anuncio-card-editorial {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: var(--color-card-bg);
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+        .anuncio-card-editorial:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
         }
 
-    .card-title {
+    .anuncio-card-header {
+        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        color: var(--color-text-light);
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    .anuncio-card-title {
+        font-family: var(--font-heading);
         font-weight: 700;
-        color: var(--color-secondary);
-        font-size: 1.25rem;
+        font-size: 1.5rem;
+        line-height: var(--line-height-normal);
+        margin-bottom: 0.5rem;
     }
 
-    .card-subtitle {
-        color: var(--color-text-muted);
+    .anuncio-card-date {
+        font-family: var(--font-accent);
         font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
-    .card-text-content {
-        color: var(--color-primary);
-        font-size: 0.9rem;
-        /* Limitar el contenido para que no sea muy largo */
+    .anuncio-card-body {
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    .anuncio-card-content {
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
+        margin-bottom: 1rem;
         display: -webkit-box;
-        -webkit-line-clamp: 3; /* Mostrar máximo 3 líneas */
+        -webkit-line-clamp: 4;
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
-        margin-top: 10px;
     }
 
-    /* Estilos de Botones de Acción dentro de la card (B&W) */
-    .btn-primary {
-        background-color: var(--color-primary) !important;
-        border-color: var(--color-primary) !important;
+    /* BOTONES ESTILO REVISTA */
+    .btn-magazine-primary {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        color: white;
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        font-family: var(--font-accent);
+    }
+
+        .btn-magazine-primary:hover {
+            background-color: var(--color-brand-secondary);
+            border-color: var(--color-brand-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+    .btn-magazine-secondary {
+        background-color: transparent;
+        border: 2px solid var(--color-brand-primary);
+        color: var(--color-brand-primary);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        font-family: var(--font-accent);
+    }
+
+        .btn-magazine-secondary:hover {
+            background-color: var(--color-brand-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .btn-magazine-action {
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-family: var(--font-accent);
+        font-size: 0.9rem;
+    }
+
+    .btn-edit {
+        background-color: var(--color-brand-primary);
+        border: none;
+        color: white;
+    }
+
+        .btn-edit:hover {
+            background-color: var(--color-brand-secondary);
+            transform: translateY(-2px);
+        }
+
+    /* MODALES ESTILO REVISTA */
+    .modal-magazine .modal-content {
+        border-radius: var(--border-radius-lg);
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-magazine .modal-header {
+        border-bottom: 3px solid var(--color-brand-primary);
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+        padding: 1.5rem 2rem;
+    }
+
+    .modal-magazine .modal-title {
+        font-family: var(--font-heading);
+        font-weight: 800;
+        color: var(--color-secondary);
+        font-size: 1.5rem;
+    }
+
+    .modal-magazine .modal-body {
+        padding: 2rem;
+    }
+
+    .modal-magazine .modal-footer {
+        border-top: 1px solid var(--color-border);
+        padding: 1.5rem 2rem;
+        border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+    }
+
+    .form-label-magazine {
+        font-family: var(--font-accent);
+        font-weight: 600;
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control-magazine {
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1rem;
+        font-family: var(--font-body);
+        transition: all 0.3s ease;
+    }
+
+        .form-control-magazine:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    /* BADGES ESTILO REVISTA */
+    .badge-magazine {
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    .badge-primary {
+        background-color: var(--color-brand-primary) !important;
         color: white !important;
-        transition: background-color 0.2s;
     }
 
-        .btn-primary:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
-        }
-
-    .btn-danger {
-        /* Mantenemos el rojo para eliminar por seguridad, pero con estilo limpio */
-        border-radius: 6px;
+    .badge-count {
+        background-color: var(--color-brand-secondary) !important;
+        color: white !important;
     }
 
-    /* ------------------------------------- */
-    /* 3. MEDIA QUERY RESPONSIVE (MÓVIL)     */
-    /* ------------------------------------- */
-    @@media (max-width: 575.98px) { /* Pantallas extra pequeñas (móvil) */
-        .container.mt-5 {
-            /* Reduce el margen superior y lateral en móvil */
-            margin-top: 1.5rem !important;
-            padding: 0 1rem;
+    /* GRID DE ANUNCIOS */
+    .anuncios-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 2rem;
+    }
+
+    /* HEADER DE ACCIONES */
+    .actions-header {
+        background: var(--color-card-bg);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border-left: 4px solid var(--color-brand-primary);
+    }
+
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* ALERTAS ESTILO REVISTA */
+    .alert-info {
+        background-color: rgba(109, 181, 62, 0.1);
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    /* RESPONSIVE */
+    @@media (max-width: 768px) {
+        .magazine-admin-header {
+            height: 25vh;
         }
 
-        h1 {
+        .admin-cover-title {
+            font-size: 2.2rem;
+        }
+
+        .admin-cover-subtitle {
+            font-size: 1rem;
+        }
+
+        .section-container {
+            padding: 2rem 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .anuncios-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .actions-header {
+            padding: 1rem 1.5rem;
+        }
+
+        .anuncio-card-header {
+            padding: 1rem 1.5rem;
+        }
+
+        .anuncio-card-body {
+            padding: 1rem 1.5rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .admin-cover-title {
+            font-size: 1.8rem;
+        }
+
+        .section-title {
             font-size: 2rem;
-            margin-bottom: 1.5rem !important;
         }
 
-        .d-flex.justify-content-end.mb-4 {
-            /* Centra el botón y le da ancho completo en móvil */
-            justify-content: center !important;
+        .latest-grid-header {
+            font-size: 1.5rem;
         }
 
-        .btn-success {
-            /* Botón de 'Nuevo Anuncio' de ancho completo para fácil pulsación */
-            width: 100%;
-            max-width: 300px; /* Limita el ancho máximo para que no se vea ridículo en pantallas muy anchas, aunque estemos en el media query de móvil */
-        }
-
-        .row-cols-1 .col {
-            padding-left: 0.5rem;
-            padding-right: 0.5rem;
+        .anuncio-card-title {
+            font-size: 1.3rem;
         }
     }
 </style>
 
-<div class="container mt-5 mb-5 pb-5">
-    <h1 class="text-center mb-5">Gestión de anuncios</h1>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <a asp-action="Panel" asp-controller="Admin" class="btn btn-primary">
-            <i class="fas fa-arrow-left me-2"></i> Regresar al panel
-        </a>
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearAnuncioModal">
-            <i class="fas fa-plus-circle me-2"></i> Nuevo anuncio
-        </button>
+<div class="container px-0 py-4 mb-5 pb-5">
+    <!-- SECCIÓN DE ACCIONES -->
+    <div class="actions-header">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <a asp-action="Panel" asp-controller="Admin" class="btn btn-magazine-secondary">
+                <i class="fas fa-arrow-left me-2"></i> Volver al Panel
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge badge-magazine badge-count">
+                    <i class="fas fa-bullhorn me-1"></i> @Model.Count Anuncios
+                </span>
+                <button type="button" class="btn btn-magazine-primary" data-bs-toggle="modal" data-bs-target="#crearAnuncioModal">
+                    <i class="fas fa-plus-circle me-2"></i> Nuevo Anuncio
+                </button>
+            </div>
+        </div>
     </div>
 
-    @if (Model == null || !Model.Any())
-    {
-        <div class="alert alert-info text-center" role="alert" style="border-radius: 8px;">
-            No hay anuncios creados aún. Haz clic en **Nuevo Anuncio** para empezar.
-        </div>
-    }
-    else
-    {
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5 pb-5">
-            @foreach (var anuncio in Model)
+    <!-- SECCIÓN PRINCIPAL DE ANUNCIOS -->
+    <div class="section-container">
+        <h2 class="section-title">Comunicados de la Comunidad</h2>
+        <p class="section-subtitle">Mantén informados a estudiantes y artistas sobre novedades y eventos importantes</p>
+
+        <div class="anuncios-grid" id="contenedorAnuncios">
+            @if (Model != null && Model.Any())
             {
-                <div class="col">
-                    <div class="card anuncio-card h-100 p-3">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">@anuncio.Titulo</h5>
-                            <h6 class="card-subtitle mb-2">Publicado: @anuncio.FechaPublicacion.ToShortDateString()</h6>
+                @foreach (var anuncio in Model)
+                {
+                    <div class="anuncio-card-editorial">
+                        <div class="anuncio-card-header">
+                            <h3 class="anuncio-card-title">@anuncio.Titulo</h3>
+                            <div class="anuncio-card-date">
+                                <i class="far fa-calendar me-1"></i>
+                                <span>Publicado: @anuncio.FechaPublicacion.ToString("dd MMMM yyyy")</span>
+                            </div>
+                        </div>
 
-                            <p class="card-text card-text-content flex-grow-1">
+                        <div class="anuncio-card-body">
+                            <div class="anuncio-card-content">
                                 @Html.Raw(anuncio.Contenido)
-                            </p>
+                            </div>
 
-                            <div class="mt-3 pt-2 border-top d-flex justify-content-end">
-
-                                <button type="button" class="btn btn-sm btn-primary editar-anuncio-btn me-2"
+                            <div class="d-flex justify-content-end mt-3 pt-3 border-top">
+                                <button type="button" class="btn btn-magazine-action btn-edit editar-anuncio-btn"
                                         data-id="@anuncio.Id"
                                         data-titulo="@anuncio.Titulo"
                                         data-contenido="@anuncio.Contenido"
                                         data-bs-toggle="modal"
                                         data-bs-target="#editarAnuncioModal">
-                                    <i class="fas fa-edit"></i> Editar
+                                    <i class="fas fa-edit me-2"></i> Editar
                                 </button>
-
                             </div>
                         </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center py-5">
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle me-2 fa-2x mb-3"></i>
+                        <h4 class="alert-heading">No hay anuncios creados</h4>
+                        <p class="mb-0">Haz clic en <strong>Nuevo Anuncio</strong> para empezar a compartir información con la comunidad.</p>
                     </div>
                 </div>
             }
         </div>
-    }
+    </div>
 </div>
 
-<div class="modal fade" id="crearAnuncioModal" tabindex="-1" aria-labelledby="crearAnuncioModalLabel" aria-hidden="true">
+<!-- MODALES (manteniendo la funcionalidad original) -->
+<div class="modal fade modal-magazine" id="crearAnuncioModal" tabindex="-1" aria-labelledby="crearAnuncioModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="crearAnuncioModalLabel" style="color:var(--color-secondary);">Crear anuncio</h5>
+                <h5 class="modal-title" id="crearAnuncioModalLabel">
+                    <i class="fas fa-plus-circle me-2"></i>Nuevo Anuncio
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form asp-action="CrearAnuncio" method="post" novalidate>
                 <div class="modal-body">
                     <input type="hidden" name="CursoId" value="@ViewBag.CursoId" />
                     <div class="form-group mb-3">
-                        <label for="Titulo" style="color:var(--color-primary);">Título</label>
-                        <input type="text" name="Titulo" class="form-control" required />
+                        <label for="Titulo" class="form-label-magazine">Título del Anuncio</label>
+                        <input type="text" name="Titulo" class="form-control form-control-magazine" required
+                               placeholder="Ingresa un título llamativo para tu anuncio" />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Contenido" style="color:var(--color-primary);">Contenido</label>
-                        <textarea name="Contenido" class="tinymce-full-editor" rows="8"></textarea>
+                        <label for="Contenido" class="form-label-magazine">Contenido</label>
+                        <textarea name="Contenido" class="tinymce-full-editor form-control-magazine" rows="8"
+                                  placeholder="Escribe el contenido detallado de tu anuncio..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-magazine-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-magazine-primary">Publicar Anuncio</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="editarAnuncioModal" tabindex="-1" aria-labelledby="editarAnuncioModalLabel" aria-hidden="true">
+<div class="modal fade modal-magazine" id="editarAnuncioModal" tabindex="-1" aria-labelledby="editarAnuncioModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editarAnuncioModalLabel" style="color:var(--color-secondary);">Editar anuncio</h5>
+                <h5 class="modal-title" id="editarAnuncioModalLabel">
+                    <i class="fas fa-edit me-2"></i>Editar Anuncio
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form asp-action="EditarAnuncio" method="post" novalidate>
@@ -228,27 +542,26 @@
                     <input type="hidden" name="Id" id="editar-anuncio-id" />
                     <input type="hidden" name="CursoId" value="@ViewBag.CursoId" />
                     <div class="form-group mb-3">
-                        <label for="Titulo" style="color:var(--color-primary);">Título</label>
-                        <input type="text" name="Titulo" id="editar-anuncio-titulo" class="form-control" required />
+                        <label for="Titulo" class="form-label-magazine">Título del Anuncio</label>
+                        <input type="text" name="Titulo" id="editar-anuncio-titulo" class="form-control form-control-magazine" required />
                     </div>
                     <div class="form-group mb-3">
-                        <label for="Contenido" style="color:var(--color-primary);">Contenido</label>
+                        <label for="Contenido" class="form-label-magazine">Contenido</label>
                         <textarea name="Contenido" id="editar-anuncio-contenido" class="tinymce-full-editor" rows="8"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                    <button type="button" class="btn btn-magazine-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-magazine-primary">Actualizar Anuncio</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
     <script>
@@ -262,13 +575,13 @@
             });
         }
 
-        // Inicialización para el campo de Contenido
+        // Inicialización para el campo de Contenido (CREAR)
         tinymce.init({
-            selector: 'textarea.tinymce-full-editor',
+            selector: 'textarea.tinymce-full-editor[name="Contenido"]',
             plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
             toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
             height: 300,
-            setup: tinymceModalSetup // Aplicar la corrección de foco del modal
+            setup: tinymceModalSetup
         });
 
         // Esperar a que el DOM esté completamente cargado
@@ -284,25 +597,24 @@
                     document.getElementById('editar-anuncio-id').value = id;
                     document.getElementById('editar-anuncio-titulo').value = titulo;
 
-                    // PASO 4: ACTUALIZAR EL CONTENIDO EN TINYMCE
-                    // En lugar de actualizar el textarea directamente, usamos el API de TinyMCE
-
-                    // 1. Destruir la instancia existente (para evitar conflictos al abrir múltiples veces)
+                    // ACTUALIZAR EL CONTENIDO EN TINYMCE
                     var editorId = 'editar-anuncio-contenido';
+
+                    // Destruir la instancia existente (para evitar conflictos)
                     if (tinymce.get(editorId)) {
                         tinymce.get(editorId).remove();
                     }
 
-                    // 2. Inicializar de nuevo y establecer el contenido
+                    // Inicializar de nuevo y establecer el contenido
                     tinymce.init({
                         selector: '#' + editorId,
                         plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
                         toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
                         height: 300,
                         setup: function (editor) {
-                            tinymceModalSetup(editor); // Aplicar la corrección de foco
+                            tinymceModalSetup(editor);
                             editor.on('init', function (e) {
-                                // Establecer el contenido SÓLO después de que el editor se haya inicializado
+                                // Establecer el contenido después de que el editor se haya inicializado
                                 editor.setContent(contenido);
                             });
                         }
@@ -310,7 +622,7 @@
                 });
             });
 
-            // ... (Lógica para SweetAlert2 se mantiene igual) ...
+            // SweetAlert2 para confirmaciones (si se agrega funcionalidad de eliminar en el futuro)
             document.querySelectorAll('.eliminar-anuncio-btn').forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -332,20 +644,6 @@
                     });
                 });
             });
-
-            // Importante: Re-inicializar el editor de CREAR cada vez que se abre el modal,
-            // si el modal de EDITAR lo está destruyendo.
-            // Una solución más simple es NO DESTRUIR el editor de Crear, solo el de Editar.
-            // Si el editor de Crear (el que usa la clase) no se inicializó, lo hacemos aquí:
-            if (!tinymce.get(document.querySelector('textarea.tinymce-full-editor[name="Contenido"]'))) {
-                tinymce.init({
-                    selector: 'textarea.tinymce-full-editor[name="Contenido"]', // Solo el de Crear
-                    plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
-                    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-                    height: 300,
-                    setup: tinymceModalSetup
-                });
-            }
 
         });
     </script>

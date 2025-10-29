@@ -4,156 +4,376 @@
 }
 
 <style>
-    /* ------------------------------------- */
-    /* 1. Variables B&W y Estilos Generales  */
-    /* ------------------------------------- */
+    /* IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES COHERENTES CON EL DISEÑO EDITORIAL */
     :root {
-        --color-secondary: #000000; /* Negro Puro (Título, Hover) */
-        --color-primary: #333333; /* Gris Oscuro (Botones, Acentos) */
-        --color-text-muted: #6a6a6a; /* Gris medio (Descripción) */
-        --color-background-light: #f7f7f7; /* Fondo general de la página */
-        --color-background-white: #ffffff; /* Fondo para las tarjetas */
-        --color-border-light: #eeeeee; /* Borde sutil */
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Coherentes con el diseño editorial */
+        --font-heading: 'Georgia', 'Times New Roman', serif;
+        --font-body: 'Arial', 'Helvetica', sans-serif;
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
     body {
-        background-color: var(--color-background-light);
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
     }
 
-    h1, h2 {
-        color: var(--color-secondary) !important;
-        font-weight: 700;
+    /* PORTADA DE REVISTA PARA DASHBOARD */
+    .dashboard-cover {
+        width: 100%;
+        height: 40vh;
+        background-color: #f4f4f4;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 3rem;
     }
 
-    /* ------------------------------------- */
-    /* 2. Tarjetas de Métricas Clave (Top)  */
-    /* ------------------------------------- */
-    .metric-card {
-        background-color: var(--color-background-white);
-        border: 1px solid var(--color-border-light);
-        border-radius: 12px;
-        transition: transform 0.3s, box-shadow 0.3s;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    .cover-image {
+        width: 100%;
         height: 100%;
-        text-decoration: none; /* Asegura que el enlace no tenga línea */
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .cover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
+        z-index: 2;
+        display: flex;
+        align-items: flex-end;
+        padding: 3rem;
+    }
+
+    .cover-title-block {
+        color: var(--color-text-light);
+        max-width: 700px;
+        z-index: 3;
+    }
+
+    .cover-title {
+        font-family: var(--font-heading);
+        font-size: 3rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 0.5rem;
+    }
+
+    .cover-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: var(--line-height-normal);
+    }
+
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    /* TARJETAS DE MÉTRICAS ESTILO EDITORIAL */
+    .metric-card {
+        background-color: var(--color-card-bg);
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        height: 100%;
+        text-decoration: none;
         color: inherit;
-        display: flex; /* Añadir display flex para alinear contenido */
-        flex-direction: column; /* Contenido en columna */
-        justify-content: space-between; /* Espaciar contenido verticalmente */
+        display: block;
+        position: relative;
+        padding: 2rem;
     }
 
-    /* Aplicar hover y estilo a la etiqueta <a> que ahora envuelve la tarjeta */
-    .metric-link, .metric-link:hover {
-        color: inherit; /* Mantener el color del texto */
-        text-decoration: none; /* Quitar subrayado */
-    }
-
-    .metric-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        border-color: var(--color-primary); /* Resalta el borde al hacer hover */
-    }
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
 
     .metric-value {
+        font-family: var(--font-heading);
         font-size: 3rem;
         font-weight: 800;
-        color: var(--color-secondary); /* Negro */
-        line-height: 1;
+        color: var(--color-secondary);
+        line-height: var(--line-height-tight);
+        margin-bottom: 0.5rem;
     }
 
     .metric-label {
+        font-family: var(--font-accent);
+        font-size: 0.9rem;
         font-weight: 600;
-        color: var(--color-text-muted);
+        color: var(--color-accent);
         text-transform: uppercase;
-        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        margin-bottom: 1rem;
     }
 
     .metric-icon {
-        font-size: 3rem;
-        color: var(--color-primary); /* Gris oscuro */
-        opacity: 0.7;
+        font-size: 2.5rem;
+        color: var(--color-brand-primary);
+        opacity: 0.8;
+        margin-top: 1rem;
     }
 
-    /* **NUEVOS ESTILOS para el ícono de la Tasa BCV** */
-    .metric-card.bcv-rate .metric-icon {
-        font-size: 2.5rem; /* Un poco más pequeño para encajar mejor */
-        color: var(--color-primary); /* Usar el color primario */
-        opacity: 1; /* Sin opacidad para que resalte */
-        align-self: flex-end; /* Alinear a la derecha-abajo si el contenido es flexible */
-        margin-top: 1rem; /* Espacio para separarlo del valor */
+    /* Estilo especial para métricas de alerta */
+    .metric-card.metric-pending {
+        border-left: 4px solid var(--color-brand-secondary);
     }
 
+        .metric-card.metric-pending .metric-value,
+        .metric-card.metric-pending .metric-icon {
+            color: var(--color-brand-secondary);
+        }
 
-    /* Estilo especial para Pedidos Pendientes (Rojo/Negro) */
-    .metric-pending .metric-value,
-    .metric-pending .metric-icon {
-        color: #dc3545; /* Rojo de advertencia */
-    }
-
-    .metric-pending:hover {
-        border-color: #dc3545;
-    }
-
-
-    /* ------------------------------------- */
-    /* 3. Tarjetas de Gestión Rápida (Grid)  */
-    /* ------------------------------------- */
+    /* TARJETAS DE ACCIÓN ESTILO EDITORIAL */
     .action-card {
-        background-color: var(--color-background-white);
-        border: 1px solid var(--color-border-light);
+        background-color: var(--color-card-bg);
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
         height: 100%;
-        transition: background-color 0.2s, color 0.2s, transform 0.2s;
-        border-radius: 8px;
         text-decoration: none;
-        color: var(--color-primary);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        color: inherit;
+        display: block;
+        padding: 2rem;
+        text-align: center;
     }
 
         .action-card:hover {
-            background-color: var(--color-secondary); /* Negro Puro */
-            border-color: var(--color-secondary);
-            color: #ffffff;
-            transform: translateY(-2px);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+            background-color: var(--color-brand-primary);
+            color: var(--color-text-light);
         }
+
+            .action-card:hover .action-card-icon,
+            .action-card:hover .action-card-title,
+            .action-card:hover .card-text {
+                color: var(--color-text-light) !important;
+            }
 
     .action-card-icon {
         font-size: 2.8rem;
-        margin-bottom: 0.5rem;
-        color: var(--color-primary);
-        transition: color 0.2s;
-    }
-
-    .action-card:hover .action-card-icon {
-        color: #ffffff;
+        color: var(--color-brand-primary);
+        margin-bottom: 1rem;
+        transition: color 0.3s ease;
     }
 
     .action-card-title {
-        font-size: 1.2rem;
+        font-family: var(--font-heading);
+        font-size: 1.3rem;
         font-weight: 700;
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+        line-height: var(--line-height-normal);
+        transition: color 0.3s ease;
     }
 
-    .action-card:hover .card-text {
-        color: #ddd !important; /* Texto claro en hover */
+    .action-card .card-text {
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
+        transition: color 0.3s ease;
     }
 
-    /* ------------------------------------- */
-    /* 4. Centralización y Contenedor */
-    /* ------------------------------------- */
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* CONTENEDOR PRINCIPAL */
     .dashboard-container {
-        max-width: 1200px; /* Ancho máximo para el dashboard */
-        margin: 0 auto; /* Centraliza el contenido */
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* RESPONSIVE ADJUSTMENTS */
+    @@media (max-width: 991.98px) {
+        .dashboard-cover {
+            height: 35vh;
+        }
+
+        .cover-overlay {
+            padding: 2rem;
+        }
+
+        .cover-title {
+            font-size: 2.5rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1.25rem;
+        }
+
+        .section-container {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .metric-card {
+            padding: 1.5rem;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+        }
+
+        .action-card {
+            padding: 1.5rem;
+        }
+    }
+
+    @@media (max-width: 767.98px) {
+        .dashboard-cover {
+            height: 30vh;
+        }
+
+        .cover-title {
+            font-size: 2rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+        }
+
+        .metric-icon {
+            font-size: 2rem;
+        }
+
+        .action-card-icon {
+            font-size: 2.2rem;
+        }
+
+        .action-card-title {
+            font-size: 1.1rem;
+        }
+    }
+
+    @@media (max-width: 575.98px) {
+        .dashboard-cover {
+            height: 25vh;
+        }
+
+        .cover-overlay {
+            padding: 1.5rem;
+        }
+
+        .cover-title {
+            font-size: 1.75rem;
+        }
+
+        .section-container {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .metric-card {
+            padding: 1.25rem;
+        }
+
+        .action-card {
+            padding: 1.25rem;
+        }
     }
 </style>
 
-<div class="dashboard-container py-5 px-3 pb-5 mb-5">
+<div class="container px-0 mb-5 pb-5">
+    <!-- SECCIÓN DE MÉTRICAS PRINCIPALES -->
+    <div class="section-container">
+        <div class="px-3">
+            <span class="latest-grid-header">MÉTRICAS PRINCIPALES</span>
+        </div>
 
-    <h1 class="mb-5 mt-3">Panel de administración</h1>
-
-    <div class="row row-cols-1 row-cols-md-4 g-4 mb-5 pb-3">
-
-        <div class="col">
-            <a href="@Url.Action("HistorialTasas", "Admin")" class="metric-link">
-                <div class="card metric-card text-start p-4 bcv-rate">
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            <!-- Tasa BCV -->
+            <div class="col">
+                <a href="@Url.Action("HistorialTasas", "Admin")" class="metric-card d-block">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             @if (Model.TasaBCV.HasValue)
@@ -168,130 +388,209 @@
                         </div>
                         <i class="fas fa-money-bill-wave metric-icon"></i>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
 
-        <div class="col">
-            <div class="card metric-card text-start p-4">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="metric-value">@Model.TotalCursos</div>
-                        <div class="metric-label">Total cursos</div>
+            <!-- Total Cursos -->
+            <div class="col">
+                <div class="metric-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="metric-value">@Model.TotalCursos</div>
+                            <div class="metric-label">Total cursos</div>
+                        </div>
+                        <i class="fas fa-book-open metric-icon"></i>
                     </div>
-                    <i class="fas fa-book-open metric-icon"></i>
                 </div>
             </div>
-        </div>
 
-        <div class="col">
-            <div class="card metric-card text-start p-4">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="metric-value">@Model.TotalEstudiantes</div>
-                        <div class="metric-label">Estudiantes activos</div>
+            <!-- Estudiantes Activos -->
+            <div class="col">
+                <div class="metric-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="metric-value">@Model.TotalEstudiantes</div>
+                            <div class="metric-label">Estudiantes activos</div>
+                        </div>
+                        <i class="fas fa-users metric-icon"></i>
                     </div>
-                    <i class="fas fa-users metric-icon"></i>
                 </div>
             </div>
-        </div>
 
-        <div class="col">
-            <a href="@Url.Action("PedidosPendientes", "Admin")" class="card metric-card metric-pending text-start p-4">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <div class="metric-value">@Model.PedidosPendientes</div>
-                        <div class="metric-label">Pedidos pendientes</div>
+            <!-- Pedidos Pendientes -->
+            <div class="col">
+                <a href="@Url.Action("PedidosPendientes", "Admin")" class="metric-card metric-pending d-block">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="metric-value">@Model.PedidosPendientes</div>
+                            <div class="metric-label">Pedidos pendientes</div>
+                        </div>
+                        <i class="fas fa-exclamation-triangle metric-icon"></i>
                     </div>
-                    <i class="fas fa-exclamation-triangle metric-icon"></i>
-                </div>
-            </a>
+                </a>
+            </div>
         </div>
-
     </div>
-    <h2 class="mb-4 pt-3">Accesos rápidos</h2>
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 pb-5 mb-5">
-        <div class="col">
-            <a href="@Url.Action("GestionarCursos", "Admin")" class="card action-card text-center p-4">
-                <div class="card-body">
-                    <i class="fas fa-graduation-cap action-card-icon"></i>
-                    <div class="action-card-title">Gestionar cursos</div>
-                    <p class="card-text small text-muted mt-1">Crear, editar o administrar la estructura de los cursos.</p>
-                </div>
-            </a>
+    <hr class="section-divider" />
+
+    <!-- SECCIÓN DE ACCESOS RÁPIDOS -->
+    <div class="section-container">
+        <div class="px-3">
+            <span class="latest-grid-header">ACCESOS RÁPIDOS</span>
         </div>
-        <div class="col">
-            <a href="@Url.Action("GestionarArtistas", "Admin")" class="card action-card text-center p-4">
-                <div class="card-body">
-                    <i class="fas fa-paint-brush action-card-icon"></i>
-                    <div class="action-card-title">Gestionar artistas</div>
-                    <p class="card-text small text-muted mt-1">Administrar perfiles de profesores y colaboradores.</p>
-                </div>
-            </a>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+            <!-- Gestión de Cursos -->
+            <div class="col">
+                <a href="@Url.Action("GestionarCursos", "Admin")" class="action-card">
+                    <div class="card-body">
+                        <i class="fas fa-graduation-cap action-card-icon"></i>
+                        <div class="action-card-title">Gestionar cursos</div>
+                        <p class="card-text small mt-2">Crear, editar o administrar la estructura de los cursos.</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Gestión de Artistas -->
+            <div class="col">
+                <a href="@Url.Action("GestionarArtistas", "Admin")" class="action-card">
+                    <div class="card-body">
+                        <i class="fas fa-paint-brush action-card-icon"></i>
+                        <div class="action-card-title">Gestionar artistas</div>
+                        <p class="card-text small mt-2">Administrar perfiles de profesores y colaboradores.</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Productos Digitales -->
+            <div class="col">
+                <a href="@Url.Action("GestionarProductos", "Admin")" class="action-card">
+                    <div class="card-body">
+                        <i class="fas fa-file-pdf action-card-icon"></i>
+                        <div class="action-card-title">Gestionar productos digitales</div>
+                        <p class="card-text small mt-2">Administrar la librería de recursos descargables (PDFs).</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Gestión de Eventos -->
+            <div class="col">
+                <a href="@Url.Action("GestionarEventos", "Admin")" class="action-card">
+                    <div class="card-body">
+                        <i class="fas fa-calendar-alt action-card-icon"></i>
+                        <div class="action-card-title">Gestionar eventos</div>
+                        <p class="card-text small mt-2">Crear y actualizar clases en vivo, talleres o webinars.</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Gestión de Estudiantes -->
+            <div class="col">
+                <a href="@Url.Action("GestionarEstudiantes", "Admin")" class="action-card">
+                    <div class="card-body">
+                        <i class="fas fa-user-friends action-card-icon"></i>
+                        <div class="action-card-title">Gestionar estudiantes</div>
+                        <p class="card-text small mt-2">Ver perfiles, permisos y actividad de usuarios.</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Gestión de Categorías -->
+            <div class="col">
+                <a href="@Url.Action("GestionarCategorias", "Admin")" class="action-card">
+                    <div class="card-body">
+                        <i class="fas fa-folder action-card-icon"></i>
+                        <div class="action-card-title">Gestionar categorías</div>
+                        <p class="card-text small mt-2">Organizar y clasificar el contenido de la plataforma.</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Historial y Pagos -->
+            <div class="col">
+                <a href="@Url.Action("GestionarPedidos", "Admin")" class="action-card">
+                    <div class="card-body">
+                        <i class="fas fa-receipt action-card-icon"></i>
+                        <div class="action-card-title">Historial y pagos</div>
+                        <p class="card-text small mt-2">Revisar el estado y detalle de todas las transacciones.</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Historial de Tasas -->
+            <div class="col">
+                <a href="@Url.Action("HistorialTasas", "Admin")" class="action-card">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line action-card-icon"></i>
+                        <div class="action-card-title">Historial de tasas</div>
+                        <p class="card-text small mt-2">Ver la evolución y registros pasados de la tasa BCV.</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Gestión de Artículos -->
+            <div class="col">
+                <a href="@Url.Action("Articulos", "Admin")" class="action-card">
+                    <div class="card-body">
+                        <i class="fas fa-newspaper action-card-icon"></i>
+                        <div class="action-card-title">Gestionar artículos</div>
+                        <p class="card-text small mt-2">Administrar la creación y edición de noticias y publicaciones.</p>
+                    </div>
+                </a>
+            </div>
         </div>
-        <div class="col">
-            <a href="@Url.Action("GestionarProductos", "Admin")" class="card action-card text-center p-4">
-                <div class="card-body">
-                    <i class="fas fa-file-pdf action-card-icon"></i>
-                    <div class="action-card-title">Gestionar productos digitales</div>
-                    <p class="card-text small text-muted mt-1">Administrar la librería de recursos descargables (PDFs).</p>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- SECCIÓN INFORMATIVA ADICIONAL -->
+    <div class="section-container text-center mb-5 pb-5">
+        <h2 class="section-title">Soporte y Recursos</h2>
+        <div class="row justify-content-center mt-4">
+            <div class="col-lg-8">
+                <p class="fs-5 mb-4">
+                    ¿Necesitas ayuda con alguna funcionalidad del panel de administración? Consulta nuestra documentación o contacta al equipo de soporte técnico.
+                </p>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="action-card h-100">
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                <i class="fas fa-question-circle action-card-icon"></i>
+                                <div class="action-card-title">Centro de Ayuda</div>
+                                <p class="card-text small mt-2">Documentación y guías de uso</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card h-100">
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                <i class="fas fa-chart-bar action-card-icon"></i>
+                                <div class="action-card-title">Reportes Avanzados</div>
+                                <p class="card-text small mt-2">Métricas detalladas y análisis</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card h-100">
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                <i class="fas fa-cogs action-card-icon"></i>
+                                <div class="action-card-title">Configuración</div>
+                                <p class="card-text small mt-2">Ajustes de la plataforma</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </a>
-        </div>
-        <div class="col">
-            <a href="@Url.Action("GestionarEventos", "Admin")" class="card action-card text-center p-4">
-                <div class="card-body">
-                    <i class="fas fa-calendar-alt action-card-icon"></i>
-                    <div class="action-card-title">Gestionar eventos</div>
-                    <p class="card-text small text-muted mt-1">Crear y actualizar clases en vivo, talleres o webinars.</p>
-                </div>
-            </a>
-        </div>
-        <div class="col">
-            <a href="@Url.Action("GestionarEstudiantes", "Admin")" class="card action-card text-center p-4">
-                <div class="card-body">
-                    <i class="fas fa-user-friends action-card-icon"></i>
-                    <div class="action-card-title">Gestionar estudiantes</div>
-                    <p class="card-text small text-muted mt-1">Ver perfiles, permisos y actividad de usuarios.</p>
-                </div>
-            </a>
-        </div>
-        <div class="col">
-            <a href="@Url.Action("GestionarCategorias", "Admin")" class="card action-card text-center p-4">
-                <div class="card-body">
-                    <i class="fas fa-folder action-card-icon"></i>
-                    <div class="action-card-title">Gestionar categorías</div>
-                    <p class="card-text small text-muted mt-1">Organizar y clasificar el contenido de la plataforma (cursos, productos).</p>
-                </div>
-            </a>
-        </div>
-        <div class="col">
-            <a href="@Url.Action("GestionarPedidos", "Admin")" class="card action-card text-center p-4">
-                <div class="card-body">
-                    <i class="fas fa-receipt action-card-icon"></i>
-                    <div class="action-card-title">Historial y pagos</div>
-                    <p class="card-text small text-muted mt-1">Revisar el estado y detalle de todas las transacciones.</p>
-                </div>
-            </a>
-        </div>
-        <div class="col">
-            <a href="@Url.Action("HistorialTasas", "Admin")" class="card action-card text-center p-4">
-                <div class="card-body">
-                    <i class="fas fa-chart-line action-card-icon"></i>
-                    <div class="action-card-title">Historial de tasas</div>
-                    <p class="card-text small text-muted mt-1">Ver la evolución y registros pasados de la tasa BCV.</p>
-                </div>
-            </a>
-        </div>
-        <div class="col">
-            <a href="@Url.Action("Articulos", "Admin")" class="card action-card text-center p-4">
-                <div class="card-body">
-                    <i class="fas fa-newspaper action-card-icon"></i>
-                    <div class="action-card-title">Gestionar artículos</div>
-                    <p class="card-text small text-muted mt-1">Administrar la creación y edición de noticias, posts y publicaciones.</p>
-                </div>
-            </a>
+            </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Scripts opcionales para el dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard administrativo cargado correctamente');
+        });
+    </script>
+}

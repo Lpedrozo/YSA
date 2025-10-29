@@ -4,269 +4,583 @@
 }
 
 <style>
-    /* ------------------------------------- */
-    /* 1. Paleta Monocromática (B/W)         */
-    /* ------------------------------------- */
+    /* IMPORTACIÓN DE TIPOGRAFÍAS */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
     :root {
-        --color-primary: #000000; /* Negro para acentos y CTA */
-        --color-secondary: #343a40; /* Gris oscuro para títulos */
-        --color-background: #ffffff; /* Fondo blanco */
-        --color-card-bg: #f8f8f8; /* Gris muy claro para tarjetas */
-        --color-text-dark: #212529; /* Texto principal (negro) */
-        --color-border: #dee2e6; /* Gris claro para bordes */
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
     }
 
-    /* Estilos generales */
     body {
+        font-family: var(--font-body);
         background-color: var(--color-background);
         color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
     }
 
-    /* Contenedor principal para centrar el contenido */
-    .course-details-container {
-        max-width: 1200px; /* Hacemos el contenedor un poco más ancho */
-        padding-top: 40px;
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: #f3f3f3;
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
-    /* ------------------------------------- */
-    /* 2. Sección Principal (Imagen y Título)*/
-    /* ------------------------------------- */
-    .course-hero {
-        position: relative;
-        width: 100%;
-        /* Ajuste: Usaremos un padding vertical más sutil para que no sea tan grande en móviles */
-        padding-top: 56.25%; /* Ratio 16:9 */
-        border-radius: 8px;
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    .section-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: var(--color-accent);
+        margin-top: -2rem;
+        margin-bottom: 3rem;
+        line-height: var(--line-height-normal);
+    }
+
+    /* === ESTILO ESPECÍFICO PARA EL BLOQUE DE LA IMAGEN === */
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    /* ESTILO DE TARJETA TIPO REJILLA DE REVISTA MEJORADO */
+    .magazine-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
         overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    @@media (max-width: 991.98px) {
-        /* En dispositivos pequeños, hacemos la imagen más compacta para que el contenido sea visible antes */
-        .course-hero
-
-    {
-        padding-top: 75%; /* Ratio 4:3 en móviles, o simplemente un valor fijo si se prefiere */
-        margin-bottom: 20px !important;
-    }
-
-    }
-
-    .course-hero img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
+        background-color: var(--color-card-bg);
         height: 100%;
-        object-fit: cover;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
     }
 
-    .hero-title-block {
-        padding: 20px 0;
-        border-bottom: 2px solid var(--color-primary);
-        margin-bottom: 20px;
-    }
-
-        .hero-title-block h1 {
-            font-weight: 700;
-            color: var(--color-primary);
-            margin-bottom: 0.5rem;
+        .magazine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
         }
 
-    /* ------------------------------------- */
-    /* 3. Tarjeta de Precio (Compra)         */
-    /* ------------------------------------- */
-    .price-card {
-        border-radius: 8px;
-        border: 1px solid var(--color-border);
-        background-color: var(--color-card-bg); /* Fondo gris claro */
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        color: var(--color-text-dark);
+    .magazine-card-img-container {
+        overflow: hidden;
+        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
     }
 
-    /* Nuevo: Estilo Flotante para Móviles */
-    @@media (max-width: 991.98px) {
-        .mobile-buy-bar
-
-    {
-        position: fixed;
-        bottom: 0;
-        left: 0;
+    .magazine-card-img {
         width: 100%;
-        z-index: 1030; /* Alto para estar sobre casi todo */
-        padding: 10px;
-        background-color: var(--color-card-bg);
-        border-top: 1px solid var(--color-border);
-        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        height: 250px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
     }
 
-    /* Oculta la tarjeta completa en la columna lateral en móviles, ya que usaremos el flotante */
-    .price-card-lg {
-        display: none !important;
+    .magazine-card:hover .magazine-card-img {
+        transform: scale(1.05);
     }
 
+    .magazine-card-body {
+        padding: 1.5rem;
+        position: relative;
+        text-align: left;
     }
 
-    /* Muestra la tarjeta completa en el layout de columna grande */
-    @@media (min-width: 992px) {
-        .price-card-lg
-
-    {
-        display: block !important;
-    }
-
-    .mobile-buy-bar {
-        display: none !important;
-    }
-
-    }
-
-
-    .btn-action {
-        background-color: var(--color-primary) !important;
-        border-color: var(--color-primary) !important;
-        color: #ffffff !important;
-        padding: 10px 20px;
-        font-size: 1.1em;
+    .card-category {
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
         font-weight: 600;
-        border-radius: 6px;
-        transition: background-color 0.3s, transform 0.2s;
+        color: var(--color-brand-primary);
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+        letter-spacing: 0.5px;
+    }
+
+    .magazine-card-body h5 {
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 1.5rem;
+        line-height: var(--line-height-normal);
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .magazine-card-body .card-text {
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
+        margin-bottom: 1rem;
+    }
+
+    .card-date {
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        color: var(--color-brand-primary);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* BOTONES CON ESTILO REVISTA */
+    .btn-action {
+        background-color: var(--color-brand-primary) !important;
+        border-color: var(--color-brand-primary) !important;
+        color: var(--color-text-light) !important;
+        font-weight: 600;
+        padding: 12px 24px;
+        border-radius: var(--border-radius-sm);
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        font-family: var(--font-accent);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
         .btn-action:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
-            transform: translateY(-1px);
+            background-color: var(--color-brand-secondary) !important;
+            border-color: var(--color-brand-secondary) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-    /* ------------------------------------- */
-    /* 4. Acordeón (Índice - Solo Títulos)   */
-    /* ------------------------------------- */
+    /* ACORDEÓN CON ESTILO REVISTA */
     .accordion-item {
         border: 1px solid var(--color-border);
-        margin-bottom: 8px;
-        border-radius: 6px;
+        margin-bottom: 12px;
+        border-radius: var(--border-radius-md);
         overflow: hidden;
+        background-color: var(--color-card-bg);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
     .accordion-button {
         background-color: var(--color-card-bg);
         color: var(--color-text-dark);
         font-weight: 600;
+        font-family: var(--font-heading);
+        font-size: 1.1rem;
+        padding: 1.25rem 1.5rem;
+        border: none;
     }
 
         .accordion-button:not(.collapsed) {
-            background-color: var(--color-primary);
-            color: #ffffff;
+            background-color: var(--color-brand-primary);
+            color: var(--color-text-light);
             box-shadow: none;
+        }
+
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: var(--color-brand-primary);
         }
 
     .list-group-item {
         background-color: var(--color-background);
-        border-bottom: 1px dotted var(--color-border);
+        border-bottom: 1px solid var(--color-border);
         color: var(--color-secondary);
+        padding: 1rem 1.5rem;
+        font-family: var(--font-body);
     }
 
-        /* Ocultamos el ícono de video, solo mostramos el texto */
-        .list-group-item i.fa-play-circle {
-            display: none;
+    /* HERO SECTION PARA EL CURSO */
+    .course-hero-section {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-hero-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .course-hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 100%);
+        z-index: 2;
+        display: flex;
+        align-items: flex-end;
+        padding: 2.5rem;
+    }
+
+    .course-hero-content {
+        color: var(--color-text-light);
+        z-index: 3;
+        max-width: 800px;
+    }
+
+    .course-hero-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 0.5rem;
+    }
+
+    .course-hero-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.25rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: var(--line-height-normal);
+    }
+
+    /* TARJETA DE PRECIO CON ESTILO REVISTA */
+    .price-card {
+        border-radius: var(--border-radius-lg);
+        border: 1px solid var(--color-border);
+        background-color: var(--color-card-bg);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        color: var(--color-text-dark);
+        overflow: hidden;
+    }
+
+    .price-display {
+        font-family: var(--font-heading);
+        font-weight: 800;
+        color: var(--color-brand-primary);
+        font-size: 2.5rem;
+        line-height: var(--line-height-tight);
+    }
+
+    /* BADGES Y ALERTAS */
+    .badge.bg-light {
+        background-color: var(--color-brand-accent) !important;
+        color: var(--color-brand-dark) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    .alert-info {
+        background-color: rgba(109, 181, 62, 0.1);
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+    }
+
+    .alert-success {
+        background-color: rgba(109, 181, 62, 0.1);
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1rem;
+    }
+
+    .alert-warning {
+        background-color: rgba(242, 229, 20, 0.1);
+        border-color: var(--color-brand-accent);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+    }
+
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* BARRA DE COMPRA MÓVIL */
+    .mobile-buy-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1030;
+        padding: 1rem;
+        background-color: var(--color-card-bg);
+        border-top: 1px solid var(--color-border);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* ADAPTACIONES RESPONSIVE */
+
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .section-container {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
         }
+
+        .course-hero-section {
+            height: 300px;
+        }
+
+        .course-hero-title {
+            font-size: 2rem;
+        }
+
+        .course-hero-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .price-display {
+            font-size: 2rem;
+        }
+
+        .magazine-card-body {
+            padding: 1.25rem;
+        }
+
+            .magazine-card-body h5 {
+                font-size: 1.35rem;
+            }
+        /* Oculta la tarjeta de precio lateral en móviles */
+        .price-card-lg {
+            display: none !important;
+        }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .section-container {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .course-hero-section {
+            height: 250px;
+        }
+
+        .course-hero-overlay {
+            padding: 1.5rem;
+        }
+
+        .course-hero-title {
+            font-size: 1.75rem;
+        }
+
+        .course-hero-subtitle {
+            font-size: 1rem;
+        }
+
+        .magazine-card-body {
+            padding: 1rem;
+        }
+
+            .magazine-card-body h5 {
+                font-size: 1.25rem;
+            }
+
+        .accordion-button {
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+        }
+
+        .mobile-buy-bar {
+            padding: 0.75rem 1rem;
+        }
+        /* Muestra la barra de compra móvil */
+        .mobile-buy-bar {
+            display: flex !important;
+        }
+    }
+
+    /* Desktop (min-width: 992px) */
+    @@media (min-width: 992px) {
+        .price-card-lg {
+            display: block !important;
+        }
+
+        .mobile-buy-bar {
+            display: none !important;
+        }
+    }
 </style>
 
-<div class="container course-details-container pb-5 mb-5">
+<div class="container px-0 py-5 mb-5 pb-5">
 
-    <div class="hero-title-block">
-        <h1 class="">@Model.Titulo</h1>
-        <p class="lead text-secondary">@Html.Raw(Model.DescripcionCorta)</p>
+    <!-- === HERO SECTION DEL CURSO === -->
+    <div class="course-hero-section">
+        <img src="@Model.UrlImagen" class="course-hero-img" alt="Imagen del curso: @Model.Titulo" />
+        <div class="course-hero-overlay">
+            <div class="course-hero-content">
+                <span class="badge bg-light text-dark mb-3">CURSO DISPONIBLE</span>
+                <h1 class="course-hero-title">@Model.Titulo</h1>
+                <p class="course-hero-subtitle">@Html.Raw(Model.DescripcionCorta)</p>
+            </div>
+        </div>
     </div>
 
-    <div class="row g-5 pb-5 mb-5">
+    <div class="row g-5">
 
+        <!-- === CONTENIDO PRINCIPAL DEL CURSO === -->
         <div class="col-lg-8">
-            <div class="course-hero mb-4">
-                <img src="@Model.UrlImagen" alt="Imagen del curso: @Model.Titulo" />
-            </div>
-
-            <h2 class="mb-3 text-secondary">Acerca de este curso</h2>
-            <div class="mb-5 text-dark">
-                @Html.Raw(Model.DescripcionLarga)
-            </div>
-
-            <h2 class="mb-3 text-secondary">Contenido del curso</h2>
-            <div class="accordion" id="acordeonModulos">
-                @if (Model.Modulos != null && Model.Modulos.Any())
-                {
-                    @foreach (var modulo in Model.Modulos)
-                    {
-                        <div class="accordion-item shadow-sm">
-                            <h2 class="accordion-header" id="heading_@modulo.Id">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
-                                    @modulo.Titulo
-                                </button>
-                            </h2>
-                            <div id="collapse_@modulo.Id" class="accordion-collapse collapse" aria-labelledby="heading_@modulo.Id" data-bs-parent="#acordeonModulos">
-                                <div class="accordion-body p-0">
-                                    <ul class="list-group list-group-flush">
-                                        @if (modulo.Lecciones != null && modulo.Lecciones.Any())
-                                        {
-                                            @foreach (var leccion in modulo.Lecciones)
-                                            {
-                                                <li class="list-group-item">
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="fas @(Model.TieneAcceso ? "fa-check-circle text-success" : "fa-lock text-secondary") me-2"></i>
-                                                        <span class="fw-normal flex-grow-1">@leccion.Titulo</span>
-                                                    </div>
-                                                </li>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <li class="list-group-item text-muted">No hay lecciones en este módulo.</li>
-                                        }
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <div class="alert alert-warning text-center">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Este curso no contiene módulos ni lecciones.
+            <!-- Sección Acerca del Curso -->
+            <div class="section-container">
+                <div class="px-3">
+                    <span class="latest-grid-header">ACERCA DEL CURSO</span>
+                </div>
+                <div class="px-3">
+                    <div class="text-dark fs-5 lh-base">
+                        @Html.Raw(Model.DescripcionLarga)
                     </div>
-                }
+                </div>
+            </div>
+
+            <hr class="section-divider" />
+
+            <!-- Sección Contenido del Curso -->
+            <div class="section-container">
+                <div class="px-3">
+                    <span class="latest-grid-header">CONTENIDO DEL CURSO</span>
+                </div>
+                <div class="px-3">
+                    <div class="accordion" id="acordeonModulos">
+                        @if (Model.Modulos != null && Model.Modulos.Any())
+                        {
+                            @foreach (var modulo in Model.Modulos)
+                            {
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading_@modulo.Id">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
+                                            @modulo.Titulo
+                                        </button>
+                                    </h2>
+                                    <div id="collapse_@modulo.Id" class="accordion-collapse collapse" aria-labelledby="heading_@modulo.Id" data-bs-parent="#acordeonModulos">
+                                        <div class="accordion-body p-0">
+                                            <ul class="list-group list-group-flush">
+                                                @if (modulo.Lecciones != null && modulo.Lecciones.Any())
+                                                {
+                                                    @foreach (var leccion in modulo.Lecciones)
+                                                    {
+                                                        <li class="list-group-item">
+                                                            <div class="d-flex align-items-center">
+                                                                <i class="fas @(Model.TieneAcceso ? "fa-check-circle text-success" : "fa-lock text-secondary") me-3"></i>
+                                                                <span class="fw-normal flex-grow-1">@leccion.Titulo</span>
+                                                            </div>
+                                                        </li>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <li class="list-group-item text-muted">No hay lecciones en este módulo.</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning text-center">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Este curso no contiene módulos ni lecciones.
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
 
+        <!-- === BARRA LATERAL DE INSCRIPCIÓN (DESKTOP) === -->
         <div class="col-lg-4 d-none d-lg-block">
             <div class="sticky-top" style="top: 20px;">
-                <div class="card price-card price-card-lg text-center p-4">
-                    <h5 class="fw-bold text-secondary">Precio del curso:</h5>
-                    <h2 class="display-6 fw-bold mb-3" style="color: var(--color-primary);">@Model.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</h2>
-                    <p class="text-secondary mb-4"><i class="fas fa-check-circle text-success me-2"></i>Acceso de por vida</p>
+                <div class="price-card price-card-lg text-center p-4">
+                    <h5 class="fw-bold text-secondary mb-3">INVERSIÓN DEL CURSO</h5>
+                    <div class="price-display mb-4">@Model.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</div>
+                    <p class="text-secondary mb-4">
+                        <i class="fas fa-check-circle text-success me-2"></i>Acceso de por vida
+                    </p>
 
                     @if (Model.TieneAcceso)
                     {
-                        <a asp-action="VerCurso" asp-controller="Curso" asp-route-id="@Model.Id" class="btn btn-action w-100">Ver contenido</a>
-
-                        <div class="alert alert-success d-flex align-items-center justify-content-center mt-3" role="alert">
-                            <i class="fas fa-check-circle me-2"></i>Ya tienes acceso a este curso.
+                        <a asp-action="VerCurso" asp-controller="Curso" asp-route-id="@Model.Id" class="btn btn-action w-100 mb-3">
+                            <i class="fas fa-play-circle me-2"></i>Continuar Curso
+                        </a>
+                        <div class="alert alert-success d-flex align-items-center justify-content-center" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>Ya tienes acceso a este curso
                         </div>
                     }
                     else if (Model.EstaEnValidacion)
                     {
                         <div class="alert alert-info d-flex align-items-center justify-content-center" role="alert">
-                            <i class="fas fa-hourglass-half me-2"></i>Su pago está en proceso de validación.
+                            <i class="fas fa-hourglass-half me-2"></i>Su pago está en proceso de validación
                         </div>
                     }
                     else
                     {
                         <form asp-controller="Pedido" asp-action="IniciarCompra" method="post">
                             <input type="hidden" name="cursoId" value="@Model.Id" />
-                            <button type="submit" class="btn btn-action w-100">Inscribirse ahora</button>
+                            <button type="submit" class="btn btn-action w-100">
+                                <i class="fas fa-shopping-cart me-2"></i>Inscribirse Ahora
+                            </button>
                         </form>
                     }
                 </div>
@@ -275,26 +589,48 @@
     </div>
 </div>
 
+<!-- === BARRA DE COMPRA MÓVIL === -->
 <div class="mobile-buy-bar d-lg-none">
     <div class="d-flex align-items-center">
-        <h5 class="fw-bold mb-0 me-3">Precio:</h5>
-        <h4 class="fw-bold mb-0" style="color: var(--color-primary);">@Model.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</h4>
+        <h5 class="fw-bold mb-0 me-3 text-secondary">Inversión:</h5>
+        <h4 class="fw-bold mb-0 price-display">@Model.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</h4>
     </div>
     <div class="flex-grow-1 ms-3 text-end">
         @if (Model.TieneAcceso)
         {
-            <a asp-action="VerCurso" asp-controller="Curso" asp-route-id="@Model.Id" class="btn btn-action btn-sm">Ver Contenido</a>
+            <a asp-action="VerCurso" asp-controller="Curso" asp-route-id="@Model.Id" class="btn btn-action btn-sm">
+                <i class="fas fa-play-circle me-1"></i>Continuar
+            </a>
         }
         else if (Model.EstaEnValidacion)
         {
-            <span class="text-info fw-semibold"><i class="fas fa-hourglass-half me-1"></i>En Validación</span>
+            <span class="text-info fw-semibold">
+                <i class="fas fa-hourglass-half me-1"></i>En Validación
+            </span>
         }
         else
         {
             <form asp-controller="Pedido" asp-action="IniciarCompra" method="post" class="d-inline">
                 <input type="hidden" name="cursoId" value="@Model.Id" />
-                <button type="submit" class="btn btn-action btn-sm">Comprar Ahora</button>
+                <button type="submit" class="btn btn-action btn-sm">
+                    <i class="fas fa-shopping-cart me-1"></i>Comprar
+                </button>
             </form>
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Scripts opcionales aquí
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scroll para acordeón
+            const accordionButtons = document.querySelectorAll('.accordion-button');
+            accordionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+        });
+    </script>
+}

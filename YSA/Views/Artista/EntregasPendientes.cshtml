@@ -1,69 +1,522 @@
 ﻿@model IEnumerable<YSA.Web.Models.ViewModels.EntregaActividadPendienteViewModel>
 
 @{
-    ViewData["Title"] = "Entregas Ppendientes de calificación";
+    ViewData["Title"] = "Entregas Pendientes de Calificación";
     int totalPendientes = Model.Count();
 }
 
-<div class="container-fluid pt-4 mb-5 pb-5">
+<style>
+    /* IMPORTACIÓN DE TIPOGRAFÍAS */
+    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
+    :root {
+        --color-primary-action: #ef8830; /* Naranja como color principal */
+        --color-secondary: #212529; /* Negro oscuro para títulos */
+        --color-accent: #6c757d; /* Gris para texto de soporte */
+        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
+        /* NUEVOS COLORES DE MARCA */
+        --color-brand-primary: #ef8830; /* Naranja - color principal */
+        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
+        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
+        --color-brand-success: #6db53e; /* Verde - color de éxito */
+        --color-brand-dark: #08080a; /* Negro - texto principal */
+        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
+        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
+        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
+        --font-accent: 'Poppins', sans-serif;
+        /* ALTURAS DE LÍNEA */
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        /* BORDES REDONDEADOS */
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
+    }
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-5 fw-bold text-dark">
-            <i class="bi bi-journal-check me-2 text-primary"></i> @ViewData["Title"]
-        </h1>
-    </div>
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
+    }
 
-    @* --- Resumen Estadístico (Card) --- *@
-    <div class="row mb-5">
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 bg-light-subtle">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0 me-3">
-                            <span class="p-3 rounded-circle bg-warning-subtle text-warning fs-3">
-                                <i class="bi bi-hourglass-split"></i>
-                            </span>
-                        </div>
-                        <div>
-                            <p class="card-title text-muted mb-1">Entregas por revisar</p>
-                            <h2 class="card-text fw-bold">@totalPendientes</h2>
+    /* ESTILO PORTADA DE REVISTA PRINCIPAL (BANNER) */
+    .magazine-cover {
+        width: 100%;
+        height: 60vh; /* Altura reducida para esta vista */
+        background-color: #f4f4f4;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 3rem;
+    }
+
+    .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .cover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%); /* Degradado oscuro en la parte inferior */
+        z-index: 2;
+        display: flex;
+        align-items: flex-end;
+        padding: 3rem;
+    }
+
+    .cover-title-block {
+        color: var(--color-text-light);
+        max-width: 700px;
+        z-index: 3;
+    }
+
+    .cover-title {
+        font-family: var(--font-heading);
+        font-size: 3.5rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 0.5rem;
+    }
+
+    .cover-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: var(--line-height-normal);
+    }
+
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2.5rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    .latest-grid-header {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--color-brand-primary);
+        padding-bottom: 0.5rem;
+        display: block;
+        line-height: var(--line-height-tight);
+    }
+
+    /* TARJETAS DE RESUMEN ESTADÍSTICO */
+    .stats-card {
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: var(--color-card-bg);
+        overflow: hidden;
+    }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+    .stats-icon {
+        background-color: rgba(239, 136, 48, 0.1);
+        color: var(--color-brand-primary);
+        border-radius: var(--border-radius-md);
+        padding: 1rem;
+        font-size: 2rem;
+    }
+
+    /* NAVEGACIÓN POR PESTAÑAS CON ESTILO EDITORIAL */
+    .nav-tabs {
+        border-bottom: 2px solid var(--color-border);
+    }
+
+        .nav-tabs .nav-link {
+            font-family: var(--font-accent);
+            font-weight: 600;
+            color: var(--color-accent);
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 1rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+            .nav-tabs .nav-link:hover {
+                color: var(--color-brand-primary);
+                border-bottom: 3px solid var(--color-brand-primary);
+            }
+
+            .nav-tabs .nav-link.active {
+                color: var(--color-brand-primary);
+                background-color: transparent;
+                border: none;
+                border-bottom: 3px solid var(--color-brand-primary);
+            }
+
+    /* BADGES CON NUEVA PALETA */
+    .badge.bg-secondary {
+        background-color: var(--color-brand-primary) !important;
+        color: var(--color-text-light) !important;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+    }
+
+    .badge.bg-primary {
+        background-color: var(--color-brand-primary) !important;
+        color: var(--color-text-light) !important;
+    }
+
+    .badge.bg-info {
+        background-color: var(--color-brand-primary) !important;
+        color: var(--color-text-light) !important;
+    }
+
+    .badge.bg-warning {
+        background-color: var(--color-brand-accent) !important;
+        color: var(--color-brand-dark) !important;
+    }
+
+    .badge.bg-primary-subtle {
+        background-color: rgba(239, 136, 48, 0.1) !important;
+        color: var(--color-brand-primary) !important;
+        border: 1px solid rgba(239, 136, 48, 0.2);
+    }
+
+    /* TABLAS CON ESTILO EDITORIAL */
+    .table {
+        font-family: var(--font-body);
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .table thead th {
+            background-color: var(--color-section-bg);
+            border-bottom: 2px solid var(--color-brand-primary);
+            font-family: var(--font-accent);
+            font-weight: 700;
+            color: var(--color-secondary);
+            padding: 1rem;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--color-border);
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(239, 136, 48, 0.05);
+        }
+
+    /* BOTONES CON NUEVA PALETA DE COLORES */
+    .btn-success {
+        background-color: var(--color-brand-success) !important;
+        border-color: var(--color-brand-success) !important;
+        color: white !important;
+        font-weight: 600;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+    }
+
+        .btn-success:hover {
+            background-color: #5a9c35 !important;
+            border-color: #5a9c35 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    .btn-outline-secondary {
+        border-color: var(--color-brand-primary) !important;
+        color: var(--color-brand-primary) !important;
+        transition: all 0.2s;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+    }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--color-brand-primary) !important;
+            color: white !important;
+            transform: translateY(-2px);
+        }
+
+    .btn-outline-secondary {
+        border-color: var(--color-accent) !important;
+        color: var(--color-accent) !important;
+    }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--color-accent) !important;
+            color: white !important;
+        }
+
+    /* ALERTAS CON NUEVA PALETA */
+    .alert-success {
+        background-color: rgba(109, 181, 62, 0.1);
+        border-color: var(--color-brand-success);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    .alert-danger {
+        background-color: rgba(229, 54, 26, 0.1);
+        border-color: var(--color-brand-secondary);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    .alert-info {
+        background-color: rgba(239, 136, 48, 0.1);
+        border-color: var(--color-brand-primary);
+        color: var(--color-text-dark);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    .alert-light {
+        background-color: var(--color-section-bg);
+        border-color: var(--color-border);
+        color: var(--color-accent);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        font-family: var(--font-body);
+    }
+
+    /* MODAL CON ESTILO EDITORIAL */
+    .modal-content {
+        border-radius: var(--border-radius-lg);
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--color-border);
+        background-color: var(--color-brand-success);
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+        color: white;
+    }
+
+    .modal-title {
+        font-family: var(--font-heading);
+        font-weight: 700;
+    }
+
+    .btn-close-white {
+        filter: invert(1);
+    }
+
+    /* FORMULARIOS CON ESTILO EDITORIAL */
+    .form-control {
+        border-radius: var(--border-radius-sm);
+        border: 1px solid var(--color-border);
+        padding: 0.75rem 1rem;
+        font-family: var(--font-body);
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    .form-control-lg {
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .form-label {
+        font-family: var(--font-accent);
+        font-weight: 600;
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-text {
+        font-family: var(--font-body);
+        color: var(--color-accent);
+    }
+
+    /* SEPARADORES MEJORADOS */
+    .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
+        margin: 3rem 0;
+    }
+
+    /* ADAPTACIONES RESPONSIVE */
+
+    /* Tablet (max-width: 991.98px) */
+    @@media (max-width: 991.98px) {
+        .magazine-cover {
+            height: 50vh;
+        }
+
+        .cover-overlay {
+            padding: 2rem;
+        }
+
+        .cover-title {
+            font-size: 2.5rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1.25rem;
+        }
+
+        .section-container {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .nav-tabs .nav-link {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Mobile Pequeño (max-width: 575.98px) */
+    @@media (max-width: 575.98px) {
+        .magazine-cover {
+            height: 40vh;
+        }
+
+        .cover-title {
+            font-size: 2rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1rem;
+        }
+
+        .cover-overlay {
+            padding: 1.5rem;
+        }
+
+        .section-container {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .nav-tabs .nav-link {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .table-responsive {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+
+<div class="container px-0 py-5 pb-5 mb-5">
+    <!-- SECCIÓN DE RESUMEN ESTADÍSTICO -->
+    <div class="section-container">
+        <div class="px-3 mb-4">
+            <span class="latest-grid-header">RESUMEN GENERAL</span>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-4">
+                <div class="stats-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0 me-3">
+                                <span class="stats-icon">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </span>
+                            </div>
+                            <div>
+                                <p class="card-title text-muted mb-1">Entregas por revisar</p>
+                                <h2 class="card-text fw-bold">@totalPendientes</h2>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    @* Mostrar mensajes temporales de éxito o error *@
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-x-octagon-fill me-2"></i> @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
+        <!-- Mostrar mensajes temporales de éxito o error -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i> @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
 
-    <hr class="mb-4" />
+        <hr class="section-divider" />
 
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info border-0 shadow-sm p-4 text-center" role="alert">
-            <h4 class="alert-heading">¡Todo al día!</h4>
-            <p>🎉 Actualmente no tienes actividades de estudiantes pendientes de calificación.</p>
-        </div>
-    }
-    else
-    {
-        <div class="card shadow-sm pb-5 mb-5">
-            <div class="card-header bg-white p-0">
-                @* --- NAVEGACIÓN POR PESTAÑAS (TABS) --- *@
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info border-0 text-center" role="alert">
+                <h4 class="alert-heading">¡Todo al día!</h4>
+                <p>🎉 Actualmente no tienes actividades de estudiantes pendientes de calificación.</p>
+            </div>
+        }
+        else
+        {
+            <div class="section-container">
+                <div class="px-3 mb-4">
+                    <span class="latest-grid-header">GESTIÓN DE ENTREGAS</span>
+                </div>
+
+                <!-- NAVEGACIÓN POR PESTAÑAS -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="total-tab" data-bs-toggle="tab" data-bs-target="#total-tab-pane" type="button" role="tab" aria-controls="total-tab-pane" aria-selected="true">
@@ -86,18 +539,13 @@
                         </button>
                     </li>
                 </ul>
-            </div>
 
-            <div class="card-body p-0">
-                <div class="tab-content" id="myTabContent">
-
-                    @* ============================================= *@
-                    @* --- PESTAÑA 1: TODAS LAS ENTREGAS --- *@
-                    @* ============================================= *@
+                <div class="tab-content mt-4" id="myTabContent">
+                    <!-- PESTAÑA 1: TODAS LAS ENTREGAS -->
                     <div class="tab-pane fade show active" id="total-tab-pane" role="tabpanel" aria-labelledby="total-tab" tabindex="0">
                         @if (!Model.Any())
                         {
-                            <div class="alert alert-light text-center m-4" role="alert">
+                            <div class="alert alert-light text-center" role="alert">
                                 No hay entregas pendientes.
                             </div>
                         }
@@ -123,8 +571,8 @@
                                                 <td>@item.EstudianteNombre</td>
                                                 <td class="d-none d-lg-table-cell">@item.FechaEntrega.ToString("dd MMM yyyy HH:mm")</td>
                                                 <td>
-                                                    <a href="@item.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Descargar Entrega"><i class="bi bi-file-earmark-arrow"></i>Ver actividad</a>
-                                                    <button type="button" class="btn btn-sm btn-success btn-calificar" data-bs-toggle="modal" data-bs-target="#calificarModal" data-entrega-id="@item.EntregaId" data-actividad-nombre="@item.ActividadTitulo" data-comentario-estudiante="@item.ComentarioEstudiante"><i class="bi bi-star"></i> Calificar</button>
+                                                    <a href="@item.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Ver Entrega"><i class="fas fa-eye me-1"></i>Ver actividad</a>
+                                                    <button type="button" class="btn btn-sm btn-success btn-calificar" data-bs-toggle="modal" data-bs-target="#calificarModal" data-entrega-id="@item.EntregaId" data-actividad-nombre="@item.ActividadTitulo" data-comentario-estudiante="@item.ComentarioEstudiante"><i class="fas fa-star me-1"></i> Calificar</button>
                                                 </td>
                                             </tr>
                                         }
@@ -134,16 +582,14 @@
                         }
                     </div>
 
-                    @* ============================================= *@
-                    @* --- PESTAÑA 2: POR CURSO --- *@
-                    @* ============================================= *@
+                    <!-- PESTAÑA 2: POR CURSO -->
                     <div class="tab-pane fade" id="curso-tab-pane" role="tabpanel" aria-labelledby="curso-tab" tabindex="0">
                         @{
                             var entregasCurso = Model.Where(m => m.TipoEntidad == "Curso");
                         }
                         @if (!entregasCurso.Any())
                         {
-                            <div class="alert alert-light text-center m-4" role="alert">
+                            <div class="alert alert-light text-center" role="alert">
                                 No hay entregas pendientes en esta categoría.
                             </div>
                         }
@@ -169,8 +615,8 @@
                                                 <td>@item.EstudianteNombre</td>
                                                 <td class="d-none d-lg-table-cell">@item.FechaEntrega.ToString("dd MMM yyyy HH:mm")</td>
                                                 <td>
-                                                    <a href="@item.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Descargar Entrega"><i class="bi bi-file-earmark-arrow-down"></i>Ver actividad</a>
-                                                    <button type="button" class="btn btn-sm btn-success btn-calificar" data-bs-toggle="modal" data-bs-target="#calificarModal" data-entrega-id="@item.EntregaId" data-actividad-nombre="@item.ActividadTitulo" data-comentario-estudiante="@item.ComentarioEstudiante"><i class="bi bi-star"></i> Calificar</button>
+                                                    <a href="@item.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Ver Entrega"><i class="fas fa-eye me-1"></i>Ver actividad</a>
+                                                    <button type="button" class="btn btn-sm btn-success btn-calificar" data-bs-toggle="modal" data-bs-target="#calificarModal" data-entrega-id="@item.EntregaId" data-actividad-nombre="@item.ActividadTitulo" data-comentario-estudiante="@item.ComentarioEstudiante"><i class="fas fa-star me-1"></i> Calificar</button>
                                                 </td>
                                             </tr>
                                         }
@@ -180,16 +626,14 @@
                         }
                     </div>
 
-                    @* ============================================= *@
-                    @* --- PESTAÑA 3: POR MÓDULO --- *@
-                    @* ============================================= *@
+                    <!-- PESTAÑA 3: POR MÓDULO -->
                     <div class="tab-pane fade" id="modulo-tab-pane" role="tabpanel" aria-labelledby="modulo-tab" tabindex="0">
                         @{
                             var entregasModulo = Model.Where(m => m.TipoEntidad == "Modulo");
                         }
                         @if (!entregasModulo.Any())
                         {
-                            <div class="alert alert-light text-center m-4" role="alert">
+                            <div class="alert alert-light text-center" role="alert">
                                 No hay entregas pendientes en esta categoría.
                             </div>
                         }
@@ -215,8 +659,8 @@
                                                 <td>@item.EstudianteNombre</td>
                                                 <td class="d-none d-lg-table-cell">@item.FechaEntrega.ToString("dd MMM yyyy HH:mm")</td>
                                                 <td>
-                                                    <a href="@item.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Descargar Entrega"><i class="bi bi-file-earmark-arrow-down"></i>Ver actividad</a>
-                                                    <button type="button" class="btn btn-sm btn-success btn-calificar" data-bs-toggle="modal" data-bs-target="#calificarModal" data-entrega-id="@item.EntregaId" data-actividad-nombre="@item.ActividadTitulo" data-comentario-estudiante="@item.ComentarioEstudiante"><i class="bi bi-star"></i> Calificar</button>
+                                                    <a href="@item.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Ver Entrega"><i class="fas fa-eye me-1"></i>Ver actividad</a>
+                                                    <button type="button" class="btn btn-sm btn-success btn-calificar" data-bs-toggle="modal" data-bs-target="#calificarModal" data-entrega-id="@item.EntregaId" data-actividad-nombre="@item.ActividadTitulo" data-comentario-estudiante="@item.ComentarioEstudiante"><i class="fas fa-star me-1"></i> Calificar</button>
                                                 </td>
                                             </tr>
                                         }
@@ -226,16 +670,14 @@
                         }
                     </div>
 
-                    @* ============================================= *@
-                    @* --- PESTAÑA 4: POR LECCIÓN --- *@
-                    @* ============================================= *@
+                    <!-- PESTAÑA 4: POR LECCIÓN -->
                     <div class="tab-pane fade" id="leccion-tab-pane" role="tabpanel" aria-labelledby="leccion-tab" tabindex="0">
                         @{
                             var entregasLeccion = Model.Where(m => m.TipoEntidad == "Leccion");
                         }
                         @if (!entregasLeccion.Any())
                         {
-                            <div class="alert alert-light text-center m-4" role="alert">
+                            <div class="alert alert-light text-center" role="alert">
                                 No hay entregas pendientes en esta categoría.
                             </div>
                         }
@@ -261,8 +703,8 @@
                                                 <td>@item.EstudianteNombre</td>
                                                 <td class="d-none d-lg-table-cell">@item.FechaEntrega.ToString("dd MMM yyyy HH:mm")</td>
                                                 <td>
-                                                    <a href="@item.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Descargar Entrega"><i class="bi bi-file-earmark-arrow-down"></i>Ver actividad</a>
-                                                    <button type="button" class="btn btn-sm btn-success btn-calificar" data-bs-toggle="modal" data-bs-target="#calificarModal" data-entrega-id="@item.EntregaId" data-actividad-nombre="@item.ActividadTitulo" data-comentario-estudiante="@item.ComentarioEstudiante"><i class="bi bi-star"></i> Calificar</button>
+                                                    <a href="@item.UrlArchivoEntrega" target="_blank" class="btn btn-sm btn-outline-secondary me-1" title="Ver Entrega"><i class="fas fa-eye me-1"></i>Ver actividad</a>
+                                                    <button type="button" class="btn btn-sm btn-success btn-calificar" data-bs-toggle="modal" data-bs-target="#calificarModal" data-entrega-id="@item.EntregaId" data-actividad-nombre="@item.ActividadTitulo" data-comentario-estudiante="@item.ComentarioEstudiante"><i class="fas fa-star me-1"></i> Calificar</button>
                                                 </td>
                                             </tr>
                                         }
@@ -273,20 +715,17 @@
                     </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>
 
-
-@* --------------------------------------------- *@
-@* --- MODAL DE CALIFICACIÓN (Sin cambios) --- *@
-@* --------------------------------------------- *@
+<!-- MODAL DE CALIFICACIÓN -->
 <div class="modal fade" id="calificarModal" tabindex="-1" aria-labelledby="calificarModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="calificarModalLabel"><i class="bi bi-pencil-square me-2"></i> Calificar entrega</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-pencil-alt me-2"></i> Calificar entrega</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <form asp-controller="Artista" asp-action="CalificarEntrega" method="post" id="calificarForm">
@@ -323,7 +762,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-success"><i class="bi bi-send-fill me-1"></i> Enviar calificación</button>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane me-1"></i> Enviar calificación</button>
                 </div>
             </form>
         </div>
