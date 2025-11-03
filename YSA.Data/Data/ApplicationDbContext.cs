@@ -39,6 +39,8 @@ namespace YSA.Data.Data
         public DbSet<CursoInstructor> CursoInstructores { get; set; }
         public DbSet<Articulo> Articulos { get; set; }
         public DbSet<ArticuloFoto> ArticuloFotos { get; set; }
+        public DbSet<Notificacion> Notificaciones { get; set; }
+        public DbSet<TipoNotificacion> TipoNotificaciones { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -217,6 +219,18 @@ namespace YSA.Data.Data
                 .WithMany(a => a.Fotos)
                 .HasForeignKey(af => af.ArticuloId)
                 .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Notificacion>(entity =>
+            {
+                entity.HasOne(n => n.Usuario)
+                      .WithMany()
+                      .HasForeignKey(n => n.UsuarioId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(n => n.TipoNotificacion)
+                      .WithMany(tn => tn.Notificaciones)
+                      .HasForeignKey(n => n.TipoNotificacionId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }

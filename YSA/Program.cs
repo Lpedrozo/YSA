@@ -97,6 +97,8 @@ builder.Services.AddScoped<IRecursoActividadRepository, RecursoActividadReposito
 builder.Services.AddScoped<IRecursoActividadService, RecursoActividadService>();
 builder.Services.AddScoped<IArticuloRepository, ArticuloRepository>();
 builder.Services.AddScoped<IArticuloService, ArticuloService>();
+builder.Services.AddScoped<INotificacionRepository, NotificacionRepository>();
+builder.Services.AddScoped<INotificacionService, NotificacionService>();
 // **Registro de Tasa de Cambio**
 builder.Services.AddScoped<ITasaBCVRepository, TasaBCVRepository>();
 
