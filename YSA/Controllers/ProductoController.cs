@@ -19,6 +19,7 @@ namespace YSA.Web.Controllers
         private readonly IProductoService _productoService;
         private readonly ICompraService _compraService;
         private readonly IPedidoService _pedidoService;
+        private readonly INotificacionService _notificacionService;
         private readonly UserManager<Usuario> _userManager; 
         private readonly IExchangeRateService _exchangeRateService;
 
@@ -26,7 +27,8 @@ namespace YSA.Web.Controllers
                                   ICompraService compraService,
                                   UserManager<Usuario> userManager,
                                   IPedidoService pedidoService,
-                                  IExchangeRateService exchangeRateService)
+                                  IExchangeRateService exchangeRateService,
+                                  INotificacionService notificacionService)
 
         {
             _productoService = productoService;
@@ -34,7 +36,7 @@ namespace YSA.Web.Controllers
             _userManager = userManager;
             _pedidoService = pedidoService;
             _exchangeRateService = exchangeRateService;
-
+            _notificacionService = notificacionService;
         }
 
         public async Task<IActionResult> Index(string searchString, int page = 1)
@@ -201,6 +203,26 @@ namespace YSA.Web.Controllers
 
             // Esto actualizará el estado del Pedido a "En Validación"
             await _compraService.RegistrarPagoAsync(model.PedidoId, pago);
+            var pedidoCompletado = await _pedidoService.ObtenerPedidoPorIdAsync(model.PedidoId);
+            if (pedidoCompletado != null)
+            {
+                // Enviar notificación a los administradores
+                await _notificacionService.CrearNotificacionNuevoPedidoAsync(
+                    model.PedidoId,
+                    pedidoCompletado.Total,
+                    "Producto Digital"
+                );
+                var user = await _userManager.GetUserAsync(User);
+                if (user != null && pedidoCompletado != null)
+                {
+                    // Notificar al usuario que su pago está en validación
+                    await _notificacionService.CrearNotificacionPagoPendienteAsync(
+                        user.Id,
+                        model.PedidoId,
+                        pedidoCompletado.Total
+                    );
+                }
+            }
 
             // Mensaje de éxito con la notificación de espera
             TempData["PagoRegistrado"] = true;

@@ -241,6 +241,32 @@
 				font-size: 25px;
 			}
 		}
+		/* Estilos para el dropdown de notificaciones */
+		#notificacionesDropdown + .dropdown-menu {
+			min-width: 350px;
+			max-height: 500px;
+			overflow-y: auto;
+		}
+
+		.notification-item {
+			transition: background-color 0.2s ease;
+		}
+
+			.notification-item:hover {
+				background-color: #f8f9fa;
+			}
+
+		.notification-unread {
+			background-color: #f0f8ff;
+			border-left: 3px solid #007bff;
+		}
+
+		.notification-badge {
+			position: absolute;
+			top: 0;
+			right: 0;
+			transform: translate(25%, -25%);
+		}
 	</style>
 </head>
 
@@ -295,7 +321,12 @@
 								@await Component.InvokeAsync("CursosUsuario")
 							</li>
 						}
-
+						<li class="nav-item dropdown">
+							<a class="nav-link text-dark header-nav-link position-relative" href="#" id="notificacionesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="fas fa-bell me-2"></i>Notificaciones
+								@await Component.InvokeAsync("NotificacionesMenu")
+							</a>
+						</li>
 						@* Rol: Administrador - Panel (Link directo) *@
 						@if (User.IsInRole("Administrador") || User.IsInRole("Asistente"))
 						{

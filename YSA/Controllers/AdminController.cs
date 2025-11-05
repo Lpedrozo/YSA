@@ -33,6 +33,7 @@ namespace YSA.Web.Controllers
         private readonly IExchangeRateService _exchangeRateService;
         private readonly IArticuloService _articuloService; 
         private readonly IUsuarioService _usuarioService; 
+        private readonly INotificacionService _notificacionService; 
 
         public AdminController(ICursoService cursoService, 
             IModuloService moduloService, 
@@ -47,7 +48,8 @@ namespace YSA.Web.Controllers
             IRecursoActividadService recursoActividadService,
             IExchangeRateService exchangeRateService,
             IArticuloService articuloService,
-            IUsuarioService usuarioService)
+            IUsuarioService usuarioService,
+            INotificacionService notificacionService)
         {
             _cursoService = cursoService;
             _moduloService = moduloService;
@@ -63,6 +65,7 @@ namespace YSA.Web.Controllers
             _exchangeRateService = exchangeRateService;
             _articuloService = articuloService;
             _usuarioService = usuarioService; 
+            _notificacionService = notificacionService; 
         }
 
         [HttpGet]
@@ -861,8 +864,42 @@ namespace YSA.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AprobarPedido(int pedidoId)
         {
-            // Llama al servicio para cambiar el estado y otorgar acceso
             await _pedidoService.AprobarPedidoYOtorgarAccesoAsync(pedidoId);
+
+            var pedido = await _pedidoService.ObtenerPedidoConItemsYVentaItemsAsync(pedidoId);
+            if (pedido != null)
+            {
+                // Determinar si es curso o producto
+                var primerItem = pedido.PedidoItems.FirstOrDefault();
+                if (primerItem != null)
+                {
+                    string tipoCompra = "";
+                    string itemTitulo = "";
+
+                    if (primerItem.VentaItem.Curso != null)
+                    {
+                        tipoCompra = "curso";
+                        itemTitulo = primerItem.VentaItem.Curso.Titulo;
+                    }
+                    else if (primerItem.VentaItem.Producto != null)
+                    {
+                        tipoCompra = "producto";
+                        itemTitulo = primerItem.VentaItem.Producto.Titulo;
+                    }
+
+                    if (!string.IsNullOrEmpty(itemTitulo))
+                    {
+                        // Enviar notificación al usuario
+                        await _notificacionService.CrearNotificacionPedidoAprobadoAsync(
+                            pedido.EstudianteId,
+                            pedidoId,
+                            tipoCompra,
+                            itemTitulo
+                        );
+                    }
+                }
+            }
+
             return RedirectToAction(nameof(GestionarPedidos));
         }
         [HttpPost]

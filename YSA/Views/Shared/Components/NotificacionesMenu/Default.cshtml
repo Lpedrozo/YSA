@@ -1,0 +1,110 @@
+﻿@model YSA.Web.Models.ViewModels.NotificacionMenuWrapperViewModel
+
+<div class="dropdown-menu dropdown-menu-end shadow p-3" aria-labelledby="notificacionesDropdown" style="min-width: 350px; max-height: 500px; overflow-y: auto;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="mb-0 fw-bold">Notificaciones</h6>
+        @if (Model.TotalNoLeidas > 0)
+        {
+            <span class="badge bg-danger">@Model.TotalNoLeidas nuevas</span>
+        }
+    </div>
+
+    @if (Model.Notificaciones != null && Model.Notificaciones.Any())
+    {
+        @foreach (var notificacion in Model.Notificaciones)
+        {
+            <a class="dropdown-item d-flex align-items-start p-3 mb-2 rounded @(notificacion.EsLeida ? "" : "bg-light")"
+               href="@notificacion.UrlDestino"
+               onclick="marcarComoLeida(@notificacion.Id, this)">
+                <div class="me-3">
+                    <i class="fas fa-@notificacion.Icono text-@notificacion.Color fs-5"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-1 @(notificacion.EsLeida ? "text-muted" : "fw-bold")">@notificacion.Titulo</h6>
+                    <p class="mb-1 small text-muted">@notificacion.Mensaje</p>
+                    <small class="text-muted">@notificacion.TiempoTranscurrido</small>
+                </div>
+                @if (!notificacion.EsLeida)
+                {
+                    <span class="ms-2 badge bg-primary rounded-pill">Nuevo</span>
+                }
+            </a>
+        }
+
+        <div class="dropdown-divider"></div>
+        <div class="d-flex justify-content-between">
+            <a class="dropdown-item small text-center" href="/Notificaciones">
+                Ver todas las notificaciones
+            </a>
+            @if (Model.TotalNoLeidas > 0)
+            {
+                <a class="dropdown-item small text-center text-primary" href="#" onclick="marcarTodasComoLeidas()">
+                    Marcar todas como leídas
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-4">
+            <i class="fas fa-bell-slash text-muted fs-1 mb-3"></i>
+            <p class="text-muted mb-0">No tienes notificaciones</p>
+        </div>
+    }
+</div>
+
+<script>
+    function marcarComoLeida(notificacionId, element) {
+        // Marcar visualmente como leída inmediatamente
+        element.classList.remove('bg-light');
+        element.querySelector('.fw-bold')?.classList.add('text-muted');
+        element.querySelector('.badge')?.remove();
+
+        // Llamar al servicio para actualizar en base de datos
+        fetch('/Notificaciones/MarcarComoLeida', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: notificacionId })
+        }).then(response => {
+            if (response.ok) {
+                // Actualizar el contador de notificaciones no leídas
+                actualizarContadorNotificaciones();
+            }
+        });
+    }
+
+    function marcarTodasComoLeidas() {
+        fetch('/Notificaciones/MarcarTodasComoLeidas', {
+            method: 'POST'
+        }).then(response => {
+            if (response.ok) {
+                // Recargar el dropdown de notificaciones
+                location.reload();
+            }
+        });
+    }
+
+    function actualizarContadorNotificaciones() {
+        // Esta función se puede llamar para actualizar el badge del contador
+        fetch('/Notificaciones/ObtenerCantidadNoLeidas')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.querySelector('#notificacionesDropdown .badge');
+                if (data > 0) {
+                    if (badge) {
+                        badge.textContent = data;
+                    } else {
+                        // Crear badge si no existe
+                        const newBadge = document.createElement('span');
+                        newBadge.className = 'badge bg-danger ms-1';
+                        newBadge.textContent = data;
+                        document.querySelector('#notificacionesDropdown').appendChild(newBadge);
+                    }
+                } else if (badge) {
+                    badge.remove();
+                }
+            });
+    }
+</script>

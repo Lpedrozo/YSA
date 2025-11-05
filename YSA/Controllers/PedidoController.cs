@@ -8,19 +8,29 @@ using System;
 using System.IO;
 using System.Linq;
 using YSA.Core.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using YSA.Core.Entities;
 
 public class PedidoController : Controller
 {
     private readonly IPedidoService _pedidoService;
     private readonly IVentaItemService _ventaItemService;
     private readonly IExchangeRateService _exchangeRateService;
+    private readonly INotificacionService _notificacionService;
+    private readonly UserManager<Usuario> _userManager;
 
-    // Asegúrate de inyectar todos los servicios necesarios
-    public PedidoController(IPedidoService pedidoService, IVentaItemService ventaItemService, IExchangeRateService exchangeRateService)
+    public PedidoController(
+        IPedidoService pedidoService,
+        IVentaItemService ventaItemService,
+        IExchangeRateService exchangeRateService,
+        INotificacionService notificacionService,
+        UserManager<Usuario> userManager)
     {
         _pedidoService = pedidoService;
         _ventaItemService = ventaItemService;
         _exchangeRateService = exchangeRateService;
+        _notificacionService = notificacionService;
+        _userManager = userManager;
     }
 
     [HttpPost]
@@ -68,25 +78,23 @@ public class PedidoController : Controller
 
         var tasaHoy = await _exchangeRateService.GetTasaToday();
 
-        // Si no hay tasa, usamos un valor por defecto (o mostramos error, mejor un valor de error)
         if (!tasaHoy.HasValue || tasaHoy.Value <= 0)
         {
             TempData["ErrorMessage"] = "No se pudo obtener la tasa de cambio oficial. Intente más tarde.";
             return RedirectToAction("Index");
         }
+
         var viewModel = new ConfirmacionPagoViewModel
         {
             PedidoId = pedido.Id,
             Total = pedido.Total,
-            // *** NUEVO ***
             TasaBCV = tasaHoy,
             Articulos = pedido.PedidoItems.Select(item =>
             {
-                // Determinar si el VentaItem es un Curso o un Producto para obtener el título
                 string titulo = item.VentaItem.Curso?.Titulo ?? item.VentaItem.Producto?.Titulo;
                 return new ArticuloPedidoViewModel
                 {
-                    TituloItem = titulo, // La propiedad se renombra en la vista para ser más genérica
+                    TituloItem = titulo,
                     Precio = item.PrecioUnidad
                 };
             }).ToList()
@@ -104,7 +112,7 @@ public class PedidoController : Controller
             return Unauthorized();
         }
 
-        var pedido = await _pedidoService.ObtenerPedidoPorIdAsync(pedidoId);
+        var pedido = await _pedidoService.ObtenerPedidoConDetallesCompletosAsync(pedidoId);
         if (pedido == null || pedido.EstudianteId != Convert.ToInt32(estudianteId))
         {
             return NotFound("Pedido no encontrado o no autorizado.");
@@ -144,15 +152,41 @@ public class PedidoController : Controller
             await _pedidoService.RegistrarPagoAsync(pago);
 
             await _pedidoService.ActualizarEstadoPedidoAsync(pedido.Id, "Validando");
+
+            // *** NUEVO: ENVIAR NOTIFICACIONES ***
+            await EnviarNotificacionesCompraCurso(pedido);
+
             TempData["PagoRegistrado"] = true;
-
             return RedirectToAction("Index", "Curso");
-
         }
         catch (Exception ex)
         {
             TempData["Error"] = "Ocurrió un error al procesar su pago. Intente de nuevo.";
             return RedirectToAction("Confirmar", new { pedidoId });
+        }
+    }
+
+    private async Task EnviarNotificacionesCompraCurso(Pedido pedido)
+    {
+        var usuarioId = pedido.EstudianteId;
+
+        // Obtener información del curso comprado
+        var cursoItem = pedido.PedidoItems.FirstOrDefault()?.VentaItem?.Curso;
+        if (cursoItem != null)
+        {
+            // 1. Notificar al usuario que su pago está en validación
+            await _notificacionService.CrearNotificacionPagoPendienteAsync(
+                usuarioId,
+                pedido.Id,
+                pedido.Total
+            );
+
+            // 2. Notificar a los administradores sobre el nuevo pedido
+            await _notificacionService.CrearNotificacionNuevoPedidoAsync(
+                pedido.Id,
+                pedido.Total,
+                $"Curso: {cursoItem.Titulo}"
+            );
         }
     }
 }

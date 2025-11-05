@@ -1,0 +1,676 @@
+﻿@model List<YSA.Core.Entities.Notificacion>
+@{
+    ViewData["Title"] = "Mis Notificaciones";
+}
+
+<style>
+    /* IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES COHERENTES CON EL DISEÑO EDITORIAL */
+    :root {
+        --color-primary-action: #ef8830;
+        --color-secondary: #212529;
+        --color-accent: #6c757d;
+        --color-background: #ffffff;
+        --color-card-bg: #ffffff;
+        --color-text-dark: #212529;
+        --color-text-light: #ffffff;
+        --color-border: #E8E8E8;
+        --color-alert: #e5361a;
+        --color-shadow-light: rgba(0, 0, 0, 0.1);
+        --color-section-bg: #f8f9fa;
+        --color-brand-primary: #ef8830;
+        --color-brand-secondary: #e5361a;
+        --color-brand-accent: #f2e514;
+        --color-brand-success: #6db53e;
+        --color-brand-dark: #08080a;
+        --font-heading: 'Georgia', 'Times New Roman', serif;
+        --font-body: 'Arial', 'Helvetica', sans-serif;
+        --font-accent: 'Poppins', sans-serif;
+        --line-height-tight: 1.1;
+        --line-height-normal: 1.4;
+        --line-height-loose: 1.6;
+        --border-radius-sm: 8px;
+        --border-radius-md: 12px;
+        --border-radius-lg: 16px;
+        --border-radius-xl: 20px;
+    }
+
+    body {
+        font-family: var(--font-body);
+        background-color: var(--color-background);
+        color: var(--color-text-dark);
+        line-height: var(--line-height-loose);
+    }
+
+    /* PORTADA DE REVISTA PARA NOTIFICACIONES */
+    .notifications-cover {
+        width: 100%;
+        height: 30vh;
+        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .cover-content {
+        color: var(--color-text-light);
+        z-index: 3;
+        padding: 2rem;
+    }
+
+    .cover-title {
+        font-family: var(--font-heading);
+        font-size: 3rem;
+        font-weight: 900;
+        line-height: var(--line-height-tight);
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .cover-subtitle {
+        font-family: var(--font-body);
+        font-size: 1.3rem;
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: var(--line-height-normal);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
+    .section-container {
+        background: var(--color-section-bg);
+        border-radius: var(--border-radius-lg);
+        padding: 3rem 2rem;
+        margin: 2rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--color-secondary);
+        padding-bottom: 0.5rem;
+        margin-bottom: 2rem;
+        display: inline-block;
+        border-bottom: 4px solid var(--color-brand-primary);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: var(--line-height-tight);
+    }
+
+    /* BOTONES CON ESTILO EDITORIAL */
+    .btn-primary {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        color: var(--color-text-light);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+        .btn-primary:hover {
+            background-color: #e57a20;
+            border-color: #e57a20;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 136, 48, 0.3);
+        }
+
+    .btn-outline-primary {
+        border-color: var(--color-brand-primary);
+        color: var(--color-brand-primary);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: var(--border-radius-sm);
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-outline-primary:hover {
+            background-color: var(--color-brand-primary);
+            border-color: var(--color-brand-primary);
+            color: var(--color-text-light);
+            transform: translateY(-2px);
+        }
+
+    /* TARJETAS DE NOTIFICACIONES ESTILO EDITORIAL */
+    .notificacion-card {
+        background-color: var(--color-card-bg);
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        position: relative;
+    }
+
+        .notificacion-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary);
+        }
+
+        .notificacion-card.unread {
+            border-left: 4px solid var(--color-brand-primary);
+            background-color: rgba(239, 136, 48, 0.05);
+        }
+
+    .notificacion-header {
+        padding: 1.5rem 1.5rem 1rem 1.5rem;
+        border-bottom: 1px solid var(--color-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .notificacion-body {
+        padding: 1rem 1.5rem 1.5rem 1.5rem;
+    }
+
+    .notificacion-title {
+        font-family: var(--font-heading);
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--color-secondary);
+        margin-bottom: 0.5rem;
+        line-height: var(--line-height-normal);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .notificacion-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .icon-success {
+        background-color: rgba(109, 181, 62, 0.1);
+        color: var(--color-brand-success);
+    }
+
+    .icon-warning {
+        background-color: rgba(242, 229, 20, 0.1);
+        color: #856404;
+    }
+
+    .icon-info {
+        background-color: rgba(239, 136, 48, 0.1);
+        color: var(--color-brand-primary);
+    }
+
+    .icon-primary {
+        background-color: rgba(33, 37, 41, 0.1);
+        color: var(--color-secondary);
+    }
+
+    .notificacion-message {
+        font-family: var(--font-body);
+        font-size: 1rem;
+        color: var(--color-accent);
+        line-height: var(--line-height-normal);
+        margin-bottom: 1rem;
+    }
+
+    .notificacion-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px dashed var(--color-border);
+    }
+
+    .notificacion-time {
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        color: var(--color-accent);
+        font-style: italic;
+    }
+
+    .notificacion-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .badge-unread {
+        background-color: var(--color-brand-primary);
+        color: var(--color-text-light);
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--border-radius-sm);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    /* CONTADORES Y ESTADÍSTICAS */
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--color-card-bg);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid var(--color-border);
+    }
+
+    .stat-number {
+        font-family: var(--font-heading);
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--color-brand-primary);
+        line-height: var(--line-height-tight);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        color: var(--color-accent);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* ESTADO VACÍO */
+    .empty-state {
+        padding: 4rem 2rem;
+        text-align: center;
+        color: var(--color-accent);
+    }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--color-border);
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+    /* PESTAÑAS DE FILTRO */
+    .filter-tabs {
+        background: var(--color-card-bg);
+        border-radius: var(--border-radius-md);
+        padding: 1rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--color-border);
+        background: var(--color-section-bg);
+        color: var(--color-accent);
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--color-brand-primary);
+            border-color: var(--color-brand-primary);
+            color: var(--color-text-light);
+        }
+
+    /* RESPONSIVE ADJUSTMENTS */
+    @@media (max-width: 991.98px) {
+        .notifications-cover {
+            height: 25vh;
+        }
+
+        .cover-title {
+            font-size: 2.5rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .section-container {
+            padding: 2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .notificacion-header, .notificacion-body {
+            padding: 1.25rem;
+        }
+
+        .stats-container {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+    }
+
+    @@media (max-width: 767.98px) {
+        .notifications-cover {
+            height: 20vh;
+        }
+
+        .cover-title {
+            font-size: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+        }
+
+        .notificacion-title {
+            font-size: 1.1rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .notificacion-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .notificacion-actions {
+            width: 100%;
+            justify-content: flex-end;
+        }
+
+        .filter-buttons {
+            justify-content: center;
+        }
+    }
+
+    @@media (max-width: 575.98px) {
+        .notifications-cover {
+            height: 18vh;
+        }
+
+        .cover-content {
+            padding: 1rem;
+        }
+
+        .cover-title {
+            font-size: 1.75rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1rem;
+        }
+
+        .section-container {
+            padding: 1.5rem 1rem;
+            margin: 1rem 0;
+            border-radius: var(--border-radius-md);
+        }
+
+        .notificacion-header, .notificacion-body {
+            padding: 1rem;
+        }
+
+        .btn-primary {
+            padding: 0.625rem 1.25rem;
+            font-size: 0.9rem;
+        }
+
+        .stats-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="container px-0 py-5 pb-5 mb-5">
+    <!-- PORTADA DE NOTIFICACIONES -->
+    <div class="notifications-cover">
+        <div class="cover-content">
+            <h1 class="cover-title">MIS NOTIFICACIONES</h1>
+            <p class="cover-subtitle">Mantente informado sobre todas tus actividades y actualizaciones importantes</p>
+        </div>
+    </div>
+
+    <!-- SECCIÓN PRINCIPAL DE NOTIFICACIONES -->
+    <div class="section-container">
+        <!-- ENCABEZADO Y CONTROLES -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+            <div class="mb-3 mb-md-0">
+                <span class="section-title">CENTRO DE NOTIFICACIONES</span>
+                <p class="text-muted mt-2 mb-0">Gestiona y revisa todas tus notificaciones en un solo lugar</p>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+                <button id="markAllRead" class="btn btn-outline-primary">
+                    <i class="fas fa-check-double me-2"></i> Marcar todas como leídas
+                </button>
+                <a asp-action="Index" asp-controller="Home" class="btn btn-primary">
+                    <i class="fas fa-home me-2"></i> Ir al inicio
+                </a>
+            </div>
+        </div>
+
+        <!-- ESTADÍSTICAS RÁPIDAS -->
+        @{
+            var totalNotificaciones = Model?.Count ?? 0;
+            var noLeidas = Model?.Count(n => !n.EsLeida) ?? 0;
+            var leidas = totalNotificaciones - noLeidas;
+        }
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-number">@totalNotificaciones</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@noLeidas</div>
+                <div class="stat-label">No Leídas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@leidas</div>
+                <div class="stat-label">Leídas</div>
+            </div>
+        </div>
+
+        <!-- FILTROS -->
+        <div class="filter-tabs">
+            <div class="filter-buttons">
+                <a href="?filtro=todas" class="filter-btn @(ViewBag.Filtro == "todas" || ViewBag.Filtro == null ? "active" : "")">
+                    <i class="fas fa-list me-1"></i> Todas
+                </a>
+                <a href="?filtro=noleidas" class="filter-btn @(ViewBag.Filtro == "noleidas" ? "active" : "")">
+                    <i class="fas fa-envelope me-1"></i> No leídas
+                </a>
+                <a href="?filtro=leidas" class="filter-btn @(ViewBag.Filtro == "leidas" ? "active" : "")">
+                    <i class="fas fa-envelope-open me-1"></i> Leídas
+                </a>
+            </div>
+        </div>
+
+        <!-- LISTA DE NOTIFICACIONES -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="notifications-list">
+                @foreach (var notificacion in Model.OrderByDescending(n => n.FechaCreacion))
+                {
+                    <div class="notificacion-card @(!notificacion.EsLeida ? "unread" : "")" data-notificacion-id="@notificacion.Id">
+                        <div class="notificacion-header">
+                            <div class="notificacion-title">
+                                <div class="notificacion-icon @GetIconClass(notificacion.TipoNotificacionId)">
+                                    <i class="@GetIcon(notificacion.TipoNotificacionId)"></i>
+                                </div>
+                                <div>
+                                    @notificacion.Titulo
+                                    @if (!notificacion.EsLeida)
+                                    {
+                                        <span class="badge-unread ms-2">Nuevo</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="notificacion-actions">
+                                @if (!string.IsNullOrEmpty(notificacion.UrlDestino))
+                                {
+                                    <a href="@notificacion.UrlDestino" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-external-link-alt me-1"></i> Ver
+                                    </a>
+                                }
+                                <button class="btn btn-outline-primary btn-sm mark-read-btn" data-id="@notificacion.Id">
+                                    <i class="fas fa-check me-1"></i> Leído
+                                </button>
+                            </div>
+                        </div>
+                        <div class="notificacion-body">
+                            <p class="notificacion-message">@notificacion.Mensaje</p>
+                            <div class="notificacion-meta">
+                                <span class="notificacion-time">
+                                    <i class="fas fa-clock me-1"></i> @notificacion.FechaCreacion.ToString("dd/MM/yyyy 'a las' hh:mm tt")
+                                </span>
+                                <span class="notificacion-type text-muted small">
+                                    @notificacion.TipoNotificacion?.Nombre
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fas fa-bell-slash"></i>
+                <h3>No hay notificaciones</h3>
+                <p>No tienes notificaciones en este momento. Te mantendremos informado cuando tengas nuevas actualizaciones.</p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Marcar notificación como leída
+            document.querySelectorAll('.mark-read-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const notificacionId = this.getAttribute('data-id');
+                    const notificacionCard = this.closest('.notificacion-card');
+
+                    fetch('/Notificaciones/MarcarComoLeida', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ id: parseInt(notificacionId) })
+                    }).then(response => {
+                        if (response.ok) {
+                            // Actualizar interfaz
+                            notificacionCard.classList.remove('unread');
+                            notificacionCard.querySelector('.badge-unread')?.remove();
+                            this.remove();
+
+                            // Actualizar estadísticas
+                            actualizarEstadisticas();
+                        }
+                    });
+                });
+            });
+
+            // Marcar todas como leídas
+            document.getElementById('markAllRead').addEventListener('click', function() {
+                fetch('/Notificaciones/MarcarTodasComoLeidas', {
+                    method: 'POST'
+                }).then(response => {
+                    if (response.ok) {
+                        // Actualizar interfaz
+                        document.querySelectorAll('.notificacion-card').forEach(card => {
+                            card.classList.remove('unread');
+                            card.querySelector('.badge-unread')?.remove();
+                            card.querySelector('.mark-read-btn')?.remove();
+                        });
+
+                        // Actualizar estadísticas
+                        actualizarEstadisticas();
+                    }
+                });
+            });
+
+            function actualizarEstadisticas() {
+                // Podrías hacer una llamada AJAX para obtener las estadísticas actualizadas
+                // o simplemente recargar la página
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            }
+
+            // Efecto hover mejorado para las tarjetas
+            const notificacionCards = document.querySelectorAll('.notificacion-card');
+            notificacionCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.3s ease';
+                });
+            });
+        });
+    </script>
+}
+
+@functions {
+    private string GetIcon(int tipoNotificacionId)
+    {
+        return tipoNotificacionId switch
+        {
+            1 => "fas fa-check-circle", // Pago Confirmado
+            2 => "fas fa-clock", // Pago Pendiente
+            3 => "fas fa-shopping-cart", // Curso Comprado
+            4 => "fas fa-box", // Producto Comprado
+            5 => "fas fa-award", // Actividad Calificada
+            6 => "fas fa-megaphone", // Nuevo Anuncio
+            7 => "fas fa-comment", // Pregunta Respondida
+            8 => "fas fa-chart-bar", // Progreso Curso
+            9 => "fas fa-shopping-cart", // Nuevo Pedido
+            _ => "fas fa-bell"
+        };
+    }
+
+    private string GetIconClass(int tipoNotificacionId)
+    {
+        return tipoNotificacionId switch
+        {
+            1 => "icon-success", // Pago Confirmado
+            2 => "icon-warning", // Pago Pendiente
+            3 or 4 or 9 => "icon-info", // Compras
+            _ => "icon-primary" // Otros
+        };
+    }
+}

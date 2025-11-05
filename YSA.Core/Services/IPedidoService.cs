@@ -20,6 +20,7 @@ namespace YSA.Core.Services
         Task<Pago> GetPagoWithPedido(int id);
         Task AnularPedidoAsync(int pedidoId);
         Task<int> GetPedidosPendientesAsync();
+        Task<Pedido> ObtenerPedidoConDetallesCompletosAsync(int id);
 
     }
 }

@@ -25,4 +25,22 @@ namespace YSA.Web.Models.ViewModels
         public int? EntidadId { get; set; }
         public string TipoEntidad { get; set; }
     }
+    public class NotificacionMenuViewModel
+    {
+        public int Id { get; set; }
+        public string Titulo { get; set; }
+        public string Mensaje { get; set; }
+        public string UrlDestino { get; set; }
+        public string Icono { get; set; }
+        public string Color { get; set; }
+        public DateTime FechaCreacion { get; set; }
+        public bool EsLeida { get; set; }
+        public string TiempoTranscurrido { get; set; }
+    }
+
+    public class NotificacionMenuWrapperViewModel
+    {
+        public List<NotificacionMenuViewModel> Notificaciones { get; set; }
+        public int TotalNoLeidas { get; set; }
+    }
 }

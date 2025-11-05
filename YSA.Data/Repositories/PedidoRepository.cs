@@ -25,7 +25,18 @@ namespace YSA.Data.Repositories
         {
             return await _context.Pedidos.FindAsync(id);
         }
-
+        public async Task<Pedido> GetByIdWithDetailsAsync(int id)
+        {
+            return await _context.Pedidos
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Curso)
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Producto)
+                .Include(p => p.Estudiante) // Por si necesitas info del estudiante
+                .FirstOrDefaultAsync(p => p.Id == id);
+        }
         public async Task<IEnumerable<Pedido>> GetAllAsync()
         {
             return await _context.Pedidos.ToListAsync();

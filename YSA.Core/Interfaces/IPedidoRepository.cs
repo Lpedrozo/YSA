@@ -20,5 +20,7 @@ namespace YSA.Core.Interfaces
         Task<IEnumerable<VentaItem>> GetItemsByPedidoIdAsync(int pedidoId);
         Task<Pago> GetPagoWithPedido(int id);
         Task<int> GetPedidosPendientesAsync();
+        Task<Pedido> GetByIdWithDetailsAsync(int id);
+
     }
 }

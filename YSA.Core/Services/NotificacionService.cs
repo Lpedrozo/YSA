@@ -38,7 +38,7 @@ namespace YSA.Core.Services
                 TipoNotificacionId = 2, // Pago Pendiente
                 Titulo = "Pago en Proceso",
                 Mensaje = $"Tu pago de {monto:C} está siendo procesado. Te notificaremos cuando sea confirmado.",
-                UrlDestino = $"/Pedidos/Detalles/{pedidoId}",
+                UrlDestino = $"",
                 EntidadId = pedidoId,
                 TipoEntidad = "Pedido"
             };
@@ -46,7 +46,7 @@ namespace YSA.Core.Services
             await _notificacionRepository.CreateAsync(notificacion);
         }
 
-        public async Task CrearNotificacionCursoCompradoAsync(int usuarioId, int cursoId, string cursoTitulo)
+        public async Task CrearNotificacionCursoCompradoAsync(int usuarioId, int cursoId, string cursoTitulo, int pedidoId)
         {
             var notificacion = new Notificacion
             {
@@ -55,8 +55,8 @@ namespace YSA.Core.Services
                 Titulo = "Curso Adquirido",
                 Mensaje = $"Has adquirido el curso: {cursoTitulo}. ¡Ya puedes comenzar a aprender!",
                 UrlDestino = $"/Cursos/Detalles/{cursoId}",
-                EntidadId = cursoId,
-                TipoEntidad = "Curso"
+                EntidadId = pedidoId,
+                TipoEntidad = "Pedido"
             };
 
             await _notificacionRepository.CreateAsync(notificacion);
@@ -129,8 +129,51 @@ namespace YSA.Core.Services
                 UrlDestino = notificacion.UrlDestino,
                 FechaCreacion = notificacion.FechaCreacion,
                 EsLeida = notificacion.EsLeida,
-                TipoNotificacionId = notificacion.TipoNotificacionId
+                TipoNotificacionId = notificacion.TipoNotificacionId,
+                TipoNotificacion = notificacion.TipoNotificacion
             };
+        }
+        public async Task CrearNotificacionNuevoPedidoAsync(int pedidoId, decimal monto, string tipoCompra)
+        {
+            // IDs de los administradores específicos
+            var idsAdministradores = new List<int> { 1, 2017, 2015, 2018 };
+
+            foreach (var adminId in idsAdministradores)
+            {
+                var notificacion = new Notificacion
+                {
+                    UsuarioId = adminId,
+                    TipoNotificacionId = 9, // Nuevo Pedido
+                    Titulo = "Nuevo Pedido Recibido",
+                    Mensaje = $"Se ha recibido un nuevo pedido de {tipoCompra} por un monto de {monto:C}. N° de pedido: {pedidoId}",
+                    UrlDestino = $"/Admin/GestionarPedidos",
+                    EntidadId = pedidoId,
+                    TipoEntidad = "Pedido"
+                };
+
+                await _notificacionRepository.CreateAsync(notificacion);
+            }
+        }
+
+        public async Task<List<int>> ObtenerIdsAdministradoresAsync()
+        {
+            // Retorna la lista de IDs de administradores
+            return new List<int> { 1, 2017, 2015, 2018 };
+        }
+        public async Task CrearNotificacionPedidoAprobadoAsync(int usuarioId, int pedidoId, string tipoCompra, string itemTitulo)
+        {
+            var notificacion = new Notificacion
+            {
+                UsuarioId = usuarioId,
+                TipoNotificacionId = 1, // Pago Confirmado (ya existe)
+                Titulo = "Pedido Aprobado",
+                Mensaje = $"Tu pedido de {tipoCompra.ToLower()} '{itemTitulo}' ha sido aprobado. ¡Ya tienes acceso!",
+                UrlDestino = "", // Vacío como solicitaste
+                EntidadId = pedidoId,
+                TipoEntidad = "Pedido"
+            };
+
+            await _notificacionRepository.CreateAsync(notificacion);
         }
     }
 }
