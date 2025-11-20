@@ -943,54 +943,163 @@
 
     @* === INICIO DE LA SECCIÓN QUIÉNES SOMOS (MANTENIDA) === *@
     <div class="about-us-section text-center">
-        @* Añadido padding horizontal para centrar el contenido *@
+        @* Encabezado principal de la sección *@
         <h2 class="latest-grid-header">Quiénes somos</h2>
         <div class="container">
+            @* FILA DE TARJETAS (Misión, Visión, Propósito, Contacto) *@
             <div class="row g-4 justify-content-center">
+                @* Tarjeta 1: Misión *@
                 <div class="col-lg-3 col-md-6">
                     <div class="magazine-card icon-card h-100">
-                        <div class="magazine-card-body d-flex flex-column align-items-center justify-content-center text-center">
-                            <i class="fas fa-bullseye fa-3x mb-3"></i>
-                            <h3 class="h5">Nuestra Misión</h3>
-                            <p>Facilitar el aprendizaje y la expresión artística, conectando a creadores y entusiastas en una comunidad vibrante y colaborativa.</p>
+                        <div class="magazine-card-body d-flex flex-column align-items-center justify-content-start text-center">
+                            <i class="fas fa-bullseye fa-3x mb-3 text-primary"></i> @* Icono de Misión *@
+                            <h3 class="h5 fw-bold">Nuestra Misión</h3>
+                            <p class="text-muted">
+                                Guiar a artistas a descubrir y expresar su identidad auténtica a través del arte, fusionando
+                                técnica, sensibilidad y consciencia. En YSA formamos creadores que no solo dominan la
+                                técnica, sino que entienden el arte como una vía de transformación personal y colectiva.
+                            </p>
                         </div>
                     </div>
                 </div>
+
+                @* Tarjeta 2: Visión *@
                 <div class="col-lg-3 col-md-6">
                     <div class="magazine-card icon-card h-100">
-                        <div class="magazine-card-body d-flex flex-column align-items-center justify-content-center">
-                            <i class="fas fa-gem fa-3x mb-3"></i>
-                            <h3 class="h5">Nuestros valores</h3>
-                            <ul class="list-unstyled mb-0 text-start">
-                                <li><i class="fas fa-check-circle me-2"></i> Pasión por el Arte</li>
-                                <li><i class="fas fa-check-circle me-2"></i> Innovación Continua</li>
-                                <li><i class="fas fa-check-circle me-2"></i> Inclusión y Respeto</li>
-                                <li><i class="fas fa-check-circle me-2"></i> Excelencia Educativa</li>
-                            </ul>
+                        <div class="magazine-card-body d-flex flex-column align-items-center justify-content-start text-center">
+                            <i class="fas fa-eye fa-3x mb-3 text-success"></i> @* Icono de Visión *@
+                            <h3 class="h5 fw-bold">Nuestra Visión</h3>
+                            <p class="text-muted">
+                                Ser una academia referente en Latinoamérica por integrar el arte, la formación profesional y
+                                el crecimiento interior, impulsando una nueva generación de artistas conscientes, libres y
+                                conectados con su propósito creativo.
+                            </p>
                         </div>
                     </div>
                 </div>
+
+                @* Tarjeta 3: Propósito *@
+                <div class="col-lg-3 col-md-6">
+                    <div class="magazine-card icon-card h-100">
+                        <div class="magazine-card-body d-flex flex-column align-items-center justify-content-start text-center">
+                            <i class="fas fa-compass fa-3x mb-3 text-info"></i> @* Icono de Propósito (Cambiado de 'fa-eye') *@
+                            <h3 class="h5 fw-bold">Nuestro Propósito</h3>
+                            <p class="text-muted">
+                                Despertar el poder creativo y consciente que habita en cada artista,
+                                guiándolo a expresar su verdad a través del arte como herramienta de
+                                transformación personal, emocional y profesional.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                @* Tarjeta 4: Ubicación y contacto *@
                 <div class="col-lg-3 col-md-6">
                     <div class="magazine-card icon-card h-100">
                         <div class="magazine-card-body d-flex flex-column align-items-center justify-content-center">
-                            <i class="fas fa-map-marker-alt fa-3x mb-3"></i>
-                            <h3 class="h5">Ubicación y contacto</h3>
-                            <p>Av. Principal #123, Ciudad Creativa, País Imaginario</p>
-                            <p>Email: contacto@yosoyarte.com</p>
-                            <p class="mb-0">Tel: +58 123 456 7890</p>
+                            <i class="fas fa-map-marker-alt fa-3x mb-3 text-danger"></i>
+                            <h3 class="h5 fw-bold">Ubicación y contacto</h3>
+                            <p class="text-muted text-center">Av. Principal #123, Ciudad Creativa, País Imaginario</p>
+                            <p class="text-muted">Email: contacto@yosoyarte.com</p>
+                            <p class="mb-0 text-muted">Tel: +58 123 456 7890</p>
                         </div>
                     </div>
                 </div>
             </div>
 
+            @* SECCIÓN DE VALORES Y OBJETIVOS (Debajo de las tarjetas) *@
+            <div class="row g-5 mt-5 justify-content-center text-start">
+
+                @* Columna para Valores (ICONOS ACTUALIZADOS) *@
+                <div class="col-lg-5 col-md-6">
+                    <h3 class="latest-grid-header text-center">Nuestros Valores</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex align-items-start">
+                            <i class="fas fa-feather-alt me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Autenticidad *@
+                            <div>
+                                <strong class="text-dark">Autenticidad:</strong> El arte nace desde la verdad interior.
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-start">
+                            <i class="fas fa-lightbulb me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Consciencia *@
+                            <div>
+                                <strong class="text-dark">Consciencia:</strong> Cada trazo es un acto de presencia y expansión.
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-start">
+                            <i class="fas fa-redo-alt me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Transformación *@
+                            <div>
+                                <strong class="text-dark">Transformación:</strong> El proceso creativo como camino de evolución.
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-start">
+                            <i class="fas fa-hand-holding-heart me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Libertad *@
+                            <div>
+                                <strong class="text-dark">Libertad:</strong> Aprender a crear sin miedo, sin juicio, sin comparación.
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-start">
+                            <i class="fas fa-users me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Comunidad *@
+                            <div>
+                                <strong class="text-dark">Comunidad:</strong> Crecer en un espacio seguro, humano y artístico.
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-start">
+                            <i class="fas fa-trophy me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Excelencia *@
+                            <div>
+                                <strong class="text-dark">Excelencia:</strong> Combinar profundidad emocional con técnica sólida.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                @* Columna para Objetivos (ICONOS ACTUALIZADOS) *@
+                <div class="col-lg-5 col-md-6">
+                    <h3 class="latest-grid-header text-center">Nuestros Objetivos</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex align-items-start">
+                            <i class="fas fa-graduation-cap me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Formación Integral *@
+                            <div>
+                                <strong class="text-dark">Formación integral:</strong> Brindar programas educativos que desarrollen tanto las habilidades técnicas como la conexión emocional y conceptual con la obra.
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-start">
+                            <i class="fas fa-palette me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Identidad Artística *@
+                            <div>
+                                <strong class="text-dark">Identidad artística:</strong> Acompañar a cada estudiante a construir su sello personal, fortaleciendo su autenticidad y confianza creativa.
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-start">
+                            <i class="fas fa-handshake me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Comunidad Consciente *@
+                            <div>
+                                <strong class="text-dark">Comunidad consciente:</strong> Crear un espacio donde el arte sea encuentro, apoyo y evolución compartida.
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-start">
+                            <i class="fas fa-microchip me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Innovación Educativa *@
+                            <div>
+                                <strong class="text-dark">Innovación educativa:</strong> Incorporar metodologías actuales, recursos digitales y enfoques holísticos que eleven la experiencia de aprendizaje.
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex align-items-start">
+                            <i class="fas fa-chart-line me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Proyección Profesional *@
+                            <div>
+                                <strong class="text-dark">Proyección profesional:</strong> Fomentar oportunidades para que los artistas emergentes exhiban, vendan y difundan su trabajo con propósito y coherencia.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            @* SECCIÓN DE HISTORIA (Se mantiene como la tenías) *@
             <div class="mt-5 history-section">
                 <h3 class="latest-grid-header">Nuestra historia</h3>
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
-                        <p class="fs-5">
+                        <p class="fs-5 text-muted">
                             Fundada en 2020 por un colectivo de artistas apasionados, Yo Soy Arte nació con la visión de democratizar la educación artística. Comenzamos como un pequeño blog, compartiendo tutoriales y consejos, y rápidamente evolucionamos hasta convertirnos en una plataforma integral que ofrece cursos, una revista digital y un espacio para que los artistas muestren su portafolio.
                         </p>
-                        <p class="fs-5">
+                        <p class="fs-5 text-muted">
                             Hoy en día, somos una comunidad global que sigue creciendo, inspirando y capacitando a la próxima generación de creadores. Nuestra meta es ser el puente entre la pasión por el arte y la realización profesional.
                         </p>
                     </div>
