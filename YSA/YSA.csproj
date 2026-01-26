@@ -31,6 +31,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\eventos\galeria\" />
     <Folder Include="wwwroot\eventos\portadas\" />
+    <Folder Include="wwwroot\fonts\" />
     <Folder Include="wwwroot\FotoPerfil\" />
     <Folder Include="wwwroot\Artista\" />
     <Folder Include="wwwroot\Articulos\" />
