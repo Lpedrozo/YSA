@@ -2,7 +2,6 @@
 /* IMPORTACIONES Y DEFINICIONES DE FUENTES */
 /* =========================================== */
 
-/* Importar Garet de Google Fonts como respaldo */
 @import url('https://fonts.googleapis.com/css2?family=Garet:wght@400;700&display=swap');
 
 /* Fuente Garet Book (normal) */
@@ -23,7 +22,7 @@
     font-display: swap;
 }
 
-/* Fuente Salks (solo tienes una variante) */
+/* Fuente Salks */
 @font-face {
     font-family: 'Salks';
     src: url('/Salks.woff') format('woff');
@@ -32,7 +31,10 @@
     font-display: swap;
 }
 
+/* =========================================== */
 /* VARIABLES GLOBALES */
+/* =========================================== */
+
 :root {
     --color-primary-action: #ef8830;
     --color-secondary: #212529;
@@ -51,10 +53,10 @@
     --color-brand-accent: #f2e514;
     --color-brand-success: #6db53e;
     --color-brand-dark: #08080a;
-    /* Tipografías - Actualizadas */
+    /* Tipografías */
     --font-heading: 'Salks', serif;
-    --font-body: 'Garet Book', 'Garet', 'Arial', 'Helvetica', sans-serif; /* Para texto general */
-    --font-accent: 'Garet Book', 'Garet', sans-serif; /* Para elementos de acento */
+    --font-body: 'Garet Book', 'Garet', 'Arial', 'Helvetica', sans-serif;
+    --font-accent: 'Garet Book', 'Garet', sans-serif;
     /* Espaciado y medidas */
     --line-height-tight: 1.1;
     --line-height-normal: 1.4;
@@ -65,8 +67,11 @@
     --border-radius-xl: 20px;
 }
 
+/* =========================================== */
 /* ESTILOS BASE */
-html {   
+/* =========================================== */
+
+html {
     font-size: 14px;
     position: relative;
     min-height: 100%;
@@ -79,7 +84,8 @@ html {
 }
 
 body {
-    margin-bottom: 60px;
+    margin: 0;
+    padding-top: 5.5rem;
     font-family: var(--font-body);
     background-color: var(--color-background);
     color: var(--color-text-dark);
@@ -88,25 +94,70 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    padding-top: 8rem;
 }
 
-/* Mejorar el renderizado de fuentes */
 * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
 }
 
-/* Utilidades */
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-/* --- ESTILOS DEL HEADER Y NAVEGACIÓN --- */
-.main-header {
+/* =========================================== */
+/* BARRA SUPERIOR DE WHATSAPP */
+/* =========================================== */
+
+.whatsapp-top-bar {
     position: fixed;
     top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #25d366;
+    color: white;
+    padding: 0.5rem 0;
+    z-index: 1060;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: normal;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+    .whatsapp-top-bar a {
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        padding: 0.25rem 0;
+    }
+
+        .whatsapp-top-bar a:hover {
+            color: white;
+            opacity: 0.9;
+            text-decoration: underline;
+        }
+
+    .whatsapp-top-bar i {
+        font-size: 1.1rem;
+    }
+
+/* =========================================== */
+/* HEADER Y NAVEGACIÓN */
+/* =========================================== */
+
+.main-header {
+    position: fixed;
+    top: 2.5rem;
     left: 0;
     width: 100%;
     background-color: white;
@@ -117,8 +168,9 @@ body {
 }
 
     .main-header.scroll-header-shrink {
+        top: 2rem;
         padding: 0.5rem 1rem;
-        background-color: rgba(255, 255, 255, 0.9);
+        background-color: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(5px);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
@@ -145,7 +197,6 @@ body {
     height: 80px;
 }
 
-/* Logo centrado en escritorio */
 .header-logo.navbar-brand-center {
     position: absolute;
     left: 50%;
@@ -153,19 +204,20 @@ body {
     z-index: 1050;
 }
 
-/* Enlaces de navegación */
+/* Navegación */
 .header-nav-link {
     color: black !important;
     transition: color 0.3s ease, background-color 0.3s ease;
     font-family: var(--font-body);
     font-weight: normal;
+    padding: 0.5rem 1rem !important;
 }
 
     .header-nav-link:hover {
         color: #3498db !important;
     }
 
-/* Botón de Hamburguesa */
+/* Botón Hamburguesa */
 .navbar-toggler {
     border: none !important;
     background-color: transparent !important;
@@ -189,6 +241,7 @@ body {
         color: black;
         font-family: var(--font-body);
         font-weight: normal;
+        padding: 0.75rem 1.5rem;
     }
 
         .dropdown-menu-dark .dropdown-item:hover,
@@ -197,7 +250,6 @@ body {
             color: #3498db;
         }
 
-/* Dropdown de Mi Aprendizaje */
 #miAprendizajeDropdown + div.dropdown-menu {
     min-width: 300px;
     padding: 0.5rem;
@@ -206,7 +258,6 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Dropdown de Notificaciones */
 #notificacionesDropdown + .dropdown-menu {
     min-width: 350px;
     max-height: 500px;
@@ -233,7 +284,9 @@ body {
     transform: translate(25%, -25%);
 }
 
-/* --- ESTILOS DE LA PÁGINA HOME/REVISTA --- */
+/* =========================================== */
+/* ESTILOS HOME/REVISTA */
+/* =========================================== */
 
 /* Portada principal */
 .magazine-cover {
@@ -289,11 +342,10 @@ body {
     line-height: var(--line-height-normal);
 }
 
-/* Secciones */
+/* Secciones generales */
 .section-container {
     border-radius: var(--border-radius-lg);
     padding: 3rem 2rem;
-    margin: 2rem 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
@@ -321,7 +373,6 @@ body {
     line-height: var(--line-height-normal);
 }
 
-/* Separadores */
 .section-divider {
     border: none;
     height: 1px;
@@ -329,7 +380,6 @@ body {
     margin: 3rem 0;
 }
 
-/* Encabezados de sección */
 .latest-grid-header {
     font-family: var(--font-heading);
     font-size: 1.8rem;
@@ -625,7 +675,6 @@ body {
         line-height: var(--line-height-tight);
     }
 
-/* Distribución del mural en desktop */
 .artist-mural-item:nth-child(1) {
     grid-column: span 3;
 }
@@ -770,11 +819,15 @@ body {
     font-weight: normal;
 }
 
-/* Footer */
+/* =========================================== */
+/* FOOTER */
+/* =========================================== */
+
 .footer {
     background-color: black !important;
     color: white !important;
     font-family: var(--font-body);
+    margin-top: auto;
 }
 
 .social-icons-footer a {
@@ -788,290 +841,18 @@ body {
         color: #3498db;
     }
 
-/* Botón de WhatsApp */
-.whatsapp-float {
-    position: fixed;
-    width: 60px;
-    height: 60px;
-    bottom: 40px;
-    right: 40px;
-    background-color: #25d366;
-    border-radius: 50px;
-    text-align: center;
-    font-size: 30px;
-    box-shadow: 2px 2px 3px #999;
-    z-index: 1050;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.3s ease-in-out;
-    color: #FFF;
+/* =========================================== */
+/* CONTENIDO PRINCIPAL */
+/* =========================================== */
+
+.main-content {
+    flex: 1;
 }
 
-    .whatsapp-float:hover {
-        color: #FFF;
-        transform: scale(1.1);
-    }
+/* =========================================== */
+/* EVENTOS/DETALLE - COMPONENTES ESPECÍFICOS */
+/* =========================================== */
 
-/* --- RESPONSIVE --- */
-
-/* Tablet */
-@media (max-width: 991.98px) {
-    /* Header */
-    .container-fluid {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .header-logo.navbar-brand-center {
-        display: none !important;
-    }
-
-    .header-logo.navbar-brand-mobile {
-        display: flex !important;
-        height: 70px;
-    }
-
-    .main-header.scroll-header-shrink .header-logo.navbar-brand-mobile {
-        height: 60px;
-    }
-
-    #miAprendizajeDropdown + div.dropdown-menu {
-        right: 0;
-        left: auto;
-    }
-    /* Portada */
-    .magazine-cover {
-        height: 65vh;
-    }
-
-    .cover-overlay {
-        padding: 2rem;
-    }
-
-    .cover-title {
-        font-size: 3rem;
-    }
-
-    .cover-subtitle {
-        font-size: 1.25rem;
-    }
-    /* Secciones */
-    .section-container, .about-us-section {
-        padding: 2rem 1.5rem;
-        margin: 1.5rem 0;
-    }
-    /* LO ÚLTIMO */
-    .latest-card-container {
-        grid-template-columns: repeat(2, 1fr);
-        grid-auto-rows: 300px;
-    }
-
-    .latest-card-item:nth-child(2n) {
-        border-right: none;
-    }
-
-    .latest-card-item:nth-child(3n) {
-        border-right: 1px solid var(--color-border);
-    }
-
-    .latest-card-item:nth-child(n + 5) {
-        border-bottom: none;
-    }
-    /* Eventos destacados */
-    .featured-event-header {
-        height: 300px;
-    }
-
-    .featured-list-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-    }
-
-        .featured-list-grid .magazine-card-img {
-            height: 150px;
-        }
-
-        .featured-list-grid .magazine-card-body {
-            padding: 1rem;
-        }
-
-            .featured-list-grid .magazine-card-body h5 {
-                font-size: 1.1rem;
-            }
-    /* Artistas mural */
-    .artist-grid-container {
-        grid-template-columns: repeat(2, 1fr);
-        grid-auto-rows: 300px;
-    }
-
-    .artist-mural-item:nth-child(n) {
-        grid-column: span 1 !important;
-    }
-
-    .mural-text-block h3 {
-        font-size: 1.5rem;
-    }
-    /* Quiénes somos */
-    .context-editorial-content {
-        padding-left: 0.75rem;
-        border-left: 3px solid var(--color-brand-primary);
-    }
-
-    .section-title {
-        font-size: 2rem;
-    }
-    /* WhatsApp */
-    .whatsapp-float {
-        width: 50px;
-        height: 50px;
-        bottom: 20px;
-        right: 20px;
-        font-size: 25px;
-    }
-}
-
-/* Móvil pequeño */
-@media (max-width: 575.98px) {
-    body {
-        padding-top: 6rem;
-    }
-    /* Portada */
-    .cover-title {
-        font-size: 2rem;
-    }
-
-    .cover-subtitle {
-        font-size: 1rem;
-    }
-
-    .cover-overlay {
-        padding: 1.5rem;
-    }
-    /* Secciones */
-    .section-container, .about-us-section {
-        padding: 1.5rem 1rem;
-        margin: 1rem 0;
-        border-radius: var(--border-radius-md);
-    }
-    /* LO ÚLTIMO */
-    .latest-card-container {
-        grid-template-columns: 1fr;
-        grid-auto-rows: 250px;
-        border-right: none;
-    }
-
-    .latest-card-item {
-        border-right: none !important;
-    }
-
-        .latest-card-item:last-child {
-            border-bottom: none;
-        }
-
-        .latest-card-item:nth-child(n + 1) {
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .latest-card-item:nth-child(6) {
-            border-bottom: none;
-        }
-
-        .latest-card-item:nth-child(2n) {
-            border-right: none;
-        }
-    /* Eventos destacados */
-    .featured-list-grid {
-        display: block;
-        gap: 0;
-    }
-
-        .featured-list-grid .magazine-card-img {
-            height: 180px;
-        }
-
-        .featured-list-grid .magazine-card {
-            margin-bottom: 2rem;
-        }
-
-            .featured-list-grid .magazine-card:last-child {
-                margin-bottom: 0;
-            }
-    /* Artistas mural */
-    .artist-grid-container {
-        grid-template-columns: 1fr;
-        grid-auto-rows: 250px;
-    }
-
-    .mural-text-block h3 {
-        font-size: 1.25rem;
-    }
-    /* Contenedor principal */
-    .container.px-0 > div.px-5 {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-}
-
-/* Desktop grande */
-@media (min-width: 992px) {
-    .context-editorial {
-        margin-bottom: 0;
-        padding: 2rem 0;
-    }
-
-    .featured-list-grid .magazine-card-img {
-        height: 200px;
-    }
-}
-
-/* === REVISTA/INDEX - AJUSTES ESPECÍFICOS === */
-
-/* Ajustes específicos para la vista Revista/Index */
-.magazine-card-body {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-    .magazine-card-body h5 {
-        flex-grow: 1; /* Para que los títulos empujen la fecha hacia abajo */
-    }
-
-/* === RESPONSIVE ESPECÍFICO PARA REVISTA/INDEX === */
-
-/* Ajustes adicionales para tablet */
-@media (max-width: 991.98px) {
-    .section-title {
-        font-size: 2rem;
-    }
-
-    .latest-grid-header {
-        font-size: 1.5rem;
-    }
-}
-
-/* Ajustes adicionales para móvil pequeño */
-@media (max-width: 575.98px) {
-    .section-title {
-        font-size: 1.8rem;
-    }
-
-    .latest-grid-header {
-        font-size: 1.3rem;
-    }
-
-    /* Asegurar que el contenedor tenga padding adecuado en móvil */
-    .container.px-0 > div.px-5 {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-}
-
-/* === EVENTOS/DETALLE - COMPONENTES ESPECÍFICOS === */
-
-/* Breadcrumb estilo revista */
 .breadcrumb {
     background-color: transparent;
     padding: 0;
@@ -1096,7 +877,6 @@ body {
     font-weight: normal;
 }
 
-/* Encabezado del evento */
 .event-header {
     margin-bottom: 3rem;
     text-align: center;
@@ -1119,7 +899,6 @@ body {
     justify-content: center;
 }
 
-/* Imagen del evento */
 .event-image {
     width: 100%;
     max-height: 500px;
@@ -1129,7 +908,6 @@ body {
     box-shadow: 0 4px 20px var(--color-shadow-light);
 }
 
-/* Cajas de información lateral */
 .info-box {
     background-color: var(--color-card-bg);
     border: 1px solid var(--color-border);
@@ -1171,7 +949,6 @@ body {
         font-weight: normal;
     }
 
-/* Contenido editorial específico para eventos */
 .event-description-content {
     font-family: var(--font-body);
     font-size: 1.1rem;
@@ -1221,78 +998,10 @@ body {
         font-family: var(--font-heading);
     }
 
-/* === RESPONSIVE PARA EVENTOS/DETALLE === */
+/* =========================================== */
+/* ARTÍCULOS/DETALLE - COMPONENTES ESPECÍFICOS */
+/* =========================================== */
 
-/* Tablet (max-width: 991.98px) */
-@media (max-width: 991.98px) {
-    .event-title {
-        font-size: 2.5rem;
-    }
-
-    .event-image {
-        max-height: 400px;
-    }
-
-    .event-description-content {
-        font-size: 1rem;
-    }
-
-        .event-description-content h2 {
-            font-size: 1.8rem;
-        }
-
-        .event-description-content h3 {
-            font-size: 1.3rem;
-        }
-}
-
-/* Mobile Pequeño (max-width: 575.98px) */
-@media (max-width: 575.98px) {
-    .event-title {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-    }
-
-    .event-badges {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .event-image {
-        max-height: 300px;
-    }
-
-    .info-box {
-        padding: 1.25rem;
-    }
-
-        .info-box h5 {
-            font-size: 1rem;
-        }
-
-    .event-description-content {
-        font-size: 0.95rem;
-    }
-
-        .event-description-content h2 {
-            font-size: 1.5rem;
-            margin: 1.5rem 0 0.75rem 0;
-        }
-
-        .event-description-content h3 {
-            font-size: 1.25rem;
-            margin: 1.25rem 0 0.75rem 0;
-        }
-
-        .event-description-content blockquote {
-            padding-left: 1rem;
-            border-left-width: 3px;
-        }
-}
-
-/* === ARTÍCULOS/DETALLE - COMPONENTES ESPECÍFICOS === */
-
-/* Encabezado del artículo */
 .article-header {
     margin-bottom: 3rem;
     text-align: center;
@@ -1330,7 +1039,6 @@ body {
     gap: 0.5rem;
 }
 
-/* Imagen del artículo */
 .article-image {
     width: 100%;
     max-height: 500px;
@@ -1340,7 +1048,6 @@ body {
     box-shadow: 0 4px 20px var(--color-shadow-light);
 }
 
-/* Contenido editorial específico para artículos */
 .article-content {
     font-family: var(--font-body);
     font-size: 1.1rem;
@@ -1391,7 +1098,6 @@ body {
         font-size: 1.2rem;
     }
 
-/* Bloque de persona destacada */
 .featured-person {
     background: var(--color-card-bg);
     border-radius: var(--border-radius-md);
@@ -1432,7 +1138,6 @@ body {
             margin-bottom: 0;
         }
 
-/* Galería de imágenes */
 .gallery-section {
     margin: 3rem 0;
 }
@@ -1472,10 +1177,745 @@ body {
     line-height: var(--line-height-normal);
 }
 
-/* === RESPONSIVE PARA ARTÍCULOS/DETALLE === */
+/* =========================================== */
+/* CARRUSELES */
+/* =========================================== */
 
-/* Tablet (max-width: 991.98px) */
+.carousel {
+    height: 400px;
+}
+
+.carousel-inner {
+    height: 100%;
+}
+
+.carousel-item {
+    height: 100%;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 50px;
+    opacity: 0.8;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(1);
+}
+
+.carousel-indicators {
+    z-index: 10;
+}
+
+.carousel-item img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+
+.carousel-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.carousel-item .btn-primary,
+.carousel-item .btn-success {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    border-radius: var(--border-radius-sm);
+}
+
+.carousel-item .card-price {
+    font-size: 1.8rem;
+    color: var(--color-brand-primary);
+    font-weight: bold;
+}
+
+/* =========================================== */
+/* ESTILOS ESPECÍFICOS PARA CURSOS */
+/* =========================================== */
+
+.filtro-menu {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 2rem 0;
+    gap: 0.75rem;
+}
+
+.filtro-item a {
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    color: var(--color-secondary);
+    background-color: var(--color-section-bg);
+    border-radius: var(--border-radius-sm);
+    transition: all 0.3s ease;
+    border: 1px solid var(--color-border);
+    font-family: var(--font-accent);
+    font-weight: 500;
+    display: block;
+}
+
+    .filtro-item a.active,
+    .filtro-item a:hover {
+        background-color: var(--color-brand-primary);
+        color: var(--color-text-light);
+        border-color: var(--color-brand-primary);
+        transform: translateY(-2px);
+    }
+
+.card-categories {
+    margin-bottom: 1rem;
+}
+
+    .card-categories .badge {
+        font-family: var(--font-accent);
+        font-size: 0.75rem;
+        background-color: var(--color-section-bg) !important;
+        color: var(--color-brand-primary) !important;
+        border-radius: var(--border-radius-sm);
+        padding: 0.4rem 0.8rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+/* =========================================== */
+/* ESTILOS ESPECÍFICOS PARA CURSOS INDEX */
+/* =========================================== */
+
+/* Sección de búsqueda */
+.search-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 1px solid var(--color-border);
+    margin-top: 1rem;
+}
+
+.input-group.input-group-lg {
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+}
+
+    .input-group.input-group-lg .form-control {
+        border: none;
+        font-family: var(--font-body);
+        font-size: 1rem;
+    }
+
+    .input-group.input-group-lg .btn-primary {
+        border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+    }
+
+/* Sección de categorías */
+.categories-section {
+    padding: 2rem;
+    background-color: var(--color-section-bg);
+    border-radius: var(--border-radius-lg);
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.category-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+    background-color: white;
+    border-radius: var(--border-radius-md);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+    .category-card:hover {
+        border-color: var(--color-brand-primary);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(239, 136, 48, 0.1);
+    }
+
+    .category-card.active {
+        border-color: var(--color-brand-primary);
+        background-color: rgba(239, 136, 48, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(239, 136, 48, 0.15);
+    }
+
+.category-icon {
+    color: var(--color-brand-primary);
+    opacity: 0.8;
+}
+
+.category-card:hover .category-icon,
+.category-card.active .category-icon {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.category-card h3 {
+    font-family: var(--font-body);
+    color: var(--color-text-dark);
+    font-weight: 600;
+}
+
+.category-card.active .badge {
+    background-color: var(--color-brand-primary) !important;
+    color: white !important;
+}
+
+/* Tarjetas de cursos */
+.course-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    background-color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+    .course-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+        border-color: var(--color-brand-primary);
+    }
+
+.course-card-header {
+    height: 180px;
+    overflow: hidden;
+}
+
+.course-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.course-card:hover .course-image {
+    transform: scale(1.05);
+}
+
+.badge-free, .badge-price {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-accent);
+    font-weight: 600;
+    font-size: 0.8rem;
+    z-index: 2;
+}
+
+.badge-free {
+    background-color: var(--color-brand-success);
+    color: white;
+}
+
+.badge-price {
+    background-color: var(--color-brand-primary);
+    color: white;
+}
+
+.course-card-body {
+    padding: 1.5rem;
+}
+
+.course-categories {
+    min-height: 24px;
+}
+
+.course-title {
+    font-family: var(--font-heading);
+    color: var(--color-text-dark);
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+    min-height: 40px;
+}
+
+.course-description {
+    line-height: 1.5;
+    min-height: 48px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.course-meta {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.badge-nivel {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-family: var(--font-accent);
+    font-weight: 500;
+}
+
+    .badge-nivel.principiante {
+        background-color: rgba(109, 181, 62, 0.1);
+        color: var(--color-brand-success);
+    }
+
+    .badge-nivel.intermedio {
+        background-color: rgba(239, 136, 48, 0.1);
+        color: var(--color-brand-primary);
+    }
+
+    .badge-nivel.avanzado {
+        background-color: rgba(229, 54, 26, 0.1);
+        color: var(--color-brand-secondary);
+    }
+
+.course-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.course-actions .btn-sm {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Slider de cursos destacados */
+.featured-courses-slider {
+    position: relative;
+}
+
+/* Paginación */
+.pagination .page-item .page-link {
+    color: var(--color-brand-primary);
+    border: 1px solid var(--color-border);
+    margin: 0 0.25rem;
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-body);
+    transition: all 0.3s ease;
+    min-width: 40px;
+    text-align: center;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--color-brand-primary);
+    border-color: var(--color-brand-primary);
+    color: white;
+}
+
+.pagination .page-item:not(.active) .page-link:hover {
+    background-color: var(--color-section-bg);
+    border-color: var(--color-brand-primary);
+    transform: translateY(-2px);
+}
+
+.pagination .page-item.disabled .page-link {
+    color: var(--color-accent);
+    background-color: var(--color-section-bg);
+    border-color: var(--color-border);
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Filtros */
+.search-form .form-select-sm {
+    min-width: 160px;
+    background-color: var(--color-section-bg);
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--border-radius-sm) !important;
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-family: var(--font-body);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+    .search-form .form-select-sm:focus {
+        border-color: var(--color-brand-primary) !important;
+        box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+    }
+
+.input-group.input-group-lg .input-group-text {
+    color: var(--color-brand-primary);
+    font-size: 1.1rem;
+}
+
+.input-group.input-group-lg .form-control:focus {
+    box-shadow: none;
+    border-color: var(--color-brand-primary);
+}
+
+.input-group.input-group-lg .btn-primary:focus {
+    box-shadow: 0 0 0 0.25rem rgba(239, 136, 48, 0.25);
+}
+
+/* Loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+}
+
+    .loading-overlay .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 5px solid var(--color-border);
+        border-top: 5px solid var(--color-brand-primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Spinner pequeño */
+#loadingSpinner {
+    display: flex;
+    align-items: center;
+}
+
+    #loadingSpinner .fa-spinner {
+        margin-right: 0.5rem;
+        color: var(--color-brand-primary);
+    }
+
+/* Estado vacío */
+#cursosContainer .alert-danger {
+    border-radius: var(--border-radius-md);
+    border: 1px solid rgba(229, 54, 26, 0.2);
+    background-color: rgba(229, 54, 26, 0.05);
+}
+
+/* =========================================== */
+/* ESTILOS ESPECÍFICOS PARA LA NUEVA SECCIÓN HERO */
+/* =========================================== */
+
+.hero-section {
+    background: linear-gradient(135deg, var(--color-section-bg) 0%, var(--color-background) 100%);
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    margin-top: 1rem;
+}
+
+.text-brand-primary {
+    color: var(--color-brand-primary) !important;
+}
+
+.rounded-lg {
+    border-radius: var(--border-radius-lg) !important;
+}
+
+/* Botones personalizados */
+.btn-primary {
+    background-color: var(--color-brand-primary);
+    border-color: var(--color-brand-primary);
+    font-family: var(--font-accent);
+    font-weight: normal;
+    transition: all 0.3s ease;
+}
+
+    .btn-primary:hover {
+        background-color: var(--color-brand-secondary);
+        border-color: var(--color-brand-secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 136, 48, 0.2);
+    }
+
+.btn-outline-primary {
+    color: var(--color-brand-primary);
+    border-color: var(--color-brand-primary);
+    font-family: var(--font-accent);
+    font-weight: normal;
+    transition: all 0.3s ease;
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        color: var(--color-text-light);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 136, 48, 0.2);
+    }
+
+.display-6 {
+    font-size: 2.5rem;
+    font-family: var(--font-heading);
+    font-weight: normal;
+}
+
+/* =========================================== */
+/* UTILIDADES ADICIONALES */
+/* =========================================== */
+
+.text-center {
+    text-align: center;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.mb-3 {
+    margin-bottom: 1rem;
+}
+
+.pt-3 {
+    padding-top: 1rem;
+}
+
+.pb-3 {
+    padding-bottom: 1rem;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.shadow-lg {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Ajuste para el contenido principal después del header */
+.main-content {
+    margin-top: 0;
+}
+
+@media (min-width: 992px) {
+    .navbar-expand-lg .navbar-collapse {
+        padding-top: 1.0rem;
+    }
+}
+
+/* =========================================== */
+/* RESPONSIVE GENERAL */
+/* =========================================== */
+
+/* Tablet */
 @media (max-width: 991.98px) {
+    /* Barra de WhatsApp */
+    .whatsapp-top-bar {
+        font-size: 0.85rem;
+        padding: 0.4rem 0;
+    }
+
+    /* Body */
+    body {
+        padding-top: 7.5rem;
+    }
+
+    /* Header */
+    .container-fluid {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .container-sin-gutter {
+        --bs-gutter-x: 0 !important;
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+    }
+
+    .header-logo.navbar-brand-center {
+        display: none !important;
+    }
+
+    .header-logo.navbar-brand-mobile {
+        display: flex !important;
+        height: 70px;
+    }
+
+    .main-header {
+        top: 2.2rem;
+    }
+
+        .main-header.scroll-header-shrink {
+            top: 1.8rem;
+        }
+
+            .main-header.scroll-header-shrink .header-logo.navbar-brand-mobile {
+                height: 60px;
+            }
+
+    #miAprendizajeDropdown + div.dropdown-menu {
+        right: 0;
+        left: auto;
+    }
+
+    /* Portada */
+    .magazine-cover {
+        height: 65vh;
+    }
+
+    .cover-overlay {
+        padding: 2rem;
+    }
+
+    .cover-title {
+        font-size: 3rem;
+    }
+
+    .cover-subtitle {
+        font-size: 1.25rem;
+    }
+
+    /* Secciones */
+    .section-container, .about-us-section {
+        padding: 2rem 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    /* LO ÚLTIMO */
+    .latest-card-container {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 300px;
+    }
+
+    .latest-card-item:nth-child(2n) {
+        border-right: none;
+    }
+
+    .latest-card-item:nth-child(3n) {
+        border-right: 1px solid var(--color-border);
+    }
+
+    .latest-card-item:nth-child(n + 5) {
+        border-bottom: none;
+    }
+
+    /* Eventos destacados */
+    .featured-event-header {
+        height: 300px;
+    }
+
+    .featured-list-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+        .featured-list-grid .magazine-card-img {
+            height: 150px;
+        }
+
+        .featured-list-grid .magazine-card-body {
+            padding: 1rem;
+        }
+
+            .featured-list-grid .magazine-card-body h5 {
+                font-size: 1.1rem;
+            }
+
+    /* Artistas mural */
+    .artist-grid-container {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 300px;
+    }
+
+    .artist-mural-item:nth-child(n) {
+        grid-column: span 1 !important;
+    }
+
+    .mural-text-block h3 {
+        font-size: 1.5rem;
+    }
+
+    /* Quiénes somos */
+    .context-editorial-content {
+        padding-left: 0.75rem;
+        border-left: 3px solid var(--color-brand-primary);
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    /* Carruseles */
+    .carousel {
+        height: 350px;
+    }
+
+    /* Cursos Index */
+    .categories-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 1rem;
+    }
+
+    .course-card-header {
+        height: 160px;
+    }
+
+    .course-card-body {
+        padding: 1.25rem;
+    }
+
+    .search-form .form-select-sm {
+        min-width: 140px;
+        margin-bottom: 0.5rem;
+    }
+
+    .pagination .page-item .page-link {
+        min-width: 36px;
+        padding: 0.375rem 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    /* Eventos/Detalle */
+    .event-title {
+        font-size: 2.5rem;
+    }
+
+    .event-image {
+        max-height: 400px;
+    }
+
+    .event-description-content {
+        font-size: 1rem;
+    }
+
+        .event-description-content h2 {
+            font-size: 1.8rem;
+        }
+
+        .event-description-content h3 {
+            font-size: 1.3rem;
+        }
+
+    /* Artículos/Detalle */
     .article-title {
         font-size: 2.5rem;
     }
@@ -1512,10 +1952,279 @@ body {
     .gallery-image {
         height: 200px;
     }
+
+    /* Filtros cursos */
+    .filtro-menu {
+        gap: 0.5rem;
+    }
+
+    .filtro-item a {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
 }
 
-/* Mobile Pequeño (max-width: 575.98px) */
+/* Móvil pequeño */
 @media (max-width: 575.98px) {
+    /* Barra de WhatsApp */
+    .whatsapp-top-bar {
+        font-size: 0.75rem;
+        padding: 0.35rem 0;
+    }
+
+        .whatsapp-top-bar a {
+            flex-direction: row;
+            gap: 0.3rem;
+        }
+
+        .whatsapp-top-bar i {
+            font-size: 0.9rem;
+        }
+
+    /* Body */
+    body {
+        padding-top: 6.5rem;
+    }
+
+    /* Header */
+    .main-header {
+        top: 1.8rem;
+        padding: 0.75rem 1rem;
+    }
+
+        .main-header.scroll-header-shrink {
+            top: 1.5rem;
+            padding: 0.4rem 1rem;
+        }
+
+    .header-logo.navbar-brand-mobile {
+        height: 60px;
+    }
+
+    .main-header.scroll-header-shrink .header-logo.navbar-brand-mobile {
+        height: 50px;
+    }
+
+    /* Portada */
+    .cover-title {
+        font-size: 2rem;
+    }
+
+    .cover-subtitle {
+        font-size: 1rem;
+    }
+
+    .cover-overlay {
+        padding: 1.5rem;
+    }
+
+    /* Secciones */
+    .section-container, .about-us-section {
+        padding: 1.5rem 1rem;
+        margin: 1rem 0;
+        border-radius: var(--border-radius-md);
+    }
+
+    /* LO ÚLTIMO */
+    .latest-card-container {
+        grid-template-columns: 1fr;
+        grid-auto-rows: 250px;
+        border-right: none;
+    }
+
+    .latest-card-item {
+        border-right: none !important;
+    }
+
+        .latest-card-item:last-child {
+            border-bottom: none;
+        }
+
+        .latest-card-item:nth-child(n + 1) {
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .latest-card-item:nth-child(6) {
+            border-bottom: none;
+        }
+
+        .latest-card-item:nth-child(2n) {
+            border-right: none;
+        }
+
+    /* Eventos destacados */
+    .featured-list-grid {
+        display: block;
+        gap: 0;
+    }
+
+        .featured-list-grid .magazine-card-img {
+            height: 180px;
+        }
+
+        .featured-list-grid .magazine-card {
+            margin-bottom: 2rem;
+        }
+
+            .featured-list-grid .magazine-card:last-child {
+                margin-bottom: 0;
+            }
+
+    /* Artistas mural */
+    .artist-grid-container {
+        grid-template-columns: 1fr;
+        grid-auto-rows: 250px;
+    }
+
+    .mural-text-block h3 {
+        font-size: 1.25rem;
+    }
+
+    /* Contenedor principal */
+    .container.px-0 > div.px-5 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    /* Dropdowns en móvil */
+    .dropdown-menu-dark .dropdown-item {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .header-nav-link {
+        padding: 0.4rem 0.75rem !important;
+        font-size: 0.9rem;
+    }
+
+    /* Carruseles */
+    .carousel {
+        height: 300px;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 40px;
+    }
+
+    /* Cursos Index */
+    .cursos-index-container {
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+    }
+
+    .search-section {
+        padding: 1.5rem !important;
+    }
+
+    .categories-section {
+        padding: 1.5rem;
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .category-card {
+        padding: 1rem 0.5rem;
+    }
+
+    .category-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .course-card {
+        margin-bottom: 1.5rem;
+    }
+
+    .course-card-header {
+        height: 140px;
+    }
+
+    .course-title {
+        font-size: 1rem;
+        min-height: auto;
+    }
+
+    .course-description {
+        min-height: auto;
+    }
+
+    .input-group.input-group-lg {
+        flex-direction: column;
+    }
+
+        .input-group.input-group-lg .form-control {
+            border-radius: var(--border-radius-md) var(--border-radius-md) 0 0 !important;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .input-group.input-group-lg .btn-primary {
+            border-radius: 0 0 var(--border-radius-md) var(--border-radius-md) !important;
+            width: 100%;
+        }
+
+    .search-form .form-select-sm {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .search-form .d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 0.5rem !important;
+    }
+
+    .search-form .text-muted {
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+
+    /* Eventos/Detalle */
+    .event-title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .event-badges {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .event-image {
+        max-height: 300px;
+    }
+
+    .info-box {
+        padding: 1.25rem;
+    }
+
+        .info-box h5 {
+            font-size: 1rem;
+        }
+
+    .event-description-content {
+        font-size: 0.95rem;
+    }
+
+        .event-description-content h2 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        .event-description-content h3 {
+            font-size: 1.25rem;
+            margin: 1.25rem 0 0.75rem 0;
+        }
+
+        .event-description-content blockquote {
+            padding-left: 1rem;
+            border-left-width: 3px;
+        }
+
+    /* Artículos/Detalle */
     .article-title {
         font-size: 2rem;
         margin-bottom: 0.75rem;
@@ -1585,170 +2294,8 @@ body {
     .image-caption {
         font-size: 0.8rem;
     }
-}
 
-/* Desktop grande - ajustes específicos */
-@media (min-width: 992px) {
-    .article-content {
-        max-width: 800px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .gallery-section .row {
-        justify-content: center;
-    }
-}
-
-/* =========================================== */
-/* ESTILOS ESPECÍFICOS PARA CARRUSELES */
-/* =========================================== */
-
-/* Estilos generales para carruseles */
-.carousel {
-    height: 400px; /* Altura fija para el carrusel */
-}
-
-.carousel-inner {
-    height: 100%;
-}
-
-.carousel-item {
-    height: 100%;
-}
-
-.carousel-control-prev,
-.carousel-control-next {
-    width: 50px;
-    opacity: 0.8;
-}
-
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    filter: invert(1);
-}
-
-.carousel-indicators {
-    z-index: 10;
-}
-
-/* Asegurar que las imágenes del carrusel ocupen todo el espacio */
-.carousel-item img {
-    object-fit: cover;
-    height: 100%;
-    width: 100%;
-}
-
-/* Estilos para el contenido del carrusel */
-.carousel-content {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-/* Estilos específicos para botones en carrusel */
-.carousel-item .btn-primary,
-.carousel-item .btn-success {
-    padding: 0.5rem 1.5rem;
-    font-size: 1rem;
-    border-radius: var(--border-radius-sm);
-}
-
-/* Estilos para precio en carrusel */
-.carousel-item .card-price {
-    font-size: 1.8rem;
-    color: var(--color-brand-primary);
-    font-weight: bold;
-}
-
-/* Responsive para carruseles */
-@media (max-width: 991.98px) {
-    .carousel {
-        height: 350px;
-    }
-}
-
-@media (max-width: 575.98px) {
-    .carousel {
-        height: 300px;
-    }
-
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 40px;
-    }
-}
-/* =========================================== */
-/* ESTILOS ESPECÍFICOS PARA CURSOS */
-/* =========================================== */
-
-/* Filtros de cursos */
-.filtro-menu {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin: 2rem 0;
-    gap: 0.75rem;
-}
-
-.filtro-item a {
-    padding: 0.75rem 1.5rem;
-    text-decoration: none;
-    color: var(--color-secondary);
-    background-color: var(--color-section-bg);
-    border-radius: var(--border-radius-sm);
-    transition: all 0.3s ease;
-    border: 1px solid var(--color-border);
-    font-family: var(--font-accent);
-    font-weight: 500;
-    display: block;
-}
-
-    .filtro-item a.active,
-    .filtro-item a:hover {
-        background-color: var(--color-brand-primary);
-        color: var(--color-text-light);
-        border-color: var(--color-brand-primary);
-        transform: translateY(-2px);
-    }
-
-/* Badges de categorías */
-.card-categories {
-    margin-bottom: 1rem;
-}
-
-    .card-categories .badge {
-        font-family: var(--font-accent);
-        font-size: 0.75rem;
-        background-color: var(--color-section-bg) !important;
-        color: var(--color-brand-primary) !important;
-        border-radius: var(--border-radius-sm);
-        padding: 0.4rem 0.8rem;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-/* Estilos para cursos destacados */
-.carousel-item .card-price {
-    font-size: 1.8rem;
-    color: var(--color-brand-primary);
-    font-weight: bold;
-}
-
-/* Responsive para filtros */
-@media (max-width: 991.98px) {
-    .filtro-menu {
-        gap: 0.5rem;
-    }
-
-    .filtro-item a {
-        padding: 0.6rem 1.2rem;
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 575.98px) {
+    /* Filtros cursos */
     .filtro-menu {
         justify-content: flex-start;
         overflow-x: auto;
@@ -1765,5 +2312,247 @@ body {
         padding: 0.3rem 0.6rem;
         margin-right: 0.3rem;
         margin-bottom: 0.3rem;
+    }
+}
+
+/* Desktop grande */
+@media (min-width: 992px) {
+    .context-editorial {
+        margin-bottom: 0;
+        padding: 2rem 0;
+    }
+
+    .featured-list-grid .magazine-card-img {
+        height: 200px;
+    }
+
+    .article-content {
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .gallery-section .row {
+        justify-content: center;
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+
+    .course-card-header {
+        height: 200px;
+    }
+}
+
+/* =========================================== */
+/* ESTILOS ESPECÍFICOS PARA HERO SECTION DE CURSOS */
+/* =========================================== */
+
+.cursos-hero-section {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 5rem 0;
+    position: relative;
+    margin-bottom: 4rem;
+}
+
+    .cursos-hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    .cursos-hero-section .container {
+        position: relative;
+        z-index: 2;
+    }
+
+.hero-content {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+    .hero-content .lead {
+        font-size: 1.25rem;
+        opacity: 0.9;
+    }
+
+/* Ajustes para la sección de búsqueda */
+.search-section {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.search-form .input-group {
+    border-radius: var(--border-radius-lg) !important;
+}
+
+    .search-form .input-group .form-control {
+        background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    .search-form .input-group .btn-primary {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        font-weight: 600;
+    }
+
+/* Ajustes para filtros */
+.filters-section .form-select-sm {
+    background-color: rgba(248, 249, 250, 0.9);
+    border: 1px solid rgba(222, 226, 230, 0.7) !important;
+}
+
+    .filters-section .form-select-sm:focus {
+        background-color: white;
+        border-color: var(--color-brand-primary) !important;
+    }
+
+/* Ajustes para categorías en hero */
+.categories-section {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+    .categories-section h2 {
+        font-size: 1.5rem;
+    }
+
+.categories-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+    gap: 1.25rem !important;
+}
+
+.category-card {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(232, 232, 232, 0.5);
+    transition: all 0.3s ease;
+}
+
+    .category-card:hover {
+        background-color: white;
+        border-color: var(--color-brand-primary);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(239, 136, 48, 0.15);
+    }
+
+    .category-card.active {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+    }
+
+        .category-card.active .category-icon,
+        .category-card.active h3,
+        .category-card.active .badge {
+            color: white !important;
+        }
+
+        .category-card.active .badge {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+/* Ajustes para tarjetas de cursos destacados */
+.course-badge .badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.stats-badge {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+/* Estado de filtros */
+#filterStatus {
+    font-size: 0.9rem;
+    color: var(--color-accent);
+}
+
+/* Responsive para hero section */
+@media (max-width: 768px) {
+    .cursos-hero-section {
+        padding: 3rem 0;
+        margin-bottom: 2rem;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-content .lead {
+        font-size: 1.1rem;
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 1rem !important;
+    }
+
+    .search-section,
+    .categories-section {
+        padding: 1.5rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .cursos-hero-section {
+        padding: 2rem 0;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content .lead {
+        font-size: 1rem;
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+    }
+
+    .filters-section .d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 0.5rem !important;
+    }
+
+    .filters-section .text-muted {
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .search-form .input-group {
+        flex-direction: column;
+    }
+
+        .search-form .input-group .form-control {
+            border-radius: var(--border-radius-md) var(--border-radius-md) 0 0 !important;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .search-form .input-group .btn-primary {
+            border-radius: 0 0 var(--border-radius-md) var(--border-radius-md) !important;
+            width: 100%;
+        }
+}
+
+/* Desktop grande */
+@media (min-width: 1200px) {
+    .cursos-hero-section {
+        padding: 6rem 0;
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
     }
 }

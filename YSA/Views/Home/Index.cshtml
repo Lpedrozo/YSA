@@ -2,948 +2,288 @@
 @model YSA.Web.Models.ViewModels.HomeViewModel
 @{
     ViewData["Title"] = "Yo Soy Arte | Tu Comunidad Artística";
+
     // Crear una lista plana y ordenada de todos los eventos
     var todosLosEventos = Model.EventosCategorizados
-            .SelectMany(kvp => kvp.Value)
-            .OrderByDescending(e => e.FechaEvento) // Asumimos que quieres los más recientes
+        .SelectMany(kvp => kvp.Value)
+        .OrderByDescending(e => e.FechaEvento)
         .ToList();
 
     // Eventos para el bloque "LO ÚLTIMO" (los 6 más recientes)
     var ultimosEventos = todosLosEventos.Take(6).ToList();
 
-    // Eventos para el nuevo bloque "EVENTOS DESTACADOS" (todos los demás)
-    // Se toma el resto de eventos después de los 6 últimos
-    var eventosRestantes = todosLosEventos.Skip(6).ToList();
-
-    // 1. El primer evento es el Encabezado.
-    var eventoEncabezado = eventosRestantes.FirstOrDefault();
-
-    // 2. TODOS los eventos restantes (excluyendo el encabezado) son para la lista de abajo.
-    var eventosRestantesParaLista = eventosRestantes.Skip(1).ToList();
+    // Eventos para el bloque "EVENTOS DESTACADOS" (todos los demás)
+    var eventosDestacados = todosLosEventos.Skip(6).ToList();
 }
 
-<style>
-    /* IMPORTACIÓN DE TIPOGRAFÍAS */
-    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
-    :root {
-        --color-primary-action: #ef8830; /* Naranja como color principal */
-        --color-secondary: #212529; /* Negro oscuro para títulos */
-        --color-accent: #6c757d; /* Gris para texto de soporte */
-        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
-        --color-card-bg: #ffffff;
-        --color-text-dark: #212529;
-        --color-text-light: #ffffff;
-        --color-border: #E8E8E8;
-        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
-        --color-shadow-light: rgba(0, 0, 0, 0.1);
-        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
-        /* NUEVOS COLORES DE MARCA */
-        --color-brand-primary: #ef8830; /* Naranja - color principal */
-        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
-        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
-        --color-brand-success: #6db53e; /* Verde - color de éxito */
-        --color-brand-dark: #08080a; /* Negro - texto principal */
-        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
-        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
-        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
-        --font-accent: 'Poppins', sans-serif;
-        /* ALTURAS DE LÍNEA */
-        --line-height-tight: 1.1;
-        --line-height-normal: 1.4;
-        --line-height-loose: 1.6;
-        /* BORDES REDONDEADOS */
-        --border-radius-sm: 8px;
-        --border-radius-md: 12px;
-        --border-radius-lg: 16px;
-        --border-radius-xl: 20px;
-    }
-
-    body {
-        font-family: var(--font-body);
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-        line-height: var(--line-height-loose);
-    }
-
-    /* ESTILO PORTADA DE REVISTA PRINCIPAL (BANNER) */
-    .magazine-cover {
-        width: 100%;
-        height: 85vh; /* Altura destacada como una portada */
-        background-color: #f4f4f4;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .cover-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
-    }
-
-    .cover-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%); /* Degradado oscuro en la parte inferior */
-        z-index: 2;
-        display: flex;
-        align-items: flex-end;
-        padding: 3rem;
-    }
-
-    .cover-title-block {
-        color: var(--color-text-light);
-        max-width: 700px;
-        z-index: 3;
-    }
-
-    .cover-title {
-        font-family: var(--font-heading);
-        font-size: 4rem;
-        font-weight: 900;
-        line-height: var(--line-height-tight);
-        margin-bottom: 0.5rem;
-    }
-
-    .cover-subtitle {
-        font-family: var(--font-body);
-        font-size: 1.5rem;
-        font-weight: 300;
-        color: rgba(255, 255, 255, 0.8);
-        line-height: var(--line-height-normal);
-    }
-
-    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
-    .section-container {
-        background: #f3f3f3;
-        border-radius: var(--border-radius-lg);
-        padding: 3rem 2rem;
-        margin: 2rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    /* TÍTULOS DE SECCIÓN ESTILO REVISTA (Mantenido para otras secciones) */
-    .section-title {
-        font-family: var(--font-heading);
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        padding-bottom: 0.5rem;
-        margin-bottom: 2.5rem;
-        display: inline-block;
-        border-bottom: 4px solid var(--color-brand-primary); /* Ahora usa el naranja */
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        line-height: var(--line-height-tight);
-    }
-
-    .section-subtitle {
-        font-family: var(--font-body);
-        font-size: 1.2rem;
-        font-weight: 400;
-        color: var(--color-accent);
-        margin-top: -2rem;
-        margin-bottom: 3rem;
-        line-height: var(--line-height-normal);
-    }
-
-    /* === ESTILO ESPECÍFICO PARA EL BLOQUE DE LA IMAGEN (LO ÚLTIMO) === */
-    .latest-grid-header {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid var(--color-brand-primary);
-        padding-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-    }
-
-    .latest-card-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); /* 3 columnas en desktop */
-        grid-auto-rows: 400px; /* Altura fija para la rejilla principal */
-        gap: 0; /* Sin espacio entre las tarjetas */
-        border-radius: var(--border-radius-md);
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    .latest-card-item {
-        position: relative;
-        overflow: hidden;
-        height: 100%;
-        border-right: 1px solid var(--color-border); /* Separador vertical */
-        border-bottom: 1px solid var(--color-border); /* Separador horizontal */
-        transition: all 0.3s ease;
-    }
-
-        .latest-card-item:hover {
-            transform: translateY(-5px);
-            z-index: 2;
-        }
-
-        /* El último de cada fila y la última fila no llevan borde */
-        .latest-card-item:nth-child(3n) {
-            border-right: none;
-        }
-
-        .latest-card-item:nth-child(n + 4) {
-            border-top: none; /* No necesitamos doble borde superior */
-        }
-
-            .latest-card-item:nth-child(n + 4):nth-child(-n + 6) {
-                border-bottom: none; /* Quitamos el borde inferior de la última fila */
-            }
-
-        .latest-card-item:last-child {
-            border-right: none;
-            border-bottom: none;
-        }
-
-        /* FIN DE LA REJILLA */
-        .latest-card-item:hover .magazine-grid-img {
-            transform: scale(1.05);
-        }
-
-    .magazine-grid-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
-        transition: transform 0.5s ease;
-    }
-
-    .grid-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 70%); /* Degradado oscuro en la parte inferior */
-        z-index: 2;
-        display: flex;
-        align-items: flex-end;
-        padding: 1.5rem;
-    }
-
-    .grid-title-block {
-        color: var(--color-text-light);
-        z-index: 3;
-    }
-
-    .grid-category {
-        font-family: var(--font-accent);
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: rgba(255, 255, 255, 0.7);
-        text-transform: uppercase;
-        margin-bottom: 0.25rem;
-        display: block;
-        line-height: var(--line-height-tight);
-    }
-
-    .grid-title {
-        font-family: var(--font-heading);
-        font-size: 1.25rem;
-        font-weight: 800;
-        line-height: var(--line-height-tight);
-        margin-bottom: 0;
-    }
-
-    /* ESTILO DE TARJETA TIPO REJILLA DE REVISTA MEJORADO (Para eventos y artistas) */
-    .magazine-card {
-        border-radius: var(--border-radius-md);
-        border: 1px solid var(--color-border);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        background-color: var(--color-card-bg);
-        height: 100%;
-        text-decoration: none;
-        color: inherit;
-        display: block;
-        position: relative;
-    }
-
-        .magazine-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            border-color: var(--color-brand-primary);
-        }
-
-    .magazine-card-img-container {
-        overflow: hidden;
-        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
-    }
-
-    .magazine-card-img {
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-
-    .magazine-card:hover .magazine-card-img {
-        transform: scale(1.05);
-    }
-
-    .magazine-card-body {
-        padding: 1.5rem;
-        position: relative;
-        text-align: left; /* Aseguramos que el contenido de la tarjeta esté a la izquierda */
-    }
-
-    .card-category {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--color-brand-primary); /* Ahora usa el naranja */
-        text-transform: uppercase;
-        margin-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-        letter-spacing: 0.5px;
-    }
-
-    .magazine-card-body h5 {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        font-size: 1.5rem;
-        line-height: var(--line-height-normal);
-        color: var(--color-secondary);
-        margin-bottom: 0.5rem;
-    }
-
-    .magazine-card-body .card-text {
-        font-family: var(--font-body);
-        font-size: 0.95rem;
-        color: var(--color-accent);
-        line-height: var(--line-height-normal);
-        margin-bottom: 1rem;
-    }
-
-    .card-date {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        color: var(--color-brand-primary);
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    /* BLOQUE DE CONTEXTO TIPO ENCABEZADO DE REVISTA (Para Quienes Somos) */
-    .context-editorial {
-        padding: 0;
-        border: none;
-        background-color: transparent;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 1rem;
-    }
-
-    .context-editorial-content {
-        /* Para simular la barra vertical negra junto al texto (como la imagen) */
-        border-left: 5px solid var(--color-brand-primary); /* Ahora usa el naranja */
-        padding-left: 1.5rem;
-        height: 100%;
-        /* Aseguramos que el botón quede abajo en desktop */
-        display: flex;
-        flex-direction: column;
-    }
-
-    .context-editorial h3 {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 900;
-        color: var(--color-secondary);
-        margin-bottom: 1rem;
-        text-transform: uppercase;
-        line-height: var(--line-height-tight);
-    }
-
-    .context-editorial p {
-        font-family: var(--font-body);
-        color: var(--color-text-dark);
-        font-size: 1.1rem;
-        line-height: var(--line-height-normal);
-        margin-bottom: 0.5rem;
-    }
-
-    /* ========================================================================= */
-    /* === NUEVO ESTILO ESPECÍFICO PARA EL BLOQUE DE ARTISTAS: MURAL PEGADO === */
-    /* ========================================================================= */
-    .artist-grid-container {
-        display: grid;
-        /* Utilizamos una rejilla de 5 columnas para poder hacer la distribución 2/3 en desktop */
-        grid-template-columns: repeat(5, 1fr);
-        grid-auto-rows: 400px; /* Altura base para las filas */
-        gap: 0; /* ¡CERO ESPACIO para el efecto mural pegado! */
-        /* Eliminamos el padding lateral para que se pegue a los bordes del contenedor */
-        padding: 0 !important;
-        border-radius: var(--border-radius-md);
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    .artist-mural-item {
-        position: relative;
-        overflow: hidden;
-        /* Por defecto, cada elemento ocupa 1 columna y la altura definida por grid-auto-rows */
-        transition: transform 0.3s ease;
-    }
-
-        .artist-mural-item:hover {
-            z-index: 10; /* Para que la sombra no quede detrás de los demás */
-            transform: scale(1.02);
-        }
-
-            .artist-mural-item:hover .artist-mural-img {
-                transform: scale(1.05);
-            }
-
-    .artist-mural-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
-        transition: transform 0.5s ease;
-    }
-
-    .mural-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        /* Degradado más fuerte para asegurar visibilidad del texto */
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 60%);
-        z-index: 2;
-        display: flex;
-        align-items: flex-end;
-        padding: 2rem;
-        cursor: pointer;
-    }
-
-    .mural-text-block {
-        color: var(--color-text-light);
-        text-align: left;
-    }
-
-        .mural-text-block h3 {
-            font-family: var(--font-heading);
-            font-size: 1.8rem;
-            font-weight: 900;
-            line-height: var(--line-height-tight);
-            margin-bottom: 0.5rem;
-        }
-
-        .mural-text-block .category {
-            font-family: var(--font-accent);
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
-            text-transform: uppercase;
-            margin-bottom: 0.25rem;
-            display: block;
-            line-height: var(--line-height-tight);
-        }
-
-    /* Reglas para simular el diseño 2/3 (Desktop) */
-    .artist-mural-item:nth-child(1) {
-        grid-column: span 3;
-    }
-
-    .artist-mural-item:nth-child(2) {
-        grid-column: span 2;
-    }
-
-    .artist-mural-item:nth-child(3) {
-        grid-column: span 2;
-    }
-
-    .artist-mural-item:nth-child(4) {
-        grid-column: span 3;
-    }
-
-    .artist-mural-item:nth-child(5) {
-        grid-column: span 3;
-    }
-
-    .artist-mural-item:nth-child(6) {
-        grid-column: span 2;
-    }
-
-    /* === ESTILO ESPECÍFICO PARA EL BLOQUE DE EVENTOS DESTACADOS (1+LISTA ABAJO) === */
-    .featured-event-header {
-        position: relative;
-        height: 400px; /* Altura del encabezado */
-        overflow: hidden;
-        margin-bottom: 2rem;
-        border-radius: var(--border-radius-md);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    .featured-event-header-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
-        transition: transform 0.5s ease;
-    }
-
-    .featured-event-header:hover .featured-event-header-img {
-        transform: scale(1.05);
-    }
-
-    /* Nueva clase para el bloque de la lista de eventos destacados */
-    .featured-list-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2rem;
-    }
-
-    /* BADGES Y ELEMENTOS DE ÉNFASIS CON NUEVA PALETA */
-    .badge.bg-light {
-        background-color: var(--color-brand-accent) !important; /* Amarillo para badges */
-        color: var(--color-brand-dark) !important;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.5rem 1rem;
-    }
-
-    .badge.bg-dark {
-        background-color: var(--color-brand-secondary) !important; /* Rojo para badges oscuros */
-        color: var(--color-text-light) !important;
-        border-radius: var(--border-radius-sm);
-        padding: 0.5rem 1rem;
-    }
-
-    .alert-info {
-        background-color: rgba(109, 181, 62, 0.1); /* Verde suave para alertas */
-        border-color: var(--color-brand-success);
-        color: var(--color-text-dark);
-        border-radius: var(--border-radius-md);
-        padding: 1.5rem;
-    }
-
-    /* ICONOS CON COLORES DE MARCA */
-    .icon-card .fas {
-        color: var(--color-brand-primary) !important; /* Naranja para iconos */
-    }
-
-    .list-unstyled .fas.fa-check-circle {
-        color: var(--color-brand-success) !important; /* Verde para checkmarks */
-    }
-
-    /* TARJETAS DE ICONOS MEJORADAS */
-    .icon-card {
-        border-radius: var(--border-radius-lg);
-        border: 1px solid var(--color-border);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-        transition: all 0.3s ease;
-        background: var(--color-card-bg);
-    }
-
-        .icon-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            border-color: var(--color-brand-primary);
-        }
-
-    /* SECCIÓN QUIÉNES SOMOS MEJORADA */
-    .about-us-section {
-        background: var(--color-section-bg);
-        border-radius: var(--border-radius-lg);
-        padding: 3rem 2rem;
-        margin: 2rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    .history-section {
-        background: var(--color-card-bg);
-        border-radius: var(--border-radius-md);
-        padding: 2.5rem;
-        margin-top: 2rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    }
-
-    /* SEPARADORES MEJORADOS */
-    .section-divider {
-        border: none;
-        height: 1px;
-        background: linear-gradient(to right, transparent, var(--color-border), transparent);
-        margin: 3rem 0;
-    }
-
-    /* ADAPTACIONES RESPONSIVE */
-
-    /* Desktop/Laptop (min-width: 992px) */
-    @@media (min-width: 992px) {
-        .context-editorial {
-            margin-bottom: 0;
-            padding: 2rem 0; /* Espaciado vertical para alineación */
-        }
-        /* Ajustes menores para Desktop */
-        .featured-list-grid .magazine-card-img {
-            height: 200px; /* Mantenemos altura consistente en 3 columnas */
-        }
-    }
-
-    /* Tablet (max-width: 991.98px) */
-    @@media (max-width: 991.98px) {
-        /* === AJUSTES DE PORTADA === */
-        .magazine-cover {
-            height: 65vh; /* Menos altura en tablet */
-        }
-
-        .cover-overlay {
-            padding: 2rem;
-        }
-
-        .cover-title {
-            font-size: 3rem;
-        }
-
-        .cover-subtitle {
-            font-size: 1.25rem;
-        }
-        /* === AJUSTES SECCIONES === */
-        .section-container, .about-us-section {
-            padding: 2rem 1.5rem;
-            margin: 1.5rem 0;
-        }
-        /* === AJUSTES LO ÚLTIMO (REJILLA 2x3) === */
-        .latest-grid-header {
-            text-align: center;
-        }
-
-        .latest-card-container {
-            grid-template-columns: repeat(2, 1fr); /* 2 columnas en tablet */
-            grid-auto-rows: 300px;
-        }
-
-        .latest-card-item {
-            border-right: 1px solid var(--color-border); /* Aseguramos borde en tablet */
-            border-bottom: 1px solid var(--color-border);
-        }
-            /* Reglas de borde para la rejilla 2xN */
-            .latest-card-item:nth-child(2n) {
-                border-right: none; /* Quitamos el borde derecho del 2º y 4º elemento */
-            }
-
-            .latest-card-item:nth-child(3n) { /* Anulamos la regla de 3n para Desktop */
-                border-right: 1px solid var(--color-border);
-            }
-
-            .latest-card-item:nth-child(n + 5) {
-                border-bottom: none; /* Quitamos el borde inferior de la última fila (5 y 6) */
-            }
-        /* === AJUSTES EVENTOS DESTACADOS (1 columna) === */
-        .featured-event-header {
-            height: 300px;
-        }
-
-        .featured-list-grid {
-            /* 2 columnas en tablet */
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-        }
-
-            .featured-list-grid .magazine-card-img {
-                height: 150px; /* Imagen más pequeña para las 2 columnas */
-            }
-
-            .featured-list-grid .magazine-card-body {
-                padding: 1rem; /* Menos padding */
-            }
-
-                .featured-list-grid .magazine-card-body h5 {
-                    font-size: 1.1rem; /* Título más pequeño */
-                }
-        /* === AJUSTES ARTISTAS MURAL (2 columnas) === */
-        .artist-grid-container {
-            /* 2 columnas en tablet para un aspecto de mural más denso */
-            grid-template-columns: repeat(2, 1fr);
-            grid-auto-rows: 300px;
-            padding: 0 !important;
-        }
-        /* Reiniciamos las reglas de span para tablet/móvil */
-        .artist-mural-item:nth-child(n) {
-            grid-column: span 1 !important; /* Cada elemento ocupa 1 columna */
-        }
-
-        .mural-text-block h3 {
-            font-size: 1.5rem;
-        }
-        /* === AJUSTES QUIÉNES SOMOS === */
-        .context-editorial-content {
-            padding-left: 0.75rem;
-            border-left: 3px solid var(--color-brand-primary);
-        }
-
-        .section-title {
-            font-size: 2rem;
-        }
-    }
-
-    /* Mobile Pequeño (max-width: 575.98px) - Columna única para la mayoría de rejillas */
-    @@media (max-width: 575.98px) {
-        .cover-title {
-            font-size: 2rem;
-        }
-
-        .cover-subtitle {
-            font-size: 1rem;
-        }
-
-        .cover-overlay {
-            padding: 1.5rem;
-        }
-        /* === AJUSTES SECCIONES === */
-        .section-container, .about-us-section {
-            padding: 1.5rem 1rem;
-            margin: 1rem 0;
-            border-radius: var(--border-radius-md);
-        }
-
-        .latest-card-container {
-            grid-template-columns: 1fr; /* 1 columna en móvil */
-            grid-auto-rows: 250px;
-            border-right: none;
-        }
-        /* Reglas de borde para la rejilla 1xN */
-        .latest-card-item {
-            border-right: none !important;
-        }
-
-            .latest-card-item:last-child {
-                border-bottom: none;
-            }
-
-            .latest-card-item:nth-child(n) {
-                border-right: none;
-            }
-
-            .latest-card-item:nth-child(n + 1) {
-                border-bottom: 1px solid var(--color-border);
-            }
-
-            .latest-card-item:nth-child(6) {
-                border-bottom: none;
-            }
-
-            .latest-card-item:nth-child(2n) { /* Anulamos la regla de 2n de tablet */
-                border-right: none;
-            }
-        /* === AJUSTES EVENTOS DESTACADOS (Lista vertical) === */
-        .featured-list-grid {
-            display: block; /* Volvemos a un flujo normal (1 columna) */
-            gap: 0;
-        }
-            /* Usamos la estructura de tarjeta vertical para la lista */
-            .featured-list-grid .magazine-card-img-container {
-                width: 100%;
-            }
-
-            .featured-list-grid .magazine-card-img {
-                height: 180px; /* Imagen un poco más alta en 1 columna */
-            }
-
-            .featured-list-grid .magazine-card {
-                margin-bottom: 2rem;
-            }
-
-                .featured-list-grid .magazine-card:last-child {
-                    margin-bottom: 0;
-                }
-        /* === AJUSTES ARTISTAS MURAL (1 columna) === */
-        .artist-grid-container {
-            grid-template-columns: 1fr; /* 1 columna en móvil */
-            grid-auto-rows: 250px;
-        }
-
-        .mural-text-block h3 {
-            font-size: 1.25rem;
-        }
-        /* === AJUSTES GLOBAL === */
-        /* Reducir el padding horizontal general en el contenedor principal */
-        .container.px-0 > div.px-5 {
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }
-    }
-</style>
-
-<div class="magazine-cover">
-    @* Usamos la imagen que mencionaste para el banner principal *@
+@* =========================================== *@
+@* SECCIÓN DE NUESTRO PROPÓSITO (Inspirada en la imagen) *@
+@* =========================================== *@
+<div class="hero-section pb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="badge bg-light mb-3 d-inline-block">COMUNIDAD ARTÍSTICA</div>
+                <h1 class="display-4 fw-bold mb-4" style="font-family: var(--font-heading);">
+                    Descubre tu <span class="text-brand-primary">creatividad</span> interior
+                </h1>
+                <p class="lead mb-4" style="font-family: var(--font-body); line-height: 1.8;">
+                    <strong>Formamos artistas</strong> que no solo dominan la técnica, sino que entienden el arte como una vía de <strong>transformación personal y colectiva</strong>. En YSA fusionamos técnica, sensibilidad y consciencia para despertar el poder creativo que habita en ti.
+                </p>
+                <div class="d-flex flex-wrap gap-3 mb-5">
+                    <a href="#ultimos-eventos" class="btn btn-primary btn-lg px-4 py-3">
+                        <i class="fas fa-calendar-alt me-2"></i>Explorar Eventos
+                    </a>
+                    <a href="@Url.Action("Index", "Curso")" class="btn btn-outline-primary btn-lg px-4 py-3">
+                        <i class="fas fa-book-open me-2"></i>Ver Cursos
+                    </a>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="display-6 fw-bold text-brand-primary mb-2">+500</div>
+                            <div class="small text-muted">Estudiantes</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="display-6 fw-bold text-brand-primary mb-2">+50</div>
+                            <div class="small text-muted">Artistas</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="display-6 fw-bold text-brand-primary mb-2">+100</div>
+                            <div class="small text-muted">Eventos</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="position-relative">
+                    <div class="rounded-lg overflow-hidden shadow-lg" style="border-radius: var(--border-radius-lg);">
+                        <img src="/diseño/HeaderAcademia.jpg" alt="Comunidad Artística YSA" class="img-fluid w-100" style="height: 500px; object-fit: cover;">
+                    </div>
+                    <div class="position-absolute bottom-0 start-0 bg-white p-4 m-4 rounded shadow" style="max-width: 300px;">
+                        <h5 class="fw-bold mb-2" style="font-family: var(--font-heading);">"El arte es la expresión del alma creativa"</h5>
+                        <p class="text-muted small mb-0">- Equipo YoSoyArte</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* =========================================== *@
+@* BANNER PRINCIPAL (Mantenido) *@
+@* =========================================== *@
+<div class="magazine-cover mt-5">
     <img src="/diseño/HeaderAcademia.jpg" class="cover-image" alt="Portada de la revista Yo Soy Arte">
     <div class="cover-overlay">
         <div class="cover-title-block">
-            <h1 class="cover-title">Yo Soy Arte</h1>
         </div>
     </div>
 </div>
 
 <div class="container px-0 py-5 mb-5 pb-5">
-    @* === INICIO DEL BLOQUE "LO ÚLTIMO" (REJILLA 3x2) === *@
-    <div class="section-container">
-        <div class="px-3">
-            <span class="latest-grid-header">LO ÚLTIMO</span>
-        </div>
+    @* === INICIO DEL BLOQUE "LO ÚLTIMO" (2 COLUMNAS) === *@
+    <div class="section-container" id="ultimos-eventos">
+        <div class="row align-items-center">
+            @* Columna izquierda: Texto *@
+            <div class="col-lg-5 mb-5 mb-lg-0">
+                <div class="mb-4">
+                    <span class="latest-grid-header mb-3 d-block">LO ÚLTIMO</span>
+                    <h2 class="mb-4" style="font-family: var(--font-heading); font-size: 2.5rem; line-height: 1.2;">
+                        Mantente al día con <span class="text-brand-primary">nuestros eventos</span>
+                    </h2>
+                    <p class="mb-4" style="font-family: var(--font-body); font-size: 1.1rem; line-height: 1.6;">
+                        Explora nuestras actividades más recientes: talleres, exposiciones, charlas y encuentros artísticos.
+                        Cada evento es una oportunidad para <strong>conectar, aprender y crecer</strong> junto a nuestra comunidad.
+                    </p>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-star text-brand-primary me-3 fa-2x"></i>
+                        <div>
+                            <h5 class="mb-1" style="font-family: var(--font-heading);">Experiencias únicas</h5>
+                            <p class="small text-muted mb-0">Eventos diseñados para inspirar y transformar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        @if (ultimosEventos.Any())
-        {
-            <div class="latest-card-container">
-                @foreach (var evento in ultimosEventos)
+            @* Columna derecha: Carrusel de eventos *@
+            <div class="col-lg-7">
+                @if (ultimosEventos.Any())
                 {
-                    <div class="latest-card-item">
-                        <a href="@Url.Action("DetalleEvento", "Revista", new { id = evento.Id })" class="w-100 h-100 position-relative d-block text-decoration-none">
-                            <img src="@Url.Content(evento.UrlImagen)" class="magazine-grid-img" alt="@evento.Titulo">
-                            <div class="grid-overlay">
-                                <div class="grid-title-block">
-                                    <span class="grid-category">@evento.TipoEventoNombre</span>
-                                    <h2 class="grid-title">@evento.Titulo</h2>
+                    <div id="ultimosEventosCarousel" class="carousel slide" data-bs-ride="carousel">
+                        @* Indicadores *@
+                        <div class="carousel-indicators">
+                            @for (int i = 0; i < ultimosEventos.Count; i++)
+                            {
+                                <button type="button" data-bs-target="#ultimosEventosCarousel"
+                                        data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"
+                                        aria-label="Slide @(i + 1)"></button>
+                            }
+                        </div>
+
+                        @* Contenido del carrusel *@
+                        <div class="carousel-inner rounded-lg" style="border-radius: var(--border-radius-lg);">
+                            @for (int i = 0; i < ultimosEventos.Count; i++)
+                            {
+                                var evento = ultimosEventos[i];
+                                <div class="carousel-item @(i == 0 ? "active" : "")" data-bs-interval="5000">
+                                    <a href="@Url.Action("DetalleEvento", "Revista", new { id = evento.Id })" class="text-decoration-none text-dark">
+                                        <div class="position-relative overflow-hidden rounded-lg" style="height: 450px;">
+                                            <img src="@Url.Content(evento.UrlImagen)"
+                                                 class="d-block w-100 h-100"
+                                                 alt="@evento.Titulo"
+                                                 style="object-fit: cover;">
+                                            <div class="carousel-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-end p-4"
+                                                 style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);">
+                                                <div class="text-white">
+                                                    <span class="badge bg-light mb-2">@evento.TipoEventoNombre</span>
+                                                    <h3 class="h4 mb-2" style="font-family: var(--font-heading);">@evento.Titulo</h3>
+                                                    <p class="mb-0">
+                                                        <i class="far fa-calendar me-2"></i>
+                                                        @evento.FechaEvento.ToString("dd MMMM yyyy")
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
                                 </div>
-                            </div>
-                        </a>
+                            }
+                        </div>
+
+                        @* Controles *@
+                        <button class="carousel-control-prev" type="button" data-bs-target="#ultimosEventosCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#ultimosEventosCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info text-center py-5" role="alert">
+                        <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                        <h4>No hay eventos recientes para mostrar</h4>
+                        <p class="mb-0">Pronto tendremos nuevas actividades para ti.</p>
                     </div>
                 }
             </div>
-        }
-        else
-        {
-            <div class="px-3"><div class="alert alert-info text-center" role="alert">No hay eventos recientes para mostrar.</div></div>
-        }
+        </div>
     </div>
     @* === FIN DEL BLOQUE "LO ÚLTIMO" === *@
 
     <hr class="section-divider" />
 
-    @* === INICIO DEL NUEVO BLOQUE "EVENTOS DESTACADOS" === *@
-    @if (eventoEncabezado != null || eventosRestantesParaLista.Any())
+    @* === INICIO DEL BLOQUE "EVENTOS DESTACADOS" (2 COLUMNAS INVERTIDAS CON CARRUSEL) === *@
+    @if (eventosDestacados.Any())
     {
         <div class="section-container">
-            <div class="px-3">
-                <span class="latest-grid-header">EVENTOS DESTACADOS</span>
-            </div>
-
-            <div class="row g-5 px-3">
-                @if (eventoEncabezado != null)
-                {
-                    @* 1. EVENTO ENCABEZADO (Columna 1: 12/12) *@
-                    <div class="col-12">
-                        <a href="@Url.Action("DetalleEvento", "Revista", new { id = eventoEncabezado.Id })" class="d-block text-decoration-none">
-                            <div class="featured-event-header mb-3">
-                                <img src="@Url.Content(eventoEncabezado.UrlImagen)" class="featured-event-header-img" alt="@eventoEncabezado.Titulo">
-                                <div class="grid-overlay align-items-start p-3">
-                                    <span class="badge bg-dark text-white">@eventoEncabezado.TipoEventoNombre</span>
-                                </div>
-                            </div>
-                            <h3 class="h4" style="font-weight: 800; color: var(--color-secondary);">@eventoEncabezado.Titulo</h3>
-                            <p class="text-muted">@eventoEncabezado.FechaEvento.ToString("dd MMMM yyyy")</p>
-                        </a>
-                    </div>
-                }
-
-                @* 2. RESTO DE EVENTOS (Columna 2: 12/12 - Contiene una rejilla interna 3xN/2xN/1xN) *@
-                @if (eventosRestantesParaLista.Any())
-                {
-                    <div class="col-12 mt-4">
-                        @* Agregamos un poco de margen superior para separarlo del encabezado *@
-                        <div class="featured-list-grid">
-                            @* Nueva rejilla para los eventos restantes (3 columnas en desktop) *@
-                            @foreach (var evento in eventosRestantesParaLista)
+            <div class="row align-items-center">
+                @* Columna izquierda: Carrusel de eventos destacados *@
+                <div class="col-lg-7 mb-5 mb-lg-0 order-2 order-lg-1">
+                    <div id="eventosDestacadosCarousel" class="carousel slide" data-bs-ride="carousel">
+                        @* Indicadores *@
+                        <div class="carousel-indicators">
+                            @for (int i = 0; i < eventosDestacados.Count; i++)
                             {
-                                <a href="@Url.Action("DetalleEvento", "Revista", new { id = evento.Id })" class="magazine-card text-dark">
-                                    <div class="magazine-card-img-container">
-                                        <img src="@Url.Content(evento.UrlImagen)" class="magazine-card-img featured-list-img" alt="@evento.Titulo">
-                                    </div>
-                                    <div class="magazine-card-body">
-                                        <span class="card-category">@evento.TipoEventoNombre</span>
-                                        <h5 class="mb-1">@evento.Titulo</h5>
-                                        <div class="card-date">
-                                            <i class="far fa-calendar"></i>
-                                            <span>@evento.FechaEvento.ToString("dd/MM/yyyy")</span>
-                                        </div>
-                                    </div>
-                                </a>
+                                <button type="button" data-bs-target="#eventosDestacadosCarousel"
+                                        data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"
+                                        aria-label="Slide @(i + 1)"></button>
                             }
                         </div>
-                    </div>
-                }
-            </div>
-        </div>
-    }
-    @* === FIN DEL NUEVO BLOQUE "EVENTOS DESTACADOS" === *@
 
-    <hr class="section-divider" />
-
-    @* === INICIO DE LA SECCIÓN DE ARTISTAS (MURAL) === *@
-    <div class="section-container">
-        <div class="row mb-5 pb-3 g-0">
-            @* Título de la sección sobre la rejilla (necesita padding para separarse de los bordes) *@
-            <div class="col-12 text-start mb-4 px-3">
-                <span class="latest-grid-header">MAESTROS DE LA ACADEMIA</span>
-            </div>
-
-            @* Rejilla 5xN para el mural (2/3) *@
-            <div class="col-12">
-                @if (Model.Artistas != null && Model.Artistas.Any())
-                {
-                    <div class="artist-grid-container">
-                        @foreach (var artista in Model.Artistas)
-                        {
-                            <div class="artist-mural-item">
-                                @* Nueva clase para el item del mural *@
-                                <a href="@Url.Action("Detalles", "Artista", new { id = artista.Id })" class="w-100 h-100 position-relative d-block text-decoration-none">
-                                    <img src="@(string.IsNullOrEmpty(artista.Usuario?.UrlImagen) ? "/diseño/placeholder-artist.jpg" : Url.Content(artista.Usuario.UrlImagen))"
-                                         class="artist-mural-img"
-                                         alt="Foto de @artista.Usuario.Nombre">
-                                    <div class="mural-overlay">
-                                        @* Nueva clase para la superposición de texto *@
-                                        <div class="mural-text-block">
-                                            <span class="category">@artista.EstiloPrincipal</span>
-                                            <h3>@artista.Usuario.Nombre @artista.Usuario.Apellido</h3>
+                        @* Contenido del carrusel *@
+                        <div class="carousel-inner rounded-lg" style="border-radius: var(--border-radius-lg);">
+                            @for (int i = 0; i < eventosDestacados.Count; i++)
+                            {
+                                var evento = eventosDestacados[i];
+                                <div class="carousel-item @(i == 0 ? "active" : "")" data-bs-interval="6000">
+                                    <a href="@Url.Action("DetalleEvento", "Revista", new { id = evento.Id })" class="text-decoration-none text-dark">
+                                        <div class="position-relative overflow-hidden rounded-lg" style="height: 450px;">
+                                            <img src="@Url.Content(evento.UrlImagen)"
+                                                 class="d-block w-100 h-100"
+                                                 alt="@evento.Titulo"
+                                                 style="object-fit: cover;">
+                                            <div class="carousel-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-end p-4"
+                                                 style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);">
+                                                <div class="text-white">
+                                                    <span class="badge bg-dark mb-2">DESTACADO</span>
+                                                    <span class="badge bg-light ms-2 mb-2">@evento.TipoEventoNombre</span>
+                                                    <h3 class="h4 mb-2" style="font-family: var(--font-heading);">@evento.Titulo</h3>
+                                                    <p class="mb-0">
+                                                        <i class="far fa-calendar me-2"></i>
+                                                        @evento.FechaEvento.ToString("dd MMMM yyyy")
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+
+                        @* Controles *@
+                        <button class="carousel-control-prev" type="button" data-bs-target="#eventosDestacadosCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#eventosDestacadosCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                </div>
+
+                @* Columna derecha: Texto filosófico *@
+                <div class="col-lg-5 mb-5 mb-lg-0 order-1 order-lg-2 ps-lg-5">
+                    <div class="mb-4">
+                        <span class="latest-grid-header mb-3 d-block">EVENTOS DESTACADOS</span>
+                        <h2 class="mb-4" style="font-family: var(--font-heading); font-size: 2.5rem; line-height: 1.2;">
+                            Vive el arte en <span class="text-brand-primary">su máxima expresión</span>
+                        </h2>
+                        <p class="mb-4" style="font-family: var(--font-body); font-size: 1.1rem; line-height: 1.6;">
+                            <em>"El verdadero artista no busca solo crear belleza, sino también expresar verdades profundas que conecten con el alma humana."</em>
+                        </p>
+                        <div class="border-start border-3 border-brand-primary ps-4 mb-4">
+                            <p class="mb-0">Nuestros eventos destacados son experiencias <strong>transformadoras</strong> donde el arte trasciende lo estético para convertirse en diálogo, aprendizaje y comunidad.</p>
+                        </div>
+                        @if (eventosDestacados.Any())
+                        {
+                            var proximoEvento = eventosDestacados.First();
+                            <div class="bg-light p-4 rounded" style="border-left: 4px solid var(--color-brand-primary);">
+                                <h5 class="mb-2" style="font-family: var(--font-heading);">Próximo evento especial</h5>
+                                <p class="mb-2"><strong>@proximoEvento.Titulo</strong></p>
+                                <p class="small text-muted mb-0">
+                                    <i class="far fa-clock me-1"></i>
+                                    @proximoEvento.FechaEvento.ToString("dddd, dd MMMM") a las @proximoEvento.FechaEvento.ToString("hh:mm tt")
+                                </p>
                             </div>
                         }
                     </div>
-                }
-                else
-                {
-                    <div class="px-3"><div class="alert alert-info text-center" role="alert">No hay artistas registrados para mostrar.</div></div>
-                }
+                </div>
             </div>
         </div>
-    </div>
-    @* === FIN DE LA SECCIÓN DE ARTISTAS === *@
+    }
+    else
+    {
+        <div class="section-container text-center py-5">
+            <i class="fas fa-calendar-star fa-4x text-brand-primary mb-4"></i>
+            <h3 class="mb-3" style="font-family: var(--font-heading);">Próximamente: Eventos Destacados</h3>
+            <p class="text-muted mb-0">Estamos preparando eventos especiales que pronto anunciaremos.</p>
+        </div>
+    }
+    @* === FIN DEL BLOQUE "EVENTOS DESTACADOS" === *@
 
     <hr class="section-divider" />
 
-    @* === INICIO DE LA SECCIÓN QUIÉNES SOMOS (MANTENIDA) === *@
+    @* === INICIO DE LA SECCIÓN QUIÉNES SOMOS === *@
     <div class="about-us-section text-center">
-        @* Encabezado principal de la sección *@
         <h2 class="latest-grid-header">Quiénes somos</h2>
         <div class="container">
             @* FILA DE TARJETAS (Misión, Visión, Propósito, Contacto) *@
@@ -952,12 +292,11 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="magazine-card icon-card h-100">
                         <div class="magazine-card-body d-flex flex-column align-items-center justify-content-start text-center">
-                            <i class="fas fa-bullseye fa-3x mb-3 text-primary"></i> @* Icono de Misión *@
-                            <h3 class="h5 fw-bold">Nuestra Misión</h3>
+                            <i class="fas fa-bullseye fa-3x mb-3"></i>
+                            <h3 class="h5 fw-normal" style="font-family: var(--font-heading);">Nuestra Misión</h3>
                             <p class="text-muted">
                                 Guiar a artistas a descubrir y expresar su identidad auténtica a través del arte, fusionando
-                                técnica, sensibilidad y consciencia. En YSA formamos creadores que no solo dominan la
-                                técnica, sino que entienden el arte como una vía de transformación personal y colectiva.
+                                técnica, sensibilidad y consciencia.
                             </p>
                         </div>
                     </div>
@@ -967,12 +306,11 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="magazine-card icon-card h-100">
                         <div class="magazine-card-body d-flex flex-column align-items-center justify-content-start text-center">
-                            <i class="fas fa-eye fa-3x mb-3 text-success"></i> @* Icono de Visión *@
-                            <h3 class="h5 fw-bold">Nuestra Visión</h3>
+                            <i class="fas fa-eye fa-3x mb-3"></i>
+                            <h3 class="h5 fw-normal" style="font-family: var(--font-heading);">Nuestra Visión</h3>
                             <p class="text-muted">
                                 Ser una academia referente en Latinoamérica por integrar el arte, la formación profesional y
-                                el crecimiento interior, impulsando una nueva generación de artistas conscientes, libres y
-                                conectados con su propósito creativo.
+                                el crecimiento interior.
                             </p>
                         </div>
                     </div>
@@ -982,12 +320,11 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="magazine-card icon-card h-100">
                         <div class="magazine-card-body d-flex flex-column align-items-center justify-content-start text-center">
-                            <i class="fas fa-compass fa-3x mb-3 text-info"></i> @* Icono de Propósito (Cambiado de 'fa-eye') *@
-                            <h3 class="h5 fw-bold">Nuestro Propósito</h3>
+                            <i class="fas fa-compass fa-3x mb-3"></i>
+                            <h3 class="h5 fw-normal" style="font-family: var(--font-heading);">Nuestro Propósito</h3>
                             <p class="text-muted">
                                 Despertar el poder creativo y consciente que habita en cada artista,
-                                guiándolo a expresar su verdad a través del arte como herramienta de
-                                transformación personal, emocional y profesional.
+                                guiándolo a expresar su verdad a través del arte.
                             </p>
                         </div>
                     </div>
@@ -997,9 +334,9 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="magazine-card icon-card h-100">
                         <div class="magazine-card-body d-flex flex-column align-items-center justify-content-center">
-                            <i class="fas fa-map-marker-alt fa-3x mb-3 text-danger"></i>
-                            <h3 class="h5 fw-bold">Ubicación y contacto</h3>
-                            <p class="text-muted text-center">Av. Principal #123, Ciudad Creativa, País Imaginario</p>
+                            <i class="fas fa-map-marker-alt fa-3x mb-3"></i>
+                            <h3 class="h5 fw-normal" style="font-family: var(--font-heading);">Ubicación y contacto</h3>
+                            <p class="text-muted text-center">Av. Principal #123, Ciudad Creativa</p>
                             <p class="text-muted">Email: contacto@yosoyarte.com</p>
                             <p class="mb-0 text-muted">Tel: +58 123 456 7890</p>
                         </div>
@@ -1010,42 +347,42 @@
             @* SECCIÓN DE VALORES Y OBJETIVOS (Debajo de las tarjetas) *@
             <div class="row g-5 mt-5 justify-content-center text-start">
 
-                @* Columna para Valores (ICONOS ACTUALIZADOS) *@
+                @* Columna para Valores *@
                 <div class="col-lg-5 col-md-6">
                     <h3 class="latest-grid-header text-center">Nuestros Valores</h3>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex align-items-start">
-                            <i class="fas fa-feather-alt me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Autenticidad *@
+                            <i class="fas fa-feather-alt me-3 mt-1"></i>
                             <div>
                                 <strong class="text-dark">Autenticidad:</strong> El arte nace desde la verdad interior.
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-start">
-                            <i class="fas fa-lightbulb me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Consciencia *@
+                            <i class="fas fa-lightbulb me-3 mt-1"></i>
                             <div>
                                 <strong class="text-dark">Consciencia:</strong> Cada trazo es un acto de presencia y expansión.
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-start">
-                            <i class="fas fa-redo-alt me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Transformación *@
+                            <i class="fas fa-redo-alt me-3 mt-1"></i>
                             <div>
                                 <strong class="text-dark">Transformación:</strong> El proceso creativo como camino de evolución.
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-start">
-                            <i class="fas fa-hand-holding-heart me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Libertad *@
+                            <i class="fas fa-hand-holding-heart me-3 mt-1"></i>
                             <div>
                                 <strong class="text-dark">Libertad:</strong> Aprender a crear sin miedo, sin juicio, sin comparación.
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-start">
-                            <i class="fas fa-users me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Comunidad *@
+                            <i class="fas fa-users me-3 mt-1"></i>
                             <div>
                                 <strong class="text-dark">Comunidad:</strong> Crecer en un espacio seguro, humano y artístico.
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-start">
-                            <i class="fas fa-trophy me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Excelencia *@
+                            <i class="fas fa-trophy me-3 mt-1"></i>
                             <div>
                                 <strong class="text-dark">Excelencia:</strong> Combinar profundidad emocional con técnica sólida.
                             </div>
@@ -1053,45 +390,45 @@
                     </ul>
                 </div>
 
-                @* Columna para Objetivos (ICONOS ACTUALIZADOS) *@
+                @* Columna para Objetivos *@
                 <div class="col-lg-5 col-md-6">
                     <h3 class="latest-grid-header text-center">Nuestros Objetivos</h3>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex align-items-start">
-                            <i class="fas fa-graduation-cap me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Formación Integral *@
+                            <i class="fas fa-graduation-cap me-3 mt-1"></i>
                             <div>
-                                <strong class="text-dark">Formación integral:</strong> Brindar programas educativos que desarrollen tanto las habilidades técnicas como la conexión emocional y conceptual con la obra.
+                                <strong class="text-dark">Formación integral:</strong> Brindar programas educativos que desarrollen tanto las habilidades técnicas como la conexión emocional.
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-start">
-                            <i class="fas fa-palette me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Identidad Artística *@
+                            <i class="fas fa-palette me-3 mt-1"></i>
                             <div>
-                                <strong class="text-dark">Identidad artística:</strong> Acompañar a cada estudiante a construir su sello personal, fortaleciendo su autenticidad y confianza creativa.
+                                <strong class="text-dark">Identidad artística:</strong> Acompañar a cada estudiante a construir su sello personal.
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-start">
-                            <i class="fas fa-handshake me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Comunidad Consciente *@
+                            <i class="fas fa-handshake me-3 mt-1"></i>
                             <div>
                                 <strong class="text-dark">Comunidad consciente:</strong> Crear un espacio donde el arte sea encuentro, apoyo y evolución compartida.
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-start">
-                            <i class="fas fa-microchip me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Innovación Educativa *@
+                            <i class="fas fa-microchip me-3 mt-1"></i>
                             <div>
-                                <strong class="text-dark">Innovación educativa:</strong> Incorporar metodologías actuales, recursos digitales y enfoques holísticos que eleven la experiencia de aprendizaje.
+                                <strong class="text-dark">Innovación educativa:</strong> Incorporar metodologías actuales, recursos digitales y enfoques holísticos.
                             </div>
                         </li>
                         <li class="list-group-item d-flex align-items-start">
-                            <i class="fas fa-chart-line me-3 mt-1" style="color: var(--color-brand-primary)"></i> @* Ícono para Proyección Profesional *@
+                            <i class="fas fa-chart-line me-3 mt-1"></i>
                             <div>
-                                <strong class="text-dark">Proyección profesional:</strong> Fomentar oportunidades para que los artistas emergentes exhiban, vendan y difundan su trabajo con propósito y coherencia.
+                                <strong class="text-dark">Proyección profesional:</strong> Fomentar oportunidades para que los artistas exhiban, vendan y difundan su trabajo.
                             </div>
                         </li>
                     </ul>
                 </div>
             </div>
 
-            @* SECCIÓN DE HISTORIA (Se mantiene como la tenías) *@
+            @* SECCIÓN DE HISTORIA *@
             <div class="mt-5 history-section">
                 <h3 class="latest-grid-header">Nuestra historia</h3>
                 <div class="row justify-content-center">
@@ -1111,8 +448,184 @@
 
 </div>
 
+<style>
+    /* =========================================== */
+    /* ESTILOS ESPECÍFICOS PARA LA NUEVA SECCIÓN HERO */
+    /* =========================================== */
+    .hero-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        margin-top: 1rem;
+    }
+
+    .text-brand-primary {
+        color: var(--color-brand-primary) !important;
+    }
+
+    .text-brand-success {
+        color: var(--color-brand-success) !important;
+    }
+
+    .rounded-lg {
+        border-radius: var(--border-radius-lg) !important;
+    }
+
+    .btn-primary {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        font-family: var(--font-accent);
+        font-weight: normal;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--color-brand-secondary);
+            border-color: var(--color-brand-secondary);
+        }
+
+    .btn-outline-primary {
+        color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        font-family: var(--font-accent);
+        font-weight: normal;
+    }
+
+        .btn-outline-primary:hover {
+            background-color: var(--color-brand-primary);
+            border-color: var(--color-brand-primary);
+            color: white;
+        }
+
+    .display-6 {
+        font-size: 2.5rem;
+        font-family: var(--font-heading);
+    }
+
+    /* =========================================== */
+    /* ESTILOS PARA EL NUEVO DISEÑO DE 2 COLUMNAS */
+    /* =========================================== */
+    .carousel-overlay {
+        z-index: 2;
+    }
+
+    .border-brand-primary {
+        border-color: var(--color-brand-primary) !important;
+    }
+
+    /* =========================================== */
+    /* AJUSTES RESPONSIVE PARA LA NUEVA SECCIÓN */
+    /* =========================================== */
+
+    /* Tablet */
+    @@media (max-width: 991.98px) {
+        .hero-section {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .display-4 {
+            font-size: 2.5rem;
+        }
+
+        .btn-lg {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+
+        .ps-lg-5 {
+            padding-left: 0 !important;
+        }
+        /* Carrusel en tablet */
+        #ultimosEventosCarousel .carousel-item,
+        #eventosDestacadosCarousel .carousel-item {
+            height: 350px;
+        }
+
+        .order-1 {
+            order: 1 !important;
+        }
+
+        .order-2 {
+            order: 2 !important;
+        }
+    }
+
+    /* Móvil pequeño */
+    @@media (max-width: 575.98px) {
+        .hero-section {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .display-4 {
+            font-size: 2rem;
+        }
+
+        .lead {
+            font-size: 1rem;
+        }
+
+        .btn-lg {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .d-flex.flex-wrap {
+            flex-direction: column;
+        }
+        /* Carrusel en móvil */
+        #ultimosEventosCarousel .carousel-item,
+        #eventosDestacadosCarousel .carousel-item {
+            height: 300px;
+        }
+
+        .carousel-indicators {
+            margin-bottom: 0.5rem;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 30px;
+            height: 30px;
+        }
+    }
+</style>
+
 @section Scripts {
     <script>
-        // Scripts opcionales aquí.
+        // Smooth scroll para el botón "Explorar Eventos"
+        document.querySelector('a[href="#ultimos-eventos"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetElement = document.querySelector('#ultimos-eventos');
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+            }
+        });
+
+        // Inicializar los carruseles con autoplay
+        document.addEventListener('DOMContentLoaded', function() {
+            // Carrusel de últimos eventos
+            const carouselUltimos = document.getElementById('ultimosEventosCarousel');
+            if (carouselUltimos) {
+                new bootstrap.Carousel(carouselUltimos, {
+                    interval: 5000,
+                    wrap: true,
+                    pause: 'hover'
+                });
+            }
+
+            // Carrusel de eventos destacados
+            const carouselDestacados = document.getElementById('eventosDestacadosCarousel');
+            if (carouselDestacados) {
+                new bootstrap.Carousel(carouselDestacados, {
+                    interval: 6000,
+                    wrap: true,
+                    pause: 'hover'
+                });
+            }
+        });
     </script>
 }

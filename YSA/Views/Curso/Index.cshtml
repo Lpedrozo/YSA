@@ -1,890 +1,563 @@
 ﻿@model YSA.Web.Models.ViewModels.CursosIndexViewModel
 @{
-    ViewData["Title"] = "Cursos disponibles";
+    ViewData["Title"] = "Cursos | Yo Soy Arte";
 }
 
-<style>
-    /* IMPORTACIÓN DE TIPOGRAFÍAS */
-    @* Nota: Para usar las tipografías Bogart y Hey August, debes descargarlas y alojarlas en tu proyecto *@
-    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
-    :root {
-        --color-primary-action: #ef8830; /* Naranja como color principal */
-        --color-secondary: #212529; /* Negro oscuro para títulos */
-        --color-accent: #6c757d; /* Gris para texto de soporte */
-        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
-        --color-card-bg: #ffffff;
-        --color-text-dark: #212529;
-        --color-text-light: #ffffff;
-        --color-border: #E8E8E8;
-        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
-        --color-shadow-light: rgba(0, 0, 0, 0.1);
-        --color-section-bg: #f3f3f3; /* Color de fondo para secciones */
-        /* NUEVOS COLORES DE MARCA */
-        --color-brand-primary: #ef8830; /* Naranja - color principal */
-        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
-        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
-        --color-brand-success: #6db53e; /* Verde - color de éxito */
-        --color-brand-dark: #08080a; /* Negro - texto principal */
-        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
-        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
-        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
-        --font-accent: 'Poppins', sans-serif;
-        /* ALTURAS DE LÍNEA */
-        --line-height-tight: 1.1;
-        --line-height-normal: 1.4;
-        --line-height-loose: 1.6;
-        /* BORDES REDONDEADOS */
-        --border-radius-sm: 8px;
-        --border-radius-md: 12px;
-        --border-radius-lg: 16px;
-        --border-radius-xl: 20px;
-    }
+<div class="container-sin-gutter cursos-index-container">
+    @* =========================================== *@
+    @* HERO SECTION CON BÚSQUEDA, FILTROS Y CATEGORÍAS *@
+    @* =========================================== *@
+    <div class="cursos-hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/diseño/HeaderAcademia.jpg');">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="hero-content text-center text-white mb-5">
+                        <h1 class="display-4 fw-bold mb-4" style="font-family: var(--font-heading);">
+                            Explora nuestra <span class="text-brand-primary">colección de cursos</span>
+                        </h1>
+                        <p class="lead mb-5" style="font-size: 1.25rem;">
+                            Descubre más de @(Model.CursosDestacados?.Count() + Model.CursosRecomendados?.Count() ?? 0) cursos diseñados para potenciar tu creatividad
+                        </p>
+                    </div>
 
-    body {
-        font-family: var(--font-body);
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-        line-height: var(--line-height-loose);
-    }
-
-    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
-    .section-container {
-        background: var(--color-section-bg);
-        padding: 3rem 2rem;
-        margin: 2rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
-    .section-title {
-        font-family: var(--font-heading);
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        padding-bottom: 0.5rem;
-        margin-bottom: 2.5rem;
-        display: inline-block;
-        border-bottom: 4px solid var(--color-brand-primary);
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        line-height: var(--line-height-tight);
-    }
-
-    .latest-grid-header {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid var(--color-brand-primary);
-        padding-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-    }
-
-    /* ESTILO DE TARJETA TIPO REJILLA DE REVISTA MEJORADO */
-    .magazine-card {
-        border-radius: var(--border-radius-md);
-        border: 1px solid var(--color-border);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        background-color: var(--color-card-bg);
-        height: 100%;
-        text-decoration: none;
-        color: inherit;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-    }
-
-        .magazine-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            border-color: var(--color-brand-primary);
-        }
-
-    .magazine-card-img-container {
-        overflow: hidden;
-        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
-        flex-shrink: 0;
-    }
-
-    .magazine-card-img {
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-
-    .magazine-card:hover .magazine-card-img {
-        transform: scale(1.05);
-    }
-
-    .magazine-card-body {
-        padding: 1.5rem;
-        position: relative;
-        text-align: left;
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        min-height: 0; /* Permite que el contenido se comprima */
-    }
-
-    .card-category {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--color-brand-primary);
-        text-transform: uppercase;
-        margin-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-        letter-spacing: 0.5px;
-        flex-shrink: 0;
-    }
-
-    .magazine-card-body h5 {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        font-size: 1.5rem;
-        line-height: var(--line-height-normal);
-        color: var(--color-secondary);
-        margin-bottom: 0.75rem;
-        flex-shrink: 0;
-    }
-
-    .magazine-card-body .card-text {
-        font-family: var(--font-body);
-        font-size: 0.95rem;
-        color: var(--color-accent);
-        line-height: var(--line-height-normal);
-        margin-bottom: 1rem;
-        flex-grow: 1;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-    }
-
-    .card-price {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--color-brand-primary);
-        margin: 0.5rem 0;
-        flex-shrink: 0;
-    }
-
-    .card-categories {
-        margin-bottom: 1rem;
-        flex-shrink: 0;
-    }
-
-        .card-categories .badge {
-            font-family: var(--font-accent);
-            font-size: 0.75rem;
-            font-weight: 600;
-            background-color: var(--color-section-bg) !important;
-            color: var(--color-brand-primary) !important;
-            border-radius: var(--border-radius-sm);
-            padding: 0.4rem 0.8rem;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-    .card-actions {
-        margin-top: auto;
-        flex-shrink: 0;
-    }
-
-    /* BOTONES CON COLORES DE MARCA */
-    .btn-primary {
-        background-color: var(--color-brand-primary) !important;
-        border-color: var(--color-brand-primary) !important;
-        color: var(--color-text-light) !important;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 1.5rem;
-        transition: all 0.3s ease;
-    }
-
-        .btn-primary:hover {
-            background-color: var(--color-brand-secondary) !important;
-            border-color: var(--color-brand-secondary) !important;
-            transform: translateY(-2px);
-        }
-
-    /* FORMULARIOS Y BÚSQUEDA */
-    .form-control {
-        border-radius: var(--border-radius-sm);
-        border: 1px solid var(--color-border);
-        font-family: var(--font-body);
-        padding: 0.75rem 1rem;
-    }
-
-        .form-control:focus {
-            border-color: var(--color-brand-primary);
-            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
-        }
-
-    /* FILTROS MEJORADOS */
-    .filtro-menu {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin: 2rem 0;
-        gap: 0.75rem;
-    }
-
-    .filtro-item a {
-        padding: 0.75rem 1.5rem;
-        text-decoration: none;
-        color: var(--color-secondary);
-        background-color: var(--color-section-bg);
-        border-radius: var(--border-radius-sm);
-        transition: all 0.3s ease;
-        border: 1px solid var(--color-border);
-        font-family: var(--font-accent);
-        font-weight: 500;
-        display: block;
-    }
-
-        .filtro-item a.active,
-        .filtro-item a:hover {
-            background-color: var(--color-brand-primary);
-            color: var(--color-text-light);
-            border-color: var(--color-brand-primary);
-            transform: translateY(-2px);
-        }
-
-    /* PAGINACIÓN */
-    .pagination .page-item .page-link {
-        color: var(--color-secondary);
-        border: 1px solid var(--color-border);
-        background-color: var(--color-background);
-        transition: all 0.2s;
-        border-radius: var(--border-radius-sm);
-        font-family: var(--font-accent);
-        padding: 0.75rem 1rem;
-    }
-
-    .pagination .page-item.active .page-link {
-        background-color: var(--color-brand-primary);
-        border-color: var(--color-brand-primary);
-        color: var(--color-text-light);
-    }
-
-    .pagination .page-item .page-link:hover {
-        background-color: var(--color-section-bg);
-        border-color: var(--color-brand-primary);
-        color: var(--color-brand-primary);
-    }
-
-    /* CARRUSEL DE CURSOS DESTACADOS */
-    .carousel-item-custom {
-        position: relative;
-        height: 500px;
-        background-size: cover;
-        background-position: center;
-        color: var(--color-text-light);
-        border-radius: var(--border-radius-lg);
-        overflow: hidden;
-    }
-
-    .carousel-overlay {
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 100%);
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        padding: 3rem;
-    }
-
-    .carousel-content h2 {
-        font-family: var(--font-heading);
-        font-size: 3.5rem;
-        font-weight: 900;
-        line-height: var(--line-height-tight);
-        margin-bottom: 1rem;
-    }
-
-    .carousel-content .lead {
-        font-family: var(--font-body);
-        font-size: 1.25rem;
-        line-height: var(--line-height-normal);
-        margin-bottom: 2rem;
-        opacity: 0.9;
-    }
-
-    /* CARRUSEL DE RECOMENDADOS */
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 5%;
-        opacity: 0.8;
-    }
-
-    .carousel-control-prev-icon,
-    .carousel-control-next-icon {
-        background-color: var(--color-brand-primary);
-        border-radius: 50%;
-        padding: 1.5rem;
-    }
-
-    /* ALERTAS */
-    .alert-info {
-        background-color: rgba(109, 181, 62, 0.1);
-        border-color: var(--color-brand-success);
-        color: var(--color-text-dark);
-        border-radius: var(--border-radius-md);
-        padding: 1.5rem;
-        font-family: var(--font-body);
-    }
-
-    .alert-warning {
-        background-color: rgba(242, 229, 20, 0.1);
-        border-color: var(--color-brand-accent);
-        color: var(--color-text-dark);
-        border-radius: var(--border-radius-md);
-        padding: 1.5rem;
-        font-family: var(--font-body);
-    }
-
-    /* SEPARADORES MEJORADOS */
-    .section-divider {
-        border: none;
-        height: 1px;
-        background: linear-gradient(to right, transparent, var(--color-border), transparent);
-        margin: 3rem 0;
-    }
-
-    /* POPOVERS MEJORADOS */
-    .popover {
-        border-radius: var(--border-radius-md);
-        border: 1px solid var(--color-border);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .popover-header {
-        background-color: var(--color-section-bg);
-        border-bottom: 1px solid var(--color-border);
-        font-family: var(--font-heading);
-        font-weight: 700;
-        color: var(--color-secondary);
-    }
-
-    .popover-body {
-        font-family: var(--font-body);
-        color: var(--color-text-dark);
-    }
-
-    /* ADAPTACIONES RESPONSIVE */
-
-    /* Tablet (max-width: 991.98px) */
-    @@media (max-width: 991.98px) {
-        .section-container {
-            padding: 2rem 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .section-title {
-            font-size: 2rem;
-        }
-
-        .latest-grid-header {
-            font-size: 1.5rem;
-        }
-
-        .carousel-item-custom {
-            height: 400px;
-        }
-
-        .carousel-content h2 {
-            font-size: 2.5rem;
-        }
-
-        .carousel-content .lead {
-            font-size: 1.1rem;
-        }
-
-        .filtro-menu {
-            gap: 0.5rem;
-        }
-
-        .filtro-item a {
-            padding: 0.6rem 1.2rem;
-            font-size: 0.9rem;
-        }
-    }
-
-    /* Mobile Pequeño (max-width: 575.98px) */
-    @@media (max-width: 575.98px) {
-        .section-container {
-            padding: 1.5rem 1rem;
-            margin: 1rem 0;
-            border-radius: var(--border-radius-md);
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-        }
-
-        .latest-grid-header {
-            font-size: 1.3rem;
-        }
-
-        .carousel-item-custom {
-            height: 300px;
-        }
-
-        .carousel-overlay {
-            padding: 1.5rem;
-        }
-
-        .carousel-content h2 {
-            font-size: 2rem;
-        }
-
-        .carousel-content .lead {
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .magazine-card-img {
-            height: 200px;
-        }
-
-        .card-price {
-            font-size: 1.5rem;
-        }
-
-        .filtro-menu {
-            justify-content: flex-start;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
-        }
-
-        .filtro-item {
-            flex-shrink: 0;
-        }
-    }
-</style>
-
-@if (Model == null || (!Model.CursosDestacados.Any() && !Model.CursosRecomendados.Any()))
-{
-    <div class="section-container">
-        <div class="alert alert-info text-center" role="alert">
-            No hay cursos disponibles en este momento.
-        </div>
-    </div>
-}
-else
-{
-    @* === CARRUSEL DE CURSOS DESTACADOS === *@
-    @if (Model.CursosDestacados.Any())
-    {
-        <div class="section-container">
-            <div id="cursoCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    @for (int i = 0; i < Model.CursosDestacados.Count; i++)
-                    {
-                        var curso = Model.CursosDestacados[i];
-                        <div class="carousel-item @(i == 0 ? "active" : "") carousel-item-custom" style="background-image: url('@curso.UrlImagen');">
-                            <div class="carousel-overlay">
-                                <div class="container">
-                                    <div class="carousel-content">
-                                        <h2>@curso.Titulo</h2>
-                                        <p class="lead">@Html.Raw(curso.DescripcionCorta)</p>
-                                        <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary btn-lg">Ver Curso</a>
-                                    </div>
-                                </div>
+                    @* BÚSQUEDA Y FILTROS *@
+                    <div class="search-section bg-white p-4 rounded-lg shadow-lg mb-5">
+                        @* Formulario de búsqueda *@
+                        <div class="search-form mb-4">
+                            <div class="input-group input-group-lg shadow-sm">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text"
+                                       class="form-control border-start-0 py-3"
+                                       placeholder="Buscar cursos por título, instructor o palabra clave..."
+                                       id="searchInput">
+                                <button class="btn btn-primary px-4" type="button" id="searchButton">
+                                    <i class="fas fa-search me-2"></i>Buscar
+                                </button>
                             </div>
                         </div>
-                    }
+
+                        @* Filtros rápidos *@
+                        <div class="filters-section">
+                            <div class="d-flex flex-wrap justify-content-center align-items-center gap-3">
+                                <span class="text-muted fw-medium">Filtrar por:</span>
+                                <select class="form-select form-select-sm w-auto border-0 bg-light" id="nivelFilter">
+                                    <option value="">Todos los niveles</option>
+                                    <option value="0">Principiante</option>
+                                    <option value="1">Intermedio</option>
+                                    <option value="2">Avanzado</option>
+                                </select>
+                                <select class="form-select form-select-sm w-auto border-0 bg-light" id="precioFilter">
+                                    <option value="">Cualquier precio</option>
+                                    <option value="gratis">Gratis</option>
+                                    <option value="0-50">Hasta $50</option>
+                                    <option value="50-100">$50 - $100</option>
+                                    <option value="100+">Más de $100</option>
+                                </select>
+                                <select class="form-select form-select-sm w-auto border-0 bg-light" id="ordenFilter">
+                                    <option value="recientes">Más recientes</option>
+                                    <option value="destacados">Destacados</option>
+                                    <option value="precio-asc">Precio: menor a mayor</option>
+                                    <option value="precio-desc">Precio: mayor a menor</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    @* CATEGORÍAS *@
+                    <div class="categories-section bg-white p-4 rounded-lg shadow-lg">
+                        <div class="row align-items-center mb-4">
+                            <div class="col-md-8">
+                                <h2 class="h4 mb-0" style="font-family: var(--font-heading);">
+                                    Explora por <span class="text-brand-primary">categorías</span>
+                                </h2>
+                            </div>
+                            <div class="col-md-4 text-md-end">
+                                <span class="text-muted small">@(Model.CategoriasDisponibles?.Count() ?? 0) categorías disponibles</span>
+                            </div>
+                        </div>
+
+                        <div class="categories-grid">
+                            @* Categoría "Todos" *@
+                            <a href="#" class="category-card text-decoration-none active" data-categoria="">
+                                <div class="category-icon mb-3">
+                                    <i class="fas fa-globe fa-2x"></i>
+                                </div>
+                                <h3 class="h6 mb-2">Todos</h3>
+                                <span class="badge bg-light text-dark small">Ver todos</span>
+                            </a>
+
+                            @* Categorías disponibles *@
+                            @if (Model.CategoriasDisponibles != null && Model.CategoriasDisponibles.Any())
+                            {
+                                foreach (var categoria in Model.CategoriasDisponibles)
+                                {
+                                    <a href="#" class="category-card text-decoration-none" data-categoria="@categoria">
+                                        <div class="category-icon mb-3">
+                                            <i class="fas fa-palette fa-2x"></i>
+                                        </div>
+                                        <h3 class="h6 mb-2">@categoria</h3>
+                                        <span class="badge bg-light text-dark small">Ver cursos</span>
+                                    </a>
+                                }
+                            }
+                        </div>
+                    </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#cursoCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#cursoCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Siguiente</span>
-                </button>
             </div>
         </div>
-    }
+    </div>
 
-    <hr class="section-divider" />
+    @* =========================================== *@
+    @* CONTENIDO PRINCIPAL DE CURSOS *@
+    @* =========================================== *@
+    <div class="container py-5">
+        @* SECCIÓN DE CURSOS DESTACADOS *@
+        @if (Model.CursosDestacados != null && Model.CursosDestacados.Any())
+        {
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="h3" style="font-family: var(--font-heading);">
+                            <span class="text-brand-primary">Cursos destacados</span>
+                            <small class="text-muted fs-6 ms-2">(@Model.CursosDestacados.Count() recomendados)</small>
+                        </h2>
+                        <div class="stats-badge bg-light text-dark px-3 py-2 rounded-pill">
+                            <i class="fas fa-star text-warning me-1"></i>
+                            <span class="small">Los más populares</span>
+                        </div>
+                    </div>
 
-    @* === CARRUSEL DE CURSOS RECOMENDADOS === *@
-    @if (Model.CursosRecomendados.Any())
-    {
-        <div class="section-container">
-            <div class="px-3">
-                <span class="latest-grid-header">CURSOS RECOMENDADOS</span>
-            </div>
-
-            <div id="recomendadosCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    @{
-                        int itemsPorGiro = 3;
-                        int totalCursosRecomendados = Model.CursosRecomendados.Count;
-                        int totalGiro = (int)Math.Ceiling(totalCursosRecomendados / (double)itemsPorGiro);
-                    }
-                    @for (int i = 0; i < totalGiro; i++)
-                    {
-                        <div class="carousel-item @(i == 0 ? "active" : "")">
-                            <div class="row g-4">
-                                @foreach (var curso in Model.CursosRecomendados.Skip(i * itemsPorGiro).Take(itemsPorGiro))
-                                {
-                                    <div class="col-lg-4 col-md-6 col-12">
-                                        <div class="magazine-card h-100"
-                                             data-bs-toggle="popover"
-                                             data-bs-trigger="hover focus"
-                                             data-bs-placement="right"
-                                             data-bs-html="true">
-
-                                            <div style="display: none;" class="popover-course-data">
-                                                <span data-course-id="@curso.Id"></span>
-                                                <span data-course-title="@curso.Titulo"></span>
-                                                <span data-course-description="@curso.DescripcionCorta"></span>
-                                                <span data-course-image="@curso.UrlImagen"></span>
-                                                <span data-course-price="@curso.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))"></span>
+                    <div class="featured-courses-slider">
+                        <div class="row g-4">
+                            @foreach (var curso in Model.CursosDestacados.Take(4))
+                            {
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="course-card h-100">
+                                        <div class="course-card-header position-relative">
+                                            <img src="@(string.IsNullOrEmpty(curso.UrlImagen) ? "/diseño/default-course.jpg" : curso.UrlImagen)"
+                                                 class="course-image"
+                                                 alt="@curso.Titulo">
+                                            @if (curso.Precio == 0)
+                                            {
+                                                <span class="badge-free">GRATIS</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge-price">@curso.Precio.ToString("C")</span>
+                                            }
+                                            <div class="course-badge position-absolute top-0 start-0 m-3">
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="fas fa-star me-1"></i>Destacado
+                                                </span>
                                             </div>
-
-                                            <div class="magazine-card-img-container">
-                                                <img src="@(string.IsNullOrEmpty(curso.UrlImagen) ? "https://via.placeholder.com/400x200.png?text=Sin+Imagen" : curso.UrlImagen)"
-                                                     class="magazine-card-img"
-                                                     alt="Imagen del curso: @curso.Titulo">
-                                            </div>
-                                            <div class="magazine-card-body">
-                                                <span class="card-category">CURSO</span>
-                                                <h5>@curso.Titulo</h5>
-                                                <p class="card-text">@Html.Raw(curso.DescripcionCorta)</p>
-
-                                                @if (curso.ListaCategorias != null && curso.ListaCategorias.Any())
+                                        </div>
+                                        <div class="course-card-body">
+                                            <div class="course-categories mb-2">
+                                                @if (curso.ListaCategorias != null)
                                                 {
-                                                    <div class="card-categories">
-                                                        @foreach (var categoria in curso.ListaCategorias)
-                                                        {
-                                                            <span class="badge">@categoria</span>
-                                                        }
-                                                    </div>
+                                                    @foreach (var cat in curso.ListaCategorias.Take(2))
+                                                    {
+                                                        <span class="badge bg-light text-dark small me-1">@cat</span>
+                                                    }
                                                 }
-
-                                                <div class="card-actions">
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <div class="card-price">@curso.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE"))</div>
-                                                        <a asp-action="Detalles" asp-route-id="@curso.Id" class="btn btn-primary">Ver Detalles</a>
-                                                    </div>
+                                            </div>
+                                            <h3 class="h5 course-title">@curso.Titulo</h3>
+                                            <p class="course-description small text-muted mb-3">@curso.DescripcionCorta</p>
+                                            <div class="course-meta d-flex justify-content-between align-items-center">
+                                                <span class="badge-nivel @curso.Nivel.ToString().ToLower()">
+                                                    @curso.Nivel.ToString()
+                                                </span>
+                                                <div class="course-rating">
+                                                    <i class="fas fa-star text-warning small"></i>
+                                                    <span class="small text-muted">4.5</span>
                                                 </div>
                                             </div>
+                                            <div class="course-actions mt-3">
+                                                <a href="@Url.Action("Detalle", "Curso", new { id = curso.Id })"
+                                                   class="btn btn-primary btn-sm w-100">
+                                                    <i class="fas fa-eye me-1"></i> Ver detalles
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
-                                }
-                            </div>
+                                </div>
+                            }
                         </div>
-                    }
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#recomendadosCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#recomendadosCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Siguiente</span>
-                </button>
-            </div>
-        </div>
-    }
-
-    <hr class="section-divider" />
-
-    @* === TODOS LOS CURSOS CON FILTROS === *@
-    <div class="section-container  mb-5 pb-5">
-        <div class="px-3">
-            <span class="latest-grid-header">EXPLORA TODOS LOS CURSOS</span>
-        </div>
-
-        @* BÚSQUEDA *@
-        <div class="row justify-content-center mb-4">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <input type="text" class="form-control" id="searchStringInput" placeholder="Buscar por título o descripción..." />
-                    <button class="btn btn-primary" type="button" id="searchButton">
-                        <i class="fas fa-search me-2"></i>Buscar
-                    </button>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
 
-        @* FILTROS *@
-        <div class="filtro-menu">
-            <div class="filtro-item">
-                <a href="#" class="filtro-btn active" data-filtro-categoria="">Todas las Categorías</a>
-            </div>
-            @foreach (var categoria in Model.CategoriasDisponibles)
-            {
-                <div class="filtro-item">
-                    <a href="#" class="filtro-btn" data-filtro-categoria="@categoria">@categoria</a>
-                </div>
-            }
-            <div class="filtro-item">
-                <a href="#" class="filtro-btn" data-filtro-nivel="">Todos los Niveles</a>
-            </div>
-            @foreach (var nivel in (IEnumerable<YSA.Core.Enums.NivelDificultad>)Enum.GetValues(typeof(YSA.Core.Enums.NivelDificultad)))
-            {
-                <div class="filtro-item">
-                    <a href="#" class="filtro-btn" data-filtro-nivel="@((int)nivel)">@nivel.ToString()</a>
-                </div>
-            }
-        </div>
+        @* SECCIÓN DE TODOS LOS CURSOS *@
+        <div class="row">
+            <div class="col-12">
+                <div class="all-courses-section pb-5 mb-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 class="h3" style="font-family: var(--font-heading);">
+                                <span class="text-brand-primary">Todos los cursos</span>
+                                <small class="text-muted fs-6 ms-2" id="totalCursos"></small>
+                            </h2>
+                            <p class="text-muted small mb-0" id="filterStatus">
+                                Mostrando todos los cursos disponibles
+                            </p>
+                        </div>
+                        <div class="loading-spinner small d-none" id="loadingSpinner">
+                            <i class="fas fa-spinner fa-spin"></i> Cargando...
+                        </div>
+                    </div>
 
-        @* CONTENEDOR DE CURSOS (CARGADO VÍA JSON) *@
-        <div id="cursos-list-container">
-            @* Los cursos se cargarán aquí dinámicamente *@
+                    @* Contenedor para cursos cargados por AJAX *@
+                    <div id="cursosContainer" class="row g-4">
+                        @* Los cursos se cargarán aquí dinámicamente *@
+                    </div>
+
+                    @* Paginación *@
+                    <nav aria-label="Paginación de cursos" class="mt-5">
+                        <ul class="pagination justify-content-center" id="paginationContainer">
+                            @* La paginación se generará dinámicamente *@
+                        </ul>
+                    </nav>
+                </div>
+            </div>
         </div>
     </div>
-}
+</div>
+
+@* Overlay de carga *@
+<div class="loading-overlay">
+    <div class="loading-spinner"></div>
+</div>
 
 @section Scripts {
-    @{
-        var pagoRegistrado = TempData["PagoRegistrado"] as bool?;
-    }
+    <script>
+        // Variables globales
+        let currentPage = 1;
+        let totalPages = 1;
+        let isLoading = false;
+        let currentCategory = '';
+        let currentSearch = '';
+        let currentNivel = '';
+        let currentPrecio = '';
+        let currentOrden = 'recientes';
 
-    @if (pagoRegistrado.HasValue && pagoRegistrado.Value)
-    {
-        <script>
-            $(document).ready(function() {
-                Swal.fire({
-                    title: '¡Pago Registrado!',
-                    html: 'Su comprobante ha sido subido con éxito.<br>Su pedido está en validación por parte de nuestro equipo. Le notificaremos cuando tenga acceso a sus cursos.',
-                    icon: 'success',
-                    confirmButtonText: 'Entendido',
-                    customClass: {
-                        confirmButton: 'btn-primary'
-                    }
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar cursos iniciales
+            loadCursos(1);
+
+            // Configurar eventos
+            setupEventListeners();
+
+            // Actualizar contador inicial
+            updateTotalCount();
+            updateFilterStatus();
+        });
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Búsqueda
+            document.getElementById('searchButton').addEventListener('click', function() {
+                currentSearch = document.getElementById('searchInput').value;
+                loadCursos(1);
+            });
+
+            document.getElementById('searchInput').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    currentSearch = this.value;
+                    loadCursos(1);
+                }
+            });
+
+            // Filtros
+            document.getElementById('nivelFilter').addEventListener('change', function() {
+                currentNivel = this.value;
+                loadCursos(1);
+            });
+
+            document.getElementById('precioFilter').addEventListener('change', function() {
+                currentPrecio = this.value;
+                loadCursos(1);
+            });
+
+            document.getElementById('ordenFilter').addEventListener('change', function() {
+                currentOrden = this.value;
+                loadCursos(1);
+            });
+
+            // Categorías
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Actualizar categoría activa
+                    document.querySelectorAll('.category-card').forEach(c => {
+                        c.classList.remove('active');
+                    });
+                    this.classList.add('active');
+
+                    // Cambiar categoría
+                    currentCategory = this.getAttribute('data-categoria');
+                    loadCursos(1);
                 });
             });
-        </script>
-    }
+        }
 
-    <script>
-        // Lógica de carga asíncrona de cursos desde JSON
-        async function cargarCursos(page, categoria, nivel, searchString) {
-            const container = document.getElementById('cursos-list-container');
+        // Cargar cursos con AJAX
+        async function loadCursos(page = 1) {
+            if (isLoading) return;
 
-            // Muestra un indicador de carga
-            container.innerHTML = `<div class="text-center mt-5 mb-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>`;
-
-            const url = `@Url.Action("ObtenerCursosJson", "Curso")?page=${page}&categoria=${categoria}&nivel=${nivel}&searchString=${searchString}`;
+            isLoading = true;
+            showLoading();
 
             try {
-                const response = await fetch(url);
-                const data = await response.json();
+                // Construir parámetros
+                const params = new URLSearchParams();
+                if (currentCategory) params.append('categoria', currentCategory);
+                if (currentSearch) params.append('searchString', currentSearch);
+                if (currentNivel) params.append('nivel', currentNivel);
+                if (currentPrecio) params.append('precio', currentPrecio);
+                if (currentOrden) params.append('orden', currentOrden);
+                params.append('page', page);
 
-                let html = '';
-                if (data.cursos.length === 0) {
-                    html = `<div class="alert alert-warning text-center" role="alert">No se encontraron cursos con los filtros aplicados.</div>`;
-                } else {
-                    // CORRECCIÓN: Usar clases responsivas de Bootstrap como en la vista anterior
-                    html += `<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">`;
-                    data.cursos.forEach(curso => {
-                        html += `
-                            <div class="col">
-                                <div class="magazine-card h-100"
-                                    data-bs-toggle="popover"
-                                    data-bs-trigger="hover focus"
-                                    data-bs-placement="right"
-                                    data-bs-html="true">
+                // Hacer la solicitud
+                const response = await fetch(`@Url.Action("ObtenerCursosJson", "Curso")?${params}`);
 
-                                    <div style="display: none;" class="popover-course-data">
-                                        <span data-course-id="${curso.id}"></span>
-                                        <span data-course-title="${curso.titulo}"></span>
-                                        <span data-course-description="${curso.descripcionCorta}"></span>
-                                        <span data-course-image="${curso.urlImagen}"></span>
-                                        <span data-course-price="${curso.precio}"></span>
-                                    </div>
-
-                                    <div class="magazine-card-img-container">
-                                        <img src="${curso.urlImagen || 'https://via.placeholder.com/400x200.png?text=Sin+Imagen'}" class="magazine-card-img" alt="Imagen del curso: ${curso.titulo}">
-                                    </div>
-                                    <div class="magazine-card-body">
-                                        <span class="card-category">CURSO</span>
-                                        <h5>${curso.titulo}</h5>
-                                        <p class="card-text">${curso.descripcionCorta}</p>
-
-                                        ${curso.categorias.length > 0 ? `
-                                            <div class="card-categories">
-                                                ${curso.categorias.map(cat => `<span class="badge">${cat}</span>`).join('')}
-                                            </div>
-                                        ` : ''}
-
-                                        <div class="card-actions">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div class="card-price">${curso.precio}</div>
-                                                <a href="/Curso/Detalles?id=${curso.id}" class="btn btn-primary">Ver Detalles</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    html += `</div>`;
-
-                    // Paginación
-                    if (data.totalPaginas > 1) {
-                        html += `<nav aria-label="Paginación de cursos" class="mt-5 pb-5">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item ${data.paginaActual <= 1 ? 'disabled' : ''}">
-                                    <a href="#" class="page-link" data-page="${data.paginaActual - 1}">Anterior</a>
-                                </li>`;
-                        for (let i = 1; i <= data.totalPaginas; i++) {
-                            html += `<li class="page-item ${i === data.paginaActual ? 'active' : ''}">
-                                <a href="#" class="page-link" data-page="${i}">${i}</a>
-                            </li>`;
-                        }
-                        html += `<li class="page-item ${data.paginaActual >= data.totalPaginas ? 'disabled' : ''}">
-                            <a href="#" class="page-link" data-page="${data.paginaActual + 1}">Siguiente</a>
-                        </li>
-                        </ul>
-                    </nav>`;
-                    }
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
                 }
 
-                container.innerHTML = html;
+                const data = await response.json();
 
-                // Re-inicializar popovers
-                var popoverTriggerList = [].slice.call(container.querySelectorAll('[data-bs-toggle="popover"]'))
-                popoverTriggerList.map(function (popoverTriggerEl) {
-                    const popover = new bootstrap.Popover(popoverTriggerEl, {
-                        content: function () {
-                            const dataElement = this.querySelector('.popover-course-data');
-                            const cursoId = dataElement.querySelector('[data-course-id]').getAttribute('data-course-id');
-                            const titulo = dataElement.querySelector('[data-course-title]').getAttribute('data-course-title');
-                            const descripcion = dataElement.querySelector('[data-course-description]').getAttribute('data-course-description');
-                            const imagenUrl = dataElement.querySelector('[data-course-image]').getAttribute('data-course-image');
+                // Renderizar cursos
+                renderCursos(data.cursos);
 
-                            return `
-                                <div class="popover-content">
-                                    <div class="d-flex mb-3 align-items-center">
-                                        <img src="${imagenUrl || 'https://via.placeholder.com/80x80.png?text=Sin+Imagen'}" class="me-3 rounded" style="width: 80px; height: 80px; object-fit: cover;" alt="Imagen del curso">
-                                        <div>
-                                            <h6 class="popover-title mb-0">${titulo}</h6>
-                                        </div>
-                                    </div>
-                                    <p class="text-muted small">${descripcion}</p>
-                                    <div class="d-grid gap-2">
-                                        <a href="/Curso/Detalles?id=${cursoId}" class="btn btn-primary btn-sm">Ver Detalles</a>
-                                    </div>
-                                </div>
-                            `;
-                        },
-                        html: true,
-                        sanitize: false
-                    });
-                    return popover;
-                });
+                // Actualizar paginación
+                currentPage = page;
+                totalPages = data.totalPaginas;
+                renderPagination();
+
+                // Actualizar URL
+                updateUrl(params);
+
+                // Actualizar contadores
+                updateTotalCount(data.cursos.length, data.totalCursos);
+                updateFilterStatus();
 
             } catch (error) {
-                console.error('Error al cargar los cursos:', error);
-                container.innerHTML = `<div class="alert alert-danger text-center mt-5" role="alert">Error al cargar los cursos. Por favor, inténtalo de nuevo.</div>`;
+                console.error('Error al cargar cursos:', error);
+                showError('Error al cargar los cursos. Por favor, intente nuevamente.');
+            } finally {
+                isLoading = false;
+                hideLoading();
             }
         }
 
-        // CORRECCIÓN: Mejorar la lógica de filtros como en la vista anterior
-        document.getElementById('searchButton').addEventListener('click', function() {
-            const searchString = document.getElementById('searchStringInput').value;
-            const categoriaActual = document.querySelector('.filtro-btn.active[data-filtro-categoria]')?.dataset.filtroCategoria || '';
-            const nivelActual = document.querySelector('.filtro-btn.active[data-filtro-nivel]')?.dataset.filtroNivel || '';
-            cargarCursos(1, categoriaActual, nivelActual, searchString);
-        });
+        // Renderizar cursos
+        function renderCursos(cursos) {
+            const container = document.getElementById('cursosContainer');
 
-        // CORRECCIÓN: Mejor manejo de eventos de filtros
-        document.querySelector('.filtro-menu').addEventListener('click', function(e) {
-            if (e.target.classList.contains('filtro-btn')) {
-                e.preventDefault();
-
-                const searchString = document.getElementById('searchStringInput').value;
-                const categoria = e.target.dataset.filtroCategoria !== undefined ? e.target.dataset.filtroCategoria : null;
-                const nivel = e.target.dataset.filtroNivel !== undefined ? e.target.dataset.filtroNivel : null;
-
-                // Manejar activación de filtros como en la vista anterior
-                if (categoria !== null) {
-                    document.querySelectorAll('.filtro-btn[data-filtro-categoria]').forEach(btn => btn.classList.remove('active'));
-                }
-                if (nivel !== null) {
-                    document.querySelectorAll('.filtro-btn[data-filtro-nivel]').forEach(btn => btn.classList.remove('active'));
-                }
-
-                e.target.classList.add('active');
-
-                const categoriaFinal = document.querySelector('.filtro-btn.active[data-filtro-categoria]')?.dataset.filtroCategoria || '';
-                const nivelFinal = document.querySelector('.filtro-btn.active[data-filtro-nivel]')?.dataset.filtroNivel || '';
-
-                cargarCursos(1, categoriaFinal, nivelFinal, searchString);
+            if (!cursos || cursos.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-book-open fa-4x text-muted mb-4"></i>
+                        <h4 class="mb-3">No se encontraron cursos</h4>
+                        <p class="text-muted mb-0">Intenta con otros criterios de búsqueda.</p>
+                    </div>
+                `;
+                return;
             }
-        });
 
-        // CORRECCIÓN: Mejor manejo de paginación
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('page-link')) {
-                e.preventDefault();
-                const page = e.target.dataset.page;
-                const categoriaActual = document.querySelector('.filtro-btn.active[data-filtro-categoria]')?.dataset.filtroCategoria || '';
-                const nivelActual = document.querySelector('.filtro-btn.active[data-filtro-nivel]')?.dataset.filtroNivel || '';
-                const searchString = document.getElementById('searchStringInput').value;
-                cargarCursos(page, categoriaActual, nivelActual, searchString);
-            }
-        });
-
-        // Cargar cursos al iniciar
-        document.addEventListener('DOMContentLoaded', () => {
-            cargarCursos(1, '', '', '');
-        });
-
-        // CORRECCIÓN: Inicializar popovers de los cursos recomendados como en la vista anterior
-        document.querySelectorAll('[data-bs-toggle="popover"]').forEach(popoverEl => {
-            const popoverInstance = new bootstrap.Popover(popoverEl, {
-                content: function () {
-                    const dataElement = this.querySelector('.popover-course-data');
-                    const cursoId = dataElement.querySelector('[data-course-id]').getAttribute('data-course-id');
-                    const titulo = dataElement.querySelector('[data-course-title]').getAttribute('data-course-title');
-                    const descripcion = dataElement.querySelector('[data-course-description]').getAttribute('data-course-description');
-                    const imagenUrl = dataElement.querySelector('[data-course-image]').getAttribute('data-course-image');
-
-                    return `
-                        <div class="popover-content">
-                            <div class="d-flex mb-3 align-items-center">
-                                <img src="${imagenUrl || 'https://via.placeholder.com/80x80.png?text=Sin+Imagen'}" class="me-3 rounded" style="width: 80px; height: 80px; object-fit: cover;" alt="Imagen del curso">
-                                <div>
-                                    <h6 class="popover-title mb-0">${titulo}</h6>
+            container.innerHTML = cursos.map(curso => `
+                <div class="col-lg-4 col-md-6">
+                    <div class="course-card h-100">
+                        <div class="course-card-header position-relative">
+                            <img src="${curso.urlImagen || '/diseño/default-course.jpg'}"
+                                 class="course-image"
+                                 alt="${curso.titulo}"
+                                 onerror="this.src='/diseño/default-course.jpg'">
+                            ${curso.precio === '$0.00' || curso.precio === '0,00 $' ?
+                                '<span class="badge-free">GRATIS</span>' :
+                                `<span class="badge-price">${curso.precio}</span>`}
+                        </div>
+                        <div class="course-card-body">
+                            <div class="course-categories mb-2">
+                                ${curso.categorias && curso.categorias.length > 0 ?
+                                    curso.categorias.slice(0, 2).map(cat =>
+                                        `<span class="badge bg-light text-dark small me-1">${cat}</span>`
+                                    ).join('') :
+                                    '<span class="badge bg-light text-dark small">Sin categoría</span>'}
+                            </div>
+                            <h3 class="h5 course-title">${curso.titulo}</h3>
+                            <p class="course-description small text-muted mb-3">${curso.descripcionCorta || 'Sin descripción'}</p>
+                            <div class="course-meta d-flex justify-content-between align-items-center">
+                                <span class="badge-nivel ${curso.nivel.toLowerCase()}">
+                                    ${curso.nivel}
+                                </span>
+                                <div class="course-rating">
+                                    <i class="fas fa-star text-warning small"></i>
+                                    <span class="small text-muted">4.5</span>
                                 </div>
                             </div>
-                            <p class="text-muted small">${descripcion}</p>
-                            <div class="d-grid gap-2">
-                                <a href="/Curso/Detalles?id=${cursoId}" class="btn btn-primary btn-sm">Ver Detalles</a>
+                            <div class="course-actions mt-3">
+                                <a href="@Url.Action("Detalle", "Curso")/${curso.id}"
+                                   class="btn btn-primary btn-sm w-100">
+                                    <i class="fas fa-eye me-1"></i> Ver detalles
+                                </a>
                             </div>
                         </div>
-                    `;
-                },
-                html: true,
-                sanitize: false
-            });
-        });
+                    </div>
+                </div>
+            `).join('');
+        }
 
-        // CORRECCIÓN: Permitir búsqueda con Enter
-        document.getElementById('searchStringInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('searchButton').click();
+        // Renderizar paginación
+        function renderPagination() {
+            const container = document.getElementById('paginationContainer');
+
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
             }
+
+            let html = '';
+
+            // Botón anterior
+            html += `
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+            `;
+
+            // Números de página
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
+                    </li>
+                `;
+            }
+
+            // Botón siguiente
+            html += `
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${currentPage + 1}); return false;">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Cambiar página
+        function changePage(page) {
+            if (page < 1 || page > totalPages || page === currentPage) return;
+            loadCursos(page);
+        }
+
+        // Actualizar URL
+        function updateUrl(params) {
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.history.pushState({}, '', newUrl);
+        }
+
+        // Actualizar contador total
+        function updateTotalCount(currentCount = 0, totalCount = 0) {
+            const element = document.getElementById('totalCursos');
+            if (element) {
+                if (totalCount > 0) {
+                    element.textContent = `(${currentCount} de ${totalCount} cursos)`;
+                } else {
+                    element.textContent = `(${currentCount} cursos)`;
+                }
+            }
+        }
+
+        // Actualizar estado de filtros
+        function updateFilterStatus() {
+            const statusElement = document.getElementById('filterStatus');
+            let statusText = 'Mostrando todos los cursos disponibles';
+
+            if (currentCategory) {
+                statusText = `Categoría: ${currentCategory}`;
+            }
+            if (currentSearch) {
+                statusText = `Búsqueda: "${currentSearch}"`;
+            }
+            if (currentNivel) {
+                const nivelText = document.getElementById('nivelFilter').options[document.getElementById('nivelFilter').selectedIndex].text;
+                statusText = `Nivel: ${nivelText}`;
+            }
+            if (currentPrecio) {
+                const precioText = document.getElementById('precioFilter').options[document.getElementById('precioFilter').selectedIndex].text;
+                statusText = `Precio: ${precioText}`;
+            }
+
+            statusElement.textContent = statusText;
+        }
+
+        // Mostrar/ocultar loading
+        function showLoading() {
+            document.querySelector('.loading-overlay').style.display = 'flex';
+            document.getElementById('loadingSpinner').classList.remove('d-none');
+        }
+
+        function hideLoading() {
+            document.querySelector('.loading-overlay').style.display = 'none';
+            document.getElementById('loadingSpinner').classList.add('d-none');
+        }
+
+        // Mostrar error
+        function showError(message) {
+            const container = document.getElementById('cursosContainer');
+            container.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-danger text-center">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        ${message}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Manejar navegación con botones atrás/adelante
+        window.addEventListener('popstate', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // Actualizar valores de filtros desde URL
+            currentCategory = urlParams.get('categoria') || '';
+            currentSearch = urlParams.get('searchString') || '';
+            currentNivel = urlParams.get('nivel') || '';
+            currentPrecio = urlParams.get('precio') || '';
+            currentOrden = urlParams.get('orden') || 'recientes';
+            const page = parseInt(urlParams.get('page')) || 1;
+
+            // Actualizar controles UI
+            document.getElementById('searchInput').value = currentSearch;
+            document.getElementById('nivelFilter').value = currentNivel;
+            document.getElementById('precioFilter').value = currentPrecio;
+            document.getElementById('ordenFilter').value = currentOrden;
+
+            // Actualizar categoría activa
+            document.querySelectorAll('.category-card').forEach(card => {
+                const cat = card.getAttribute('data-categoria');
+                if (cat === currentCategory) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+            });
+
+            // Cargar cursos
+            loadCursos(page);
         });
     </script>
 }

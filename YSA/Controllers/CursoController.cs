@@ -8,6 +8,7 @@ using YSA.Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using System.Globalization;
 public class CursoController : Controller
 {
     private readonly ICursoService _cursoService;
@@ -29,88 +30,183 @@ public class CursoController : Controller
         _webHostEnvironment = webHostEnvironment;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string categoria = null, string searchString = null,
+        int? nivel = null, string precio = null, string orden = "recientes", int pagina = 1)
     {
-        // Obtener todos los cursos y categorías una sola vez
+        // Obtener todos los cursos y categorías
         var todosLosCursos = await _cursoService.ObtenerTodosLosCursosAsync();
         var todasLasCategorias = await _cursoService.ObtenerTodasLasCategoriasAsync();
 
-        // Lógica para cursos destacados y recomendados (sin cambios)
-        var cursosDestacados = todosLosCursos.Where(c => c.EsDestacado).ToList();
-        var cursosRecomendados = todosLosCursos.Where(c => c.EsRecomendado && !c.EsDestacado).ToList();
+        // Obtener cursos destacados (siempre los mismos)
+        var cursosDestacados = todosLosCursos
+            .Where(c => c.EsDestacado)
+            .OrderByDescending(c => c.Id)
+            .Take(4)
+            .ToList();
 
-        // Mapear los cursos
-        var mapearCursos = (List<YSA.Core.Entities.Curso> cursos) => cursos.Select(c => new CursoIndexViewModel
-        {
-            Id = c.Id,
-            Titulo = c.Titulo,
-            DescripcionCorta = c.DescripcionCorta,
-            UrlImagen = c.UrlImagen,
-            Precio = c.Precio,
-            ListaCategorias = c.CursoCategorias?.Select(cc => cc.Categoria.NombreCategoria).ToList() ?? new List<string>(),
-            Nivel = c.Nivel
-        }).ToList();
+        // Mapear cursos
+        Func<List<YSA.Core.Entities.Curso>, List<CursoIndexViewModel>> mapearCursos = (cursos) =>
+            cursos.Select(c => new CursoIndexViewModel
+            {
+                Id = c.Id,
+                Titulo = c.Titulo,
+                DescripcionCorta = c.DescripcionCorta,
+                UrlImagen = c.UrlImagen,
+                Precio = c.Precio,
+                ListaCategorias = c.CursoCategorias?.Select(cc => cc.Categoria.NombreCategoria).ToList() ?? new List<string>(),
+                Nivel = c.Nivel
+            }).ToList();
 
-        // Crea el ViewModel para la vista principal
+        // Crear ViewModel para la vista inicial
         var viewModel = new CursosIndexViewModel
         {
             CursosDestacados = mapearCursos(cursosDestacados),
-            CursosRecomendados = mapearCursos(cursosRecomendados),
             CategoriasDisponibles = todasLasCategorias.Select(cat => cat.NombreCategoria).ToList(),
-            // No se necesitan los campos de paginación o la lista de cursos en el modelo inicial
+            // NOTA: Los cursos normales NO se cargan aquí, se cargan vía AJAX
+            Cursos = new List<CursoIndexViewModel>(), // Vacío porque se carga con AJAX
+            PaginaActual = 1,
+            TotalPaginas = 1,
+            CategoriaActual = categoria
         };
 
+        // Pasar parámetros a ViewBag para inicializar controles si vienen de URL
+        ViewBag.Categoria = categoria;
+        ViewBag.SearchString = searchString;
+        ViewBag.Nivel = nivel;
+        ViewBag.Precio = precio;
+        ViewBag.Orden = orden;
+
         return View(viewModel);
-    }
-
-    // Agrega este nuevo método a tu CursoController.cs
+    }    // Agrega este nuevo método a tu CursoController.cs
     [HttpGet]
-    public async Task<IActionResult> ObtenerCursosJson(string categoria, string searchString, int page = 1, int? nivel = null)
+    [HttpGet]
+    public async Task<IActionResult> ObtenerCursosJson(string categoria = null, string searchString = null,
+    int? nivel = null, string precio = null, string orden = "recientes", int page = 1)
     {
-        const int pageSize = 8;
-
-        var cursos = await _cursoService.ObtenerTodosLosCursosAsync();
-
-        // Filtro por categoría
-        if (!string.IsNullOrEmpty(categoria))
+        try
         {
-            cursos = cursos.Where(c => c.CursoCategorias.Any(cc => cc.Categoria.NombreCategoria == categoria)).ToList();
+            const int pageSize = 9; // 3x3 en desktop
+
+            // Obtener todos los cursos
+            var todosLosCursos = await _cursoService.ObtenerTodosLosCursosAsync();
+            var cursosFiltrados = todosLosCursos.AsQueryable();
+
+            // ===== APLICAR FILTROS =====
+
+            // 1. Filtrar por categoría
+            if (!string.IsNullOrEmpty(categoria))
+            {
+                cursosFiltrados = cursosFiltrados.Where(c =>
+                    c.CursoCategorias != null &&
+                    c.CursoCategorias.Any(cc =>
+                        cc.Categoria != null &&
+                        cc.Categoria.NombreCategoria == categoria));
+            }
+
+            // 2. Filtrar por búsqueda de texto
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                searchString = searchString.Trim().ToLower();
+                cursosFiltrados = cursosFiltrados.Where(c =>
+                    (c.Titulo != null && c.Titulo.ToLower().Contains(searchString)) ||
+                    (c.DescripcionCorta != null && c.DescripcionCorta.ToLower().Contains(searchString)));
+            }
+
+            // 3. Filtrar por nivel
+            if (nivel.HasValue)
+            {
+                cursosFiltrados = cursosFiltrados.Where(c => (int)c.Nivel == nivel.Value);
+            }
+
+            // 4. Filtrar por precio
+            if (!string.IsNullOrEmpty(precio))
+            {
+                switch (precio.ToLower())
+                {
+                    case "gratis":
+                        cursosFiltrados = cursosFiltrados.Where(c => c.Precio == 0);
+                        break;
+                    case "0-50":
+                        cursosFiltrados = cursosFiltrados.Where(c => c.Precio > 0 && c.Precio <= 50);
+                        break;
+                    case "50-100":
+                        cursosFiltrados = cursosFiltrados.Where(c => c.Precio > 50 && c.Precio <= 100);
+                        break;
+                    case "100+":
+                        cursosFiltrados = cursosFiltrados.Where(c => c.Precio > 100);
+                        break;
+                }
+            }
+
+            // ===== APLICAR ORDEN =====
+            switch (orden.ToLower())
+            {
+                case "destacados":
+                    cursosFiltrados = cursosFiltrados.OrderByDescending(c => c.EsDestacado)
+                                                     .ThenByDescending(c => c.Id);
+                    break;
+                case "precio-asc":
+                    cursosFiltrados = cursosFiltrados.OrderBy(c => c.Precio)
+                                                     .ThenByDescending(c => c.Id);
+                    break;
+                case "precio-desc":
+                    cursosFiltrados = cursosFiltrados.OrderByDescending(c => c.Precio)
+                                                     .ThenByDescending(c => c.Id);
+                    break;
+                case "recientes":
+                default:
+                    cursosFiltrados = cursosFiltrados.OrderByDescending(c => c.Id);
+                    break;
+            }
+
+            // ===== PAGINACIÓN =====
+            var totalCursos = cursosFiltrados.Count();
+            var totalPaginas = (int)Math.Ceiling(totalCursos / (double)pageSize);
+
+            // Validar página
+            if (page < 1) page = 1;
+            if (page > totalPaginas && totalPaginas > 0) page = totalPaginas;
+
+            var cursosPaginados = cursosFiltrados
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // ===== MAPEAR A DTO =====
+            var cursosDto = cursosPaginados.Select(c => new
+            {
+                id = c.Id,
+                titulo = c.Titulo ?? "Sin título",
+                descripcionCorta = c.DescripcionCorta ?? "Sin descripción",
+                urlImagen = c.UrlImagen,
+                precio = c.Precio.ToString("C", CultureInfo.CreateSpecificCulture("es-VE")),
+                categorias = c.CursoCategorias?
+                    .Where(cc => cc.Categoria != null)
+                    .Select(cc => cc.Categoria.NombreCategoria)
+                    .ToList() ?? new List<string>(),
+                nivel = c.Nivel.ToString()
+            }).ToList();
+
+            // ===== RETORNAR RESULTADO =====
+            return Json(new
+            {
+                success = true,
+                cursos = cursosDto,
+                totalPaginas = totalPaginas,
+                paginaActual = page,
+                totalCursos = totalCursos
+            });
         }
-
-        // Filtro por nivel de dificultad
-        if (nivel.HasValue)
+        catch (Exception ex)
         {
-            cursos = cursos.Where(c => (int)c.Nivel == nivel.Value).ToList();
+            // Loggear error
+            return Json(new
+            {
+                success = false,
+                message = "Error al cargar los cursos",
+                error = ex.Message
+            });
         }
-
-        // Filtro por búsqueda
-        if (!string.IsNullOrEmpty(searchString))
-        {
-            cursos = cursos.Where(c =>
-                c.Titulo.Contains(searchString, System.StringComparison.OrdinalIgnoreCase) ||
-                c.DescripcionCorta.Contains(searchString, System.StringComparison.OrdinalIgnoreCase)).ToList();
-        }
-
-
-        var cursosOrdenados = cursos.OrderByDescending(c => c.Id).ToList();
-        var totalCursos = cursosOrdenados.Count();
-        var totalPaginas = (int)Math.Ceiling(totalCursos / (double)pageSize);
-        var cursosPaginados = cursosOrdenados.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
-        // Mapeamos los cursos a un DTO para enviar solo la información necesaria
-        var cursosDto = cursosPaginados.Select(c => new
-        {
-            id = c.Id,
-            titulo = c.Titulo,
-            descripcionCorta = c.DescripcionCorta,
-            urlImagen = c.UrlImagen,
-            precio = c.Precio.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("es-VE")),
-            categorias = c.CursoCategorias?.Select(cc => cc.Categoria.NombreCategoria).ToList() ?? new List<string>(),
-            nivel = c.Nivel.ToString()
-        }).ToList();
-
-        // Devolvemos un objeto JSON con los datos de los cursos y la paginación
-        return Json(new { cursos = cursosDto, totalPaginas = totalPaginas, paginaActual = page });
     }
     public async Task<IActionResult> Detalles(int id)
     {
