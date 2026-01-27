@@ -5,583 +5,83 @@
 
 @{
     ViewData["Title"] = "Iniciar Sesión";
-    // Define el returnUrl para que el login te devuelva a la página anterior o al Home.
     ViewData["ReturnUrl"] = ViewData["ReturnUrl"] ?? Url.Content("~/");
 }
 
-<style>
-    /* IMPORTACIÓN DE TIPOGRAFÍAS */
-    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
-    :root {
-        --color-primary-action: #ef8830; /* Naranja como color principal */
-        --color-secondary: #212529; /* Negro oscuro para títulos */
-        --color-accent: #6c757d; /* Gris para texto de soporte */
-        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
-        --color-card-bg: #ffffff;
-        --color-text-dark: #212529;
-        --color-text-light: #ffffff;
-        --color-border: #E8E8E8;
-        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
-        --color-shadow-light: rgba(0, 0, 0, 0.1);
-        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
-        /* NUEVOS COLORES DE MARCA */
-        --color-brand-primary: #ef8830; /* Naranja - color principal */
-        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
-        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
-        --color-brand-success: #6db53e; /* Verde - color de éxito */
-        --color-brand-dark: #08080a; /* Negro - texto principal */
-        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
-        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
-        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
-        --font-accent: 'Poppins', sans-serif;
-        /* ALTURAS DE LÍNEA */
-        --line-height-tight: 1.1;
-        --line-height-normal: 1.4;
-        --line-height-loose: 1.6;
-        /* BORDES REDONDEADOS */
-        --border-radius-sm: 8px;
-        --border-radius-md: 12px;
-        --border-radius-lg: 16px;
-        --border-radius-xl: 20px;
-    }
+<div class="auth-github-style">
+    <!-- Logo separado arriba del card -->
+    <div class="auth-github-logo-container">
+        <!-- Logo de YoSoyArte -->
+        <img src="~/diseño/horizontal.png"
+             alt="Yo Soy Arte"
+             class="auth-github-logo-image">
+    </div>
 
-    body {
-        font-family: var(--font-body);
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-        line-height: var(--line-height-loose);
-        background: linear-gradient(135deg, var(--color-section-bg) 0%, var(--color-background) 100%);
-    }
-
-    /* CONTENEDOR PRINCIPAL CON ESTILO REVISTA */
-    .main-container-dual {
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 2rem;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="%23f8f9fa" points="0,0 1000,0 1000,1000 0,1000"/></svg>');
-    }
-
-    /* CONTENEDOR DUAL CON ESTILO REVISTA */
-    .dual-card-wrapper {
-        display: flex;
-        max-width: 1000px;
-        width: 100%;
-        border-radius: var(--border-radius-xl);
-        overflow: hidden;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-        background: var(--color-card-bg);
-    }
-
-    /* PANEL DE CONTENIDO IZQUIERDO CON ESTILO REVISTA */
-    .content-panel-mono {
-        flex: 1;
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
-        color: var(--color-text-light);
-        padding: 3rem 2.5rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-        .content-panel-mono::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><circle cx="50" cy="50" r="2" fill="white"/></svg>') repeat;
-            pointer-events: none;
+    <div class="auth-github-card">
+        @{
+            var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-    .panel-title {
-        font-family: var(--font-heading);
-        font-size: 2.2rem;
-        font-weight: 800;
-        margin-bottom: 1.5rem;
-        border-bottom: 3px solid var(--color-brand-accent);
-        padding-bottom: 0.75rem;
-        line-height: var(--line-height-tight);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
+        <!-- FORMULARIO PRINCIPAL -->
+        <form asp-controller="Cuenta" asp-action="Login" method="post" class="auth-github-form">
+            <div asp-validation-summary="ModelOnly" class="auth-github-validation"></div>
+            <input type="hidden" asp-for="ReturnUrl" value="@ViewData["ReturnUrl"]" />
 
-    .panel-text {
-        font-family: var(--font-body);
-        font-size: 1.1rem;
-        line-height: var(--line-height-normal);
-        color: rgba(255, 255, 255, 0.9);
-        margin-bottom: 1.5rem;
-        position: relative;
-        z-index: 2;
-    }
-
-        .panel-text:last-of-type {
-            font-weight: 700;
-            color: var(--color-brand-accent);
-            margin-bottom: 0;
-            font-size: 1.2rem;
-        }
-
-    /* TARJETA DE LOGIN CON ESTILO REVISTA */
-    .login-card-mono {
-        flex: 1;
-        background-color: var(--color-card-bg);
-        padding: 3rem 2.5rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .login-title-mono {
-        font-family: var(--font-heading);
-        font-size: 2rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        margin-bottom: 1rem;
-        text-align: center;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        line-height: var(--line-height-tight);
-    }
-
-    .login-header-image {
-        max-width: 100%;
-        height: auto;
-        border-radius: var(--border-radius-md);
-        margin-bottom: 2rem;
-        display: block;
-        border: 2px solid var(--color-border);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    /* FORMULARIOS CON ESTILO REVISTA */
-    .form-group-vertical {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-label-mono {
-        display: block;
-        width: 100%;
-        font-weight: 600;
-        color: var(--color-secondary);
-        margin-bottom: 0.5rem;
-        font-size: 0.95rem;
-        font-family: var(--font-accent);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .form-control-mono {
-        background-color: var(--color-card-bg);
-        border: 2px solid var(--color-border);
-        color: var(--color-text-dark);
-        border-radius: var(--border-radius-sm);
-        height: 50px;
-        padding: 0.75rem 1rem;
-        padding-right: 50px;
-        width: 100%;
-        transition: all 0.3s ease;
-        font-family: var(--font-body);
-        font-size: 1rem;
-    }
-
-        .form-control-mono:focus {
-            border-color: var(--color-brand-primary);
-            outline: 0;
-            box-shadow: 0 0 0 0.25rem rgba(239, 136, 48, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .form-control-mono.input-validation-error {
-            border-color: var(--color-brand-secondary);
-            box-shadow: 0 0 0 0.25rem rgba(229, 54, 26, 0.15);
-        }
-
-    /* BOTONES CON ESTILO REVISTA */
-    .btn-mono-primary {
-        width: 100%;
-        background-color: var(--color-brand-primary);
-        color: var(--color-text-light);
-        border: none;
-        border-radius: var(--border-radius-sm);
-        padding: 0.9rem 1.5rem;
-        font-weight: 700;
-        font-family: var(--font-accent);
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        transition: all 0.3s ease;
-        margin-top: 1rem;
-        font-size: 1rem;
-    }
-
-        .btn-mono-primary:hover {
-            background-color: var(--color-brand-secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(239, 136, 48, 0.3);
-        }
-
-    /* BOTÓN GOOGLE CON ESTILO REVISTA */
-    .btn-google-revista {
-        width: 100%;
-        background-color: var(--color-card-bg);
-        color: var(--color-text-dark);
-        border: 2px solid var(--color-border);
-        border-radius: var(--border-radius-sm);
-        padding: 0.9rem 1.5rem;
-        font-weight: 600;
-        font-family: var(--font-accent);
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.75rem;
-    }
-
-        .btn-google-revista:hover {
-            border-color: var(--color-brand-primary);
-            background-color: var(--color-section-bg);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-
-    /* ENLACES CON ESTILO REVISTA */
-    .link-mono-subtle {
-        color: var(--color-brand-primary);
-        font-weight: 600;
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-        font-family: var(--font-accent);
-    }
-
-        .link-mono-subtle:hover {
-            color: var(--color-brand-secondary);
-            text-decoration: underline;
-        }
-
-    .form-footer-separator {
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 2px solid var(--color-border);
-        text-align: center;
-    }
-
-    .text-footer-subtle {
-        color: var(--color-accent);
-        font-size: 0.9rem;
-        font-family: var(--font-body);
-    }
-
-    /* CHECKBOX CON ESTILO REVISTA */
-    .form-check {
-        margin-bottom: 1rem;
-    }
-
-    .form-check-input {
-        border: 2px solid var(--color-border);
-        border-radius: var(--border-radius-sm);
-        width: 1.2em;
-        height: 1.2em;
-        margin-top: 0.15em;
-    }
-
-        .form-check-input:checked {
-            background-color: var(--color-brand-primary);
-            border-color: var(--color-brand-primary);
-        }
-
-        .form-check-input:focus {
-            box-shadow: 0 0 0 0.25rem rgba(239, 136, 48, 0.25);
-        }
-
-    .form-check-label {
-        font-family: var(--font-body);
-        color: var(--color-text-dark);
-        font-size: 0.9rem;
-        margin-left: 0.5rem;
-    }
-
-    /* SEPARADOR CON ESTILO REVISTA */
-    .separator-revista {
-        display: flex;
-        align-items: center;
-        text-align: center;
-        margin: 2rem 0;
-        color: var(--color-accent);
-        font-family: var(--font-accent);
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-size: 0.8rem;
-    }
-
-        .separator-revista::before,
-        .separator-revista::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .separator-revista::before {
-            margin-right: 1rem;
-        }
-
-        .separator-revista::after {
-            margin-left: 1rem;
-        }
-
-    /* VISIBILIDAD DE CONTRASEÑA CON ESTILO REVISTA */
-    .password-container {
-        position: relative;
-        width: 100%;
-    }
-
-    .password-toggle-icon {
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        color: var(--color-accent);
-        font-size: 1.1rem;
-        transition: all 0.3s ease;
-        z-index: 10;
-        background: var(--color-card-bg);
-        padding: 0.5rem;
-        border-radius: var(--border-radius-sm);
-    }
-
-        .password-toggle-icon:hover {
-            color: var(--color-brand-primary);
-            background: var(--color-section-bg);
-        }
-
-    /* ALERTAS DE VALIDACIÓN CON ESTILO REVISTA */
-    .validation-summary-errors {
-        background-color: rgba(229, 54, 26, 0.1);
-        border: 1px solid var(--color-brand-secondary);
-        color: var(--color-text-dark);
-        border-radius: var(--border-radius-md);
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        font-family: var(--font-body);
-    }
-
-        .validation-summary-errors ul {
-            margin-bottom: 0;
-            padding-left: 1rem;
-        }
-
-        .validation-summary-errors li {
-            margin-bottom: 0.5rem;
-        }
-
-            .validation-summary-errors li:last-child {
-                margin-bottom: 0;
-            }
-
-    .text-danger {
-        color: var(--color-brand-secondary) !important;
-        font-size: 0.85rem;
-        font-family: var(--font-accent);
-        font-weight: 500;
-    }
-
-    /* ADAPTACIONES RESPONSIVE */
-
-    /* Tablet (max-width: 991.98px) */
-    @@media (max-width: 991.98px) {
-        .main-container-dual {
-            padding: 1.5rem;
-        }
-
-        .dual-card-wrapper {
-            max-width: 800px;
-        }
-
-        .content-panel-mono,
-        .login-card-mono {
-            padding: 2.5rem 2rem;
-        }
-
-        .panel-title {
-            font-size: 1.8rem;
-        }
-
-        .login-title-mono {
-            font-size: 1.8rem;
-        }
-    }
-
-    /* Mobile (max-width: 768px) */
-    @@media (max-width: 768px) {
-        .dual-card-wrapper {
-            flex-direction: column;
-            max-width: 450px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        }
-
-        .content-panel-mono {
-            display: none;
-        }
-
-        .login-card-mono {
-            border-radius: var(--border-radius-xl);
-            padding: 2rem 1.5rem;
-        }
-
-        .panel-title {
-            font-size: 1.6rem;
-        }
-
-        .login-title-mono {
-            font-size: 1.6rem;
-        }
-
-        .form-control-mono {
-            height: 48px;
-            padding: 0.7rem 1rem;
-            padding-right: 45px;
-        }
-    }
-
-    /* Mobile Pequeño (max-width: 575.98px) */
-    @@media (max-width: 575.98px) {
-        .main-container-dual {
-            padding: 1rem;
-        }
-
-        .login-card-mono {
-            padding: 1.5rem 1.25rem;
-        }
-
-        .panel-title {
-            font-size: 1.4rem;
-        }
-
-        .login-title-mono {
-            font-size: 1.4rem;
-        }
-
-        .form-control-mono {
-            height: 46px;
-            padding: 0.6rem 0.9rem;
-            padding-right: 40px;
-        }
-
-        .btn-mono-primary,
-        .btn-google-revista {
-            padding: 0.8rem 1.25rem;
-            font-size: 0.9rem;
-        }
-    }
-</style>
-
-<div class="main-container-dual mb-5 pb-5">
-    <div class="dual-card-wrapper mb-5 pb-5">
-
-        <!-- PANEL IZQUIERDO CON CONTENIDO INSPIRADOR -->
-        <div class="content-panel-mono mb-3 pb-3">
-            <span class="badge bg-light text-dark mb-3" style="background-color: var(--color-brand-accent) !important; color: var(--color-brand-dark) !important; font-family: var(--font-accent); font-weight: 600; border-radius: var(--border-radius-sm); padding: 0.5rem 1rem; align-self: flex-start;">
-                YO SOY ARTE
-            </span>
-
-            <h2 class="panel-title">Tu Comunidad Artística</h2>
-
-            <p class="panel-text">
-                En <strong>Yo Soy Arte</strong>, no solo ofrecemos cursos; creamos caminos hacia la expresión creativa. Nuestra plataforma está diseñada para impulsarte desde los fundamentos hasta la maestría en diversas disciplinas artísticas.
-            </p>
-
-            <p class="panel-text">
-                Accede a recursos exclusivos, tutoriales en vivo y una comunidad de artistas apasionados. Inicia sesión para retomar tu progreso, o únete a nosotros para transformar tu potencial creativo en obras extraordinarias.
-            </p>
-
-            <p class="panel-text">
-                ¡El arte es tu voz, y YSA es tu escenario!
-            </p>
-        </div>
-
-        <!-- PANEL DERECHO CON FORMULARIO DE LOGIN -->
-        <div class="login-card-mono">
-            <div class="text-center">
-                <h1 class="login-title-mono">Iniciar Sesión</h1>
-
-                <img src="~/diseño/InicioSesionImagen.jpg"
-                     alt="Comunidad artística Yo Soy Arte"
-                     class="login-header-image" />
+            <div class="auth-github-form-group">
+                <label asp-for="Email" class="auth-github-label">Correo Electrónico</label>
+                <input asp-for="Email" type="email" class="auth-github-input" placeholder="ejemplo@correo.com" required>
+                <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
             </div>
 
-            @{
-                var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            }
-
-            @if (loginProviders.Count > 0)
-            {
-                <form asp-controller="Cuenta" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
-                    <div class="d-grid gap-2 mb-4">
-                        @foreach (var p in loginProviders)
-                        {
-                            <button type="submit" class="btn-google-revista"
-                                    name="provider"
-                                    value="@p.Name"
-                                    title="Iniciar sesión con tu cuenta de @p.DisplayName">
-                                <i class="fab fa-google"></i>
-                                Continuar con Google
-                            </button>
-                        }
-                    </div>
-
-                    <div class="separator-revista">
-                        O ingresa con tu correo
-                    </div>
-                </form>
-            }
-
-            <!-- FORMULARIO PRINCIPAL DE LOGIN -->
-            <form asp-controller="Cuenta" asp-action="Login" method="post" class="login-form-custom mb-3 pb-3">
-                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
-                <input type="hidden" asp-for="ReturnUrl" value="@ViewData["ReturnUrl"]" />
-
-                <div class="form-group-vertical">
-                    <label asp-for="Email" class="form-label-mono">Correo Electrónico</label>
-                    <input asp-for="Email" type="email" class="form-control-mono" placeholder="ejemplo@correo.com" required>
-                    <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
-                </div>
-
-                <div class="form-group-vertical">
-                    <label asp-for="Contrasena" class="form-label-mono">Contraseña</label>
-                    <div class="password-container">
-                        <input asp-for="Contrasena" type="password" class="form-control-mono" placeholder="Tu contraseña" required>
-                        <i class="fas fa-eye password-toggle-icon" id="togglePasswordLogin"></i>
-                    </div>
-                    <span asp-validation-for="Contrasena" class="text-danger small mt-1 d-block"></span>
-                </div>
-
-                <div class="form-check d-flex justify-content-center align-items-center mt-2">
-                    <a href="#" class="link-mono-subtle text-center">¿Olvidaste tu contraseña?</a>
-                </div>
-
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn-mono-primary">
-                        <i class="fas fa-sign-in-alt me-2"></i>Acceder a la Plataforma
+            <div class="auth-github-form-group">
+                <label asp-for="Contrasena" class="auth-github-label d-flex justify-content-between">
+                    <span>Contraseña</span>
+                    <a href="#" class="auth-github-link" style="font-size: 0.8rem;">¿Olvidaste tu contraseña?</a>
+                </label>
+                <div class="auth-github-password-container">
+                    <input asp-for="Contrasena" type="password" class="auth-github-input" placeholder="Tu contraseña" required>
+                    <button type="button" class="auth-github-password-toggle" id="togglePasswordLogin">
+                        <i class="fas fa-eye"></i>
                     </button>
                 </div>
+                <span asp-validation-for="Contrasena" class="text-danger small mt-1 d-block"></span>
+            </div>
 
-                <div class="form-footer-separator">
-                    <span class="text-footer-subtle">¿No tienes una cuenta? </span>
-                    <a href="~/Cuenta/Registro" class="link-mono-subtle">
-                        Únete a nuestra comunidad
-                    </a>
+            <div class="d-grid gap-2">
+                <button type="submit" class="auth-github-btn">
+                    Iniciar sesión
+                </button>
+            </div>
+
+            @if (loginProviders.Count == 0)
+            {
+                <div class="auth-github-links">
+                    <a href="#" class="auth-github-link">¿Olvidaste tu contraseña?</a>
+                </div>
+            }
+        </form>
+
+        @if (loginProviders.Count > 0)
+        {
+            <div class="auth-github-separator">
+                O continúa con
+            </div>
+
+            <form asp-controller="Cuenta" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="auth-github-external-form">
+                <div class="d-grid gap-2">
+                    @foreach (var p in loginProviders)
+                    {
+                        <button type="submit" class="auth-github-btn-external"
+                                name="provider"
+                                value="@p.Name"
+                                title="Iniciar sesión con tu cuenta de @p.DisplayName">
+                            <i class="fab fa-google"></i>
+                            Continuar con Google
+                        </button>
+                    }
                 </div>
             </form>
-        </div>
+        }
     </div>
 </div>
 
@@ -624,23 +124,14 @@
                     const type = passwordLoginInput.getAttribute('type') === 'password' ? 'text' : 'password';
                     passwordLoginInput.setAttribute('type', type);
 
-                    this.classList.toggle('fa-eye');
-                    this.classList.toggle('fa-eye-slash');
+                    const icon = this.querySelector('i');
+                    icon.classList.toggle('fa-eye');
+                    icon.classList.toggle('fa-eye-slash');
                 });
             }
-
-            // Efectos hover mejorados para elementos interactivos
-            document.querySelectorAll('.form-control-mono').forEach(input => {
-                input.addEventListener('focus', function() {
-                    this.parentElement.classList.add('focused');
-                });
-
-                input.addEventListener('blur', function() {
-                    this.parentElement.classList.remove('focused');
-                });
-            });
         });
     </script>
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
