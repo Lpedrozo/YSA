@@ -1,827 +1,239 @@
 ﻿@model YSA.Web.Models.ViewModels.ProductosIndexViewModel
 @{
     ViewData["Title"] = "Catálogo de productos";
-
     var totalPaginas = Model.TotalPaginas;
     var paginaActual = Model.PaginaActual;
     var currentSearch = Context.Request.Query["searchString"];
-
-    // 1. OBTENER LOS PRODUCTOS PARA EL BANNER Y LA NUEVA REJILLA
     var todosLosProductos = Model.Productos?.ToList();
-
-    var productoDestacado = todosLosProductos.FirstOrDefault();
-    // AHORA TOMAMOS LOS SIGUIENTES 5 PRODUCTOS para asegurar el llenado de la rejilla 2x2
-    var productosParaGrid = todosLosProductos.Skip(1).Take(4).ToList();
-    // Los productos restantes para el catálogo normal
-    var productosSecundariosCatalogo = todosLosProductos.Skip(6).ToList();
+    var productoDestacado = todosLosProductos?.FirstOrDefault();
+    var productosRestantes = todosLosProductos?.Skip(1).ToList();
 }
-
 <style>
-    /* IMPORTACIÓN DE TIPOGRAFÍAS */
-    @* Nota: Para usar las tipografías Bogart y Hey August, debes descargarlas y alojarlas en tu proyecto *@
-    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
-    :root {
-        --color-primary-action: #ef8830; /* Naranja como color principal */
-        --color-secondary: #212529; /* Negro oscuro para títulos */
-        --color-accent: #6c757d; /* Gris para texto de soporte */
-        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
-        --color-card-bg: #ffffff;
-        --color-text-dark: #212529;
-        --color-text-light: #ffffff;
-        --color-border: #E8E8E8;
-        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
-        --color-shadow-light: rgba(0, 0, 0, 0.1);
-        --color-section-bg: #f3f3f3; /* Color de fondo para secciones */
-        /* NUEVOS COLORES DE MARCA */
-        --color-brand-primary: #ef8830; /* Naranja - color principal */
-        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
-        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
-        --color-brand-success: #6db53e; /* Verde - color de éxito */
-        --color-brand-dark: #08080a; /* Negro - texto principal */
-        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
-        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
-        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
-        --font-accent: 'Poppins', sans-serif;
-        /* ALTURAS DE LÍNEA */
-        --line-height-tight: 1.1;
-        --line-height-normal: 1.4;
-        --line-height-loose: 1.6;
-        /* BORDES REDONDEADOS */
-        --border-radius-sm: 8px;
-        --border-radius-md: 12px;
-        --border-radius-lg: 16px;
-        --border-radius-xl: 20px;
-    }
-
-    body {
-        font-family: var(--font-body);
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-        line-height: var(--line-height-loose);
-    }
-
-    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
-    .section-container {
-        background: var(--color-section-bg);
-        border-radius: var(--border-radius-lg);
-        padding: 3rem 2rem;
-        margin: 2rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
-    .section-title {
-        font-family: var(--font-heading);
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        padding-bottom: 0.5rem;
-        margin-bottom: 2.5rem;
-        display: inline-block;
-        border-bottom: 4px solid var(--color-brand-primary);
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        line-height: var(--line-height-tight);
-    }
-
-    .latest-grid-header {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid var(--color-brand-primary);
-        padding-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-    }
-
-    /* ------------------------------------- */
-    /* ESTILOS DEL BANNER PRINCIPAL (ACTUALIZADO) */
-    /* ------------------------------------- */
-    .magazine-cover {
-        width: 100%;
-        height: 85vh; /* Altura destacada como una portada */
-        background-color: #f4f4f4;
-        position: relative;
-        overflow: hidden;
-        margin-bottom: 3rem;
-    }
-
-    .cover-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
-    }
-
-    .cover-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
-        z-index: 2;
-        display: flex;
-        align-items: flex-end;
-        padding: 3rem;
-    }
-
-    .cover-title-block {
-        color: var(--color-text-light);
-        max-width: 700px;
-        z-index: 3;
-    }
-
-    .cover-title {
-        font-family: var(--font-heading);
-        font-size: 4rem;
-        font-weight: 900;
-        line-height: var(--line-height-tight);
-        margin-bottom: 0.5rem;
-    }
-
-    .cover-subtitle {
-        font-family: var(--font-body);
-        font-size: 1.5rem;
-        font-weight: 300;
-        color: rgba(255, 255, 255, 0.8);
-        line-height: var(--line-height-normal);
-    }
-
-    /* ESTILO DE TARJETA TIPO REJILLA DE REVISTA MEJORADO */
-    .magazine-card {
-        border-radius: var(--border-radius-md);
-        border: 1px solid var(--color-border);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        background-color: var(--color-card-bg);
-        height: 100%;
-        text-decoration: none;
-        color: inherit;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-    }
-
-        .magazine-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            border-color: var(--color-brand-primary);
-        }
-
-    .magazine-card-img-container {
-        overflow: hidden;
-        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
-        flex-shrink: 0;
-    }
-
-    .magazine-card-img {
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-
-    .magazine-card:hover .magazine-card-img {
-        transform: scale(1.05);
-    }
-
-    .magazine-card-body {
-        padding: 1.5rem;
-        position: relative;
-        text-align: left;
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        min-height: 0; /* Permite que el contenido se comprima */
-    }
-
-    .card-category {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--color-brand-primary);
-        text-transform: uppercase;
-        margin-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-        letter-spacing: 0.5px;
-        flex-shrink: 0;
-    }
-
-    .magazine-card-body h5 {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        font-size: 1.5rem;
-        line-height: var(--line-height-normal);
-        color: var(--color-secondary);
-        margin-bottom: 0.75rem;
-        flex-shrink: 0;
-    }
-
-    .magazine-card-body .card-text {
-        font-family: var(--font-body);
-        font-size: 0.95rem;
-        color: var(--color-accent);
-        line-height: var(--line-height-normal);
-        margin-bottom: 1rem;
-        flex-grow: 1;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-    }
-
-    .card-price {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--color-brand-primary);
-        margin: 0.5rem 0;
-        flex-shrink: 0;
-    }
-
-    .card-author {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        color: var(--color-accent);
-        margin-bottom: 1rem;
-        flex-shrink: 0;
-    }
-
-    .card-actions {
-        margin-top: auto;
-        flex-shrink: 0;
-    }
-
-    /* BADGES Y ELEMENTOS DE ÉNFASIS CON NUEVA PALETA */
-    .badge.bg-light {
-        background-color: var(--color-brand-accent) !important; /* Amarillo para badges */
-        color: var(--color-brand-dark) !important;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.5rem 1rem;
-    }
-
-    .badge.bg-dark {
-        background-color: var(--color-brand-secondary) !important; /* Rojo para badges oscuros */
-        color: var(--color-text-light) !important;
-        border-radius: var(--border-radius-sm);
-        padding: 0.5rem 1rem;
-    }
-
-    .alert-info {
-        background-color: rgba(109, 181, 62, 0.1); /* Verde suave para alertas */
-        border-color: var(--color-brand-success);
-        color: var(--color-text-dark);
-        border-radius: var(--border-radius-md);
-        padding: 1.5rem;
-    }
-
-    .alert-warning {
-        background-color: rgba(242, 229, 20, 0.1); /* Amarillo suave para alertas */
-        border-color: var(--color-brand-accent);
-        color: var(--color-text-dark);
-        border-radius: var(--border-radius-md);
-        padding: 1.5rem;
-    }
-
-    /* BOTONES CON COLORES DE MARCA */
-    .btn-primary {
-        background-color: var(--color-brand-primary) !important;
-        border-color: var(--color-brand-primary) !important;
-        color: var(--color-text-light) !important;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 1.5rem;
-        transition: all 0.3s ease;
-    }
-
-        .btn-primary:hover {
-            background-color: var(--color-brand-secondary) !important;
-            border-color: var(--color-brand-secondary) !important;
-            transform: translateY(-2px);
-        }
-
-    .btn-success {
-        background-color: var(--color-brand-success) !important;
-        border-color: var(--color-brand-success) !important;
-        color: var(--color-text-light) !important;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 1.5rem;
-    }
-
-    .btn-warning {
-        background-color: var(--color-brand-accent) !important;
-        border-color: var(--color-brand-accent) !important;
-        color: var(--color-brand-dark) !important;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 1.5rem;
-        cursor: not-allowed;
-    }
-
-    /* FORMULARIOS Y BÚSQUEDA */
-    .form-control {
-        border-radius: var(--border-radius-sm);
-        border: 1px solid var(--color-border);
-        font-family: var(--font-body);
-        padding: 0.75rem 1rem;
-    }
-
-        .form-control:focus {
-            border-color: var(--color-brand-primary);
-            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
-        }
-
-    /* PAGINACIÓN */
-    .pagination .page-item .page-link {
-        color: var(--color-secondary);
-        border: 1px solid var(--color-border);
-        background-color: var(--color-background);
-        transition: all 0.2s;
-        border-radius: var(--border-radius-sm);
-        font-family: var(--font-accent);
-    }
-
-    .pagination .page-item.active .page-link {
-        background-color: var(--color-brand-primary);
-        border-color: var(--color-brand-primary);
-        color: var(--color-text-light);
-    }
-
-    .pagination .page-item .page-link:hover {
-        background-color: var(--color-section-bg);
-        border-color: var(--color-brand-primary);
-        color: var(--color-brand-primary);
-    }
-
-    /* SEPARADORES MEJORADOS */
-    .section-divider {
-        border: none;
-        height: 1px;
-        background: linear-gradient(to right, transparent, var(--color-border), transparent);
-        margin: 3rem 0;
-    }
-
-    /* REJILLA DE PRODUCTOS DESTACADOS */
-    .product-grid-section {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        grid-template-rows: repeat(3, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 4rem;
-        border-radius: var(--border-radius-lg);
-        overflow: hidden;
-    }
-
-    .grid-item {
-        position: relative;
-        overflow: hidden;
-        border-radius: var(--border-radius-md);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        display: flex;
-        align-items: flex-end;
-        text-decoration: none;
-        color: var(--color-text-light);
-    }
-
-        .grid-item:hover {
-            transform: translateY(-5px) scale(1.01);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-    .grid-item-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
-        transition: transform 0.5s ease;
-    }
-
-    .grid-item:hover .grid-item-img {
-        transform: scale(1.05);
-    }
-
-    .grid-item-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%);
-        z-index: 1;
-    }
-
-    .grid-item-content {
-        position: relative;
-        z-index: 2;
-        padding: 1.5rem;
-        text-align: left;
-        width: 100%;
-    }
-
-    .grid-item-title {
-        font-family: var(--font-heading);
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        line-height: 1.2;
-    }
-
-    .grid-item-price {
-        font-family: var(--font-heading);
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--color-brand-primary);
-        margin-bottom: 0.5rem;
-    }
-
-    .grid-item .btn {
-        background-color: var(--color-brand-primary);
-        color: var(--color-text-light);
-        border: none;
-        padding: 0.5rem 1rem;
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        border-radius: var(--border-radius-sm);
-        transition: all 0.3s ease;
-    }
-
-        .grid-item .btn:hover {
-            background-color: var(--color-brand-secondary);
-            transform: translateY(-2px);
-        }
-
-    /* Estilo específico para el producto principal del grid */
-    .grid-main-product {
-        grid-column: 1 / 2;
-        grid-row: 1 / 4;
-    }
-
-    /* Estilo para los productos pequeños */
-    .grid-small-product {
-        grid-column: 2 / 3;
-    }
-
-    /* ADAPTACIONES RESPONSIVE */
-
-    /* Tablet (max-width: 991.98px) */
-    @@media (max-width: 991.98px) {
-        /* === AJUSTES DE PORTADA === */
-        .magazine-cover {
-            height: 65vh; /* Menos altura en tablet */
-        }
-
-        .cover-overlay {
-            padding: 2rem;
-        }
-
-        .cover-title {
-            font-size: 3rem;
-        }
-
-        .cover-subtitle {
-            font-size: 1.25rem;
-        }
-        /* === AJUSTES SECCIONES === */
-        .section-container {
-            padding: 2rem 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .section-title {
-            font-size: 2rem;
-        }
-
-        .latest-grid-header {
-            font-size: 1.5rem;
-        }
-        /* === AJUSTES REJILLA PRODUCTOS === */
-        .product-grid-section {
-            grid-template-columns: 1fr;
-            grid-template-rows: auto;
-        }
-
-        .grid-main-product {
-            grid-column: auto;
-            grid-row: auto;
-            height: 300px;
-        }
-
-        .grid-small-product {
-            grid-column: auto;
-            grid-row: auto;
-            height: 300px;
-        }
-
-        .grid-item-content {
-            text-align: center;
-        }
-    }
-
-    /* Mobile Pequeño (max-width: 575.98px) - Columna única para la mayoría de rejillas */
-    @@media (max-width: 575.98px) {
-        .cover-title {
-            font-size: 2rem;
-        }
-
-        .cover-subtitle {
-            font-size: 1rem;
-        }
-
-        .cover-overlay {
-            padding: 1.5rem;
-        }
-        /* === AJUSTES SECCIONES === */
-        .section-container {
-            padding: 1.5rem 1rem;
-            margin: 1rem 0;
-            border-radius: var(--border-radius-md);
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-        }
-
-        .latest-grid-header {
-            font-size: 1.3rem;
-        }
-
-        .magazine-card-img {
-            height: 200px;
-        }
-
-        .card-price {
-            font-size: 1.5rem;
-        }
+    /* Variables específicas para productos */
+    .productos-hero-section {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/diseño/HeaderProductos.jpg');
     }
 </style>
 
-@* === PORTADA PRINCIPAL DE PRODUCTOS === *@
-@if (productoDestacado != null)
-{
-    <div class="magazine-cover">
-        <img src="@Url.Content(productoDestacado.UrlImagen)"
-             alt="@productoDestacado.Titulo"
-             class="cover-image">
-        <div class="cover-overlay">
-            <div class="cover-title-block">
-                <span class="badge bg-light text-dark mb-2">PRODUCTO DESTACADO</span>
-                <h1 class="cover-title">@productoDestacado.Titulo</h1>
-                @{
-                    var descripcionBanner = productoDestacado.DescripcionCorta.Split('.').FirstOrDefault();
-                }
-                <p class="cover-subtitle">@Html.Raw(descripcionBanner)</p>
-                <div class="d-flex align-items-center gap-3 mt-3">
-                    <span class="card-price">@string.Format("{0:C}", productoDestacado.Precio)</span>
-                    @if (User.Identity.IsAuthenticated && Model.ProductosCompradosIds.Contains(productoDestacado.Id))
-                    {
-                        <a asp-action="Descargar" asp-route-id="@productoDestacado.Id" class="btn btn-success">
-                            <i class="fas fa-download me-2"></i> Descargar
-                        </a>
-                    }
-                    else if (Model.ProductosEnValidacionIds.Contains(productoDestacado.Id))
-                    {
-                        <button class="btn btn-warning" disabled>
-                            <i class="fas fa-hourglass-half me-2"></i> En validación
-                        </button>
-                    }
-                    else
-                    {
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <form asp-controller="Producto" asp-action="ComprarProducto" method="post" class="d-inline">
-                                <input type="hidden" name="productoId" value="@productoDestacado.Id" />
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-shopping-cart me-2"></i> Comprar
+<div class="container-sin-gutter productos-index-container">
+    <!-- HERO SECTION CON BÚSQUEDA -->
+    <div class="productos-hero-section">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="hero-content text-center text-white mb-5">
+                        <h1 class="display-4 fw-bold mb-4" style="font-family: var(--font-heading);">
+                            Explora nuestra <span class="text-brand-primary">colección de productos</span>
+                        </h1>
+                        <p class="lead mb-5" style="font-size: 1.25rem;">
+                            Descubre obras únicas creadas por artistas talentosos
+                        </p>
+                    </div>
+
+                    <!-- BÚSQUEDA -->
+                    <div class="search-section bg-white p-4 rounded-lg shadow-lg mb-5">
+                        <form asp-action="Index" method="get">
+                            <div class="input-group input-group-lg shadow-sm">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text"
+                                       name="searchString"
+                                       class="form-control border-start-0 py-3"
+                                       placeholder="Buscar productos por título o descripción..."
+                                       value="@currentSearch">
+                                <button class="btn btn-primary px-4" type="submit">
+                                    <i class="fas fa-search me-2"></i>Buscar
                                 </button>
-                            </form>
+                                @if (!string.IsNullOrEmpty(currentSearch))
+                                {
+                                    <a asp-action="Index" class="btn btn-secondary" title="Limpiar Búsqueda">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                }
+                            </div>
+                            <input type="hidden" name="page" value="1" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="container py-5">
+        <!-- PRODUCTO DESTACADO -->
+        @if (productoDestacado != null)
+        {
+            <div class="featured-product-banner mb-5">
+                <div class="banner-content">
+                    <span class="banner-badge">DESTACADO</span>
+                    <h2 class="banner-title">@productoDestacado.Titulo</h2>
+                    <p class="banner-description">@Html.Raw(productoDestacado.DescripcionCorta.Split('.').FirstOrDefault())</p>
+                    <div class="banner-price">@string.Format("{0:C}", productoDestacado.Precio)</div>
+                    <div class="banner-actions">
+                        @if (User.Identity.IsAuthenticated && Model.ProductosCompradosIds.Contains(productoDestacado.Id))
+                        {
+                            <a asp-action="Descargar" asp-route-id="@productoDestacado.Id" class="btn btn-descargar">
+                                <i class="fas fa-download me-2"></i> Descargar
+                            </a>
+                        }
+                        else if (Model.ProductosEnValidacionIds.Contains(productoDestacado.Id))
+                        {
+                            <button class="btn btn-validacion" disabled>
+                                <i class="fas fa-hourglass-half me-2"></i> En validación
+                            </button>
                         }
                         else
                         {
-                            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">Iniciar Sesión para Comprar</a>
-                        }
-                    }
-                </div>
-                <small style="color: rgba(255, 255, 255, 0.8);">
-                    Por @(productoDestacado.Autor?.Usuario?.Nombre ?? "Autor Desconocido")
-                </small>
-            </div>
-        </div>
-    </div>
-}
-else
-{
-    <div class="magazine-cover">
-        <div class="cover-overlay">
-            <div class="cover-title-block">
-                <span class="badge bg-light text-dark mb-2">TIENDA YO SOY ARTE</span>
-                <h1 class="cover-title">Catálogo de Productos</h1>
-                <p class="cover-subtitle">Descubre obras únicas creadas por nuestros artistas</p>
-            </div>
-        </div>
-    </div>
-}
-
-<div class="container px-0 py-5">
-    @* === SECCIÓN DE PRODUCTOS DESTACADOS EN REJILLA === *@
-    @if (productosParaGrid.Any())
-    {
-        <div class="section-container">
-            <div class="px-3">
-                <span class="latest-grid-header">LO MÁS RECIENTE</span>
-            </div>
-
-            <div class="product-grid-section">
-                @for (int i = 0; i < productosParaGrid.Count; i++)
-                {
-                    var producto = productosParaGrid[i];
-                    var cssClass = (i == 0) ? "grid-main-product" : "grid-small-product";
-
-                    if (i >= 5) { break; }
-
-                    <div class="grid-item @cssClass">
-                        <img src="@Url.Content(producto.UrlImagen)" class="grid-item-img" alt="@producto.Titulo">
-                        <div class="grid-item-overlay"></div>
-                        <div class="grid-item-content">
-                            <h4 class="grid-item-title">@producto.Titulo</h4>
-                            <div class="grid-item-price">@string.Format("{0:C}", producto.Precio)</div>
-
-                            @if (User.Identity.IsAuthenticated && Model.ProductosCompradosIds.Contains(producto.Id))
+                            @if (User.Identity.IsAuthenticated)
                             {
-                                <a asp-action="Descargar" asp-route-id="@producto.Id" class="btn">
-                                    <i class="fas fa-download me-2"></i> Descargar
-                                </a>
-                            }
-                            else if (Model.ProductosEnValidacionIds.Contains(producto.Id))
-                            {
-                                <button class="btn" disabled>
-                                    <i class="fas fa-hourglass-half me-2"></i> En validación
-                                </button>
+                                <form asp-controller="Producto" asp-action="ComprarProducto" method="post" class="d-inline">
+                                    <input type="hidden" name="productoId" value="@productoDestacado.Id" />
+                                    <button type="submit" class="btn btn-comprar">
+                                        <i class="fas fa-shopping-cart me-2"></i> Comprar
+                                    </button>
+                                </form>
                             }
                             else
                             {
-                                @if (User.Identity.IsAuthenticated)
-                                {
-                                    <form asp-controller="Producto" asp-action="ComprarProducto" method="post" class="d-inline">
-                                        <input type="hidden" name="productoId" value="@producto.Id" />
-                                        <button type="submit" class="btn">
-                                            <i class="fas fa-shopping-cart me-2"></i> Comprar
-                                        </button>
-                                    </form>
-                                }
-                                else
-                                {
-                                    <a asp-area="Identity" asp-page="/Account/Login" class="btn">Iniciar Sesión para Comprar</a>
-                                }
+                                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-comprar">Iniciar Sesión para Comprar</a>
                             }
-                        </div>
+                        }
+                        <a href="#todos-productos" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-down me-2"></i> Ver más productos
+                        </a>
                     </div>
-                }
-            </div>
-        </div>
-    }
-
-    <hr class="section-divider" />
-
-    @* === CATÁLOGO COMPLETO DE PRODUCTOS === *@
-    @if (productosSecundariosCatalogo.Any())
-    {
-        <div class="section-container mb-5 pb-5">
-            <div class="px-3">
-                <span class="latest-grid-header">MÁS PRODUCTOS</span>
-            </div>
-
-            @* BÚSQUEDA Y FILTRO *@
-            <div class="row mb-5 justify-content-center">
-                <div class="col-12 col-lg-8">
-                    <form asp-action="Index" method="get">
-                        <div class="input-group">
-                            <input type="text" name="searchString" class="form-control" placeholder="Busca por título o descripción..." value="@currentSearch">
-                            <button class="btn btn-primary" type="submit">
-                                <i class="fas fa-search me-2"></i> Buscar
-                            </button>
-                            @if (!string.IsNullOrEmpty(currentSearch))
-                            {
-                                <a asp-action="Index" class="btn btn-secondary" title="Limpiar Búsqueda">
-                                    <i class="fas fa-times"></i>
-                                </a>
-                            }
-                        </div>
-                        <input type="hidden" name="page" value="1" />
-                    </form>
+                    <small class="text-muted mt-3 d-block">
+                        Por @(productoDestacado.Autor?.Usuario?.Nombre ?? "Autor Desconocido")
+                    </small>
+                </div>
+                <div class="banner-image">
+                    <img src="@Url.Content(productoDestacado.UrlImagen)" alt="@productoDestacado.Titulo">
                 </div>
             </div>
+        }
 
-            <div class="row g-4 px-3">
-                @foreach (var producto in productosSecundariosCatalogo)
+        <!-- TODOS LOS PRODUCTOS -->
+        <div class="row mb-5 pb-5" id="todos-productos">
+            <div class="col-12">
+                <div class="section-header">
+                    <h2>Todos los productos</h2>
+                    <span class="badge">@(todosLosProductos?.Count ?? 0) productos</span>
+                </div>
+
+                @if (productosRestantes != null && productosRestantes.Any())
                 {
-                    <div class="col-lg-4 col-md-6 col-12">
-                        <div class="magazine-card h-100">
-                            <div class="magazine-card-img-container">
-                                <img src="@Url.Content(producto.UrlImagen)" class="magazine-card-img" alt="@producto.Titulo">
-                            </div>
-                            <div class="magazine-card-body">
-                                <span class="card-category">PRODUCTO</span>
-                                <h5>@producto.Titulo</h5>
-                                <p class="card-text">@Html.Raw(producto.DescripcionCorta)</p>
-                                <div class="card-price">@string.Format("{0:C}", producto.Precio)</div>
-                                <div class="card-author">Por @(producto.Autor?.Usuario?.Nombre ?? "Autor Desconocido")</div>
-
-                                <div class="card-actions">
-                                    @if (User.Identity.IsAuthenticated && Model.ProductosCompradosIds.Contains(producto.Id))
-                                    {
-                                        <a asp-action="Descargar" asp-route-id="@producto.Id" class="btn btn-success w-100">
-                                            <i class="fas fa-download me-2"></i> Descargar
-                                        </a>
-                                    }
-                                    else if (Model.ProductosEnValidacionIds.Contains(producto.Id))
-                                    {
-                                        <button class="btn btn-warning w-100" disabled>
-                                            <i class="fas fa-hourglass-half me-2"></i> En validación
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        @if (User.Identity.IsAuthenticated)
-                                        {
-                                            <form asp-controller="Producto" asp-action="ComprarProducto" method="post" class="w-100">
-                                                <input type="hidden" name="productoId" value="@producto.Id" />
-                                                <button type="submit" class="btn btn-primary w-100">
-                                                    <i class="fas fa-shopping-cart me-2"></i> Comprar
-                                                </button>
-                                            </form>
-                                        }
-                                        else
-                                        {
-                                            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary w-100">Iniciar Sesión para Comprar</a>
-                                        }
-                                    }
+                    <div class="products-container">
+                        <div class="row g-4">
+                            @foreach (var producto in productosRestantes)
+                            {
+                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                    <div class="product-card">
+                                        <div class="product-card-header">
+                                            <img src="@Url.Content(producto.UrlImagen)"
+                                                 class="product-image"
+                                                 alt="@producto.Titulo"
+                                                 onerror="this.src='/diseño/default-product.jpg'">
+                                            <span class="product-badge price">@string.Format("{0:C}", producto.Precio)</span>
+                                        </div>
+                                        <div class="product-card-body">
+                                            <h3 class="product-title">@producto.Titulo</h3>
+                                            <p class="product-description">@Html.Raw(producto.DescripcionCorta)</p>
+                                            <div class="product-price">@string.Format("{0:C}", producto.Precio)</div>
+                                            <div class="product-author">Por @(producto.Autor?.Usuario?.Nombre ?? "Autor Desconocido")</div>
+                                            <div class="product-actions">
+                                                @if (User.Identity.IsAuthenticated && Model.ProductosCompradosIds.Contains(producto.Id))
+                                                {
+                                                    <a asp-action="Descargar" asp-route-id="@producto.Id" class="btn btn-descargar">
+                                                        <i class="fas fa-download me-2"></i> Descargar
+                                                    </a>
+                                                }
+                                                else if (Model.ProductosEnValidacionIds.Contains(producto.Id))
+                                                {
+                                                    <button class="btn btn-validacion" disabled>
+                                                        <i class="fas fa-hourglass-half me-2"></i> En validación
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    @if (User.Identity.IsAuthenticated)
+                                                    {
+                                                        <form asp-controller="Producto" asp-action="ComprarProducto" method="post" class="w-100">
+                                                            <input type="hidden" name="productoId" value="@producto.Id" />
+                                                            <button type="submit" class="btn btn-comprar w-100">
+                                                                <i class="fas fa-shopping-cart me-2"></i> Comprar
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-comprar w-100">Iniciar Sesión para Comprar</a>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         </div>
+
+                        <!-- PAGINACIÓN -->
+                        @if (totalPaginas > 1)
+                        {
+                            <nav aria-label="Paginación de productos" class="mt-5">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item @(paginaActual == 1 ? "disabled" : "")">
+                                        <a class="page-link"
+                                           asp-action="Index"
+                                           asp-route-page="@(paginaActual - 1)"
+                                           asp-route-searchString="@currentSearch"
+                                           aria-label="Previous">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+
+                                    @for (int i = 1; i <= totalPaginas; i++)
+                                    {
+                                        <li class="page-item @(i == paginaActual ? "active" : "")">
+                                            <a class="page-link"
+                                               asp-action="Index"
+                                               asp-route-page="@i"
+                                               asp-route-searchString="@currentSearch">@i</a>
+                                        </li>
+                                    }
+
+                                    <li class="page-item @(paginaActual == totalPaginas ? "disabled" : "")">
+                                        <a class="page-link"
+                                           asp-action="Index"
+                                           asp-route-page="@(paginaActual + 1)"
+                                           asp-route-searchString="@currentSearch"
+                                           aria-label="Next">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <i class="fas fa-box-open"></i>
+                        <h4>No hay productos disponibles</h4>
+                        <p class="text-muted">No se encontraron productos que coincidan con tu búsqueda.</p>
+                        @if (!string.IsNullOrEmpty(currentSearch))
+                        {
+                            <a asp-action="Index" class="btn btn-primary mt-3">
+                                <i class="fas fa-times me-2"></i> Limpiar búsqueda
+                            </a>
+                        }
                     </div>
                 }
             </div>
-
-            @* PAGINACIÓN *@
-            @if (totalPaginas > 1)
-            {
-                <div class="row mt-5">
-                    <div class="col-12 d-flex justify-content-center">
-                        <nav aria-label="Navegación de Productos">
-                            <ul class="pagination">
-                                <li class="page-item @(paginaActual == 1 ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="@(paginaActual - 1)" asp-route-searchString="@currentSearch" aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-
-                                @for (int i = 1; i <= totalPaginas; i++)
-                                {
-                                    <li class="page-item @(i == paginaActual ? "active" : "")">
-                                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchString="@currentSearch">@i</a>
-                                    </li>
-                                }
-
-                                <li class="page-item @(paginaActual == totalPaginas ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-page="@(paginaActual + 1)" asp-route-searchString="@currentSearch" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-            }
         </div>
-    }
-    else if (productoDestacado == null && !productosParaGrid.Any())
-    {
-        <div class="section-container">
-            <div class="alert alert-warning text-center" role="alert">
-                No hay productos disponibles en este momento que coincidan con la búsqueda.
-            </div>
-        </div>
-    }
+    </div>
 </div>
 
 @section Scripts {
@@ -845,4 +257,43 @@ else
             });
         </script>
     }
+
+    <script>
+        // Scroll suave al ancla
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Mejorar experiencia de formularios
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-focus en el campo de búsqueda si hay búsqueda actual
+            const searchInput = document.querySelector('input[name="searchString"]');
+            if (searchInput && searchInput.value) {
+                searchInput.select();
+            }
+
+            // Confirmación de compra
+            document.querySelectorAll('form[action*="ComprarProducto"]').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const button = this.querySelector('button[type="submit"]');
+                    if (button) {
+                        button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Procesando...';
+                        button.disabled = true;
+                    }
+                });
+            });
+        });
+    </script>
 }
