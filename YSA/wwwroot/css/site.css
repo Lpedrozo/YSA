@@ -87,7 +87,7 @@ body {
     margin: 0;
     padding-top: 5.5rem;
     font-family: var(--font-body);
-    background-color: var(--color-background);
+    background: linear-gradient(135deg, rgba(239, 136, 48, 0.08) 0%, rgba(239, 136, 48, 0.04) 20%, rgba(242, 229, 20, 0.02) 40%, rgba(109, 181, 62, 0.05) 60%, rgba(229, 54, 26, 0.03) 80%, rgba(248, 249, 250, 1) 100%);
     color: var(--color-text-dark);
     line-height: var(--line-height-loose);
     font-weight: normal;
@@ -3008,22 +3008,9 @@ body {
     align-items: center;
     padding: 2rem 1rem;
     margin-top: 4rem;
-    /* Fondo degradado con los colores principales */
-    background: linear-gradient(135deg, rgba(239, 136, 48, 0.08) 0%, rgba(229, 54, 26, 0.05) 25%, rgba(242, 229, 20, 0.03) 50%, rgba(109, 181, 62, 0.06) 75%, rgba(248, 249, 250, 1) 100%);
     position: relative;
 }
 
-    /* Patrón sutil de fondo (opcional) */
-    .auth-github-style::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: radial-gradient(circle at 15% 50%, rgba(239, 136, 48, 0.05) 0%, transparent 50%), radial-gradient(circle at 85% 30%, rgba(109, 181, 62, 0.04) 0%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(242, 229, 20, 0.03) 0%, transparent 50%);
-        z-index: 1;
-    }
 
 .auth-github-logo-container {
     text-align: center;
@@ -3387,5 +3374,119 @@ body {
 
     .auth-github-subtitle {
         font-size: 0.9rem;
+    }
+}
+
+/* =========================================== */
+/* ESTILOS ESPECÍFICOS PARA REGISTRO */
+/* =========================================== */
+
+/* Card de registro más ancha */
+.auth-register-card {
+    width: 100%;
+    max-width: 420px;
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(239, 136, 48, 0.1);
+    margin-top: 0.5rem;
+    position: relative;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+    .auth-register-card:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(239, 136, 48, 0.15);
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+    }
+
+/* Grupo de formulario en fila para registro */
+.auth-register-form-group-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+    .auth-register-form-group-row .auth-github-form-group {
+        flex: 1;
+        margin-bottom: 0;
+    }
+
+/* Checkbox de términos */
+.auth-terms-check {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: rgba(248, 249, 250, 0.5);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid rgba(239, 136, 48, 0.1);
+}
+
+    .auth-terms-check .form-check {
+        margin-bottom: 0;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .auth-terms-check .form-check-input {
+        margin-top: 0.3rem;
+        border: 2px solid var(--color-border);
+        border-radius: var(--border-radius-sm);
+    }
+
+        .auth-terms-check .form-check-input:checked {
+            background-color: var(--color-brand-primary);
+            border-color: var(--color-brand-primary);
+        }
+
+        .auth-terms-check .form-check-input:focus {
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    .auth-terms-check .form-check-label {
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        color: var(--color-text-dark);
+        margin-left: 0.75rem;
+        line-height: var(--line-height-normal);
+    }
+
+        .auth-terms-check .form-check-label a {
+            color: var(--color-brand-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .auth-terms-check .form-check-label a:hover {
+                color: var(--color-brand-secondary);
+                text-decoration: underline;
+            }
+
+/* Responsive para registro */
+@media (max-width: 576px) {
+    .auth-register-card {
+        max-width: 100%;
+        padding: 1.5rem;
+    }
+
+    .auth-register-form-group-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .auth-terms-check {
+        padding: 0.75rem;
+    }
+
+        .auth-terms-check .form-check-label {
+            font-size: 0.8rem;
+        }
+}
+
+@media (max-width: 768px) {
+    .auth-register-card {
+        max-width: 100%;
     }
 }
