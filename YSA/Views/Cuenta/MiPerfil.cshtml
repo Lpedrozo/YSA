@@ -3,611 +3,104 @@
     ViewData["Title"] = "Mi perfil y cursos";
 }
 
-<style>
-    /* IMPORTACIÓN DE TIPOGRAFÍAS */
-    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
-    :root {
-        --color-primary-action: #ef8830; /* Naranja como color principal */
-        --color-secondary: #212529; /* Negro oscuro para títulos */
-        --color-accent: #6c757d; /* Gris para texto de soporte */
-        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
-        --color-card-bg: #ffffff;
-        --color-text-dark: #212529;
-        --color-text-light: #ffffff;
-        --color-border: #E8E8E8;
-        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
-        --color-shadow-light: rgba(0, 0, 0, 0.1);
-        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
-        /* NUEVOS COLORES DE MARCA */
-        --color-brand-primary: #ef8830; /* Naranja - color principal */
-        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
-        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
-        --color-brand-success: #6db53e; /* Verde - color de éxito */
-        --color-brand-dark: #08080a; /* Negro - texto principal */
-        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
-        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
-        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
-        --font-accent: 'Poppins', sans-serif;
-        /* ALTURAS DE LÍNEA */
-        --line-height-tight: 1.1;
-        --line-height-normal: 1.4;
-        --line-height-loose: 1.6;
-        /* BORDES REDONDEADOS */
-        --border-radius-sm: 8px;
-        --border-radius-md: 12px;
-        --border-radius-lg: 16px;
-        --border-radius-xl: 20px;
-    }
-
-    body {
-        font-family: var(--font-body);
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-        line-height: var(--line-height-loose);
-        background: linear-gradient(135deg, var(--color-section-bg) 0%, var(--color-background) 100%);
-    }
-
-    /* CONTENEDOR PRINCIPAL CON ESTILO REVISTA */
-    .main-container {
-        padding: 3rem 0;
-    }
-
-    /* === ESTILO ESPECÍFICO PARA EL BLOQUE DE LA IMAGEN === */
-    .latest-grid-header {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid var(--color-brand-primary);
-        padding-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-    }
-
-    /* BARRA LATERAL DE PERFIL CON ESTILO REVISTA */
-    .profile-sidebar {
-        background-color: var(--color-card-bg);
-        border-radius: var(--border-radius-lg);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-        padding: 2.5rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        height: fit-content;
-        position: sticky;
-        top: 2rem;
-    }
-
-    /* FOTO DE PERFIL CON ESTILO REVISTA */
-    .profile-photo-container {
-        position: relative;
-        width: 140px;
-        height: 140px;
-        margin: 0 auto 2rem;
-        border-radius: 50%;
-        overflow: hidden;
-        border: 4px solid var(--color-brand-primary);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(239, 136, 48, 0.2);
-    }
-
-        .profile-photo-container:hover {
-            transform: scale(1.05);
-            border-color: var(--color-brand-secondary);
-        }
-
-        .profile-photo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-    .initials {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--color-text-light);
-        font-size: 3rem;
-        font-weight: 800;
-        font-family: var(--font-heading);
-    }
-
-    .upload-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.7);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        color: var(--color-text-light);
-        font-size: 2rem;
-    }
-
-    .profile-photo-container:hover .upload-overlay {
-        opacity: 1;
-    }
-
-    #imageUpload {
-        display: none;
-    }
-
-    /* INFORMACIÓN DEL USUARIO */
-    .user-info {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .user-name {
-        font-family: var(--font-heading);
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .user-email {
-        font-family: var(--font-accent);
-        font-size: 0.9rem;
-        color: var(--color-accent);
-        font-weight: 500;
-    }
-
-    /* MENÚ LATERAL CON ESTILO REVISTA */
-    .sidebar-menu {
-        list-style: none;
-        padding: 0;
-        margin-top: 2rem;
-        width: 100%;
-    }
-
-    .sidebar-menu-item {
-        margin-bottom: 0.5rem;
-    }
-
-        .sidebar-menu-item a,
-        .sidebar-menu-item button {
-            display: flex;
-            align-items: center;
-            padding: 1rem 1.25rem;
-            border-radius: var(--border-radius-md);
-            color: var(--color-text-dark);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: none;
-            background: transparent;
-            width: 100%;
-            text-align: left;
-            font-family: var(--font-accent);
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-            .sidebar-menu-item button.btn-link {
-                background-color: transparent;
-                cursor: pointer;
-            }
-
-                .sidebar-menu-item a.active,
-                .sidebar-menu-item a:hover,
-                .sidebar-menu-item button.btn-link:hover {
-                    background-color: var(--color-brand-primary);
-                    color: var(--color-text-light);
-                    transform: translateX(5px);
-                }
-
-            .sidebar-menu-item a i,
-            .sidebar-menu-item button i {
-                margin-right: 0.75rem;
-                font-size: 1.1rem;
-                width: 20px;
-                text-align: center;
-            }
-
-    /* CONTENIDO PRINCIPAL CON ESTILO REVISTA */
-    .profile-content {
-        background-color: var(--color-card-bg);
-        border-radius: var(--border-radius-lg);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-        padding: 3rem;
-    }
-
-    .content-section {
-        border-bottom: 2px solid var(--color-border);
-        padding-bottom: 2.5rem;
-        margin-bottom: 2.5rem;
-    }
-
-        .content-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-
-    .section-title {
-        font-family: var(--font-heading);
-        font-size: 2rem;
-        font-weight: 800;
-        margin-bottom: 1rem;
-        color: var(--color-secondary);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        line-height: var(--line-height-tight);
-    }
-
-    .section-subtitle {
-        font-family: var(--font-body);
-        font-size: 1.1rem;
-        color: var(--color-accent);
-        margin-bottom: 2rem;
-        line-height: var(--line-height-normal);
-    }
-
-    /* FORMULARIOS CON ESTILO REVISTA */
-    .form-control {
-        border-radius: var(--border-radius-sm);
-        border: 2px solid var(--color-border);
-        padding: 1rem;
-        background-color: var(--color-card-bg);
-        width: 100%;
-        color: var(--color-text-dark);
-        font-family: var(--font-body);
-        font-size: 1rem;
-        transition: all 0.3s ease;
-    }
-
-        .form-control:focus {
-            border-color: var(--color-brand-primary);
-            box-shadow: 0 0 0 0.25rem rgba(239, 136, 48, 0.15);
-            background-color: var(--color-background);
-            transform: translateY(-2px);
-        }
-
-        .form-control:read-only {
-            background-color: var(--color-section-bg);
-            border-color: var(--color-border);
-            color: var(--color-accent);
-        }
-
-    .form-label {
-        font-family: var(--font-accent);
-        font-weight: 600;
-        color: var(--color-secondary);
-        margin-bottom: 0.5rem;
-        font-size: 0.95rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    /* BOTONES CON ESTILO REVISTA */
-    .btn-primary {
-        background-color: var(--color-brand-primary) !important;
-        border-color: var(--color-brand-primary) !important;
-        color: var(--color-text-light) !important;
-        font-weight: 700;
-        font-family: var(--font-accent);
-        padding: 1rem 2rem;
-        border-radius: var(--border-radius-sm);
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-size: 1rem;
-    }
-
-        .btn-primary:hover {
-            background-color: var(--color-brand-secondary) !important;
-            border-color: var(--color-brand-secondary) !important;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(239, 136, 48, 0.3);
-        }
-
-    .btn-success {
-        background-color: var(--color-brand-success) !important;
-        border-color: var(--color-brand-success) !important;
-        color: var(--color-text-light) !important;
-        font-weight: 600;
-        font-family: var(--font-accent);
-        padding: 0.75rem 1.5rem;
-        border-radius: var(--border-radius-sm);
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-size: 0.9rem;
-    }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(109, 181, 62, 0.3);
-        }
-
-    /* TARJETAS DE CURSO/PRODUCTO CON ESTILO REVISTA */
-    .magazine-card {
-        border-radius: var(--border-radius-md);
-        border: 1px solid var(--color-border);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        background-color: var(--color-card-bg);
-        height: 100%;
-        text-decoration: none;
-        color: inherit;
-        display: block;
-        position: relative;
-    }
-
-        .magazine-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-            border-color: var(--color-brand-primary);
-            text-decoration: none;
-            color: inherit;
-        }
-
-    .magazine-card-img-container {
-        overflow: hidden;
-        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
-    }
-
-    .magazine-card-img {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-
-    .magazine-card:hover .magazine-card-img {
-        transform: scale(1.08);
-    }
-
-    .magazine-card-body {
-        padding: 1.5rem;
-        position: relative;
-        text-align: left;
-    }
-
-    .card-category {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--color-brand-primary);
-        text-transform: uppercase;
-        margin-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-        letter-spacing: 0.5px;
-    }
-
-    .magazine-card-body h5 {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        font-size: 1.3rem;
-        line-height: var(--line-height-normal);
-        color: var(--color-secondary);
-        margin-bottom: 0.75rem;
-    }
-
-    .magazine-card-body .card-text {
-        font-family: var(--font-body);
-        font-size: 0.95rem;
-        color: var(--color-accent);
-        line-height: var(--line-height-normal);
-        margin-bottom: 1rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .card-price {
-        font-family: var(--font-accent);
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--color-brand-primary);
-        margin-bottom: 1rem;
-    }
-
-    /* ALERTAS CON ESTILO REVISTA */
-    .alert-info {
-        background-color: rgba(109, 181, 62, 0.1);
-        border-color: var(--color-brand-success);
-        color: var(--color-text-dark);
-        border-radius: var(--border-radius-md);
-        padding: 2rem;
-        text-align: center;
-        font-family: var(--font-body);
-    }
-
-    .text-danger {
-        color: var(--color-brand-secondary) !important;
-        font-size: 0.85rem;
-        font-family: var(--font-accent);
-        font-weight: 500;
-        margin-top: 0.25rem;
-    }
-
-    /* ADAPTACIONES RESPONSIVE */
-
-    /* Tablet (max-width: 991.98px) */
-    @@media (max-width: 991.98px) {
-        .main-container {
-            padding: 2rem 0;
-        }
-
-        .profile-sidebar {
-            position: relative;
-            top: 0;
-            margin-bottom: 2rem;
-        }
-
-        .profile-content {
-            padding: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-        }
-
-        .magazine-card-body {
-            padding: 1.25rem;
-        }
-
-            .magazine-card-body h5 {
-                font-size: 1.2rem;
-            }
-    }
-
-    /* Mobile Pequeño (max-width: 575.98px) */
-    @@media (max-width: 575.98px) {
-        .main-container {
-            padding: 1.5rem 0;
-        }
-
-        .profile-sidebar {
-            padding: 2rem 1.5rem;
-        }
-
-        .profile-content {
-            padding: 1.5rem;
-            border-radius: var(--border-radius-md);
-        }
-
-        .section-title {
-            font-size: 1.6rem;
-        }
-
-        .profile-photo-container {
-            width: 120px;
-            height: 120px;
-        }
-
-        .initials {
-            font-size: 2.5rem;
-        }
-
-        .magazine-card-body {
-            padding: 1rem;
-        }
-
-            .magazine-card-body h5 {
-                font-size: 1.1rem;
-            }
-
-        .btn-primary {
-            padding: 0.875rem 1.5rem;
-            font-size: 0.9rem;
-        }
-    }
-</style>
-
-<div class="container main-container mb-5 mb-5">
-    <div class="row g-5 pb-5">
+<div class="container main-container mt-5 pt-5 mb-5">
+    <div class="row g-5">
         <!-- BARRA LATERAL DE PERFIL -->
         <div class="col-lg-4">
-            <div class="profile-sidebar">
-                <form asp-action="UpdateProfileImage" method="post" enctype="multipart/form-data" id="imageUploadForm">
-                    <label for="imageUpload">
-                        <div class="profile-photo-container">
-                            @if (!string.IsNullOrEmpty(Model.UrlImagen))
-                            {
-                                <img src="@Model.UrlImagen" alt="Foto de perfil de @Model.Nombre @Model.Apellido" />
-                            }
-                            else
-                            {
-                                <div class="initials">
-                                    @{
-                                        string initials = "";
-                                        if (!string.IsNullOrEmpty(Model.Nombre) && !string.IsNullOrEmpty(Model.Apellido))
-                                        {
-                                            initials = Model.Nombre.ToUpper().FirstOrDefault().ToString() + Model.Apellido.ToUpper().FirstOrDefault().ToString();
+            <div class="curso-sidebar" style="position: sticky; top: 20px;">
+                <div class="curso-precio-card">
+                    <!-- FOTO DE PERFIL -->
+                    <form asp-action="UpdateProfileImage" method="post" enctype="multipart/form-data" id="imageUploadForm" class="text-center">
+                        <label for="imageUpload" class="d-inline-block cursor-pointer">
+                            <div class="position-relative mb-4" style="width: 140px; height: 140px; margin: 0 auto;">
+                                @if (!string.IsNullOrEmpty(Model.UrlImagen))
+                                {
+                                    <img src="@Model.UrlImagen" alt="Foto de perfil"
+                                         class="persona-imagen"
+                                         style="width: 140px; height: 140px;">
+                                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center justify-content-center rounded-circle opacity-0 transition-all hover:opacity-100">
+                                        <i class="fas fa-camera text-white fs-3"></i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="persona-imagen d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary fs-2 fw-bold"
+                                         style="width: 140px; height: 140px;">
+                                        @{
+                                            string initials = "";
+                                            if (!string.IsNullOrEmpty(Model.Nombre) && !string.IsNullOrEmpty(Model.Apellido))
+                                            {
+                                                initials = Model.Nombre.ToUpper().FirstOrDefault().ToString() + Model.Apellido.ToUpper().FirstOrDefault().ToString();
+                                            }
                                         }
-                                    }
-                                    @initials
-                                </div>
-                            }
-                            <div class="upload-overlay">
-                                <i class="fas fa-camera"></i>
+                                        @initials
+                                    </div>
+                                }
                             </div>
-                        </div>
-                    </label>
-                    <input type="file" id="imageUpload" name="file" accept="image/*" />
-                    @Html.AntiForgeryToken()
-                </form>
+                        </label>
+                        <input type="file" id="imageUpload" name="file" accept="image/*" class="d-none" />
+                        @Html.AntiForgeryToken()
+                    </form>
 
-                <div class="user-info">
-                    <h3 class="user-name">@Model.Nombre @Model.Apellido</h3>
-                    <p class="user-email">@Model.Email</p>
-                </div>
+                    <!-- INFORMACIÓN DEL USUARIO -->
+                    <div class="text-center mb-4">
+                        <h3 class="persona-nombre mb-1">@Model.Nombre @Model.Apellido</h3>
+                        <p class="text-muted mb-0">@Model.Email</p>
+                    </div>
 
-                <ul class="sidebar-menu">
-                    <li class="sidebar-menu-item">
-                        <a href="#" id="miPerfilLink" class="active">
-                            <i class="fas fa-user-circle"></i> Mi Perfil
-                        </a>
-                    </li>
-                    <li class="sidebar-menu-item">
-                        <a href="#" id="seguridadLink">
-                            <i class="fas fa-lock"></i> Seguridad
-                        </a>
-                    </li>
-                    <li class="sidebar-menu-item">
-                        <a href="#" id="misCursosLink">
-                            <i class="fas fa-book-open"></i> Mis Cursos
-                        </a>
-                    </li>
-                    <li class="sidebar-menu-item">
-                        <a href="#" id="misProductosLink">
-                            <i class="fas fa-file-pdf"></i> Mis Productos
-                        </a>
-                    </li>
-                    <li class="sidebar-menu-item">
-                        <form asp-controller="Cuenta" asp-action="Logout" method="post" id="logoutForm">
-                            <button type="submit" class="btn btn-link">
-                                <i class="fas fa-power-off"></i> Cerrar Sesión
+                    <!-- MENÚ DE NAVEGACIÓN -->
+                    <div class="miscursos-filtros mb-0">
+                        <div class="miscursos-filtros-botones flex-column gap-2">
+                            <button type="button" class="miscursos-filtro-btn text-start active" data-section="profile">
+                                <i class="fas fa-user-circle me-2"></i> Mi Perfil
                             </button>
-                            @Html.AntiForgeryToken()
-                        </form>
-                    </li>
-                </ul>
+                            <button type="button" class="miscursos-filtro-btn text-start" data-section="security">
+                                <i class="fas fa-lock me-2"></i> Seguridad
+                            </button>
+                            <button type="button" class="miscursos-filtro-btn text-start" data-section="courses">
+                                <i class="fas fa-book-open me-2"></i> Mis Cursos
+                            </button>
+                            <button type="button" class="miscursos-filtro-btn text-start" data-section="products">
+                                <i class="fas fa-file-pdf me-2"></i> Mis Productos
+                            </button>
+                            <form asp-controller="Cuenta" asp-action="Logout" method="post" class="w-100">
+                                <button type="submit" class="miscursos-filtro-btn text-start w-100">
+                                    <i class="fas fa-power-off me-2"></i> Cerrar Sesión
+                                </button>
+                                @Html.AntiForgeryToken()
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- CONTENIDO PRINCIPAL -->
         <div class="col-lg-8">
-            <div class="profile-content">
+            <div class="curso-precio-card">
                 <!-- SECCIÓN DE PERFIL -->
-                <div id="profileSection" class="content-section">
-                    <span class="latest-grid-header">INFORMACIÓN DEL PERFIL</span>
-                    <p class="section-subtitle">Actualiza tus datos personales y mantén tu perfil al día</p>
+                <div id="profileSection" class="content-section active-section">
+                    <h2 class="curso-titulo-seccion">
+                        <i class="fas fa-user-circle me-2"></i>INFORMACIÓN DEL PERFIL
+                    </h2>
+                    <p class="text-muted mb-4">Actualiza tus datos personales y mantén tu perfil al día</p>
 
                     <form asp-action="UpdateProfile" method="post">
                         <div class="row g-3">
                             <div class="col-12">
-                                <label for="email" class="form-label">Correo Electrónico</label>
-                                <input type="text" id="email" class="form-control" value="@Model.Email" readonly />
+                                <label for="email" class="form-label confirmacion-form-label">Correo Electrónico</label>
+                                <input type="text" id="email" class="form-control confirmacion-form-input" value="@Model.Email" readonly />
                             </div>
                             <div class="col-md-6">
-                                <label for="nombre" class="form-label">Nombre</label>
-                                <input type="text" id="nombre" name="Nombre" class="form-control" value="@Model.Nombre" />
+                                <label for="nombre" class="form-label confirmacion-form-label">Nombre</label>
+                                <input type="text" id="nombre" name="Nombre" class="form-control confirmacion-form-input" value="@Model.Nombre" />
                             </div>
                             <div class="col-md-6">
-                                <label for="apellido" class="form-label">Apellido</label>
-                                <input type="text" id="apellido" name="Apellido" class="form-control" value="@Model.Apellido" />
+                                <label for="apellido" class="form-label confirmacion-form-label">Apellido</label>
+                                <input type="text" id="apellido" name="Apellido" class="form-control confirmacion-form-input" value="@Model.Apellido" />
                             </div>
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary curso-btn-inscribirse">
                                     <i class="fas fa-save me-2"></i>Guardar Cambios
                                 </button>
                             </div>
@@ -616,29 +109,31 @@
                 </div>
 
                 <!-- SECCIÓN DE SEGURIDAD -->
-                <div id="securitySection" class="content-section" style="display: none;">
-                    <span class="latest-grid-header">SEGURIDAD DE LA CUENTA</span>
-                    <p class="section-subtitle">Mantén tu cuenta segura actualizando tu contraseña periódicamente</p>
+                <div id="securitySection" class="content-section d-none">
+                    <h2 class="curso-titulo-seccion">
+                        <i class="fas fa-lock me-2"></i>SEGURIDAD DE LA CUENTA
+                    </h2>
+                    <p class="text-muted mb-4">Mantén tu cuenta segura actualizando tu contraseña periódicamente</p>
 
                     <form asp-action="ChangePassword" method="post">
                         <div class="row g-3">
                             <div class="col-12">
-                                <label for="currentPassword" class="form-label">Contraseña Actual</label>
-                                <input type="password" id="currentPassword" name="CurrentPassword" class="form-control" />
+                                <label for="currentPassword" class="form-label confirmacion-form-label">Contraseña Actual</label>
+                                <input type="password" id="currentPassword" name="CurrentPassword" class="form-control confirmacion-form-input" />
                                 <span asp-validation-for="CurrentPassword" class="text-danger"></span>
                             </div>
                             <div class="col-md-6">
-                                <label for="newPassword" class="form-label">Nueva Contraseña</label>
-                                <input type="password" id="newPassword" name="NewPassword" class="form-control" />
+                                <label for="newPassword" class="form-label confirmacion-form-label">Nueva Contraseña</label>
+                                <input type="password" id="newPassword" name="NewPassword" class="form-control confirmacion-form-input" />
                                 <span asp-validation-for="NewPassword" class="text-danger"></span>
                             </div>
                             <div class="col-md-6">
-                                <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
-                                <input type="password" id="confirmPassword" name="ConfirmPassword" class="form-control" />
+                                <label for="confirmPassword" class="form-label confirmacion-form-label">Confirmar Contraseña</label>
+                                <input type="password" id="confirmPassword" name="ConfirmPassword" class="form-control confirmacion-form-input" />
                                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                             </div>
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary curso-btn-inscribirse">
                                     <i class="fas fa-key me-2"></i>Actualizar Contraseña
                                 </button>
                             </div>
@@ -647,8 +142,10 @@
                 </div>
 
                 <!-- SECCIÓN DE CURSOS -->
-                <div id="coursesSection" class="content-section" style="display: none;">
-                    <span class="latest-grid-header">MIS CURSOS ADQUIRIDOS</span>
+                <div id="coursesSection" class="content-section d-none">
+                    <h2 class="curso-titulo-seccion">
+                        <i class="fas fa-book-open me-2"></i>MIS CURSOS ADQUIRIDOS
+                    </h2>
 
                     @if (Model.CursosComprados != null && Model.CursosComprados.Any())
                     {
@@ -656,53 +153,24 @@
                             @foreach (var curso in Model.CursosComprados)
                             {
                                 <div class="col-md-6">
-                                    <a asp-controller="Curso" asp-action="VerCurso" asp-route-id="@curso.Id" class="magazine-card">
+                                    <div class="magazine-card">
                                         <div class="magazine-card-img-container">
                                             <img src="@curso.UrlImagen" class="magazine-card-img" alt="@curso.Titulo" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFF/000?text=Sin+Imagen';" />
+                                            @if (curso.Precio > 0)
+                                            {
+                                                <div class="badge-price">@curso.Precio.ToString("C")</div>
+                                            }
+                                            else
+                                            {
+                                                <div class="badge-free">Gratis</div>
+                                            }
                                         </div>
                                         <div class="magazine-card-body">
                                             <span class="card-category">CURSO</span>
-                                            <h5>@curso.Titulo</h5>
-                                            <div class="card-text">@Html.Raw(curso.DescripcionCorta)</div>
-                                            <div class="card-price">@curso.Precio.ToString("C")</div>
-                                            <div class="btn btn-primary w-100">
+                                            <h5 class="magazine-card-body h5">@curso.Titulo</h5>
+                                            <div class="magazine-card-body .card-text">@Html.Raw(curso.DescripcionCorta)</div>
+                                            <a asp-controller="Curso" asp-action="VerCurso" asp-route-id="@curso.Id" class="btn btn-primary w-100 mt-3">
                                                 <i class="fas fa-eye me-2"></i>Continuar Aprendiendo
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-info" role="alert">
-                            <i class="fas fa-book-open me-2"></i>Aún no has comprado ningún curso. ¡Descubre nuestro catálogo y comienza tu viaje de aprendizaje!
-                        </div>
-                    }
-                </div>
-
-                <!-- SECCIÓN DE PRODUCTOS -->
-                <div id="productsSection" class="content-section" style="display: none;">
-                    <span class="latest-grid-header">MIS PRODUCTOS DIGITALES</span>
-
-                    @if (Model.ProductosComprados != null && Model.ProductosComprados.Any())
-                    {
-                        <div class="row g-4">
-                            @foreach (var producto in Model.ProductosComprados)
-                            {
-                                <div class="col-md-6">
-                                    <div class="magazine-card">
-                                        <div class="magazine-card-img-container">
-                                            <img src="@producto.UrlImagen" class="magazine-card-img" alt="@producto.Titulo" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFF/000?text=Sin+Imagen';" />
-                                        </div>
-                                        <div class="magazine-card-body">
-                                            <span class="card-category">PRODUCTO DIGITAL</span>
-                                            <h5>@producto.Titulo</h5>
-                                            <div class="card-text">@Html.Raw(producto.DescripcionCorta)</div>
-                                            <div class="card-price">@producto.Precio.ToString("C")</div>
-                                            <a asp-controller="Producto" asp-action="Descargar" asp-route-id="@producto.Id" class="btn btn-success w-100">
-                                                <i class="fas fa-download me-2"></i>Descargar Producto
                                             </a>
                                         </div>
                                     </div>
@@ -712,8 +180,58 @@
                     }
                     else
                     {
-                        <div class="alert alert-info" role="alert">
-                            <i class="fas fa-file-pdf me-2"></i>Aún no has adquirido ningún producto digital. Explora nuestra tienda y descubre recursos exclusivos.
+                        <div class="alert alert-info text-center py-4">
+                            <i class="fas fa-book-open fa-3x mb-3 opacity-25"></i>
+                            <h5 class="mb-2">Aún no has comprado ningún curso</h5>
+                            <p class="mb-3">¡Descubre nuestro catálogo y comienza tu viaje de aprendizaje!</p>
+                            <a asp-controller="Curso" asp-action="Index" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Explorar Cursos
+                            </a>
+                        </div>
+                    }
+                </div>
+
+                <!-- SECCIÓN DE PRODUCTOS -->
+                <div id="productsSection" class="content-section d-none">
+                    <h2 class="curso-titulo-seccion">
+                        <i class="fas fa-file-pdf me-2"></i>MIS PRODUCTOS DIGITALES
+                    </h2>
+
+                    @if (Model.ProductosComprados != null && Model.ProductosComprados.Any())
+                    {
+                        <div class="row g-4">
+                            @foreach (var producto in Model.ProductosComprados)
+                            {
+                                <div class="col-md-6">
+                                    <div class="product-card">
+                                        <div class="product-card-header">
+                                            <img src="@producto.UrlImagen" class="product-image" alt="@producto.Titulo" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFF/000?text=Sin+Imagen';" />
+                                            <div class="product-badge price">@producto.Precio.ToString("C")</div>
+                                            <div class="product-badge category">DIGITAL</div>
+                                        </div>
+                                        <div class="product-card-body">
+                                            <h5 class="product-title">@producto.Titulo</h5>
+                                            <div class="product-description">@Html.Raw(producto.DescripcionCorta)</div>
+                                            <div class="product-actions">
+                                                <a asp-controller="Producto" asp-action="Descargar" asp-route-id="@producto.Id" class="btn btn-success w-100">
+                                                    <i class="fas fa-download me-2"></i>Descargar Producto
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info text-center py-4">
+                            <i class="fas fa-file-pdf fa-3x mb-3 opacity-25"></i>
+                            <h5 class="mb-2">Aún no has adquirido productos digitales</h5>
+                            <p class="mb-3">Explora nuestra tienda y descubre recursos exclusivos.</p>
+                            <a asp-controller="Producto" asp-action="Index" class="btn btn-primary">
+                                <i class="fas fa-store me-2"></i>Visitar Tienda
+                            </a>
                         </div>
                     }
                 </div>
@@ -722,84 +240,111 @@
     </div>
 </div>
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const miPerfilLink = document.getElementById('miPerfilLink');
-        const seguridadLink = document.getElementById('seguridadLink');
-        const misCursosLink = document.getElementById('misCursosLink');
-        const misProductosLink = document.getElementById('misProductosLink');
-        const profileSection = document.getElementById('profileSection');
-        const securitySection = document.getElementById('securitySection');
-        const coursesSection = document.getElementById('coursesSection');
-        const productsSection = document.getElementById('productsSection');
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Referencias a elementos
+            const sectionButtons = document.querySelectorAll('[data-section]');
+            const sections = document.querySelectorAll('.content-section');
+            const imageUploadInput = document.getElementById('imageUpload');
 
-        function setActiveLink(activeLink) {
-            // Eliminar 'active' de todos los enlaces
-            [miPerfilLink, seguridadLink, misCursosLink, misProductosLink].forEach(link => {
-                link.classList.remove('active');
+            // Función para cambiar de sección
+            function showSection(sectionId) {
+                // Actualizar botones activos
+                sectionButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.section === sectionId) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                // Mostrar sección correspondiente
+                sections.forEach(section => {
+                    section.classList.add('d-none');
+                    if (section.id === sectionId + 'Section') {
+                        section.classList.remove('d-none');
+                    }
+                });
+            }
+
+            // Event listeners para los botones de navegación
+            sectionButtons.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    if (this.tagName === 'BUTTON') {
+                        e.preventDefault();
+                        const sectionId = this.dataset.section;
+                        showSection(sectionId);
+
+                        // Actualizar URL sin recargar la página
+                        const url = new URL(window.location);
+                        url.searchParams.set('section', sectionId);
+                        window.history.pushState({}, '', url);
+                    }
+                });
             });
-            // Añadir 'active' al enlace actual
-            activeLink.classList.add('active');
-        }
 
-        function showSection(sectionToShow) {
-            // Ocultar todas las secciones
-            [profileSection, securitySection, coursesSection, productsSection].forEach(section => {
-                section.style.display = 'none';
+            // Subida de imagen
+            imageUploadInput?.addEventListener('change', function () {
+                if (this.files && this.files[0]) {
+                    // Mostrar loader
+                    const form = document.getElementById('imageUploadForm');
+                    const originalButton = form.querySelector('button[type="submit"]');
+                    const originalHtml = originalButton?.innerHTML;
+
+                    if (originalButton) {
+                        originalButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Subiendo...';
+                        originalButton.disabled = true;
+                    }
+
+                    // Enviar formulario
+                    form.submit();
+                }
             });
-            // Mostrar la sección requerida
-            sectionToShow.style.display = 'block';
-        }
 
-        // --- Event Listeners para la navegación ---
-        miPerfilLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            setActiveLink(this);
-            showSection(profileSection);
+            // Manejar parámetros de URL al cargar la página
+            const urlParams = new URLSearchParams(window.location.search);
+            const sectionParam = urlParams.get('section');
+
+            if (sectionParam && ['profile', 'security', 'courses', 'products'].includes(sectionParam)) {
+                showSection(sectionParam);
+            } else {
+                // Por defecto, mostrar perfil
+                showSection('profile');
+            }
+
+            // Validación de formularios
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function (e) {
+                    if (!form.checkValidity()) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+
+            // Previsualización de imagen antes de subir
+            const imagePreview = (input, previewId) => {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const preview = document.getElementById(previewId);
+                        if (preview) {
+                            preview.src = e.target.result;
+                        }
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            };
+
+            // Efecto hover en tarjetas
+            const cards = document.querySelectorAll('.magazine-card, .product-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function () {
+                    this.style.transition = 'all 0.3s ease';
+                });
+            });
         });
-
-        seguridadLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            setActiveLink(this);
-            showSection(securitySection);
-        });
-
-        misCursosLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            setActiveLink(this);
-            showSection(coursesSection);
-        });
-
-        misProductosLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            setActiveLink(this);
-            showSection(productsSection);
-        });
-
-        // --- Lógica de Subida de Imagen ---
-        const imageUploadInput = document.getElementById('imageUpload');
-        imageUploadInput.addEventListener('change', function () {
-            // Envía el formulario de subida de imagen cuando se selecciona un archivo
-            document.getElementById('imageUploadForm').submit();
-        });
-
-        // --- Manejar la visibilidad de las secciones al cargar la página ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const section = urlParams.get('section');
-        if (section === 'security') {
-            setActiveLink(seguridadLink);
-            showSection(securitySection);
-        } else if (section === 'courses') {
-            setActiveLink(misCursosLink);
-            showSection(coursesSection);
-        } else if (section === 'products') {
-            setActiveLink(misProductosLink);
-            showSection(productsSection);
-        } else {
-            // Por defecto, muestra la sección del perfil
-            setActiveLink(miPerfilLink);
-            showSection(profileSection);
-        }
-    });
-</script>
+    </script>
+}
