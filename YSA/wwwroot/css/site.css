@@ -3812,3 +3812,489 @@ body {
         transform: translateY(0);
     }
 }
+
+/* =========================================== */
+/* ESTILOS ESPECÍFICOS PARA VISTA DE CURSO COMPLETO */
+/* =========================================== */
+
+/* Hero section del curso */
+.curso-hero {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.curso-hero-imagen {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.curso-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 100%);
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    padding: 3rem;
+}
+
+.curso-hero-contenido {
+    color: var(--color-text-light);
+    z-index: 3;
+    max-width: 800px;
+}
+
+.curso-hero-badge {
+    background-color: var(--color-brand-accent) !important;
+    color: var(--color-brand-dark) !important;
+    font-family: var(--font-accent);
+    font-weight: 600;
+    border-radius: var(--border-radius-sm);
+    padding: 0.5rem 1.5rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.curso-hero-titulo {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    font-weight: normal;
+    line-height: var(--line-height-tight);
+    margin-bottom: 0.75rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.curso-hero-descripcion {
+    font-family: var(--font-body);
+    font-size: 1.3rem;
+    font-weight: normal;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: var(--line-height-normal);
+}
+
+/* Contenido del curso */
+.curso-contenido-seccion {
+    margin-bottom: 3rem;
+}
+
+.curso-titulo-seccion {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: normal;
+    color: var(--color-secondary);
+    border-bottom: 3px solid var(--color-brand-primary);
+    padding-bottom: 0.75rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+    .curso-titulo-seccion i {
+        color: var(--color-brand-primary);
+    }
+
+.curso-descripcion {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    line-height: var(--line-height-loose);
+    color: var(--color-text-dark);
+}
+
+    .curso-descripcion p {
+        margin-bottom: 1.5rem;
+    }
+
+/* Acordeón de módulos */
+.curso-acordeon {
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+}
+
+.curso-modulo-item {
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+    background-color: var(--color-card-bg);
+}
+
+    .curso-modulo-item:last-child {
+        border-bottom: 1px solid var(--color-border);
+        border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
+    }
+
+    .curso-modulo-item:first-child {
+        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    }
+
+.curso-modulo-header {
+    background-color: var(--color-section-bg);
+    border: none;
+    color: var(--color-secondary);
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: normal;
+    padding: 1.5rem 1.75rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+    .curso-modulo-header:hover {
+        background-color: rgba(239, 136, 48, 0.1);
+    }
+
+    .curso-modulo-header[aria-expanded="true"] {
+        background-color: var(--color-brand-primary);
+        color: var(--color-text-light);
+    }
+
+        .curso-modulo-header[aria-expanded="true"] .modulo-icon {
+            transform: rotate(180deg);
+        }
+
+.modulo-icon {
+    color: var(--color-brand-primary);
+    transition: transform 0.3s ease;
+}
+
+.curso-modulo-header[aria-expanded="true"] .modulo-icon {
+    color: white;
+}
+
+.curso-modulo-contenido {
+    padding: 0;
+    border-top: 1px solid var(--color-border);
+}
+
+/* Lista de lecciones */
+.curso-lecciones-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.curso-leccion-item {
+    padding: 1.25rem 1.75rem;
+    border-bottom: 1px solid rgba(232, 232, 232, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+    .curso-leccion-item:hover {
+        background-color: var(--color-section-bg);
+    }
+
+    .curso-leccion-item:last-child {
+        border-bottom: none;
+    }
+
+.leccion-icono {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+    .leccion-icono.libre i {
+        color: var(--color-brand-success);
+    }
+
+    .leccion-icono.bloqueada i {
+        color: var(--color-accent);
+    }
+
+.curso-leccion-titulo {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--color-text-dark);
+    margin: 0;
+    flex-grow: 1;
+}
+
+/* Sidebar de inscripción */
+.curso-sidebar {
+    position: sticky;
+    top: 20px;
+}
+
+.curso-precio-card {
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-card-bg);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 2.5rem;
+    text-align: center;
+}
+
+.curso-precio-titulo {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: normal;
+    color: var(--color-secondary);
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-brand-primary);
+    padding-bottom: 0.75rem;
+}
+
+.curso-precio-monto {
+    font-family: var(--font-heading);
+    font-weight: normal;
+    color: var(--color-brand-primary);
+    font-size: 3rem;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+}
+
+.curso-beneficio-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    font-family: var(--font-body);
+    color: var(--color-text-dark);
+}
+
+    .curso-beneficio-item i {
+        color: var(--color-brand-success);
+    }
+
+/* Estados del curso */
+.curso-estado {
+    border-radius: var(--border-radius-md);
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-family: var(--font-accent);
+    font-weight: 600;
+}
+
+    .curso-estado.activo {
+        background-color: rgba(109, 181, 62, 0.1);
+        border: 1px solid var(--color-brand-success);
+        color: var(--color-brand-success);
+    }
+
+    .curso-estado.validacion {
+        background-color: rgba(242, 229, 20, 0.1);
+        border: 1px solid var(--color-brand-accent);
+        color: var(--color-brand-dark);
+    }
+
+/* Botones de acción */
+.curso-btn-inscribirse {
+    background: var(--color-brand-primary);
+    border: none;
+    color: white;
+    padding: 1.25rem;
+    font-family: var(--font-accent);
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: var(--border-radius-md);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+    .curso-btn-inscribirse:hover {
+        background: var(--color-brand-secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(239, 136, 48, 0.3);
+    }
+
+.curso-btn-continuar {
+    background: var(--color-brand-success);
+    border: none;
+    color: white;
+    padding: 1.25rem;
+    font-family: var(--font-accent);
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: var(--border-radius-md);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+    .curso-btn-continuar:hover {
+        background: #5aa036;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(109, 181, 62, 0.3);
+    }
+
+/* Barra móvil de compra */
+.curso-barra-movil {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1030;
+    padding: 1rem 1.5rem;
+    background-color: var(--color-card-bg);
+    border-top: 1px solid var(--color-border);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.curso-barra-precio {
+    font-family: var(--font-heading);
+    color: var(--color-brand-primary);
+    font-size: 1.5rem;
+    font-weight: normal;
+}
+
+.curso-barra-texto {
+    font-family: var(--font-accent);
+    font-size: 0.9rem;
+    color: var(--color-accent);
+    margin-right: 1rem;
+}
+
+/* Responsive para vista de curso */
+@media (max-width: 991.98px) {
+    .curso-hero {
+        height: 350px;
+    }
+
+    .curso-hero-overlay {
+        padding: 2rem;
+    }
+
+    .curso-hero-titulo {
+        font-size: 2.2rem;
+    }
+
+    .curso-hero-descripcion {
+        font-size: 1.1rem;
+    }
+
+    .curso-precio-card {
+        padding: 2rem;
+    }
+
+    .curso-precio-monto {
+        font-size: 2.5rem;
+    }
+
+    .curso-sidebar {
+        display: none !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .curso-hero {
+        height: 300px;
+        border-radius: var(--border-radius-md);
+    }
+
+    .curso-hero-overlay {
+        padding: 1.5rem;
+    }
+
+    .curso-hero-titulo {
+        font-size: 1.8rem;
+    }
+
+    .curso-titulo-seccion {
+        font-size: 1.6rem;
+    }
+
+    .curso-modulo-header {
+        padding: 1.25rem 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    .curso-leccion-item {
+        padding: 1rem 1.5rem;
+    }
+
+    .curso-barra-movil {
+        padding: 0.875rem 1.25rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .curso-hero {
+        height: 250px;
+    }
+
+    .curso-hero-titulo {
+        font-size: 1.6rem;
+    }
+
+    .curso-hero-badge {
+        padding: 0.4rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .curso-titulo-seccion {
+        font-size: 1.4rem;
+    }
+
+    .curso-descripcion {
+        font-size: 1rem;
+    }
+
+    .curso-modulo-header {
+        padding: 1rem 1.25rem;
+        font-size: 1rem;
+    }
+
+    .curso-leccion-item {
+        padding: 0.875rem 1.25rem;
+    }
+
+    .curso-barra-precio {
+        font-size: 1.3rem;
+    }
+}
+
+/* Desktop grande */
+@media (min-width: 992px) {
+    .curso-barra-movil {
+        display: none !important;
+    }
+}
+
+/* Estilos para el acordeón vacío */
+.curso-modulo-vacio {
+    text-align: center;
+    padding: 2rem;
+    color: var(--color-accent);
+    font-family: var(--font-body);
+}
+
+    .curso-modulo-vacio i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
