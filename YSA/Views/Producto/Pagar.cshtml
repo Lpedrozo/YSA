@@ -3,440 +3,135 @@
 @{
     ViewData["Title"] = "Procesar pago";
 
-    // **NUEVO CÁLCULO:** El total en Bolívares (VES)
-    decimal totalVes = 0;
-    if (Model.TasaBCV > 0)
-    {
-        totalVes = Model.Total * Model.TasaBCV;
-    }
-
-    // Definición de CultureInfo.InvariantCulture para formatos numéricos
+    // Calcular total en Bolívares (VES)
+    decimal totalVes = Model.TasaBCV > 0 ? Model.Total * Model.TasaBCV : 0;
     var culture = CultureInfo.InvariantCulture;
+
+    // Datos para WhatsApp
+    var whatsappNumber = "584121463374";
+    var whatsappMessage = $"Hola, necesito asistencia con el pago del Pedido #{Model.PedidoId}. ¿Me pueden ayudar?";
+    var encodedMessage = System.Web.HttpUtility.UrlEncode(whatsappMessage);
+    var whatsappLink = $"https://wa.me/{whatsappNumber}?text={encodedMessage}";
 }
 
-<style>
-    /* IMPORTACIÓN DE TIPOGRAFÍAS */
-    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
-    :root {
-        --color-primary-action: #ef8830; /* Naranja como color principal */
-        --color-secondary: #212529; /* Negro oscuro para títulos */
-        --color-accent: #6c757d; /* Gris para texto de soporte */
-        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
-        --color-card-bg: #ffffff;
-        --color-text-dark: #212529;
-        --color-text-light: #ffffff;
-        --color-border: #E8E8E8;
-        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
-        --color-shadow-light: rgba(0, 0, 0, 0.1);
-        --color-section-bg: #f3f3f3; /* Color de fondo para secciones */
-        /* NUEVOS COLORES DE MARCA */
-        --color-brand-primary: #ef8830; /* Naranja - color principal */
-        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
-        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
-        --color-brand-success: #6db53e; /* Verde - color de éxito */
-        --color-brand-dark: #08080a; /* Negro - texto principal */
-        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
-        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
-        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
-        --font-accent: 'Poppins', sans-serif;
-        /* ALTURAS DE LÍNEA */
-        --line-height-tight: 1.1;
-        --line-height-normal: 1.4;
-        --line-height-loose: 1.6;
-        /* BORDES REDONDEADOS */
-        --border-radius-sm: 8px;
-        --border-radius-md: 12px;
-        --border-radius-lg: 16px;
-        --border-radius-xl: 20px;
-    }
-
-    body {
-        font-family: var(--font-body);
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-        line-height: var(--line-height-loose);
-    }
-
-    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
-    .section-container {
-        background: var(--color-section-bg);
-        border-radius: var(--border-radius-lg);
-        padding: 3rem 2rem;
-        margin: 2rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
-    .section-title {
-        font-family: var(--font-heading);
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        padding-bottom: 0.5rem;
-        margin-bottom: 2.5rem;
-        display: inline-block;
-        border-bottom: 4px solid var(--color-brand-primary);
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        line-height: var(--line-height-tight);
-    }
-
-    .latest-grid-header {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid var(--color-brand-primary);
-        padding-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-    }
-
-    /* ESTILO DE TARJETA TIPO REVISTA MEJORADO */
-    .magazine-card {
-        border-radius: var(--border-radius-md);
-        border: 1px solid var(--color-border);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        background-color: var(--color-card-bg);
-        height: 100%;
-        text-decoration: none;
-        color: inherit;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-    }
-
-        .magazine-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            border-color: var(--color-brand-primary);
-        }
-
-    .magazine-card-body {
-        padding: 2rem;
-        position: relative;
-        text-align: left;
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        min-height: 0;
-    }
-
-    .card-category {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--color-brand-primary);
-        text-transform: uppercase;
-        margin-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-        letter-spacing: 0.5px;
-    }
-
-    .magazine-card-body h5 {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        font-size: 1.5rem;
-        line-height: var(--line-height-normal);
-        color: var(--color-secondary);
-        margin-bottom: 0.75rem;
-    }
-
-    .magazine-card-body .card-text {
-        font-family: var(--font-body);
-        font-size: 0.95rem;
-        color: var(--color-accent);
-        line-height: var(--line-height-normal);
-        margin-bottom: 1rem;
-    }
-
-    /* BOTONES CON COLORES DE MARCA */
-    .btn-primary {
-        background-color: var(--color-brand-primary) !important;
-        border-color: var(--color-brand-primary) !important;
-        color: var(--color-text-light) !important;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 1.5rem;
-        transition: all 0.3s ease;
-    }
-
-        .btn-primary:hover {
-            background-color: var(--color-brand-secondary) !important;
-            border-color: var(--color-brand-secondary) !important;
-            transform: translateY(-2px);
-        }
-
-    .btn-success {
-        background-color: var(--color-brand-success) !important;
-        border-color: var(--color-brand-success) !important;
-        color: var(--color-text-light) !important;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 1.5rem;
-    }
-
-    .btn-whatsapp {
-        background-color: #25d366 !important;
-        border-color: #25d366 !important;
-        color: var(--color-text-light) !important;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 1.5rem;
-        transition: all 0.3s ease;
-    }
-
-        .btn-whatsapp:hover {
-            background-color: #1faa59 !important;
-            border-color: #1faa59 !important;
-            transform: translateY(-2px);
-        }
-
-    /* FORMULARIOS Y BÚSQUEDA */
-    .form-control {
-        border-radius: var(--border-radius-sm);
-        border: 1px solid var(--color-border);
-        font-family: var(--font-body);
-        padding: 0.75rem 1rem;
-    }
-
-        .form-control:focus {
-            border-color: var(--color-brand-primary);
-            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
-        }
-
-    /* INFORMACIÓN DE PAGO */
-    .payment-info-box {
-        border: 1px solid var(--color-border);
-        background-color: var(--color-background);
-        padding: 1.5rem;
-        border-radius: var(--border-radius-md);
-        margin-top: 1rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    }
-
-        .payment-info-box h5 {
-            font-family: var(--font-heading);
-            font-weight: 700;
-            color: var(--color-secondary);
-            border-bottom: 2px solid var(--color-brand-primary);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
-            display: inline-block;
-        }
-
-    .payment-details-content p {
-        font-family: var(--font-body);
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-        line-height: var(--line-height-normal);
-    }
-
-    /* ALERTAS Y NOTAS */
-    .instruction-note {
-        padding: 1.5rem;
-        background-color: rgba(242, 229, 20, 0.1);
-        border: 1px solid var(--color-brand-accent);
-        color: var(--color-text-dark);
-        border-radius: var(--border-radius-md);
-        margin-top: 1.5rem;
-        font-family: var(--font-body);
-        font-weight: 500;
-    }
-
-    .amount-highlight {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--color-brand-primary);
-        margin: 0.5rem 0;
-    }
-
-    .amount-subtitle {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        color: var(--color-accent);
-        margin-bottom: 1rem;
-    }
-
-    /* SEPARADORES MEJORADOS */
-    .section-divider {
-        border: none;
-        height: 1px;
-        background: linear-gradient(to right, transparent, var(--color-border), transparent);
-        margin: 2rem 0;
-    }
-
-    /* ADAPTACIONES RESPONSIVE */
-
-    /* Tablet (max-width: 991.98px) */
-    @@media (max-width: 991.98px) {
-        .section-container {
-            padding: 2rem 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .section-title {
-            font-size: 2rem;
-        }
-
-        .latest-grid-header {
-            font-size: 1.5rem;
-        }
-
-        .magazine-card-body {
-            padding: 1.5rem;
-        }
-    }
-
-    /* Mobile Pequeño (max-width: 575.98px) */
-    @@media (max-width: 575.98px) {
-        .section-container {
-            padding: 1.5rem 1rem;
-            margin: 1rem 0;
-            border-radius: var(--border-radius-md);
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-        }
-
-        .latest-grid-header {
-            font-size: 1.3rem;
-        }
-
-        .amount-highlight {
-            font-size: 1.5rem;
-        }
-
-        .magazine-card-body {
-            padding: 1.25rem;
-        }
-    }
-</style>
-
-<div class="container px-0 py-5 mb-5 pb-5">
-    <div class="section-container">
-        <div class="px-3">
-            <span class="latest-grid-header">PROCESAR PAGO</span>
+<div class="container px-0 mt-5 py-5">
+    <!-- Tarjeta principal de pago -->
+    <div class="pago-tarjeta">
+        <!-- Encabezado -->
+        <div class="pago-header">
+            <span class="pago-id">PEDIDO #@Model.PedidoId</span>
+            <h1 class="pago-titulo">Complete los datos de su pago</h1>
         </div>
 
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-10 col-lg-8">
-                <div class="magazine-card">
-                    <div class="magazine-card-body">
-                        <span class="card-category">PEDIDO #@Model.PedidoId</span>
-                        <h5 class="text-center">Complete los datos de su pago</h5>
-
-                        <!-- Montos a pagar -->
-                        <div class="text-center mb-4">
-                            <div class="amount-highlight">
-                                @Model.Total.ToString("N2", culture) USD
-                            </div>
-                            <div class="amount-subtitle">
-                                Equivalente en bolívares:
-                                <strong style="color: var(--color-brand-success);">@totalVes.ToString("N2", culture) VES</strong>
-                                <br>
-                                <small class="text-muted">(Tasa BCV del día: @Model.TasaBCV.ToString("N2", culture) VES/USD)</small>
-                            </div>
-                        </div>
-
-                        <!-- Nota de instrucción -->
-                        <div class="instruction-note text-center">
-                            <i class="fas fa-exclamation-triangle me-2" style="color: var(--color-brand-accent);"></i>
-                            Su pedido será validado por un administrador. Una vez confirmado, ¡tendrá acceso!
-                        </div>
-
-                        <!-- Botón de WhatsApp -->
-                        @{
-                            var whatsappNumber = "584121463374";
-                            var whatsappMessage = $"Hola, necesito asistencia con el pago del Pedido #{Model.PedidoId}. No me siento seguro de hacerlo por la página. ¿Me pueden ayudar?";
-                            var encodedMessage = System.Web.HttpUtility.UrlEncode(whatsappMessage);
-                            var whatsappLink = $"https://wa.me/{whatsappNumber}?text={encodedMessage}";
-                        }
-                        <div class="d-grid gap-2 mt-4 mb-4">
-                            <a href="@whatsappLink" target="_blank" class="btn btn-whatsapp">
-                                <i class="fab fa-whatsapp me-2"></i> Consultar por WhatsApp
-                            </a>
-                        </div>
-
-                        <hr class="section-divider" />
-
-                        <!-- Formulario de pago -->
-                        <form asp-action="ProcesarPago" method="post" enctype="multipart/form-data">
-                            <input type="hidden" asp-for="PedidoId" />
-                            <input type="hidden" asp-for="TasaBCV" />
-
-                            <!-- Método de pago -->
-                            <div class="mb-4">
-                                <label asp-for="MetodoPago" class="form-label fw-bold">Método de pago</label>
-                                <select asp-for="MetodoPago" class="form-control" id="MetodoPagoSelect" required>
-                                    <option value="" disabled selected>-- Seleccione un método --</option>
-                                    <option value="Transferencia Bancaria">Transferencia Bancaria</option>
-                                    <option value="Pago Móvil">Pago Móvil</option>
-                                    <option value="PayPal">PayPal</option>
-                                </select>
-                                <span asp-validation-for="MetodoPago" class="text-danger"></span>
-                            </div>
-
-                            <!-- Información de pago dinámica -->
-                            <div id="payment-info-container">
-                                <div id="payment-info-box" class="payment-info-box" style="display:none;">
-                                    <h5>Datos de Pago</h5>
-                                    <div id="payment-details-content" class="payment-details-content">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Referencia de pago -->
-                            <div class="mb-4">
-                                <label asp-for="ReferenciaPago" class="form-label fw-bold">Referencia</label>
-                                <input asp-for="ReferenciaPago" class="form-control" placeholder="Ingrese el número de referencia/transacción" required />
-                                <span asp-validation-for="ReferenciaPago" class="text-danger"></span>
-                            </div>
-
-                            <!-- Comprobante -->
-                            <div class="mb-4">
-                                <label asp-for="ComprobanteArchivo" class="form-label fw-bold">Adjuntar comprobante</label>
-                                <input asp-for="ComprobanteArchivo" type="file" class="form-control" required />
-                                <span asp-validation-for="ComprobanteArchivo" class="text-danger"></span>
-                            </div>
-
-                            <!-- Botón de envío -->
-                            <div class="d-grid gap-2 mt-4">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-upload me-2"></i> Registrar pago
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+        <!-- Cuerpo -->
+        <div class="pago-body">
+            <!-- Monto destacado -->
+            <div class="pago-monto">
+                <div class="pago-monto-usd">@Model.Total.ToString("N2", culture) USD</div>
+                <div class="pago-monto-ves">
+                    Equivalente: <strong class="text-success">@totalVes.ToString("N2", culture) VES</strong>
+                </div>
+                <div class="pago-tasa">
+                    <i class="fas fa-exchange-alt me-1"></i>
+                    Tasa BCV: @Model.TasaBCV.ToString("N2", culture) VES/USD
                 </div>
             </div>
+
+            <!-- Nota informativa -->
+            <div class="pago-nota">
+                <div class="pago-nota-icono">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <p class="mb-0">Su pedido será validado por un administrador. Una vez confirmado, ¡tendrá acceso!</p>
+            </div>
+
+            <!-- Botón de WhatsApp -->
+            <div class="d-grid mb-4">
+                <a href="@whatsappLink" target="_blank" class="btn pago-whatsapp-btn">
+                    <i class="fab fa-whatsapp"></i>
+                    Consultar por WhatsApp
+                </a>
+            </div>
+
+            <!-- Formulario de pago -->
+            <form asp-action="ProcesarPago" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="PedidoId" />
+                <input type="hidden" asp-for="TasaBCV" />
+
+                <!-- Método de pago -->
+                <div class="mb-4">
+                    <label asp-for="MetodoPago" class="pago-form-label">
+                        <i class="fas fa-credit-card me-1"></i> Método de pago
+                    </label>
+                    <select asp-for="MetodoPago" class="form-select pago-form-control pago-form-select" id="MetodoPagoSelect" required>
+                        <option value="" disabled selected>-- Seleccione un método --</option>
+                        <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+                        <option value="Pago Móvil">Pago Móvil</option>
+                        <option value="PayPal">PayPal</option>
+                    </select>
+                    <span asp-validation-for="MetodoPago" class="text-danger small"></span>
+                </div>
+
+                <!-- Información de pago dinámica -->
+                <div class="pago-info-contenedor">
+                    <div id="pago-info-caja" class="pago-info-caja" style="display:none;">
+                        <h4 class="pago-info-titulo">
+                            <i class="fas fa-info-circle"></i> Datos de Pago
+                        </h4>
+                        <div id="pago-info-detalle" class="pago-info-detalle">
+                            <!-- La información se cargará dinámicamente aquí -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Referencia de pago -->
+                <div class="mb-4">
+                    <label asp-for="ReferenciaPago" class="pago-form-label">
+                        <i class="fas fa-hashtag me-1"></i> Referencia de pago
+                    </label>
+                    <input asp-for="ReferenciaPago" class="form-control pago-form-control"
+                           placeholder="Ingrese el número de referencia/transacción"
+                           required />
+                    <div class="form-text">Número de transferencia, comprobante o transacción</div>
+                    <span asp-validation-for="ReferenciaPago" class="text-danger small"></span>
+                </div>
+
+                <!-- Comprobante -->
+                <div class="mb-5">
+                    <label asp-for="ComprobanteArchivo" class="pago-form-label">
+                        <i class="fas fa-file-upload me-1"></i> Adjuntar comprobante
+                    </label>
+                    <input asp-for="ComprobanteArchivo" type="file" class="form-control pago-form-control"
+                           accept=".jpg,.jpeg,.png,.pdf,.gif"
+                           required />
+                    <div class="form-text">Formatos aceptados: JPG, PNG, PDF, GIF (Máx. 5MB)</div>
+                    <span asp-validation-for="ComprobanteArchivo" class="text-danger small"></span>
+                </div>
+
+                <!-- Botón de envío -->
+                <div class="d-grid">
+                    <button type="submit" class="btn pago-enviar-btn">
+                        <i class="fas fa-paper-plane me-1"></i>
+                        Registrar pago
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <partial name="_ValidationScriptsPartial" />
 
     <script>
         $(document).ready(function () {
-            // **VARIABLES JS ACTUALIZADAS**
+            // Variables globales
             const formattedTotalUSD = '@Html.Raw(Model.Total.ToString("N2", culture))';
             const formattedTotalVES = '@Html.Raw(totalVes.ToString("N2", culture))';
             const tasaHoy = '@Model.TasaBCV.ToString("N2", culture)';
 
-            // Objeto JSON con la información de pago
+            // Información de pago por método
             const PAYMENT_DETAILS = {
                 "Transferencia Bancaria": `
                     <p><strong>Monto a Pagar:</strong> ${formattedTotalVES} VES</p>
@@ -444,45 +139,84 @@
                     <p><strong>Banco:</strong> Banco Universal Negro</p>
                     <p><strong>RUC/C.I.:</strong> V-12.345.678</p>
                     <p><strong>Cuenta:</strong> 0102-0304-0506-0708-0910</p>
-                    <p><strong>Correo:</strong> pagos@miempresa.com</p>
-                    <p class="text-danger">Asegúrese de transferir el monto exacto antes de continuar.</p>
+                    <p><strong>Tipo de cuenta:</strong> Corriente</p>
+                    <p><strong>Correo para confirmación:</strong> pagos@yosoyarte.com</p>
+                    <p class="pago-info-importante">
+                        <i class="fas fa-exclamation-circle me-1"></i>
+                        Asegúrese de transferir el monto exacto antes de continuar.
+                    </p>
                 `,
                 "Pago Móvil": `
                     <p><strong>Monto a Pagar:</strong> ${formattedTotalVES} VES</p>
                     <p><strong>Tasa utilizada:</strong> ${tasaHoy} VES/USD</p>
                     <p><strong>Banco:</strong> Banco Móvil</p>
-                    <p><strong>C.I.:</strong> V-8.765.432</p>
+                    <p><strong>Cédula:</strong> V-8.765.432</p>
                     <p><strong>Teléfono:</strong> 0412-1234567</p>
-                    <p class="text-danger">El monto total es <strong>${formattedTotalVES} VES</strong>. Use el campo Referencia para el Hash/N° de la transacción.</p>
+                    <p><strong>Alias/Concepto:</strong> PAGOYOSOYARTE</p>
+                    <p class="pago-info-importante">
+                        <i class="fas fa-exclamation-circle me-1"></i>
+                        El monto total es <strong>${formattedTotalVES} VES</strong>.
+                        Use el campo "Referencia" para el Hash/N° de la transacción.
+                    </p>
                 `,
                 "PayPal": `
                     <p><strong>Monto a Pagar:</strong> ${formattedTotalUSD} USD</p>
                     <p><strong>Tasa de referencia:</strong> ${tasaHoy} VES/USD</p>
-                    <p><strong>Cuenta PayPal:</strong> miempresa@paypal.com</p>
-                    <p><strong>Instrucciones:</strong> Debe realizar el pago directamente a nuestra cuenta de PayPal por <strong>${formattedTotalUSD} USD</strong>.</p>
-                    <p class="text-danger">Use el campo Referencia para su N° de transacción o Hash de PayPal.</p>
+                    <p><strong>Cuenta PayPal:</strong> pagos@yosoyarte.com</p>
+                    <p><strong>Instrucciones:</strong></p>
+                    <ol class="mb-3">
+                        <li>Acceda a su cuenta de PayPal</li>
+                        <li>Enviar dinero a: <strong>pagos@yosoyarte.com</strong></li>
+                        <li>Monto: <strong>${formattedTotalUSD} USD</strong></li>
+                        <li>Seleccione "Enviar a un amigo" si está disponible</li>
+                    </ol>
+                    <p class="pago-info-importante">
+                        <i class="fas fa-exclamation-circle me-1"></i>
+                        Use el campo "Referencia" para su N° de transacción o Hash de PayPal.
+                    </p>
                 `
             };
 
+            // Elementos del DOM
             const $select = $('#MetodoPagoSelect');
-            const $infoBox = $('#payment-info-box');
-            const $content = $('#payment-details-content');
+            const $infoBox = $('#pago-info-caja');
+            const $content = $('#pago-info-detalle');
 
+            // Función para actualizar información de pago
             function updatePaymentInfo() {
                 const selectedMethod = $select.val();
 
                 if (selectedMethod && PAYMENT_DETAILS[selectedMethod]) {
                     $content.html(PAYMENT_DETAILS[selectedMethod]);
-                    $infoBox.slideDown();
+                    $infoBox.slideDown(300);
                 } else {
-                    $infoBox.slideUp();
+                    $infoBox.slideUp(300);
                 }
             }
 
-            // Manejar el cambio de selección
+            // Evento cambio de método de pago
             $select.on('change', updatePaymentInfo);
 
-            // Cargar información inicial si ya hay un valor seleccionado (en caso de error de validación)
+            // Validación del formulario
+            $('form').on('submit', function(e) {
+                const fileInput = $('#ComprobanteArchivo')[0];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+
+                if (fileInput.files.length > 0) {
+                    const fileSize = fileInput.files[0].size;
+                    if (fileSize > maxSize) {
+                        e.preventDefault();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Archivo muy grande',
+                            text: 'El comprobante no debe superar los 5MB.',
+                            confirmButtonColor: '#ef8830'
+                        });
+                    }
+                }
+            });
+
+            // Cargar información inicial si ya hay un valor seleccionado
             updatePaymentInfo();
         });
     </script>
