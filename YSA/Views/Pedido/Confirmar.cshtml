@@ -3,636 +3,210 @@
 @{
     ViewData["Title"] = "Confirmar pago";
 
-    // *** NUEVO BLOQUE RAZOR PARA CÁLCULO Y CULTURA ***
+    // Configuración de culturas
     var cultureUS = new CultureInfo("en-US");
     var cultureVE = new CultureInfo("es-VE");
 
-    decimal totalVes = 0;
-    if (Model.TasaBCV > 0)
-    {
-        totalVes = Model.Total * Model.TasaBCV.Value;
-    }
-    // *** FIN BLOQUE RAZOR ***
+    // Cálculo del total en VES
+    decimal totalVes = Model.TasaBCV > 0 ? Model.Total * Model.TasaBCV.Value : 0;
+
+    // Datos para WhatsApp
+    var whatsappNumber = "584241544523";
+    var whatsappMessage = $"Hola, necesito asistencia con el pago del Pedido #{Model.PedidoId}. ¿Me pueden ayudar?";
+    var encodedMessage = System.Web.HttpUtility.UrlEncode(whatsappMessage);
+    var whatsappLink = $"https://wa.me/{whatsappNumber}?text={encodedMessage}";
 }
 
-<style>
-    /* IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES COHERENTES CON EL DISEÑO EDITORIAL */
-    :root {
-        --color-primary-action: #ef8830;
-        --color-secondary: #212529;
-        --color-accent: #6c757d;
-        --color-background: #ffffff;
-        --color-card-bg: #ffffff;
-        --color-text-dark: #212529;
-        --color-text-light: #ffffff;
-        --color-border: #E8E8E8;
-        --color-alert: #e5361a;
-        --color-shadow-light: rgba(0, 0, 0, 0.1);
-        --color-section-bg: #f8f9fa;
-        --color-brand-primary: #ef8830;
-        --color-brand-secondary: #e5361a;
-        --color-brand-accent: #f2e514;
-        --color-brand-success: #6db53e;
-        --color-brand-dark: #08080a;
-        --font-heading: 'Georgia', 'Times New Roman', serif;
-        --font-body: 'Arial', 'Helvetica', sans-serif;
-        --font-accent: 'Poppins', sans-serif;
-        --line-height-tight: 1.1;
-        --line-height-normal: 1.4;
-        --line-height-loose: 1.6;
-        --border-radius-sm: 8px;
-        --border-radius-md: 12px;
-        --border-radius-lg: 16px;
-        --border-radius-xl: 20px;
-    }
-
-    body {
-        font-family: var(--font-body);
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-        line-height: var(--line-height-loose);
-    }
-
-    /* PORTADA DE REVISTA PARA CONFIRMACIÓN */
-    .confirmation-cover {
-        width: 100%;
-        height: 50vh;
-        background-color: #f4f4f4;
-        position: relative;
-        overflow: hidden;
-        margin-bottom: 3rem;
-    }
-
-    .cover-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
-    }
-
-    .cover-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 60%);
-        z-index: 2;
-        display: flex;
-        align-items: flex-end;
-        padding: 3rem;
-    }
-
-    .cover-title-block {
-        color: var(--color-text-light);
-        max-width: 700px;
-        z-index: 3;
-    }
-
-    .cover-title {
-        font-family: var(--font-heading);
-        font-size: 3rem;
-        font-weight: 900;
-        line-height: var(--line-height-tight);
-        margin-bottom: 0.5rem;
-    }
-
-    .cover-subtitle {
-        font-family: var(--font-body);
-        font-size: 1.5rem;
-        font-weight: 300;
-        color: rgba(255, 255, 255, 0.8);
-        line-height: var(--line-height-normal);
-    }
-
-    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
-    .section-container {
-        background: var(--color-section-bg);
-        border-radius: var(--border-radius-lg);
-        padding: 3rem 2rem;
-        margin: 2rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
-    .section-title {
-        font-family: var(--font-heading);
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        padding-bottom: 0.5rem;
-        margin-bottom: 2.5rem;
-        display: inline-block;
-        border-bottom: 4px solid var(--color-brand-primary);
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        line-height: var(--line-height-tight);
-    }
-
-    /* ESTILO DE TARJETA TIPO REVISTA MEJORADO */
-    .magazine-card {
-        border-radius: var(--border-radius-md);
-        border: 1px solid var(--color-border);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        background-color: var(--color-card-bg);
-        height: 100%;
-        text-decoration: none;
-        color: inherit;
-        display: block;
-        position: relative;
-    }
-
-        .magazine-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            border-color: var(--color-brand-primary);
-        }
-
-    .card-header-editorial {
-        background-color: var(--color-secondary);
-        color: var(--color-text-light);
-        font-family: var(--font-heading);
-        font-weight: 700;
-        font-size: 1.5rem;
-        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
-        padding: 1.5rem 2rem;
-        border-bottom: 3px solid var(--color-brand-primary);
-    }
-
-    .magazine-card-body {
-        padding: 2rem;
-        position: relative;
-    }
-
-    /* ESTILOS PARA FORMULARIOS COHERENTES */
-    .form-control {
-        border-radius: var(--border-radius-sm);
-        border: 1px solid var(--color-border);
-        padding: 0.75rem 1rem;
-        font-family: var(--font-body);
-        transition: all 0.3s ease;
-    }
-
-        .form-control:focus {
-            border-color: var(--color-brand-primary);
-            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
-        }
-
-    .form-label {
-        font-family: var(--font-accent);
-        font-weight: 600;
-        color: var(--color-secondary);
-        margin-bottom: 0.5rem;
-    }
-
-    /* BOTONES CON ESTILO EDITORIAL */
-    .btn-primary {
-        background-color: var(--color-brand-primary);
-        border-color: var(--color-brand-primary);
-        color: var(--color-text-light);
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 1rem 2rem;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-size: 1.1rem;
-    }
-
-        .btn-primary:hover {
-            background-color: #e57a20;
-            border-color: #e57a20;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 136, 48, 0.3);
-        }
-
-    .btn-whatsapp-assistance {
-        background-color: #25d366;
-        border-color: #25d366;
-        color: white;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 1rem 2rem;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-size: 1.1rem;
-    }
-
-        .btn-whatsapp-assistance:hover {
-            background-color: #1faa59;
-            border-color: #1faa59;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-        }
-
-    /* LISTAS Y BADGES ESTILO EDITORIAL */
-    .list-group-item {
-        background-color: var(--color-background);
-        border-color: var(--color-border);
-        padding: 1.25rem 1.5rem;
-        font-family: var(--font-body);
-        border-radius: var(--border-radius-sm);
-        margin-bottom: 0.5rem;
-    }
-
-    .badge.bg-primary {
-        background-color: var(--color-brand-primary) !important;
-        color: var(--color-text-light);
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-    }
-
-    /* ESTILO PARA RESALTAR TOTALES */
-    .text-ves {
-        color: var(--color-brand-success);
-        font-weight: 800;
-        font-size: 1.4em;
-        font-family: var(--font-heading);
-    }
-
-    .text-usd {
-        color: var(--color-brand-primary);
-        font-weight: 800;
-        font-size: 1.4em;
-        font-family: var(--font-heading);
-    }
-
-    /* CAJA DE INFORMACIÓN BANCARIA DINÁMICA */
-    #payment-info-box {
-        border: 2px dashed var(--color-brand-primary);
-        background-color: rgba(239, 136, 48, 0.05);
-        padding: 2rem;
-        border-radius: var(--border-radius-md);
-        margin-top: 1.5rem;
-        transition: all 0.3s ease;
-    }
-
-        #payment-info-box h5 {
-            color: var(--color-brand-primary);
-            font-weight: 700;
-            font-family: var(--font-heading);
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--color-border);
-            padding-bottom: 0.75rem;
-            font-size: 1.3rem;
-        }
-
-    .info-item {
-        margin-bottom: 1rem;
-        font-family: var(--font-body);
-        font-size: 1.05rem;
-    }
-
-        .info-item strong {
-            display: inline-block;
-            min-width: 140px;
-            color: var(--color-secondary);
-            font-weight: 600;
-        }
-
-    /* ALERTAS Y NOTIFICACIONES ESTILO EDITORIAL */
-    .alert {
-        border-radius: var(--border-radius-md);
-        border: none;
-        padding: 1.5rem 2rem;
-        font-family: var(--font-body);
-        margin-bottom: 2rem;
-    }
-
-    .alert-danger {
-        background-color: rgba(229, 54, 26, 0.1);
-        color: var(--color-brand-secondary);
-        border-left: 4px solid var(--color-brand-secondary);
-    }
-
-    .alert-warning {
-        background-color: rgba(242, 229, 20, 0.1);
-        color: #856404;
-        border-left: 4px solid var(--color-brand-accent);
-    }
-
-    .alert-secondary {
-        background-color: rgba(108, 117, 125, 0.1);
-        color: var(--color-accent);
-        border-left: 4px solid var(--color-accent);
-    }
-
-    /* SECCIÓN DE RESUMEN DE PEDIDO */
-    .summary-box {
-        background: var(--color-section-bg);
-        border-radius: var(--border-radius-lg);
-        padding: 2.5rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        border: 1px solid var(--color-border);
-    }
-
-    .summary-title {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--color-secondary);
-        margin-bottom: 2rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 3px solid var(--color-brand-primary);
-        display: inline-block;
-    }
-
-    .total-box {
-        background: var(--color-card-bg);
-        border: 2px solid var(--color-border);
-        border-radius: var(--border-radius-md);
-        padding: 2rem;
-        margin-top: 1.5rem;
-    }
-
-    /* SEPARADORES MEJORADOS */
-    .section-divider {
-        border: none;
-        height: 1px;
-        background: linear-gradient(to right, transparent, var(--color-border), transparent);
-        margin: 3rem 0;
-    }
-
-    /* RESPONSIVE ADJUSTMENTS */
-    @@media (max-width: 991.98px) {
-        .confirmation-cover {
-            height: 40vh;
-        }
-
-        .cover-overlay {
-            padding: 2rem;
-        }
-
-        .cover-title {
-            font-size: 2.5rem;
-        }
-
-        .cover-subtitle {
-            font-size: 1.25rem;
-        }
-
-        .section-container {
-            padding: 2rem 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .magazine-card-body {
-            padding: 1.5rem;
-        }
-
-        .card-header-editorial {
-            padding: 1.25rem 1.5rem;
-            font-size: 1.3rem;
-        }
-
-        .summary-box {
-            padding: 2rem;
-        }
-    }
-
-    @@media (max-width: 767.98px) {
-        .confirmation-cover {
-            height: 35vh;
-        }
-
-        .cover-title {
-            font-size: 2rem;
-        }
-
-        .cover-subtitle {
-            font-size: 1.1rem;
-        }
-
-        .section-title {
-            font-size: 2rem;
-        }
-
-        .magazine-card-body {
-            padding: 1.25rem;
-        }
-
-        .btn-primary, .btn-whatsapp-assistance {
-            padding: 0.875rem 1.5rem;
-            font-size: 1rem;
-        }
-    }
-
-    @@media (max-width: 575.98px) {
-        .confirmation-cover {
-            height: 30vh;
-        }
-
-        .cover-overlay {
-            padding: 1.5rem;
-        }
-
-        .cover-title {
-            font-size: 1.75rem;
-        }
-
-        .section-container {
-            padding: 1.5rem 1rem;
-            margin: 1rem 0;
-            border-radius: var(--border-radius-md);
-        }
-
-        .magazine-card-body {
-            padding: 1rem;
-        }
-
-        .summary-box {
-            padding: 1.5rem;
-        }
-
-        .total-box {
-            padding: 1.5rem;
-        }
-
-        .info-item strong {
-            min-width: 120px;
-            font-size: 0.95rem;
-        }
-    }
-</style>
-
-<!-- PORTADA DE REVISTA PARA CONFIRMACIÓN -->
-<div class="confirmation-cover">
-    <img src="/diseño/HeaderAcademia.jpg" class="cover-image" alt="Confirmación de pago - Yo Soy Arte">
-    <div class="cover-overlay">
-        <div class="cover-title-block">
-            <span class="badge bg-light text-dark mb-2">CONFIRMACIÓN DE PAGO</span>
-            <h1 class="cover-title">Finaliza tu compra</h1>
-            <p class="cover-subtitle">Registra tu pago y únete a nuestra comunidad artística</p>
+<!-- Hero de confirmación -->
+<div class="confirmacion-hero">
+    <img src="/diseño/HeaderAcademia.jpg" class="confirmacion-hero-imagen" alt="Confirmación de pago">
+    <div class="confirmacion-hero-overlay">
+        <div class="confirmacion-hero-contenido">
+            <span class="confirmacion-hero-badge">CONFIRMACIÓN DE PAGO</span>
+            <h1 class="confirmacion-hero-titulo">Finaliza tu compra</h1>
+            <p class="confirmacion-hero-subtitulo">Registra tu pago y únete a nuestra comunidad artística</p>
         </div>
     </div>
 </div>
 
-<div class="container px-0 py-5  mb-5 pb-5">
+<div class="container px-0 py-5">
+    <!-- Mensajes de error -->
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger">
+        <div class="alert alert-danger mb-4">
             <i class="fas fa-exclamation-circle me-2"></i> @TempData["Error"]
         </div>
     }
 
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-warning">
+        <div class="alert alert-warning mb-4">
             <i class="fas fa-exclamation-triangle me-2"></i> @TempData["ErrorMessage"]
         </div>
     }
 
-    <!-- SECCIÓN PRINCIPAL DE CONFIRMACIÓN -->
-    <div class="section-container">
-        <div class="row g-5">
-            <!-- FORMULARIO DE PAGO -->
-            <div class="col-lg-6">
-                <div class="magazine-card h-100">
-                    <div class="card-header-editorial">
-                        <i class="fas fa-credit-card me-2"></i> Registrar pago y comprobante
-                    </div>
-                    <div class="magazine-card-body">
-                        <form asp-controller="Pedido" asp-action="ProcesarPago" method="post" enctype="multipart/form-data">
-                            <input type="hidden" name="pedidoId" value="@Model.PedidoId" />
+    <!-- Contenido principal -->
+    <div class="row g-4">
+        <!-- Formulario de pago -->
+        <div class="col-lg-6">
+            <div class="confirmacion-tarjeta h-100">
+                <div class="confirmacion-tarjeta-header">
+                    <i class="fas fa-credit-card"></i> Registrar pago y comprobante
+                </div>
+                <div class="confirmacion-tarjeta-body">
+                    <form asp-controller="Pedido" asp-action="ProcesarPago" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="pedidoId" value="@Model.PedidoId" />
 
-                            <div class="mb-4">
-                                <label for="MetodoPago" class="form-label">Método de pago</label>
-                                <select class="form-control" id="MetodoPago" name="metodoPago" required>
-                                    <option value="" disabled selected>Seleccione un método</option>
-                                    <option value="Transferencia Bancaria">Transferencia Bancaria</option>
-                                    <option value="Pago Móvil">Pago Móvil</option>
-                                    <option value="PayPal">PayPal</option>
-                                </select>
+                        <!-- Método de pago -->
+                        <div class="mb-4">
+                            <label for="MetodoPago" class="confirmacion-form-label">
+                                <i class="fas fa-money-check-alt"></i> Método de pago
+                            </label>
+                            <select class="form-control confirmacion-form-select" id="MetodoPago" name="metodoPago" required>
+                                <option value="" disabled selected>Seleccione un método</option>
+                                <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+                                <option value="Pago Móvil">Pago Móvil</option>
+                                <option value="PayPal">PayPal</option>
+                            </select>
+                        </div>
+
+                        <!-- Información de pago dinámica -->
+                        <div id="confirmacion-info-caja" class="confirmacion-info-caja" style="display:none;">
+                            <h4 class="confirmacion-info-titulo">
+                                <i class="fas fa-info-circle"></i> Datos para realizar el pago
+                            </h4>
+                            <div id="confirmacion-info-detalle">
+                                <!-- La información se cargará dinámicamente aquí -->
                             </div>
+                        </div>
 
-                            <div id="payment-info-box" style="display:none;">
-                                <h5><i class="fas fa-info-circle me-2"></i>Datos para realizar el pago</h5>
-                                <div id="payment-details-content">
-                                </div>
-                            </div>
+                        <!-- Referencia de pago -->
+                        <div class="mb-4">
+                            <label for="ReferenciaPago" class="confirmacion-form-label">
+                                <i class="fas fa-hashtag"></i> Referencia del pago
+                            </label>
+                            <input type="text" class="form-control confirmacion-form-input"
+                                   id="ReferenciaPago"
+                                   name="referenciaPago"
+                                   placeholder="Ingrese N° de transacción o Hash"
+                                   required>
+                        </div>
 
-                            <div class="mb-4">
-                                <label for="ReferenciaPago" class="form-label">Referencia del pago</label>
-                                <input type="text" class="form-control" id="ReferenciaPago" name="referenciaPago" placeholder="Ingrese N° de transacción o Hash" required>
-                            </div>
+                        <!-- Comprobante -->
+                        <div class="mb-4">
+                            <label for="comprobanteArchivo" class="confirmacion-form-label">
+                                <i class="fas fa-file-upload"></i> Subir comprobante
+                            </label>
+                            <input type="file" class="form-control confirmacion-form-file"
+                                   id="comprobanteArchivo"
+                                   name="comprobanteArchivo"
+                                   accept=".pdf,.jpg,.jpeg,.png"
+                                   required>
+                            <div class="form-text">Formatos aceptados: PDF, JPG, PNG (Máx. 5MB)</div>
+                        </div>
 
-                            <div class="mb-4">
-                                <label for="comprobanteArchivo" class="form-label">Subir comprobante (PDF, JPG, PNG)</label>
-                                <input type="file" class="form-control" id="comprobanteArchivo" name="comprobanteArchivo" accept=".pdf,.jpg,.jpeg,.png" required>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary w-100 py-3">
-                                <i class="fas fa-paper-plane me-2"></i>Enviar comprobante
-                            </button>
-                        </form>
-                    </div>
+                        <!-- Botón de envío -->
+                        <button type="submit" class="btn confirmacion-btn-enviar">
+                            <i class="fas fa-paper-plane me-2"></i> Enviar comprobante
+                        </button>
+                    </form>
                 </div>
             </div>
+        </div>
 
-            <!-- RESUMEN DEL PEDIDO -->
-            <div class="col-lg-6">
-                <div class="magazine-card h-100">
-                    <div class="card-header-editorial">
-                        <i class="fas fa-receipt me-2"></i> Resumen del pedido
-                    </div>
-                    <div class="magazine-card-body">
-                        <h3 class="summary-title">Pedido #@Model.PedidoId</h3>
+        <!-- Resumen del pedido -->
+        <div class="col-lg-6">
+            <div class="confirmacion-tarjeta h-100">
+                <div class="confirmacion-tarjeta-header">
+                    <i class="fas fa-receipt"></i> Resumen del pedido
+                </div>
+                <div class="confirmacion-tarjeta-body">
+                    <h3 class="confirmacion-resumen-titulo">Pedido #@Model.PedidoId</h3>
 
-                        <ul class="list-group mb-4">
-                            @foreach (var articulo in Model.Articulos)
-                            {
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="text-truncate me-3">@articulo.TituloItem</span>
-                                    <span class="badge bg-primary rounded-pill flex-shrink-0">@articulo.Precio.ToString("N2", cultureUS) USD</span>
-                                </li>
-                            }
-                        </ul>
-
-                        <div class="total-box">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="mb-0 text-secondary">Total en dólares:</h5>
-                                <h5 class="text-usd mb-0">@Model.Total.ToString("N2", cultureUS) USD</h5>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center border-top pt-3">
-                                <h4 class="mb-0">Total a pagar:</h4>
-                                <h4 class="text-ves mb-0">@totalVes.ToString("N2", cultureVE) VES</h4>
-                            </div>
-                            <small class="text-muted d-block text-end mt-2">Tasa BCV: @Model.TasaBCV.Value.ToString("N4", cultureUS) VES/USD</small>
-                        </div>
-
-                        <!-- BOTÓN WHATSAPP -->
-                        @{
-                            var whatsappNumber = "584241544523";
-                            var whatsappMessage = $"Hola, necesito asistencia con el pago del Pedido #{Model.PedidoId}. ¿Me pueden ayudar?";
-                            var encodedMessage = System.Web.HttpUtility.UrlEncode(whatsappMessage);
-                            var whatsappLink = $"https://wa.me/{whatsappNumber}?text={encodedMessage}";
+                    <!-- Lista de artículos -->
+                    <ul class="confirmacion-lista-articulos">
+                        @foreach (var articulo in Model.Articulos)
+                        {
+                            <li class="confirmacion-articulo-item">
+                                <div class="confirmacion-articulo-nombre">@articulo.TituloItem</div>
+                                <div class="confirmacion-articulo-precio">@articulo.Precio.ToString("N2", cultureUS) USD</div>
+                            </li>
                         }
-                        <div class="d-grid gap-2 mt-4">
-                            <a href="@whatsappLink" target="_blank" class="btn btn-whatsapp-assistance text-white btn-lg py-3">
-                                <i class="fab fa-whatsapp text-white me-2"></i> Pagar o consultar por WhatsApp
-                            </a>
+                    </ul>
+
+                    <!-- Total -->
+                    <div class="confirmacion-total-box">
+                        <div class="confirmacion-total-item">
+                            <div class="confirmacion-total-label">Total en dólares:</div>
+                            <div class="confirmacion-total-usd">@Model.Total.ToString("N2", cultureUS) USD</div>
                         </div>
 
-                        <!-- INFORMACIÓN ADICIONAL -->
-                        <div class="mt-4 p-3 alert alert-secondary">
-                            <i class="fas fa-clock me-2"></i> Una vez enviado el comprobante, validaremos el pago en un máximo de 24 horas. Recibirás un correo de confirmación.
+                        <div class="confirmacion-info-divider"></div>
+
+                        <div class="confirmacion-total-item">
+                            <div class="confirmacion-total-label">Total a pagar:</div>
+                            <div class="confirmacion-total-ves">@totalVes.ToString("N2", cultureVE) VES</div>
                         </div>
+
+                        <span class="confirmacion-tasa">
+                            <i class="fas fa-exchange-alt me-1"></i>
+                            Tasa BCV: @Model.TasaBCV.Value.ToString("N4", cultureUS) VES/USD
+                        </span>
+                    </div>
+
+                    <!-- Botón de WhatsApp -->
+                    <div class="d-grid mt-4">
+                        <a href="@whatsappLink" target="_blank" class="btn confirmacion-btn-whatsapp">
+                            <i class="fab fa-whatsapp"></i>
+                            Pagar o consultar por WhatsApp
+                        </a>
+                    </div>
+
+                    <!-- Información adicional -->
+                    <div class="alert alert-info mt-4 mb-0 p-3">
+                        <i class="fas fa-clock me-2"></i>
+                        Una vez enviado el comprobante, validaremos el pago en un máximo de 24 horas. Recibirás un correo de confirmación.
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <hr class="section-divider" />
+    <!-- Sección de ayuda -->
+    <div class="confirmacion-ayuda-seccion">
+        <h2 class="confirmacion-ayuda-titulo">¿Necesitas ayuda?</h2>
+        <p class="confirmacion-ayuda-descripcion">
+            Nuestro equipo de soporte está disponible para ayudarte con cualquier duda sobre tu pago o pedido.
+        </p>
 
-    <!-- SECCIÓN DE INFORMACIÓN ADICIONAL -->
-    <div class="section-container text-center">
-        <h2 class="section-title">¿Necesitas ayuda?</h2>
-        <div class="row justify-content-center mt-4">
-            <div class="col-lg-8">
-                <p class="fs-5 mb-4">
-                    Nuestro equipo de soporte está disponible para ayudarte con cualquier duda sobre tu pago o pedido.
-                </p>
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="magazine-card icon-card h-100">
-                            <div class="magazine-card-body d-flex flex-column align-items-center justify-content-center text-center">
-                                <i class="fas fa-headset fa-3x mb-3" style="color: var(--color-brand-primary);"></i>
-                                <h4 class="h5">Soporte Inmediato</h4>
-                                <p>Contacta por WhatsApp para asistencia rápida</p>
-                            </div>
-                        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="confirmacion-icono-card">
+                    <div class="confirmacion-icono-grande" style="color: var(--color-brand-primary);">
+                        <i class="fas fa-headset"></i>
                     </div>
-                    <div class="col-md-4">
-                        <div class="magazine-card icon-card h-100">
-                            <div class="magazine-card-body d-flex flex-column align-items-center justify-content-center text-center">
-                                <i class="fas fa-shield-alt fa-3x mb-3" style="color: var(--color-brand-success);"></i>
-                                <h4 class="h5">Pago Seguro</h4>
-                                <p>Todas las transacciones son verificadas y seguras</p>
-                            </div>
-                        </div>
+                    <h4 class="confirmacion-icono-titulo">Soporte Inmediato</h4>
+                    <p class="confirmacion-icono-texto">Contacta por WhatsApp para asistencia rápida</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="confirmacion-icono-card">
+                    <div class="confirmacion-icono-grande" style="color: var(--color-brand-success);">
+                        <i class="fas fa-shield-alt"></i>
                     </div>
-                    <div class="col-md-4">
-                        <div class="magazine-card icon-card h-100">
-                            <div class="magazine-card-body d-flex flex-column align-items-center justify-content-center text-center">
-                                <i class="fas fa-envelope fa-3x mb-3" style="color: var(--color-brand-secondary);"></i>
-                                <h4 class="h5">Confirmación por Email</h4>
-                                <p>Recibirás confirmación detallada de tu compra</p>
-                            </div>
-                        </div>
+                    <h4 class="confirmacion-icono-titulo">Pago Seguro</h4>
+                    <p class="confirmacion-icono-texto">Todas las transacciones son verificadas y seguras</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="confirmacion-icono-card">
+                    <div class="confirmacion-icono-grande" style="color: var(--color-brand-secondary);">
+                        <i class="fas fa-envelope"></i>
                     </div>
+                    <h4 class="confirmacion-icono-titulo">Confirmación por Email</h4>
+                    <p class="confirmacion-icono-texto">Recibirás confirmación detallada de tu compra</p>
                 </div>
             </div>
         </div>
@@ -641,7 +215,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -650,43 +223,91 @@
             const formattedTotalVES = '@Html.Raw(totalVes.ToString("N2", cultureVE))';
             const tasaHoy = '@Model.TasaBCV.Value.ToString("N4", cultureUS)';
 
-            if (typeof jQuery == 'undefined') {
-                console.error('Error: jQuery no está cargado. La funcionalidad de cambio de método de pago no funcionará.');
-                return;
-            }
-
-            // Objeto JSON con la información de pago (estilo mejorado)
+            // Información de pago por método
             const PAYMENT_DETAILS = {
                 "Transferencia Bancaria": `
-                    <div class="info-item"><strong>Monto a Pagar:</strong> <span class="text-ves">${formattedTotalVES} VES</span></div>
-                    <div class="info-item"><small class="text-muted">Tasa Aplicada: ${tasaHoy} VES/USD</small></div>
-                    <hr class="my-3"/>
-                    <div class="info-item"><strong>Banco:</strong> Banco Universal Monocromático</div>
-                    <div class="info-item"><strong>RUC/C.I.:</strong> V-12.345.678</div>
-                    <div class="info-item"><strong>N° Cuenta:</strong> 0102-0304-0506-0708-0910</div>
-                    <div class="info-item"><strong>Correo:</strong> pagos@yosoyarte.com</div>
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">Monto a Pagar:</span>
+                        <span class="confirmacion-info-valor text-success fw-bold">${formattedTotalVES} VES</span>
+                    </div>
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">Tasa Aplicada:</span>
+                        <span class="confirmacion-info-valor">${tasaHoy} VES/USD</span>
+                    </div>
+
+                    <div class="confirmacion-info-divider"></div>
+
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">Banco:</span>
+                        <span class="confirmacion-info-valor">Banco Universal Monocromático</span>
+                    </div>
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">RUC/C.I.:</span>
+                        <span class="confirmacion-info-valor">V-12.345.678</span>
+                    </div>
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">N° Cuenta:</span>
+                        <span class="confirmacion-info-valor">0102-0304-0506-0708-0910</span>
+                    </div>
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">Correo:</span>
+                        <span class="confirmacion-info-valor">pagos@yosoyarte.com</span>
+                    </div>
                 `,
                 "Pago Móvil": `
-                    <div class="info-item"><strong>Monto a Pagar:</strong> <span class="text-ves">${formattedTotalVES} VES</span></div>
-                    <div class="info-item"><small class="text-muted">Tasa Aplicada: ${tasaHoy} VES/USD</small></div>
-                    <hr class="my-3"/>
-                    <div class="info-item"><strong>Banco:</strong> Banco Móvil Digital</div>
-                    <div class="info-item"><strong>C.I.:</strong> V-8.765.432</div>
-                    <div class="info-item"><strong>Teléfono:</strong> 0412-1234567</div>
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">Monto a Pagar:</span>
+                        <span class="confirmacion-info-valor text-success fw-bold">${formattedTotalVES} VES</span>
+                    </div>
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">Tasa Aplicada:</span>
+                        <span class="confirmacion-info-valor">${tasaHoy} VES/USD</span>
+                    </div>
+
+                    <div class="confirmacion-info-divider"></div>
+
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">Banco:</span>
+                        <span class="confirmacion-info-valor">Banco Móvil Digital</span>
+                    </div>
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">C.I.:</span>
+                        <span class="confirmacion-info-valor">V-8.765.432</span>
+                    </div>
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">Teléfono:</span>
+                        <span class="confirmacion-info-valor">0412-1234567</span>
+                    </div>
                 `,
                 "PayPal": `
-                    <div class="info-item"><strong>Monto a Pagar:</strong> <span class="text-usd">${formattedTotalUSD} USD</span></div>
-                    <div class="info-item"><small class="text-muted">Tasa de Referencia: ${tasaHoy} VES/USD</small></div>
-                    <hr class="my-3"/>
-                    <div class="info-item"><strong>Cuenta PayPal:</strong> pagos@yosoyarte.com</div>
-                    <div class="info-item"><strong>Instrucciones:</strong> Realice el pago directamente en PayPal y adjunte el comprobante.</div>
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">Monto a Pagar:</span>
+                        <span class="confirmacion-info-valor text-primary fw-bold">${formattedTotalUSD} USD</span>
+                    </div>
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">Tasa de Referencia:</span>
+                        <span class="confirmacion-info-valor">${tasaHoy} VES/USD</span>
+                    </div>
+
+                    <div class="confirmacion-info-divider"></div>
+
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">Cuenta PayPal:</span>
+                        <span class="confirmacion-info-valor">pagos@yosoyarte.com</span>
+                    </div>
+                    <div class="confirmacion-info-item">
+                        <span class="confirmacion-info-label">Instrucciones:</span>
+                        <span class="confirmacion-info-valor">Realice el pago directamente en PayPal y adjunte el comprobante.</span>
+                    </div>
                 `
             };
 
+            // Elementos del DOM
             const $select = $('#MetodoPago');
-            const $infoBox = $('#payment-info-box');
-            const $content = $('#payment-details-content');
+            const $infoBox = $('#confirmacion-info-caja');
+            const $content = $('#confirmacion-info-detalle');
 
+            // Función para actualizar información de pago
             function updatePaymentInfo() {
                 const selectedMethod = $select.val();
 
@@ -698,11 +319,27 @@
                 }
             }
 
+            // Evento cambio de método de pago
             $select.on('change', updatePaymentInfo);
 
-            if ($select.val()) {
-                updatePaymentInfo();
-            }
+            // Validación del formulario
+            $('form').on('submit', function(e) {
+                const fileInput = $('#comprobanteArchivo')[0];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+
+                if (fileInput.files.length > 0) {
+                    const fileSize = fileInput.files[0].size;
+                    if (fileSize > maxSize) {
+                        e.preventDefault();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Archivo muy grande',
+                            text: 'El comprobante no debe superar los 5MB.',
+                            confirmButtonColor: '#ef8830'
+                        });
+                    }
+                }
+            });
         });
     </script>
 }
