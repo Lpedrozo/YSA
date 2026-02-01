@@ -6658,3 +6658,510 @@ body {
         }
     }
 }
+/* =========================================== */
+/* ESTILOS SIMPLIFICADOS INSPIRADOS EN GITHUB - VERSIÓN MEJORADA */
+/* =========================================== */
+
+.auth-github-style {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+    margin-top: 4rem;
+    /* Fondo degradado con los colores principales */
+    background: linear-gradient(135deg, rgba(239, 136, 48, 0.08) 0%, rgba(229, 54, 26, 0.05) 25%, rgba(242, 229, 20, 0.03) 50%, rgba(109, 181, 62, 0.06) 75%, rgba(248, 249, 250, 1) 100%);
+    position: relative;
+}
+
+    /* Patrón sutil de fondo (opcional) */
+    .auth-github-style::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 15% 50%, rgba(239, 136, 48, 0.05) 0%, transparent 50%), radial-gradient(circle at 85% 30%, rgba(109, 181, 62, 0.04) 0%, transparent 50%), radial-gradient(circle at 50% 80%, rgba(242, 229, 20, 0.03) 0%, transparent 50%);
+        z-index: 1;
+    }
+
+.auth-github-logo-container {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 1rem;
+}
+
+.auth-github-logo-image {
+    width: 120px;
+    height: auto;
+    margin: 0 auto 1rem;
+    display: block;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    transition: transform 0.3s ease;
+}
+
+    .auth-github-logo-image:hover {
+        transform: scale(1.05);
+    }
+
+.auth-github-title {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--color-text-dark);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 2;
+}
+
+.auth-github-subtitle {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--color-accent);
+    line-height: var(--line-height-normal);
+    max-width: 340px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.auth-github-card {
+    width: 100%;
+    max-width: 340px;
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(239, 136, 48, 0.1);
+    margin-top: 0.5rem;
+    position: relative;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+    .auth-github-card:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(239, 136, 48, 0.15);
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+    }
+
+.auth-github-form {
+    margin-bottom: 1.5rem;
+}
+
+.auth-github-form-group {
+    margin-bottom: 1rem;
+}
+
+.auth-github-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--color-text-dark);
+    margin-bottom: 0.4rem;
+    font-family: var(--font-accent);
+}
+
+.auth-github-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--color-text-dark);
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    transition: all 0.15s ease-in-out;
+    font-family: var(--font-body);
+}
+
+    .auth-github-input:focus {
+        border-color: var(--color-brand-primary);
+        outline: 0;
+        box-shadow: 0 0 0 3px rgba(239, 136, 48, 0.15), inset 0 1px 2px rgba(0, 0, 0, 0.05);
+        background-color: white;
+    }
+
+    .auth-github-input.input-validation-error {
+        border-color: var(--color-brand-secondary);
+        box-shadow: 0 0 0 3px rgba(229, 54, 26, 0.15);
+    }
+
+.auth-github-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--color-text-light);
+    background: linear-gradient(135deg, var(--color-brand-primary) 0%, #e07a2a 100%);
+    border: 1px solid transparent;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+    font-family: var(--font-accent);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+    .auth-github-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .auth-github-btn:hover {
+        background: linear-gradient(135deg, #e07a2a 0%, var(--color-brand-secondary) 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(239, 136, 48, 0.25);
+    }
+
+        .auth-github-btn:hover::before {
+            left: 100%;
+        }
+
+    .auth-github-btn:active {
+        transform: translateY(0);
+    }
+
+.auth-github-btn-external {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--color-text-dark);
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+    font-family: var(--font-accent);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+    .auth-github-btn-external:hover {
+        background-color: white;
+        border-color: var(--color-brand-primary);
+        box-shadow: 0 2px 8px rgba(239, 136, 48, 0.1);
+        transform: translateY(-1px);
+    }
+
+.auth-github-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1rem 0;
+    color: var(--color-accent);
+    font-size: 0.85rem;
+    position: relative;
+}
+
+    .auth-github-separator::before,
+    .auth-github-separator::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid rgba(239, 136, 48, 0.2);
+    }
+
+    .auth-github-separator::before {
+        margin-right: 0.5rem;
+    }
+
+    .auth-github-separator::after {
+        margin-left: 0.5rem;
+    }
+
+.auth-github-links {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(239, 136, 48, 0.1);
+}
+
+.auth-github-link {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--color-brand-primary);
+    text-decoration: none;
+    padding: 0.25rem 0;
+    text-align: center;
+    font-family: var(--font-accent);
+    transition: all 0.2s ease;
+}
+
+    .auth-github-link:hover {
+        color: var(--color-brand-secondary);
+        text-decoration: underline;
+        transform: translateX(2px);
+    }
+
+.auth-github-footer {
+    margin-top: 2rem;
+    padding: 1rem;
+    border: 1px solid rgba(239, 136, 48, 0.2);
+    border-radius: var(--border-radius-sm);
+    background: linear-gradient(135deg, rgba(239, 136, 48, 0.05) 0%, rgba(109, 181, 62, 0.03) 100%);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+    .auth-github-footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(239, 136, 48, 0.05), transparent);
+        z-index: 1;
+    }
+
+.auth-github-footer-text {
+    font-size: 0.85rem;
+    color: var(--color-accent);
+    margin-bottom: 0.5rem;
+    font-family: var(--font-body);
+    position: relative;
+    z-index: 2;
+}
+
+.auth-github-footer-link {
+    font-size: 0.85rem;
+    color: var(--color-brand-primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-family: var(--font-accent);
+    position: relative;
+    z-index: 2;
+    transition: all 0.2s ease;
+}
+
+    .auth-github-footer-link:hover {
+        color: var(--color-brand-secondary);
+        text-decoration: underline;
+        transform: translateX(2px);
+    }
+
+.auth-github-validation {
+    background: linear-gradient(135deg, rgba(229, 54, 26, 0.05) 0%, rgba(229, 54, 26, 0.1) 100%);
+    border: 1px solid rgba(229, 54, 26, 0.2);
+    border-radius: var(--border-radius-sm);
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: var(--color-text-dark);
+    position: relative;
+    overflow: hidden;
+}
+
+    .auth-github-validation::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background-color: var(--color-brand-secondary);
+    }
+
+    .auth-github-validation ul {
+        margin: 0;
+        padding-left: 1rem;
+    }
+
+    .auth-github-validation li {
+        margin-bottom: 0.25rem;
+    }
+
+        .auth-github-validation li:last-child {
+            margin-bottom: 0;
+        }
+
+/* Contenedor de contraseña */
+.auth-github-password-container {
+    position: relative;
+}
+
+.auth-github-password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--color-accent);
+    font-size: 0.9rem;
+    background: transparent;
+    border: none;
+    padding: 0.25rem;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+    .auth-github-password-toggle:hover {
+        color: var(--color-brand-primary);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+/* Estilo para el form de Google */
+.auth-github-external-form {
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive para diseño GitHub mejorado */
+@media (max-width: 576px) {
+    .auth-github-card {
+        border: 1px solid var(--color-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(239, 136, 48, 0.05);
+        padding: 1.5rem;
+        max-width: 100%;
+    }
+
+    .auth-github-style {
+        padding: 1rem;
+        margin-top: 3rem;
+        background: linear-gradient(135deg, rgba(239, 136, 48, 0.08) 0%, rgba(229, 54, 26, 0.05) 20%, rgba(242, 229, 20, 0.03) 40%, rgba(109, 181, 62, 0.06) 60%, rgba(248, 249, 250, 1) 100%);
+    }
+
+    .auth-github-logo-image {
+        width: 100px;
+        height: auto;
+    }
+
+    .auth-github-title {
+        font-size: 1.5rem;
+    }
+
+    .auth-github-subtitle {
+        font-size: 0.9rem;
+    }
+}
+
+/* =========================================== */
+/* ESTILOS ESPECÍFICOS PARA REGISTRO */
+/* =========================================== */
+
+/* Card de registro más ancha */
+.auth-register-card {
+    width: 100%;
+    max-width: 420px;
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(239, 136, 48, 0.1);
+    margin-top: 0.5rem;
+    position: relative;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+    .auth-register-card:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(239, 136, 48, 0.15);
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+    }
+
+/* Grupo de formulario en fila para registro */
+.auth-register-form-group-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+    .auth-register-form-group-row .auth-github-form-group {
+        flex: 1;
+        margin-bottom: 0;
+    }
+
+/* Checkbox de términos */
+.auth-terms-check {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: rgba(248, 249, 250, 0.5);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid rgba(239, 136, 48, 0.1);
+}
+
+    .auth-terms-check .form-check {
+        margin-bottom: 0;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .auth-terms-check .form-check-input {
+        margin-top: 0.3rem;
+        border: 2px solid var(--color-border);
+        border-radius: var(--border-radius-sm);
+    }
+
+        .auth-terms-check .form-check-input:checked {
+            background-color: var(--color-brand-primary);
+            border-color: var(--color-brand-primary);
+        }
+
+        .auth-terms-check .form-check-input:focus {
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    .auth-terms-check .form-check-label {
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        color: var(--color-text-dark);
+        margin-left: 0.75rem;
+        line-height: var(--line-height-normal);
+    }
+
+        .auth-terms-check .form-check-label a {
+            color: var(--color-brand-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .auth-terms-check .form-check-label a:hover {
+                color: var(--color-brand-secondary);
+                text-decoration: underline;
+            }
+
+/* Responsive para registro */
+@media (max-width: 576px) {
+    .auth-register-card {
+        max-width: 100%;
+        padding: 1.5rem;
+    }
+
+    .auth-register-form-group-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .auth-terms-check {
+        padding: 0.75rem;
+    }
+
+        .auth-terms-check .form-check-label {
+            font-size: 0.8rem;
+        }
+}
+
+@media (max-width: 768px) {
+    .auth-register-card {
+        max-width: 100%;
+    }
+}
