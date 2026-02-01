@@ -1,316 +1,134 @@
 ﻿@model List<YSA.Web.Models.ViewModels.CursoViewModel>
-
 @{
     ViewData["Title"] = "Mis Cursos";
+
+    // Contador de cursos
+    var totalCursos = Model?.Count ?? 0;
 }
 
-<style>
-    /* IMPORTACIÓN DE TIPOGRAFÍAS */
-    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
-    :root {
-        --color-primary-action: #ef8830; /* Naranja como color principal */
-        --color-secondary: #212529; /* Negro oscuro para títulos */
-        --color-accent: #6c757d; /* Gris para texto de soporte */
-        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
-        --color-card-bg: #ffffff;
-        --color-text-dark: #212529;
-        --color-text-light: #ffffff;
-        --color-border: #E8E8E8;
-        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
-        --color-shadow-light: rgba(0, 0, 0, 0.1);
-        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
-        /* NUEVOS COLORES DE MARCA */
-        --color-brand-primary: #ef8830; /* Naranja - color principal */
-        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
-        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
-        --color-brand-success: #6db53e; /* Verde - color de éxito */
-        --color-brand-dark: #08080a; /* Negro - texto principal */
-        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
-        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
-        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
-        --font-accent: 'Poppins', sans-serif;
-        /* ALTURAS DE LÍNEA */
-        --line-height-tight: 1.1;
-        --line-height-normal: 1.4;
-        --line-height-loose: 1.6;
-        /* BORDES REDONDEADOS */
-        --border-radius-sm: 8px;
-        --border-radius-md: 12px;
-        --border-radius-lg: 16px;
-        --border-radius-xl: 20px;
-    }
+<div class="container px-0 py-5">
+    <!-- Header de Mis Cursos -->
+    <div class="miscursos-header">
+        <h1 class="miscursos-titulo">Mis Cursos</h1>
+        <p class="miscursos-subtitulo">
+            Revisa tu progreso y continúa aprendiendo con los cursos en los que te has inscrito
+        </p>
+        <span class="miscursos-contador">
+            <i class="fas fa-graduation-cap me-2"></i>
+            @totalCursos curso@(totalCursos != 1 ? "s" : "")
+        </span>
+    </div>
 
-    body {
-        font-family: var(--font-body);
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-        line-height: var(--line-height-loose);
-    }
-
-    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
-    .section-container {
-        background: #f3f3f3;
-        border-radius: var(--border-radius-lg);
-        padding: 3rem 2rem;
-        margin: 2rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
-    .section-title {
-        font-family: var(--font-heading);
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        padding-bottom: 0.5rem;
-        margin-bottom: 2.5rem;
-        display: inline-block;
-        border-bottom: 4px solid var(--color-brand-primary);
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        line-height: var(--line-height-tight);
-    }
-
-    .section-subtitle {
-        font-family: var(--font-body);
-        font-size: 1.2rem;
-        font-weight: 400;
-        color: var(--color-accent);
-        margin-top: -2rem;
-        margin-bottom: 3rem;
-        line-height: var(--line-height-normal);
-    }
-
-    /* === ESTILO ESPECÍFICO PARA EL BLOQUE DE CURSOS === */
-    .latest-grid-header {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid var(--color-brand-primary);
-        padding-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-    }
-
-    /* ESTILO DE TARJETA TIPO REJILLA DE REVISTA MEJORADO (Para cursos) */
-    .magazine-card {
-        border-radius: var(--border-radius-md);
-        border: 1px solid var(--color-border);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        background-color: var(--color-card-bg);
-        height: 100%;
-        text-decoration: none;
-        color: inherit;
-        display: block;
-        position: relative;
-    }
-
-        .magazine-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            border-color: var(--color-brand-primary);
-        }
-
-    .magazine-card-img-container {
-        overflow: hidden;
-        border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
-    }
-
-    .magazine-card-img {
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-
-    .magazine-card:hover .magazine-card-img {
-        transform: scale(1.05);
-    }
-
-    .magazine-card-body {
-        padding: 1.5rem;
-        position: relative;
-        text-align: left;
-    }
-
-    .card-category {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--color-brand-primary);
-        text-transform: uppercase;
-        margin-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-        letter-spacing: 0.5px;
-    }
-
-    .magazine-card-body h5 {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        font-size: 1.5rem;
-        line-height: var(--line-height-normal);
-        color: var(--color-secondary);
-        margin-bottom: 0.5rem;
-    }
-
-    .magazine-card-body .card-text {
-        font-family: var(--font-body);
-        font-size: 0.95rem;
-        color: var(--color-accent);
-        line-height: var(--line-height-normal);
-        margin-bottom: 1rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .card-date {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        color: var(--color-brand-primary);
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    /* Botón de Acción (Ir al curso) - Estilo revista */
-    .btn-primary {
-        background-color: var(--color-brand-primary);
-        border-color: var(--color-brand-primary);
-        color: white;
-        font-weight: 600;
-        padding: 10px 15px;
-        border-radius: var(--border-radius-sm);
-        transition: background-color 0.2s, color 0.2s;
-        font-family: var(--font-accent);
-    }
-
-        .btn-primary:hover {
-            background-color: var(--color-brand-secondary);
-            border-color: var(--color-brand-secondary);
-            color: white;
-        }
-
-    /* SEPARADORES MEJORADOS */
-    .section-divider {
-        border: none;
-        height: 1px;
-        background: linear-gradient(to right, transparent, var(--color-border), transparent);
-        margin: 3rem 0;
-    }
-
-    .alert-info {
-        background-color: rgba(109, 181, 62, 0.1); /* Verde suave para alertas */
-        border-color: var(--color-brand-success);
-        color: var(--color-text-dark);
-        border-radius: var(--border-radius-md);
-        padding: 1.5rem;
-    }
-
-    /* ADAPTACIONES RESPONSIVE */
-
-    /* Tablet (max-width: 991.98px) */
-    @@media (max-width: 991.98px) {
-        .section-container {
-            padding: 2rem 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .latest-grid-header {
-            text-align: center;
-        }
-
-        .magazine-card-img {
-            height: 200px;
-        }
-
-        .magazine-card-body {
-            padding: 1.25rem;
-        }
-
-            .magazine-card-body h5 {
-                font-size: 1.35rem;
-            }
-    }
-
-    /* Mobile Pequeño (max-width: 575.98px) */
-    @@media (max-width: 575.98px) {
-        .section-container {
-            padding: 1.5rem 1rem;
-            margin: 1rem 0;
-            border-radius: var(--border-radius-md);
-        }
-
-        .magazine-card-img {
-            height: 180px;
-        }
-
-        .magazine-card-body {
-            padding: 1rem;
-        }
-
-            .magazine-card-body h5 {
-                font-size: 1.25rem;
-            }
-    }
-</style>
-
-<div class="container px-0 py-5 mb-5 pb-5">
-    <!-- === INICIO DEL BLOQUE "MIS CURSOS" === -->
-    <div class="section-container">
-        <div class="px-3">
-            <span class="latest-grid-header">MIS CURSOS</span>
-        </div>
-
-        @if (Model == null || !Model.Any())
-        {
-            <div class="px-3">
-                <div class="alert alert-info text-center" role="alert">
-                    Aún no te has inscrito en ningún curso. Explora nuestro catálogo y empieza a aprender.
-                </div>
+    @if (Model == null || !Model.Any())
+    {
+        <!-- Estado vacío -->
+        <div class="miscursos-vacio">
+            <div class="miscursos-vacio-icono">
+                <i class="fas fa-book-open"></i>
             </div>
-        }
-        else
-        {
-            <div class="row g-4 px-3">
-                @foreach (var curso in Model)
-                {
-                    <div class="col-lg-4 col-md-6">
-                        <div class="magazine-card h-100">
-                            <div class="magazine-card-img-container">
-                                @if (!string.IsNullOrEmpty(curso.UrlImagen))
-                                {
-                                    <img src="@curso.UrlImagen" class="magazine-card-img" alt="Imagen del curso: @curso.Titulo">
-                                }
-                                else
-                                {
-                                    <img src="https://via.placeholder.com/400x200/F7F7F7/333333?text=Sin+Imagen" class="magazine-card-img" alt="Imagen de marcador de posición">
-                                }
-                            </div>
-                            <div class="magazine-card-body d-flex flex-column">
-                                <h5>@curso.Titulo</h5>
-                                <div class="card-text flex-grow-1">@Html.Raw(curso.DescripcionCorta)</div>
-                                <div class="d-grid mt-3">
-                                    <a asp-controller="Curso" asp-action="VerCurso" asp-route-id="@curso.Id" class="btn btn-primary">
-                                        <i class="fas fa-chalkboard-teacher me-2"></i> Ir al curso
-                                    </a>
-                                </div>
+            <h2 class="miscursos-vacio-titulo">Aún no tienes cursos</h2>
+            <p class="miscursos-vacio-texto">
+                Explora nuestro catálogo de cursos y encuentra el perfecto para ti.
+                Una vez que te inscribas, aparecerán aquí para que puedas continuar aprendiendo.
+            </p>
+            <a asp-controller="Curso" asp-action="Index" class="miscursos-vacio-boton">
+                <i class="fas fa-search me-1"></i>
+                Explorar cursos
+            </a>
+        </div>
+    }
+    else
+    {
+        <!-- Grid de cursos -->
+        <div class="row g-4">
+            @foreach (var curso in Model)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="miscursos-tarjeta">
+                        <!-- Imagen del curso -->
+                        <div class="overflow-hidden">
+                            @if (!string.IsNullOrEmpty(curso.UrlImagen))
+                            {
+                                <img src="@curso.UrlImagen" class="miscursos-tarjeta-imagen" alt="@curso.Titulo">
+                            }
+                            else
+                            {
+                                <img src="https://via.placeholder.com/400x200/F7F7F7/333333?text=Sin+Imagen"
+                                     class="miscursos-tarjeta-imagen"
+                                     alt="Imagen de marcador de posición">
+                            }
+                        </div>
+
+                        <!-- Contenido del curso -->
+                        <div class="miscursos-tarjeta-body">
+
+                            <h3 class="miscursos-tarjeta-titulo">@curso.Titulo</h3>
+
+                            <div class="miscursos-tarjeta-descripcion">
+                                @Html.Raw(curso.DescripcionCorta)
                             </div>
                         </div>
+
+                        <!-- Botón para acceder al curso -->
+                        <div class="p-3 pt-0">
+                            <a asp-controller="Curso"
+                               asp-action="VerCurso"
+                               asp-route-id="@curso.Id"
+                               class="miscursos-tarjeta-boton">
+                                <i class="fas fa-play me-1"></i>
+                                <span>Ver curso</span>
+                            </a>
+                        </div>
                     </div>
-                }
+                </div>
+            }
+        </div>
+
+        <!-- Sugerencia de más cursos -->
+        @if (totalCursos > 0 && totalCursos <= 3)
+        {
+            <div class="text-center mt-5 pt-4 border-top">
+                <h3 class="h4 mb-3">¿Buscas más cursos?</h3>
+                <p class="text-muted mb-4">
+                    Continúa tu aprendizaje explorando nuestro catálogo completo de cursos.
+                </p>
+                <a asp-controller="Curso" asp-action="Index" class="btn btn-outline-primary">
+                    <i class="fas fa-search me-1"></i>
+                    Explorar más cursos
+                </a>
             </div>
         }
-    </div>
-    <!-- === FIN DEL BLOQUE "MIS CURSOS" === -->
+    }
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animación suave para las barras de progreso
+            const progressBars = document.querySelectorAll('.progreso-completado');
+
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+
+                setTimeout(() => {
+                    bar.style.transition = 'width 1s ease-out';
+                    bar.style.width = width;
+                }, 100);
+            });
+
+            // Efecto hover mejorado para tarjetas
+            const cards = document.querySelectorAll('.miscursos-tarjeta');
+
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.3s ease';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transition = 'all 0.3s ease';
+                });
+            });
+        });
+    </script>
+}

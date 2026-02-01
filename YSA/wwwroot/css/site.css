@@ -4790,3 +4790,404 @@ body {
         font-size: 1.5rem;
     }
 }
+
+/* =========================================== */
+/* ESTILOS ESPECÍFICOS PARA VISTA DE MIS CURSOS */
+/* =========================================== */
+
+/* Header de mis cursos */
+.miscursos-header {
+    margin-bottom: 3rem;
+    text-align: center;
+    background: linear-gradient(135deg, var(--color-section-bg) 0%, var(--color-background) 100%);
+    border-radius: var(--border-radius-lg);
+    padding: 3rem 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.miscursos-titulo {
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    font-weight: normal;
+    color: var(--color-secondary);
+    line-height: var(--line-height-tight);
+    margin-bottom: 1rem;
+}
+
+.miscursos-subtitulo {
+    font-family: var(--font-body);
+    font-size: 1.2rem;
+    color: var(--color-accent);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: var(--line-height-normal);
+}
+
+.miscursos-contador {
+    display: inline-block;
+    background: var(--color-brand-primary);
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-accent);
+    font-weight: 600;
+    margin-top: 1rem;
+}
+
+/* Tarjetas de curso personalizadas */
+.miscursos-tarjeta {
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    background-color: var(--color-card-bg);
+    height: 100%;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+    .miscursos-tarjeta:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        border-color: var(--color-brand-primary);
+    }
+
+.miscursos-tarjeta-imagen {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.miscursos-tarjeta:hover .miscursos-tarjeta-imagen {
+    transform: scale(1.05);
+}
+
+.miscursos-tarjeta-body {
+    padding: 1.75rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.miscursos-tarjeta-categoria {
+    font-family: var(--font-accent);
+    font-size: 0.85rem;
+    font-weight: normal;
+    color: var(--color-brand-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.miscursos-tarjeta-titulo {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: normal;
+    color: var(--color-secondary);
+    line-height: var(--line-height-tight);
+    margin-bottom: 1rem;
+    min-height: 44px;
+}
+
+.miscursos-tarjeta-descripcion {
+    font-family: var(--font-body);
+    color: var(--color-accent);
+    line-height: var(--line-height-normal);
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.miscursos-tarjeta-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    margin-top: auto;
+}
+
+.miscursos-tarjeta-progreso {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.progreso-barra {
+    width: 100px;
+    height: 6px;
+    background-color: var(--color-section-bg);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progreso-completado {
+    height: 100%;
+    background-color: var(--color-brand-success);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.progreso-texto {
+    font-family: var(--font-accent);
+    font-size: 0.8rem;
+    color: var(--color-accent);
+}
+
+.miscursos-tarjeta-boton {
+    background: var(--color-brand-primary);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-accent);
+    font-weight: 600;
+    border-radius: var(--border-radius-sm);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+    .miscursos-tarjeta-boton:hover {
+        background: var(--color-brand-secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 136, 48, 0.2);
+    }
+
+/* Estado vacío */
+.miscursos-vacio {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--color-section-bg);
+    border-radius: var(--border-radius-lg);
+    border: 2px dashed var(--color-border);
+}
+
+.miscursos-vacio-icono {
+    font-size: 4rem;
+    color: var(--color-accent);
+    opacity: 0.3;
+    margin-bottom: 1.5rem;
+}
+
+.miscursos-vacio-titulo {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    color: var(--color-secondary);
+    margin-bottom: 1rem;
+}
+
+.miscursos-vacio-texto {
+    font-family: var(--font-body);
+    color: var(--color-accent);
+    max-width: 500px;
+    margin: 0 auto 2rem auto;
+    line-height: var(--line-height-normal);
+}
+
+.miscursos-vacio-boton {
+    background: var(--color-brand-primary);
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    font-family: var(--font-accent);
+    font-weight: 600;
+    border-radius: var(--border-radius-md);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+    .miscursos-vacio-boton:hover {
+        background: var(--color-brand-secondary);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(239, 136, 48, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+/* Filtros y búsqueda */
+.miscursos-filtros {
+    background: var(--color-section-bg);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.miscursos-filtros-titulo {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    color: var(--color-secondary);
+    margin-bottom: 1rem;
+}
+
+.miscursos-filtros-botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.miscursos-filtro-btn {
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--color-border);
+    background: white;
+    color: var(--color-accent);
+    font-family: var(--font-accent);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+    .miscursos-filtro-btn:hover,
+    .miscursos-filtro-btn.active {
+        background: var(--color-brand-primary);
+        color: white;
+        border-color: var(--color-brand-primary);
+    }
+
+/* Paginación personalizada */
+.miscursos-paginacion {
+    margin-top: 3rem;
+}
+
+    .miscursos-paginacion .pagination {
+        justify-content: center;
+    }
+
+    .miscursos-paginacion .page-link {
+        border: 1px solid var(--color-border);
+        color: var(--color-brand-primary);
+        font-family: var(--font-accent);
+        font-weight: 500;
+        margin: 0 0.25rem;
+        border-radius: var(--border-radius-sm);
+        transition: all 0.3s ease;
+    }
+
+        .miscursos-paginacion .page-link:hover {
+            background-color: var(--color-brand-primary);
+            border-color: var(--color-brand-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .miscursos-paginacion .page-item.active .page-link {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+        color: white;
+    }
+
+/* Responsive para vista de mis cursos */
+@media (max-width: 991.98px) {
+    .miscursos-header {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .miscursos-titulo {
+        font-size: 2.3rem;
+    }
+
+    .miscursos-tarjeta-imagen {
+        height: 180px;
+    }
+
+    .miscursos-tarjeta-body {
+        padding: 1.5rem;
+    }
+
+    .miscursos-tarjeta-titulo {
+        font-size: 1.3rem;
+        min-height: 40px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .miscursos-header {
+        padding: 2rem 1.25rem;
+    }
+
+    .miscursos-titulo {
+        font-size: 2rem;
+    }
+
+    .miscursos-subtitulo {
+        font-size: 1.1rem;
+    }
+
+    .miscursos-tarjeta {
+        margin-bottom: 1.5rem;
+    }
+
+    .miscursos-filtros-botones {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .miscursos-header {
+        padding: 1.75rem 1rem;
+    }
+
+    .miscursos-titulo {
+        font-size: 1.8rem;
+    }
+
+    .miscursos-subtitulo {
+        font-size: 1rem;
+    }
+
+    .miscursos-tarjeta-imagen {
+        height: 160px;
+    }
+
+    .miscursos-tarjeta-body {
+        padding: 1.25rem;
+    }
+
+    .miscursos-tarjeta-titulo {
+        font-size: 1.2rem;
+        min-height: auto;
+    }
+
+    .miscursos-tarjeta-meta {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .miscursos-tarjeta-progreso {
+        justify-content: space-between;
+    }
+
+    .miscursos-vacio {
+        padding: 3rem 1rem;
+    }
+
+    .miscursos-vacio-icono {
+        font-size: 3rem;
+    }
+
+    .miscursos-vacio-titulo {
+        font-size: 1.5rem;
+    }
+}
+
+/* Desktop grande */
+@media (min-width: 1200px) {
+    .miscursos-tarjeta-imagen {
+        height: 220px;
+    }
+}
