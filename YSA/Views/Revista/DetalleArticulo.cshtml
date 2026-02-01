@@ -3,387 +3,22 @@
     ViewData["Title"] = Model.Titulo;
 }
 
-<style>
-    /* IMPORTACIÓN DE TIPOGRAFÍAS */
-    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
-    :root {
-        --color-primary-action: #ef8830; /* Naranja como color principal */
-        --color-secondary: #212529; /* Negro oscuro para títulos */
-        --color-accent: #6c757d; /* Gris para texto de soporte */
-        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
-        --color-card-bg: #ffffff;
-        --color-text-dark: #212529;
-        --color-text-light: #ffffff;
-        --color-border: #E8E8E8;
-        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
-        --color-shadow-light: rgba(0, 0, 0, 0.1);
-        --color-section-bg: #f3f3f3; /* Color de fondo para secciones */
-        /* NUEVOS COLORES DE MARCA */
-        --color-brand-primary: #ef8830; /* Naranja - color principal */
-        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
-        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
-        --color-brand-success: #6db53e; /* Verde - color de éxito */
-        --color-brand-dark: #08080a; /* Negro - texto principal */
-        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
-        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
-        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
-        --font-accent: 'Poppins', sans-serif;
-        /* ALTURAS DE LÍNEA */
-        --line-height-tight: 1.1;
-        --line-height-normal: 1.4;
-        --line-height-loose: 1.6;
-        /* BORDES REDONDEADOS */
-        --border-radius-sm: 8px;
-        --border-radius-md: 12px;
-        --border-radius-lg: 16px;
-        --border-radius-xl: 20px;
-    }
-
-    body {
-        font-family: var(--font-body);
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-        line-height: var(--line-height-loose);
-    }
-
-    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
-    .section-container {
-        background: var(--color-section-bg);
-        border-radius: var(--border-radius-lg);
-        padding: 3rem 2rem;
-        margin: 2rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
-    .section-title {
-        font-family: var(--font-heading);
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        padding-bottom: 0.5rem;
-        margin-bottom: 2.5rem;
-        display: inline-block;
-        border-bottom: 4px solid var(--color-brand-primary);
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        line-height: var(--line-height-tight);
-    }
-
-    .latest-grid-header {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid var(--color-brand-primary);
-        padding-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-    }
-
-    /* BREADCRUMB ESTILO REVISTA */
-    .breadcrumb {
-        background-color: transparent;
-        padding: 0;
-        margin-bottom: 2rem;
-    }
-
-    .breadcrumb-item a {
-        color: var(--color-brand-primary);
-        text-decoration: none;
-        font-family: var(--font-accent);
-        font-weight: 500;
-    }
-
-        .breadcrumb-item a:hover {
-            color: var(--color-brand-secondary);
-        }
-
-    .breadcrumb-item.active {
-        color: var(--color-accent);
-    }
-
-    /* ESTILO DE TARJETA TIPO REVISTA MEJORADO */
-    .magazine-card {
-        border-radius: var(--border-radius-md);
-        border: 1px solid var(--color-border);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        background-color: var(--color-card-bg);
-        height: 100%;
-        text-decoration: none;
-        color: inherit;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-    }
-
-    /* BADGES Y ELEMENTOS DE ÉNFASIS CON NUEVA PALETA */
-    .badge.bg-light {
-        background-color: var(--color-brand-accent) !important; /* Amarillo para badges */
-        color: var(--color-brand-dark) !important;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.5rem 1rem;
-    }
-
-    .badge.bg-primary {
-        background-color: var(--color-brand-primary) !important; /* Naranja para badges primarios */
-        color: var(--color-text-light) !important;
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.5rem 1rem;
-    }
-
-    /* CONTENIDO EDITORIAL */
-    .article-header {
-        margin-bottom: 3rem;
-        text-align: center;
-    }
-
-    .article-title {
-        font-family: var(--font-heading);
-        font-size: 3rem;
-        font-weight: 900;
-        color: var(--color-secondary);
-        line-height: var(--line-height-tight);
-        margin-bottom: 1.5rem;
-    }
-
-    .article-subtitle {
-        font-family: var(--font-body);
-        font-size: 1.5rem;
-        font-weight: 300;
-        color: var(--color-accent);
-        line-height: var(--line-height-normal);
-        margin-bottom: 2rem;
-    }
-
-    .article-meta {
-        font-family: var(--font-accent);
-        font-size: 0.9rem;
-        color: var(--color-accent);
-        margin-bottom: 2rem;
-    }
-
-    .article-image {
-        width: 100%;
-        max-height: 500px;
-        object-fit: cover;
-        border-radius: var(--border-radius-md);
-        margin-bottom: 3rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .article-content {
-        font-family: var(--font-body);
-        font-size: 1.1rem;
-        line-height: var(--line-height-loose);
-        color: var(--color-text-dark);
-        margin-bottom: 3rem;
-    }
-
-        .article-content h2 {
-            font-family: var(--font-heading);
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--color-secondary);
-            margin: 2rem 0 1rem 0;
-            border-bottom: 2px solid var(--color-brand-primary);
-            padding-bottom: 0.5rem;
-        }
-
-        .article-content h3 {
-            font-family: var(--font-heading);
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--color-secondary);
-            margin: 1.5rem 0 1rem 0;
-        }
-
-        .article-content p {
-            margin-bottom: 1.5rem;
-        }
-
-        .article-content blockquote {
-            border-left: 4px solid var(--color-brand-primary);
-            padding-left: 1.5rem;
-            margin: 2rem 0;
-            font-style: italic;
-            color: var(--color-accent);
-        }
-
-    /* BLOQUE PERSONA DESTACADA */
-    .featured-person {
-        background: var(--color-card-bg);
-        border-radius: var(--border-radius-md);
-        padding: 2.5rem;
-        margin: 3rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        border-left: 5px solid var(--color-brand-primary);
-    }
-
-    .person-image {
-        width: 120px;
-        height: 120px;
-        object-fit: cover;
-        border-radius: 50%;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .person-name {
-        font-family: var(--font-heading);
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--color-secondary);
-        margin-bottom: 1rem;
-    }
-
-    .person-bio {
-        font-family: var(--font-body);
-        font-size: 1rem;
-        line-height: var(--line-height-normal);
-        color: var(--color-text-dark);
-    }
-
-    /* GALERÍA DE IMÁGENES */
-    .gallery-section {
-        margin: 3rem 0;
-    }
-
-    .gallery-title {
-        font-family: var(--font-heading);
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--color-secondary);
-        text-align: center;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid var(--color-brand-primary);
-        padding-bottom: 0.5rem;
-        display: inline-block;
-    }
-
-    .gallery-image {
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
-        border-radius: var(--border-radius-md);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-        .gallery-image:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-    .image-caption {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        color: var(--color-accent);
-        text-align: center;
-        margin-top: 0.5rem;
-        line-height: var(--line-height-normal);
-    }
-
-    /* SEPARADORES MEJORADOS */
-    .section-divider {
-        border: none;
-        height: 1px;
-        background: linear-gradient(to right, transparent, var(--color-border), transparent);
-        margin: 3rem 0;
-    }
-
-    /* ADAPTACIONES RESPONSIVE */
-
-    /* Tablet (max-width: 991.98px) */
-    @@media (max-width: 991.98px) {
-        .section-container {
-            padding: 2rem 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .article-title {
-            font-size: 2.5rem;
-        }
-
-        .article-subtitle {
-            font-size: 1.25rem;
-        }
-
-        .article-content {
-            font-size: 1rem;
-        }
-
-        .featured-person {
-            padding: 2rem;
-        }
-
-        .person-image {
-            width: 100px;
-            height: 100px;
-        }
-    }
-
-    /* Mobile Pequeño (max-width: 575.98px) */
-    @@media (max-width: 575.98px) {
-        .section-container {
-            padding: 1.5rem 1rem;
-            margin: 1rem 0;
-            border-radius: var(--border-radius-md);
-        }
-
-        .article-title {
-            font-size: 2rem;
-        }
-
-        .article-subtitle {
-            font-size: 1.1rem;
-        }
-
-        .article-image {
-            max-height: 300px;
-        }
-
-        .featured-person {
-            padding: 1.5rem;
-            text-align: center;
-        }
-
-        .person-image {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 1rem;
-        }
-
-        .gallery-image {
-            height: 200px;
-        }
-    }
-</style>
-
 <div class="container px-0 py-5 mb-5 pb-5">
     <div class="section-container">
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
+            <ol class="articulo-breadcrumb breadcrumb">
                 <li class="breadcrumb-item"><a href="@Url.Action("Index", "Revista")">Revista</a></li>
                 <li class="breadcrumb-item active" aria-current="page">@Model.Titulo</li>
             </ol>
         </nav>
 
         <!-- Encabezado del Artículo -->
-        <div class="article-header">
+        <div class="articulo-header">
             <span class="badge bg-primary me-2">@Model.Categoria</span>
-            <h1 class="article-title">@Model.Titulo</h1>
-            <p class="article-subtitle">@Model.Resumen</p>
-            <div class="article-meta">
+            <h1 class="articulo-title">@Model.Titulo</h1>
+            <p class="articulo-subtitle">@Model.Resumen</p>
+            <div class="articulo-meta">
                 <i class="far fa-calendar me-1"></i>
                 Publicado el @Model.FechaPublicacion.ToString("dd MMMM yyyy")
             </div>
@@ -393,12 +28,12 @@
         @if (!string.IsNullOrEmpty(Model.UrlImagenPrincipal))
         {
             <div class="text-center mb-5">
-                <img src="@Url.Content(Model.UrlImagenPrincipal)" class="article-image" alt="@Model.Titulo">
+                <img src="@Url.Content(Model.UrlImagenPrincipal)" class="articulo-imagen" alt="@Model.Titulo">
             </div>
         }
 
         <!-- Contenido Principal -->
-        <div class="article-content">
+        <div class="articulo-contenido">
             @Html.Raw(Model.ContenidoTexto)
         </div>
 
@@ -407,15 +42,15 @@
         <!-- Bloque de Persona Destacada -->
         @if (!string.IsNullOrEmpty(Model.NombrePersonaDestacada))
         {
-            <div class="featured-person">
+            <div class="persona-destacada">
                 <div class="row align-items-center">
                     <div class="col-md-auto text-center mb-3 mb-md-0">
                         <img src="@(string.IsNullOrEmpty(Model.UrlFotoDestacado) ? "https://via.placeholder.com/120x120.png?text=Foto" : Url.Content(Model.UrlFotoDestacado))"
-                             alt="@Model.NombrePersonaDestacada" class="person-image">
+                             alt="@Model.NombrePersonaDestacada" class="persona-imagen">
                     </div>
                     <div class="col-md">
-                        <h3 class="person-name">Acerca de @Model.NombrePersonaDestacada</h3>
-                        <div class="person-bio">
+                        <h3 class="persona-nombre">Acerca de @Model.NombrePersonaDestacada</h3>
+                        <div class="persona-bio">
                             @Html.Raw(Model.BiografiaCortaDestacado)
                         </div>
                     </div>
@@ -426,15 +61,15 @@
         <!-- Galería de Fotos -->
         @if (Model.FotosContenido.Any())
         {
-            <div class="gallery-section">
-                <h3 class="gallery-title text-center">Galería de Imágenes</h3>
+            <div class="galeria-articulo">
+                <h3 class="galeria-titulo text-center">Galería de Imágenes</h3>
                 <div class="row g-4">
                     @foreach (var foto in Model.FotosContenido)
                     {
                         <div class="col-lg-4 col-md-6 col-12">
                             <a href="@Url.Content(foto.UrlFoto)" target="_blank" class="d-block text-decoration-none">
-                                <img src="@Url.Content(foto.UrlFoto)" class="gallery-image" alt="@foto.Descripcion">
-                                <p class="image-caption">@foto.Descripcion</p>
+                                <img src="@Url.Content(foto.UrlFoto)" class="galeria-imagen" alt="@foto.Descripcion">
+                                <p class="leyenda-imagen">@foto.Descripcion</p>
                             </a>
                         </div>
                     }
