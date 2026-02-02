@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿﻿@using Microsoft.AspNetCore.Identity
 @using YSA.Core.Entities
 
 @inject SignInManager<Usuario> SignInManager
@@ -7,7 +7,7 @@
 <html lang="es">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>@ViewData["Title"]</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -16,46 +16,395 @@
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <style>
-        /* Estilos adicionales para el header centrado */
-        .navbar-brand-left {
-            margin-right: auto;
+        /* Barra de WhatsApp optimizada para móvil */
+        .whatsapp-top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #6db53e;
+            color: white;
+            padding: 0.4rem 0;
+            z-index: 1060;
+            text-align: center;
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: normal;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
 
+            .whatsapp-top-bar a {
+                color: white;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+                padding: 0.2rem 0.5rem;
+                gap: 0.3rem;
+            }
+
+            .whatsapp-top-bar i {
+                font-size: 0.9rem;
+                flex-shrink: 0;
+            }
+
+            .whatsapp-top-bar span {
+                display: inline;
+            }
+
+        /* Header principal optimizado */
+        .main-header {
+            position: fixed;
+            top: 2rem;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            padding: 0.5rem 0.75rem;
+            z-index: 1040;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+            .main-header.scroll-header-shrink {
+                top: 1.5rem;
+                padding: 0.3rem 0.75rem;
+            }
+
+        /* Logo optimizado para móvil */
+        .navbar-brand img {
+            height: 45px !important;
+            width: auto;
+            max-width: 150px;
+        }
+
+        .main-header.scroll-header-shrink .navbar-brand img {
+            height: 40px !important;
+        }
+
+        /* Botón hamburguesa optimizado */
+        .navbar-toggler {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.9rem;
+            border: none;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navbar-toggler-icon {
+            width: 1.2em;
+            height: 1.2em;
+        }
+
+        /* Menú colapsado optimizado para móvil */
+        .navbar-collapse {
+            background-color: white;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Elementos del menú móvil */
+        .navbar-nav-center,
+        .navbar-nav-right {
+            width: 100%;
+            margin: 0 !important;
+        }
+
+        .navbar-nav-center {
+            order: 2;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            margin-top: 0.5rem !important;
+            padding-top: 0.5rem;
+        }
+
+        .navbar-nav-right {
+            order: 3;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            margin-top: 0.5rem !important;
+            padding-top: 0.5rem;
+        }
+
+        /* Items del menú móvil */
+        .nav-item {
+            margin: 0.25rem 0;
+        }
+
+        .nav-link {
+            padding: 0.6rem 0.75rem !important;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .nav-link i {
+                width: 20px;
+                text-align: center;
+                font-size: 0.9rem;
+            }
+
+        /* Dropdowns optimizados para móvil */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-top: 0.25rem;
+            max-width: calc(100vw - 2rem);
+            transform: translateX(-10px) !important;
+        }
+
+        .dropdown-item {
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .dropdown-item i {
+                width: 20px;
+                text-align: center;
+            }
+
+        /* Contenedor principal optimizado */
+        .container-fluid {
+            padding-right: 0.75rem !important;
+            padding-left: 0.75rem !important;
+        }
+
+        /* Footer optimizado para móvil */
+        .footer {
+            padding: 2rem 1rem !important;
+        }
+
+        .social-icons-footer a {
+            font-size: 1.2rem;
+            margin: 0 0.5rem;
+        }
+
+        /* ============ CORRECCIÓN PARA DESKTOP ============ */
+        /* En desktop: Logo izquierda, menú centro, usuario derecha */
+        @@media (min-width: 992px) {
+            .whatsapp-top-bar
+
+        {
+            font-size: 0.9rem;
+            padding: 0.5rem 0;
+        }
+
+        .navbar-collapse {
+            background-color: transparent;
+            box-shadow: none;
+            margin-top: 0;
+            padding: 0;
+            max-height: none;
+            overflow-y: visible;
+            display: flex !important;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        /* Menú del centro */
         .navbar-nav-center {
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
+            width: auto;
+            order: 1;
+            border-top: none;
+            margin-top: 0 !important;
+            padding-top: 0;
+            display: flex !important;
+            flex-direction: row !important;
         }
 
+        /* Menú de usuario a la derecha */
         .navbar-nav-right {
-            margin-left: auto;
+            margin-left: auto !important;
+            width: auto;
+            order: 2;
+            border-top: none;
+            margin-top: 0 !important;
+            padding-top: 0;
+            display: flex !important;
+            flex-direction: row !important;
         }
 
-        /* Ajustes responsive */
-        @@media (max-width: 991.98px) {
-            .navbar-nav-center {
-                position: static;
-                transform: none;
-                text-align: center;
-                margin: 1rem 0;
-                width: 100%;
-                order: 3;
+        /* Elementos del menú */
+        .nav-item {
+            margin: 0 0.2rem;
+        }
+
+        .nav-link {
+            padding: 0.5rem 0.75rem !important;
+        }
+
+        /* Dropdowns en desktop */
+        .dropdown-menu {
+            transform: none !important;
+            max-width: none;
+            margin-top: 0.5rem;
+        }
+
+        /* Ocultar versión móvil del dropdown de usuario */
+        .navbar-nav-right .dropdown.d-lg-none {
+            display: none !important;
+        }
+
+        /* Mostrar elementos desktop */
+        .navbar-nav-right .d-none.d-lg-block {
+            display: flex !important;
+            align-items: center;
+        }
+
+        /* Asegurar que los elementos desktop estén visibles */
+        .d-lg-inline-flex {
+            display: inline-flex !important;
+        }
+
+        }
+
+        /* Ajustes específicos para móviles muy pequeños (hasta 400px) */
+        @@media (max-width: 400px) {
+            .whatsapp-top-bar
+
+        {
+            font-size: 0.7rem;
+            padding: 0.3rem 0;
+        }
+
+        .whatsapp-top-bar span {
+            display: none;
+        }
+
+        .whatsapp-top-bar a {
+            padding: 0.2rem;
+        }
+
+        .whatsapp-top-bar i {
+            font-size: 1rem;
+        }
+
+        .navbar-brand img {
+            height: 40px !important;
+            max-width: 130px;
+        }
+
+        .nav-link {
+            padding: 0.5rem 0.6rem !important;
+            font-size: 0.85rem;
+        }
+
+            .nav-link i {
+                font-size: 0.85rem;
+                width: 18px;
             }
 
-            .navbar-brand-left {
-                order: 1;
-            }
+        .dropdown-item {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.85rem;
+        }
 
-            .navbar-nav-right {
-                order: 2;
-                margin-left: 0;
-                width: 100%;
-                justify-content: center;
-            }
+        .main-content {
+            margin-top: 4.5rem;
+        }
 
-            .navbar-collapse {
-                flex-direction: column;
-            }
+        /* Ocultar elementos desktop en móvil */
+        .navbar-nav-right .d-none.d-lg-block {
+            display: none !important;
+        }
+
+        /* Mostrar dropdown móvil */
+        .navbar-nav-right .dropdown.d-lg-none {
+            display: block !important;
+        }
+
+        }
+
+        /* Ajustes para tablets pequeñas (401px - 575px) */
+        @@media (min-width: 401px) and (max-width: 575px) {
+            .whatsapp-top-bar span
+
+        {
+            display: inline;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        .navbar-brand img {
+            height: 50px !important;
+        }
+
+        .nav-link {
+            font-size: 0.88rem;
+        }
+
+        /* Ocultar elementos desktop en tablet */
+        .navbar-nav-right .d-none.d-lg-block {
+            display: none !important;
+        }
+
+        /* Mostrar dropdown móvil */
+        .navbar-nav-right .dropdown.d-lg-none {
+            display: block !important;
+        }
+
+        }
+
+        /* Ajustes para tablets (576px - 991px) */
+        @@media (min-width: 576px) and (max-width: 991.98px) {
+            .whatsapp-top-bar
+
+        {
+            font-size: 0.85rem;
+        }
+
+        .navbar-collapse {
+            padding: 1rem;
+        }
+
+        .navbar-nav-center,
+        .navbar-nav-right {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-item {
+            margin: 0.15rem 0;
+        }
+
+        /* Ocultar elementos desktop en tablet */
+        .navbar-nav-right .d-none.d-lg-block {
+            display: none !important;
+        }
+
+        /* Mostrar dropdown móvil */
+        .navbar-nav-right .dropdown.d-lg-none {
+            display: block !important;
+        }
+
+        }
+
+        /* Mejoras de accesibilidad */
+        .nav-link:focus,
+        .dropdown-item:focus {
+            outline: 2px solid var(--color-brand-primary);
+            outline-offset: 2px;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
         }
     </style>
 </head>
@@ -68,77 +417,158 @@
         var urlWhatsapp = $"https://wa.me/{telefono}?text={mensajeCodificado}";
     }
 
-    <!-- Barra superior de WhatsApp -->
-    <div class="whatsapp-top-bar">
+    <!-- Barra superior de WhatsApp optimizada -->
+    <div class="whatsapp-top-bar d-lg-block">
         <div class="container-fluid">
             <a href="@urlWhatsapp" target="_blank" title="Asistencia por WhatsApp">
-                <i class="fab fa-whatsapp me-2"></i>
-                 ¿Necesitas ayuda? Escríbenos por WhatsApp
+                <i class="fab fa-whatsapp"></i>
+                <span class="d-none d-sm-inline">¿Necesitas ayuda? Escríbenos por WhatsApp</span>
+                <span class="d-inline d-sm-none">Ayuda por WhatsApp</span>
             </a>
         </div>
     </div>
 
     <header class="main-header navbar navbar-expand-lg navbar-light">
-        <div class="container-fluid">
-            <!-- LOGO A LA IZQUIERDA -->
-            <a class="navbar-brand navbar-brand-left" asp-controller="Home" asp-action="Index">
-                <img src="~/diseño/horizontal.png" alt="Logo YoSoyArte" height="60">
+        <div class="container-fluid px-1 px-sm-2">
+            <!-- LOGO OPTIMIZADO A LA IZQUIERDA -->
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <img src="~/diseño/logo-neutro.png" alt="Logo YoSoyArte" class="img-fluid">
             </a>
 
-            <!-- BOTÓN HAMBURGUESA PARA MÓVIL -->
-            <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- BOTÓN HAMBURGUESA MEJORADO -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <!-- MENÚ CENTRADO -->
-                <ul class="navbar-nav navbar-nav-center mx-auto">
-                    <li class="nav-item mx-2">
+                <!-- MENÚ CENTRADO (solo en desktop) -->
+                <ul class="navbar-nav navbar-nav-center mx-lg-auto">
+                    <li class="nav-item">
                         <a class="nav-link text-dark header-nav-link" asp-controller="Home" asp-action="Index">
-                            <i class="fas fa-home me-1"></i>Inicio
+                            <i class="fas fa-home"></i>Inicio
                         </a>
                     </li>
-                    <li class="nav-item mx-2">
+                    <li class="nav-item">
                         <a class="nav-link text-dark header-nav-link" asp-controller="Curso" asp-action="Index">
-                            <i class="fas fa-book-open me-1"></i>Cursos
+                            <i class="fas fa-book-open"></i>Cursos
                         </a>
                     </li>
-                    <li class="nav-item mx-2">
+                    <li class="nav-item">
                         <a class="nav-link text-dark header-nav-link" asp-controller="Revista" asp-action="Index">
-                            <i class="fas fa-newspaper me-1"></i>Revista
+                            <i class="fas fa-newspaper"></i>Revista
                         </a>
                     </li>
-                    <li class="nav-item mx-2">
+                    <li class="nav-item">
                         <a class="nav-link text-dark header-nav-link" asp-controller="Producto" asp-action="Index">
-                            <i class="fas fa-file-pdf me-1"></i>Productos
+                            <i class="fas fa-file-pdf"></i>Productos
                         </a>
                     </li>
                 </ul>
 
                 <!-- OPCIONES DE USUARIO A LA DERECHA -->
-                <ul class="navbar-nav navbar-nav-right">
+                <ul class="navbar-nav navbar-nav-right ms-lg-auto">
                     @if (SignInManager.IsSignedIn(User))
                     {
-                        @if (User.IsInRole("Estudiante"))
-                        {
+                        <!-- Versión móvil compacta (solo en móvil/tablet) -->
+                        <li class="nav-item dropdown d-lg-none">
+                            <a class="nav-link dropdown-toggle text-dark header-nav-link" href="#"
+                               id="mobileUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle"></i>Mi cuenta
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="mobileUserDropdown">
+                                @if (User.IsInRole("Estudiante"))
+                                {
+                                    <li>
+                                        <a class="dropdown-item" href="#" data-bs-toggle="collapse" data-bs-target="#miAprendizajeMobile">
+                                            <i class="fas fa-graduation-cap"></i>Mi aprendizaje
+                                        </a>
+                                        <div class="collapse" id="miAprendizajeMobile">
+                                            <div class="p-2">
+                                                @await Component.InvokeAsync("CursosUsuario")
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                                <li>
+                                    <a class="dropdown-item" href="#" data-bs-toggle="collapse" data-bs-target="#notificacionesMobile">
+                                        <i class="fas fa-bell"></i>Notificaciones
+                                    </a>
+                                    <div class="collapse" id="notificacionesMobile">
+                                        <div class="p-2">
+                                            @await Component.InvokeAsync("NotificacionesMenu")
+                                        </div>
+                                    </div>
+                                </li>
+                                @if (User.IsInRole("Administrador") || User.IsInRole("Asistente"))
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Admin" asp-action="Panel">
+                                            <i class="fas fa-chart-bar"></i>Panel
+                                        </a>
+                                    </li>
+                                }
+                                @if (User.IsInRole("Artista"))
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Artista" asp-action="GestionarPortafolio">
+                                            <i class="fas fa-file-alt"></i>Portafolio
+                                        </a>
+                                    </li>
+                                }
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Cuenta" asp-action="MiPerfil">
+                                        <i class="fas fa-user"></i>Mi perfil
+                                    </a>
+                                </li>
+                                @if (User.IsInRole("Artista"))
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Artista" asp-action="PreguntasPendientes">
+                                            <i class="fas fa-question-circle"></i>Preguntas
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Artista" asp-action="EntregasPendientes">
+                                            <i class="fas fa-tasks"></i>Actividades
+                                        </a>
+                                    </li>
+                                }
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#" onclick="document.getElementById('logoutForm').submit();">
+                                        <i class="fas fa-sign-out-alt"></i>Cerrar sesión
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Versión desktop (solo en desktop) -->
+                        <div class="d-none d-lg-flex align-items-center">
+                            @if (User.IsInRole("Estudiante"))
+                            {
                             <li class="nav-item dropdown">
-                                <a class="nav-link text-dark header-nav-link" href="#" id="miAprendizajeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-graduation-cap me-1"></i>Mi aprendizaje
+                                <a class="nav-link text-dark header-nav-link" href="#"
+                                   id="miAprendizajeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-graduation-cap"></i>Mi aprendizaje
                                 </a>
                                 @await Component.InvokeAsync("CursosUsuario")
                             </li>
                         }
+
                         <li class="nav-item dropdown">
-                            <a class="nav-link text-dark header-nav-link position-relative" href="#" id="notificacionesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-bell me-1"></i>Notificaciones
+                            <a class="nav-link text-dark header-nav-link position-relative" href="#"
+                               id="notificacionesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-bell"></i>
                                 @await Component.InvokeAsync("NotificacionesMenu")
                             </a>
                         </li>
+
                         @if (User.IsInRole("Administrador") || User.IsInRole("Asistente"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark header-nav-link" asp-controller="Admin" asp-action="Panel" role="button">
-                                    <i class="fas fa-chart-bar me-1"></i>Panel
+                                <a class="nav-link text-dark header-nav-link" asp-controller="Admin" asp-action="Panel">
+                                    <i class="fas fa-chart-bar"></i>Panel
                                 </a>
                             </li>
                         }
@@ -146,44 +576,78 @@
                         @if (User.IsInRole("Artista"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark header-nav-link" asp-controller="Artista" asp-action="GestionarPortafolio" role="button">
-                                    <i class="fas fa-file-alt me-1"></i>Portafolio
+                                <a class="nav-link text-dark header-nav-link" asp-controller="Artista" asp-action="GestionarPortafolio">
+                                    <i class="fas fa-file-alt"></i>Portafolio
                                 </a>
                             </li>
                         }
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark header-nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i>Mi cuenta
+                            <a class="nav-link dropdown-toggle text-dark header-nav-link" href="#"
+                               id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle"></i>Mi cuenta
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-lg-end" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" asp-controller="Cuenta" asp-action="MiPerfil">Mi perfil</a></li>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Cuenta" asp-action="MiPerfil">
+                                        <i class="fas fa-user"></i>Mi perfil
+                                    </a>
+                                </li>
                                 @if (User.IsInRole("Artista"))
                                 {
-                                    <li><a class="dropdown-item" asp-controller="Artista" asp-action="PreguntasPendientes">Preguntas</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Artista" asp-action="EntregasPendientes">Actividades</a></li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Artista" asp-action="PreguntasPendientes">
+                                            <i class="fas fa-question-circle"></i>Preguntas
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Artista" asp-action="EntregasPendientes">
+                                            <i class="fas fa-tasks"></i>Actividades
+                                        </a>
+                                    </li>
                                 }
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#" onclick="document.getElementById('logoutForm').submit();">Cerrar sesión</a></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#" onclick="document.getElementById('logoutForm').submit();">
+                                        <i class="fas fa-sign-out-alt"></i>Cerrar sesión
+                                    </a>
+                                </li>
                             </ul>
                         </li>
-                        <form asp-controller="Cuenta" asp-action="Logout" method="post" id="logoutForm" style="display: none;"></form>
-                    }
-                    else
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark header-nav-link" asp-controller="Cuenta" asp-action="Login">
-                                <i class="fas fa-sign-in-alt me-1"></i>Ingresar
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark header-nav-link" asp-controller="Cuenta" asp-action="Registro">
-                                <i class="fas fa-user-plus me-1"></i>Registrarse
-                            </a>
-                        </li>
-                    }
-                </ul>
-            </div>
+                </div>
+                <form asp-controller="Cuenta" asp-action="Logout" method="post" id="logoutForm" style="display: none;"></form>
+            }
+            else
+            {
+                <!-- Usuario NO logeado -->
+                <!-- Versión móvil (solo en móvil/tablet) -->
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link text-dark header-nav-link" asp-controller="Cuenta" asp-action="Login">
+                        <i class="fas fa-sign-in-alt"></i>Ingresar
+                    </a>
+                </li>
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link text-dark header-nav-link" asp-controller="Cuenta" asp-action="Registro">
+                        <i class="fas fa-user-plus"></i>Registrarse
+                    </a>
+                </li>
+
+                <!-- Versión desktop (solo en desktop) -->
+                <div class="d-none d-lg-flex align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark header-nav-link" asp-controller="Cuenta" asp-action="Login">
+                            <i class="fas fa-sign-in-alt"></i>Ingresar
+                        </a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="nav-link text-dark header-nav-link" asp-controller="Cuenta" asp-action="Registro">
+                            <i class="fas fa-user-plus"></i>Registrarse
+                        </a>
+                    </li>
+                </div>
+            }
+            </ul>
+        </div>
         </div>
     </header>
 
@@ -191,15 +655,23 @@
         @RenderBody()
     </div>
 
-    <footer class="border-top pb-5 pt-5 footer text-muted">
+    <footer class="border-top pb-4 pt-4 footer text-muted">
         <div class="container">
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start mb-md-0 mb-sm-0 mb-xs-0">
-                    <p style="color:black; font-size: 0.9rem;">&copy; @DateTime.Now.Year - YoSoyArte.Web. Todos los derechos reservados.</p>
-                    <a asp-controller="Home" asp-action="Privacidad" style="color:black; font-size: 0.9rem;" class="text-decoration-none me-3">Política de Privacidad</a>
-                    <a href="#" style="color:black; font-size: 0.9rem;" class="text-decoration-none">Términos de Servicio</a>
+            <div class="row align-items-center">
+                <div class="col-12 col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <p style="color:black; font-size: 0.85rem;">&copy; @DateTime.Now.Year - YoSoyArte.Web. Todos los derechos reservados.</p>
+                    <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-2">
+                        <a asp-controller="Home" asp-action="Privacidad"
+                           style="color:black; font-size: 0.85rem;" class="text-decoration-none">
+                            Política de Privacidad
+                        </a>
+                        <span class="d-none d-md-inline">|</span>
+                        <a href="#" style="color:black; font-size: 0.85rem;" class="text-decoration-none">
+                            Términos de Servicio
+                        </a>
+                    </div>
                 </div>
-                <div class="col-md-6 text-center text-md-end">
+                <div class="col-12 col-md-6 text-center text-md-end">
                     <div class="social-icons-footer">
                         <a href="URL_TU_INSTAGRAM" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
                         <a href="URL_TU_FACEBOOK" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -215,18 +687,64 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
-        // Lógica para el header dinámico al hacer scroll
+        // Lógica optimizada para header dinámico
         document.addEventListener('DOMContentLoaded', () => {
             const mainHeader = document.querySelector('.main-header');
             const whatsappBar = document.querySelector('.whatsapp-top-bar');
 
+            // Optimización para móviles: manejar scroll con debounce
+            let scrollTimeout;
             window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    mainHeader.classList.add('scroll-header-shrink');
-                } else {
-                    mainHeader.classList.remove('scroll-header-shrink');
-                }
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    if (window.scrollY > 50) {
+                        mainHeader.classList.add('scroll-header-shrink');
+                        if (whatsappBar) {
+                            whatsappBar.style.transform = 'translateY(-100%)';
+                        }
+                    } else {
+                        mainHeader.classList.remove('scroll-header-shrink');
+                        if (whatsappBar) {
+                            whatsappBar.style.transform = 'translateY(0)';
+                        }
+                    }
+                }, 10);
             });
+
+            // Cerrar menú al hacer clic en un enlace en móviles
+            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 992) {
+                        const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+                        if (bsCollapse) {
+                            bsCollapse.hide();
+                        }
+                    }
+                });
+            });
+
+            // Mejorar experiencia táctil en móviles
+            if ('ontouchstart' in window) {
+                document.body.classList.add('touch-device');
+
+                // Aumentar área táctil para elementos importantes
+                const touchElements = document.querySelectorAll('.nav-link, .dropdown-item, .btn');
+                touchElements.forEach(el => {
+                    el.style.minHeight = '44px';
+                    el.style.display = 'flex';
+                    el.style.alignItems = 'center';
+                });
+            }
+        });
+
+        // Manejar el logout con confirmación
+        document.getElementById('logoutForm')?.addEventListener('submit', function(e) {
+            if (!confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                e.preventDefault();
+            }
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

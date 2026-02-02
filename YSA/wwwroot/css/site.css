@@ -7165,3 +7165,1900 @@ body {
         max-width: 100%;
     }
 }
+
+/* =========================================== */
+/* ESTILOS COMPACTOS PARA LOGIN */
+/* =========================================== */
+
+.login-compact-style {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(248, 249, 250, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-bg-compact {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.login-shape-compact {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.05;
+    animation: floatCompact 20s infinite ease-in-out;
+}
+
+    .login-shape-compact.shape-1 {
+        width: 200px;
+        height: 200px;
+        top: -100px;
+        left: -100px;
+        background: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-secondary));
+        animation-delay: 0s;
+    }
+
+    .login-shape-compact.shape-2 {
+        width: 150px;
+        height: 150px;
+        bottom: -75px;
+        right: -75px;
+        background: linear-gradient(135deg, var(--color-brand-success), var(--color-brand-accent));
+        animation-delay: 5s;
+    }
+
+    .login-shape-compact.shape-3 {
+        width: 100px;
+        height: 100px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, var(--color-brand-accent), var(--color-brand-primary));
+        animation-delay: 10s;
+    }
+
+@keyframes floatCompact {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(15px, -15px) scale(1.02);
+    }
+
+    66% {
+        transform: translate(-10px, 10px) scale(0.98);
+    }
+}
+
+.login-compact-container {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.login-compact-card {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius-md);
+    padding: 2rem;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(239, 136, 48, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: cardEntranceCompact 0.5s ease-out;
+}
+
+@keyframes cardEntranceCompact {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.login-compact-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-compact-logo {
+    margin-bottom: 1.25rem;
+}
+
+.login-logo-compact {
+    height: auto;
+    margin: 0 auto;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+    transition: transform 0.3s ease;
+}
+
+    .login-logo-compact:hover {
+        transform: scale(1.03);
+    }
+
+.login-compact-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--color-brand-primary);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.login-compact-subtitle {
+    font-family: var(--font-body);
+    color: var(--color-accent);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin: 0;
+    opacity: 0.8;
+}
+
+.login-compact-form {
+    margin-bottom: 1.5rem;
+}
+
+.form-group-compact {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.input-group-compact {
+    position: relative;
+}
+
+.form-input-compact {
+    width: 100%;
+    padding: 1rem 0.875rem 0.5rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--color-text-dark);
+    background: rgba(248, 249, 250, 0.8);
+    border: 1px solid rgba(232, 232, 232, 0.6);
+    border-radius: var(--border-radius-sm);
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+    .form-input-compact:focus {
+        background: white;
+        border-color: var(--color-brand-primary);
+        box-shadow: 0 0 0 3px rgba(239, 136, 48, 0.08);
+    }
+
+.form-label-compact {
+    position: absolute;
+    top: 50%;
+    left: 0.875rem;
+    transform: translateY(-50%);
+    font-family: var(--font-accent);
+    font-size: 0.875rem;
+    color: var(--color-accent);
+    transition: all 0.2s ease;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
+
+.input-group-compact.is-focused .form-label-compact,
+.input-group-compact.has-value .form-label-compact {
+    top: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--color-brand-primary);
+}
+
+.form-line-compact {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-secondary));
+    transition: width 0.3s ease;
+}
+
+.form-input-compact:focus ~ .form-line-compact {
+    width: 100%;
+}
+
+.password-toggle-compact {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--color-accent);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+    padding: 0.25rem;
+    z-index: 10;
+}
+
+    .password-toggle-compact:hover {
+        color: var(--color-brand-primary);
+    }
+
+.form-error-compact {
+    display: block;
+    margin-top: 0.375rem;
+    font-family: var(--font-accent);
+    font-size: 0.75rem;
+    color: var(--color-brand-secondary);
+}
+
+.input-group-compact.has-error .form-input-compact {
+    border-color: var(--color-brand-secondary);
+}
+
+.form-options-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+}
+
+.form-check-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-check-input-compact {
+    width: 1em;
+    height: 1em;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-xs);
+    cursor: pointer;
+    margin: 0;
+}
+
+    .form-check-input-compact:checked {
+        background-color: var(--color-brand-primary);
+        border-color: var(--color-brand-primary);
+    }
+
+    .form-check-input-compact:focus {
+        box-shadow: 0 0 0 2px rgba(239, 136, 48, 0.2);
+    }
+
+.form-check-label-compact {
+    font-family: var(--font-accent);
+    color: var(--color-text-dark);
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.forgot-password-link-compact {
+    font-family: var(--font-accent);
+    color: var(--color-brand-primary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+    .forgot-password-link-compact:hover {
+        color: var(--color-brand-secondary);
+        text-decoration: none;
+    }
+
+    .forgot-password-link-compact::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: var(--color-brand-primary);
+        transition: width 0.2s ease;
+    }
+
+    .forgot-password-link-compact:hover::after {
+        width: 100%;
+    }
+
+.login-button-compact {
+    width: 100%;
+    padding: 0.875rem;
+    background: linear-gradient(135deg, var(--color-brand-primary) 0%, #e07a2a 100%);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    color: white;
+    font-family: var(--font-accent);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+    .login-button-compact:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(239, 136, 48, 0.2);
+        background: linear-gradient(135deg, #e07a2a 0%, var(--color-brand-secondary) 100%);
+    }
+
+    .login-button-compact:active {
+        transform: translateY(0);
+    }
+
+    .login-button-compact::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+        transition: left 0.4s ease;
+    }
+
+    .login-button-compact:hover::before {
+        left: 100%;
+    }
+
+.button-text-compact {
+    position: relative;
+    z-index: 1;
+}
+
+.button-icon-compact {
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.2s ease;
+}
+
+.login-button-compact:hover .button-icon-compact {
+    transform: translateX(3px);
+}
+
+.login-validation-compact {
+    background: linear-gradient(135deg, rgba(229, 54, 26, 0.06) 0%, rgba(229, 54, 26, 0.03) 100%);
+    border: 1px solid rgba(229, 54, 26, 0.15);
+    border-radius: var(--border-radius-sm);
+    padding: 0.75rem;
+    margin-bottom: 1.25rem;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--color-text-dark);
+    position: relative;
+}
+
+    .login-validation-compact::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3px;
+        height: 100%;
+        background: var(--color-brand-secondary);
+        border-radius: var(--border-radius-sm) 0 0 var(--border-radius-sm);
+    }
+
+    .login-validation-compact ul {
+        margin: 0;
+        padding-left: 1rem;
+    }
+
+    .login-validation-compact li {
+        margin-bottom: 0.125rem;
+        font-size: 0.8rem;
+    }
+
+        .login-validation-compact li:last-child {
+            margin-bottom: 0;
+        }
+
+.separator-compact {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+    color: var(--color-accent);
+    font-family: var(--font-accent);
+    font-size: 0.8rem;
+}
+
+    .separator-compact::before,
+    .separator-compact::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(239, 136, 48, 0.2), transparent);
+    }
+
+    .separator-compact::before {
+        margin-right: 0.75rem;
+    }
+
+    .separator-compact::after {
+        margin-left: 0.75rem;
+    }
+
+.separator-text-compact {
+    padding: 0 0.5rem;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.external-login-form-compact {
+    margin-bottom: 1.5rem;
+}
+
+.external-login-button-compact {
+    width: 100%;
+    padding: 0.75rem;
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-accent);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-dark);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+    .external-login-button-compact:hover {
+        border-color: var(--color-brand-primary);
+        background: rgba(239, 136, 48, 0.04);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .external-login-button-compact:last-child {
+        margin-bottom: 0;
+    }
+
+    .external-login-button-compact.google-button-compact {
+        border-color: #DB4437;
+        color: #DB4437;
+    }
+
+        .external-login-button-compact.google-button-compact:hover {
+            background: rgba(219, 68, 55, 0.04);
+            border-color: #DB4437;
+        }
+
+.external-icon-compact {
+    font-size: 1rem;
+}
+
+.login-footer-compact {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(239, 136, 48, 0.08);
+}
+
+.login-footer-text-compact {
+    font-family: var(--font-body);
+    color: var(--color-accent);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.register-link-compact {
+    color: var(--color-brand-primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+    .register-link-compact:hover {
+        color: var(--color-brand-secondary);
+        text-decoration: none;
+    }
+
+    .register-link-compact::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: var(--color-brand-primary);
+        transition: width 0.2s ease;
+    }
+
+    .register-link-compact:hover::after {
+        width: 100%;
+    }
+
+/* Responsive para login compacto */
+@media (max-width: 768px) {
+    .login-compact-card {
+        padding: 1.75rem;
+    }
+
+    .login-compact-title {
+        font-size: 1.4rem;
+    }
+
+    .login-compact-subtitle {
+        font-size: 0.85rem;
+    }
+
+    .login-logo-compact {
+        max-width: 100px;
+    }
+}
+
+@media (max-width: 576px) {
+    .login-compact-style {
+        padding: 0.75rem;
+    }
+
+    .login-compact-card {
+        padding: 1.5rem;
+    }
+
+    .login-compact-title {
+        font-size: 1.3rem;
+    }
+
+    .form-options-compact {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .forgot-password-link-compact {
+        align-self: flex-end;
+    }
+}
+
+/* Ajustes adicionales de tamaño */
+@media (max-width: 480px) {
+    .login-compact-container {
+        max-width: 340px;
+    }
+
+    .login-compact-title {
+        font-size: 1.25rem;
+    }
+
+    .form-input-compact {
+        font-size: 0.85rem;
+        padding: 0.875rem 0.75rem 0.375rem;
+    }
+
+    .form-label-compact {
+        font-size: 0.85rem;
+        left: 0.75rem;
+    }
+
+    .input-group-compact.is-focused .form-label-compact,
+    .input-group-compact.has-value .form-label-compact {
+        font-size: 0.7rem;
+    }
+
+    .login-button-compact {
+        font-size: 0.85rem;
+        padding: 0.75rem;
+    }
+}
+/* =========================================== */
+/* ESTILOS ESPECÍFICOS PARA REGISTRO COMPACTO */
+/* =========================================== */
+
+/* Fila de formulario para nombre y apellido */
+.form-row-compact {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+    .form-row-compact .form-group-compact {
+        flex: 1;
+        margin-bottom: 0;
+    }
+
+/* Checkbox de términos con estilo compacto */
+.terms-check-compact {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(239, 136, 48, 0.05) 0%, rgba(109, 181, 62, 0.03) 100%);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid rgba(239, 136, 48, 0.1);
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+    .terms-check-compact .form-check-compact {
+        width: 100%;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .terms-check-compact .form-check-input-compact {
+        margin-top: 0.25rem;
+        flex-shrink: 0;
+    }
+
+    .terms-check-compact .form-check-label-compact {
+        font-size: 0.85rem;
+        line-height: 1.4;
+        color: var(--color-text-dark);
+    }
+
+/* Enlaces de términos */
+.terms-link-compact {
+    color: var(--color-brand-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+    .terms-link-compact:hover {
+        color: var(--color-brand-secondary);
+        text-decoration: none;
+    }
+
+    .terms-link-compact::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: var(--color-brand-primary);
+        transition: width 0.2s ease;
+    }
+
+    .terms-link-compact:hover::after {
+        width: 100%;
+    }
+
+/* Mensaje de error para términos */
+.terms-error-compact {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, rgba(229, 54, 26, 0.08) 0%, rgba(229, 54, 26, 0.04) 100%);
+    border: 1px solid rgba(229, 54, 26, 0.2);
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-accent);
+    font-size: 0.85rem;
+    color: var(--color-brand-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: slideIn 0.3s ease-out;
+}
+
+    .terms-error-compact i {
+        color: var(--color-brand-secondary);
+    }
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estado de error en checkbox */
+.form-check-input-compact.has-error {
+    border-color: var(--color-brand-secondary);
+}
+
+/* Responsive para registro compacto */
+@media (max-width: 768px) {
+    .form-row-compact {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .terms-check-compact {
+        padding: 0.75rem;
+    }
+
+        .terms-check-compact .form-check-label-compact {
+            font-size: 0.8rem;
+        }
+}
+
+@media (max-width: 576px) {
+    .terms-check-compact {
+        margin: 1rem 0;
+    }
+}
+
+/* =========================================== */
+/* ESTILOS PARA LOGIN CON IMAGEN LATERAL */
+/* =========================================== */
+
+/* Contenedor dividido */
+.login-split-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Lado de la imagen */
+.login-image-side {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-image-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 500px;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(239, 136, 48, 0.1);
+    background: linear-gradient(135deg, rgba(239, 136, 48, 0.1) 0%, rgba(109, 181, 62, 0.05) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-child-image {
+    width: 100%;
+    height: 100%;
+    object-position: center;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.5s ease;
+}
+
+.login-image-container:hover .login-child-image {
+    transform: scale(1.03);
+}
+
+/* Decoración de la imagen */
+.image-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.decoration-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--color-brand-primary), transparent);
+    opacity: 0.1;
+    animation: float 15s infinite ease-in-out;
+}
+
+    .decoration-circle.circle-1 {
+        width: 120px;
+        height: 120px;
+        top: 10%;
+        left: 10%;
+        background: radial-gradient(circle, var(--color-brand-primary), transparent);
+        animation-delay: 0s;
+    }
+
+    .decoration-circle.circle-2 {
+        width: 80px;
+        height: 80px;
+        bottom: 20%;
+        right: 15%;
+        background: radial-gradient(circle, var(--color-brand-success), transparent);
+        animation-delay: 5s;
+    }
+
+    .decoration-circle.circle-3 {
+        width: 60px;
+        height: 60px;
+        top: 50%;
+        left: 5%;
+        background: radial-gradient(circle, var(--color-brand-accent), transparent);
+        animation-delay: 10s;
+    }
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(10px, -10px) scale(1.1);
+    }
+
+    66% {
+        transform: translate(-5px, 5px) scale(0.9);
+    }
+}
+
+/* Texto sobre la imagen */
+.image-overlay-text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    padding: 2rem;
+    color: white;
+    z-index: 3;
+    text-align: center;
+}
+
+    .image-overlay-text h3 {
+        font-family: var(--font-heading);
+        font-size: 1.5rem;
+        font-weight: normal;
+        margin-bottom: 0.5rem;
+        color: white;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .image-overlay-text p {
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin: 0;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+/* Lado del formulario */
+.login-form-side {
+    flex: 1;
+    max-width: 380px;
+}
+
+    /* Ajustar el card para el nuevo layout */
+    .login-form-side .login-compact-card {
+        margin-bottom: 1rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(239, 136, 48, 0.15);
+    }
+
+    /* Logo dentro del formulario */
+    .login-form-side .login-compact-logo {
+        margin-bottom: 1rem;
+    }
+
+    .login-form-side .login-logo-compact {
+        max-height: 60px;
+        width: auto;
+    }
+
+/* Responsive para diseño dividido */
+@media (max-width: 992px) {
+    .login-split-container {
+        flex-direction: column;
+        gap: 2rem;
+        max-width: 500px;
+    }
+
+    .login-image-side {
+        order: 1;
+        width: 100%;
+    }
+
+    .login-form-side {
+        order: 2;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .login-image-container {
+        max-width: 100%;
+        height: 300px;
+    }
+
+    .login-child-image {
+        padding: 1rem;
+    }
+
+    .image-overlay-text {
+        padding: 1.5rem;
+    }
+
+        .image-overlay-text h3 {
+            font-size: 1.3rem;
+        }
+
+        .image-overlay-text p {
+            font-size: 0.85rem;
+        }
+}
+
+@media (max-width: 768px) {
+    .login-split-container {
+        gap: 1.5rem;
+    }
+
+    .login-image-container {
+        height: 250px;
+        border-radius: var(--border-radius-md);
+    }
+
+    .login-child-image {
+        padding: 1rem;
+    }
+
+    .image-overlay-text {
+        padding: 1rem;
+    }
+
+        .image-overlay-text h3 {
+            font-size: 1.2rem;
+        }
+
+    .login-form-side .login-compact-card {
+        padding: 1.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .login-split-container {
+        gap: 1rem;
+    }
+
+    .login-image-container {
+        height: 200px;
+    }
+
+    .login-child-image {
+        padding: 0.75rem;
+    }
+
+    .image-overlay-text {
+        padding: 0.75rem;
+    }
+
+        .image-overlay-text h3 {
+            font-size: 1.1rem;
+        }
+
+        .image-overlay-text p {
+            font-size: 0.8rem;
+        }
+
+    .login-form-side .login-compact-card {
+        padding: 1.5rem;
+    }
+
+    .decoration-circle.circle-1 {
+        width: 80px;
+        height: 80px;
+    }
+
+    .decoration-circle.circle-2 {
+        width: 60px;
+        height: 60px;
+    }
+
+    .decoration-circle.circle-3 {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Efecto de entrada */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.login-image-side {
+    animation: slideInLeft 0.6s ease-out;
+}
+
+.login-form-side {
+    animation: slideInRight 0.6s ease-out;
+}
+
+/* =========================================== */
+/* MEJORAS ADICIONALES PARA MÓVILES PEQUEÑOS */
+/* =========================================== */
+
+/* Asegurar que el contenedor principal no tenga padding extra */
+@media (max-width: 400px) {
+    .login-compact-style {
+        padding: 0.5rem;
+        min-height: calc(100vh - 120px);
+        display: flex;
+        align-items: flex-start;
+        padding-top: 1rem;
+    }
+
+    /* Ajustar el fondo para móviles */
+    .login-bg-compact .shape-1,
+    .login-bg-compact .shape-2,
+    .login-bg-compact .shape-3 {
+        display: none; /* Ocultar elementos decorativos en móviles muy pequeños */
+    }
+
+    /* Mejorar la legibilidad */
+    body {
+        font-size: 14px;
+    }
+
+    /* Asegurar que los botones sean tappables */
+    .login-button-compact,
+    .external-login-button-compact {
+        min-height: 44px; /* Altura mínima para tappable area */
+    }
+
+    /* Asegurar que los inputs sean fáciles de tocar */
+    .form-input-compact {
+        min-height: 44px;
+        padding-top: 0.75rem;
+    }
+
+    /* Ajustar el logo */
+    .login-logo-compact {
+        max-width: 180px;
+        height: auto;
+    }
+
+    /* Optimizar espaciado vertical */
+    .login-compact-form {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Para landscape en móviles */
+@media (max-width: 400px) and (orientation: landscape) {
+    .login-compact-style {
+        padding-top: 0.5rem;
+        align-items: flex-start;
+    }
+
+    .login-compact-card {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .login-compact-header {
+        margin-bottom: 1rem;
+    }
+}
+
+/* =========================================== */
+/* ESTILOS RESPONSIVE ESPECÍFICOS PARA LOGIN COMPACTO */
+/* =========================================== */
+
+/* Para pantallas móviles (hasta 768px) */
+@media (max-width: 768px) {
+    .login-split-container {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1rem;
+        margin-top: 2rem;
+        padding-top: 0;
+    }
+
+    /* Oculta la imagen en dispositivos móviles */
+    .login-image-mobile {
+        display: none !important;
+    }
+
+    /* Asegura que el formulario ocupe todo el ancho */
+    .login-form-side {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 0.5rem;
+    }
+
+    .login-compact-card {
+        padding: 1.5rem;
+        margin: 0 auto;
+        max-width: 100%;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        border-radius: var(--border-radius-md);
+    }
+
+    .login-compact-title {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .login-compact-subtitle {
+        font-size: 0.85rem;
+    }
+
+    /* Ajustes específicos para pantallas muy pequeñas (400px) */
+    @media (max-width: 400px) {
+        .login-split-container {
+            padding: 0.5rem;
+            margin-top: 1rem;
+            gap: 1rem;
+        }
+
+        .login-compact-card {
+            padding: 1.25rem;
+            border-radius: var(--border-radius-sm);
+        }
+
+        .login-compact-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .login-compact-logo {
+            margin-bottom: 1rem;
+        }
+
+        .login-logo-compact {
+            max-height: 50px;
+            width: auto;
+        }
+
+        .login-compact-title {
+            font-size: 1.2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .login-compact-subtitle {
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .form-group-compact {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-input-compact {
+            padding: 0.875rem 0.75rem 0.375rem;
+            font-size: 0.85rem;
+        }
+
+        .form-label-compact {
+            font-size: 0.85rem;
+            left: 0.75rem;
+        }
+
+        .input-group-compact.is-focused .form-label-compact,
+        .input-group-compact.has-value .form-label-compact {
+            font-size: 0.7rem;
+        }
+
+        .form-options-compact {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .forgot-password-link-compact {
+            align-self: flex-end;
+            font-size: 0.8rem;
+        }
+
+        .login-button-compact {
+            padding: 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .separator-compact {
+            margin: 1.25rem 0;
+            font-size: 0.75rem;
+        }
+
+        .external-login-button-compact {
+            padding: 0.625rem;
+            font-size: 0.8rem;
+        }
+
+        .login-footer-compact {
+            padding-top: 1.25rem;
+        }
+
+        .login-footer-text-compact {
+            font-size: 0.8rem;
+        }
+
+        .register-link-compact {
+            font-size: 0.8rem;
+        }
+
+        /* Ajustes adicionales para inputs */
+        .input-group-compact {
+            margin-bottom: 0.5rem;
+        }
+
+        .form-error-compact {
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Ajuste para el toggle de password */
+        .password-toggle-compact {
+            right: 0.625rem;
+            font-size: 0.8rem;
+            padding: 0.125rem;
+        }
+
+        /* Mejora para validación */
+        .login-validation-compact {
+            padding: 0.625rem;
+            margin-bottom: 1rem;
+            font-size: 0.75rem;
+        }
+
+            .login-validation-compact li {
+                font-size: 0.75rem;
+            }
+    }
+}
+
+/* Para tablets (entre 769px y 992px) */
+@media (min-width: 769px) and (max-width: 992px) {
+    .login-split-container {
+        gap: 2rem;
+        max-width: 700px;
+    }
+
+    .login-image-side {
+        display: block;
+        flex: 0 0 40%;
+    }
+
+    .login-form-side {
+        flex: 0 0 55%;
+    }
+
+    .login-image-container {
+        height: 400px;
+    }
+}
+
+/* Para mostrar la imagen solo en desktop */
+@media (min-width: 993px) {
+    .login-image-mobile {
+        display: flex !important;
+    }
+
+    .login-split-container {
+        flex-direction: row;
+        gap: 3rem;
+        max-width: 900px;
+    }
+}
+
+/* =========================================== */
+/* ESTILOS ESPECÍFICOS PARA REGISTRO CON IMAGEN LATERAL */
+/* =========================================== */
+
+/* Contenedor dividido para registro */
+.login-split-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Lado del formulario (IZQUIERDA) */
+.login-form-side {
+    flex: 1;
+    max-width: 420px;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+/* Lado de la imagen (DERECHA) */
+.login-image-side {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0;
+}
+
+.login-image-container {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    height: 550px;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(239, 136, 48, 0.1);
+    background: linear-gradient(135deg, rgba(239, 136, 48, 0.1) 0%, rgba(109, 181, 62, 0.05) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-child-image {
+    width: 100%;
+    height: 100%;
+    object-position: center;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.5s ease;
+}
+
+.login-image-container:hover .login-child-image {
+    transform: scale(1.03);
+}
+
+/* Texto sobre la imagen para registro */
+.image-overlay-text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+    padding: 2rem;
+    color: white;
+    z-index: 3;
+    text-align: center;
+}
+
+    .image-overlay-text h3 {
+        font-family: var(--font-heading);
+        font-size: 1.8rem;
+        font-weight: normal;
+        margin-bottom: 0.75rem;
+        color: white;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .image-overlay-text p {
+        font-family: var(--font-body);
+        font-size: 1rem;
+        opacity: 0.9;
+        margin: 0;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+/* Decoración de la imagen para registro */
+.image-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.decoration-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--color-brand-primary), transparent);
+    opacity: 0.1;
+    animation: float 15s infinite ease-in-out;
+}
+
+    .decoration-circle.circle-1 {
+        width: 120px;
+        height: 120px;
+        top: 10%;
+        left: 10%;
+        background: radial-gradient(circle, var(--color-brand-primary), transparent);
+        animation-delay: 0s;
+    }
+
+    .decoration-circle.circle-2 {
+        width: 80px;
+        height: 80px;
+        bottom: 20%;
+        right: 15%;
+        background: radial-gradient(circle, var(--color-brand-success), transparent);
+        animation-delay: 5s;
+    }
+
+    .decoration-circle.circle-3 {
+        width: 60px;
+        height: 60px;
+        top: 50%;
+        left: 5%;
+        background: radial-gradient(circle, var(--color-brand-accent), transparent);
+        animation-delay: 10s;
+    }
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(10px, -10px) scale(1.1);
+    }
+
+    66% {
+        transform: translate(-5px, 5px) scale(0.9);
+    }
+}
+
+/* Card del formulario más ancha para registro */
+.login-form-side .login-compact-card {
+    margin-top: 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(239, 136, 48, 0.15);
+    max-width: 100%;
+}
+
+/* Logo dentro del formulario */
+.login-form-side .login-compact-logo {
+    margin-bottom: 1rem;
+}
+
+.login-form-side .login-logo-compact {
+    max-height: 60px;
+    width: auto;
+}
+
+/* Ajustes específicos para formulario de registro */
+.login-compact-title {
+    color: var(--color-brand-primary);
+}
+
+/* Mejoras para campos de formulario de registro */
+.form-row-compact {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+    .form-row-compact .form-group-compact {
+        flex: 1;
+        margin-bottom: 0;
+    }
+
+/* Efectos de animación específicos para registro */
+.login-form-side {
+    animation: slideInLeft 0.6s ease-out;
+}
+
+.login-image-side {
+    animation: slideInRight 0.6s ease-out;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* =========================================== */
+/* RESPONSIVE PARA REGISTRO CON IMAGEN */
+/* =========================================== */
+
+/* Para tablets (hasta 992px) */
+@media (max-width: 992px) {
+    .login-split-container {
+        flex-direction: column;
+        gap: 2rem;
+        max-width: 600px;
+    }
+
+    /* Formulario primero, imagen después */
+    .login-form-side {
+        order: 1;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .login-image-side {
+        order: 2;
+        width: 100%;
+    }
+
+    .login-image-container {
+        max-width: 100%;
+        height: 350px;
+    }
+
+    .image-overlay-text {
+        padding: 1.5rem;
+    }
+
+        .image-overlay-text h3 {
+            font-size: 1.5rem;
+        }
+
+        .image-overlay-text p {
+            font-size: 0.9rem;
+        }
+}
+
+/* Para pantallas móviles (hasta 768px) */
+@media (max-width: 768px) {
+    .login-split-container {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1rem;
+        margin-top: 1rem;
+        padding-top: 0;
+    }
+
+    /* Oculta la imagen en dispositivos móviles */
+    .login-image-mobile {
+        display: none !important;
+    }
+
+    /* Asegura que el formulario ocupe todo el ancho */
+    .login-form-side {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 0.5rem;
+    }
+
+    .login-compact-card {
+        padding: 1.5rem;
+        margin: 0 auto;
+        max-width: 100%;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        border-radius: var(--border-radius-md);
+    }
+
+    .login-compact-title {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .login-compact-subtitle {
+        font-size: 0.85rem;
+    }
+
+    /* Ajustes específicos para pantallas muy pequeñas (400px) */
+    @media (max-width: 400px) {
+        .login-split-container {
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            gap: 1rem;
+        }
+
+        .login-compact-card {
+            padding: 1.25rem;
+            border-radius: var(--border-radius-sm);
+        }
+
+        .login-compact-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .login-compact-logo {
+            margin-bottom: 1rem;
+        }
+
+        .login-logo-compact {
+            max-height: 50px;
+            width: auto;
+        }
+
+        .login-compact-title {
+            font-size: 1.2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .login-compact-subtitle {
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        /* Campos en fila se convierten en columna en móviles */
+        .form-row-compact {
+            flex-direction: column;
+            gap: 0;
+            margin-bottom: 0;
+        }
+
+            .form-row-compact .form-group-compact {
+                margin-bottom: 1.25rem;
+            }
+
+        .form-group-compact {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-input-compact {
+            padding: 0.875rem 0.75rem 0.375rem;
+            font-size: 0.85rem;
+        }
+
+        .form-label-compact {
+            font-size: 0.85rem;
+            left: 0.75rem;
+        }
+
+        .input-group-compact.is-focused .form-label-compact,
+        .input-group-compact.has-value .form-label-compact {
+            font-size: 0.7rem;
+        }
+
+        .form-options-compact {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .terms-check-compact {
+            margin: 1rem 0;
+            padding: 0.75rem;
+        }
+
+            .terms-check-compact .form-check-label-compact {
+                font-size: 0.8rem;
+            }
+
+        .login-button-compact {
+            padding: 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .separator-compact {
+            margin: 1.25rem 0;
+            font-size: 0.75rem;
+        }
+
+        .external-login-button-compact {
+            padding: 0.625rem;
+            font-size: 0.8rem;
+        }
+
+        .login-footer-compact {
+            padding-top: 1.25rem;
+        }
+
+        .login-footer-text-compact {
+            font-size: 0.8rem;
+        }
+
+        .register-link-compact {
+            font-size: 0.8rem;
+        }
+
+        /* Ajustes adicionales para inputs */
+        .input-group-compact {
+            margin-bottom: 0.5rem;
+        }
+
+        .form-error-compact {
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Ajuste para los toggles de password */
+        .password-toggle-compact {
+            right: 0.625rem;
+            font-size: 0.8rem;
+            padding: 0.125rem;
+        }
+
+        /* Mejora para validación */
+        .login-validation-compact {
+            padding: 0.625rem;
+            margin-bottom: 1rem;
+            font-size: 0.75rem;
+        }
+
+            .login-validation-compact li {
+                font-size: 0.75rem;
+            }
+    }
+}
+
+/* Para tablets (entre 769px y 992px) */
+@media (min-width: 769px) and (max-width: 992px) {
+    .login-split-container {
+        gap: 2rem;
+        max-width: 700px;
+    }
+
+    .login-image-side {
+        display: block !important;
+        flex: 0 0 40%;
+    }
+
+    .login-form-side {
+        flex: 0 0 55%;
+    }
+
+    .login-image-container {
+        height: 400px;
+    }
+
+    .image-overlay-text h3 {
+        font-size: 1.4rem;
+    }
+}
+
+/* Para mostrar la imagen solo en desktop */
+@media (min-width: 993px) {
+    .login-image-mobile {
+        display: flex !important;
+    }
+
+    .login-split-container {
+        flex-direction: row;
+        gap: 3rem;
+        max-width: 1000px;
+    }
+
+    .login-form-side {
+        order: 1;
+    }
+
+    .login-image-side {
+        order: 2;
+    }
+}
+
+/* =========================================== */
+/* MEJORAS ADICIONALES PARA MÓVILES PEQUEÑOS */
+/* =========================================== */
+
+/* Asegurar que el contenedor principal no tenga padding extra */
+@media (max-width: 400px) {
+    .login-compact-style {
+        padding: 0.5rem;
+        min-height: calc(100vh - 120px);
+        display: flex;
+        align-items: flex-start;
+        padding-top: 1rem;
+    }
+
+    /* Ajustar el fondo para móviles */
+    .login-bg-compact .shape-1,
+    .login-bg-compact .shape-2,
+    .login-bg-compact .shape-3 {
+        display: none; /* Ocultar elementos decorativos en móviles muy pequeños */
+    }
+
+    /* Mejorar la legibilidad */
+    body {
+        font-size: 14px;
+    }
+
+    /* Asegurar que los botones sean tappables */
+    .login-button-compact,
+    .external-login-button-compact {
+        min-height: 44px; /* Altura mínima para tappable area */
+    }
+
+    /* Asegurar que los inputs sean fáciles de tocar */
+    .form-input-compact {
+        min-height: 44px;
+        padding-top: 0.75rem;
+    }
+
+    /* Optimizar espaciado vertical */
+    .login-compact-form {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Para landscape en móviles */
+@media (max-width: 400px) and (orientation: landscape) {
+    .login-compact-style {
+        padding-top: 0.5rem;
+        align-items: flex-start;
+    }
+
+    .login-compact-card {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .login-compact-header {
+        margin-bottom: 1rem;
+    }
+}
+
+/* =========================================== */
+/* ESTILOS PARA INVERTIR ORDEN EN LOGIN */
+/* =========================================== */
+
+/* Para escritorio: Login tiene imagen a la izquierda y formulario a la derecha */
+@media (min-width: 993px) {
+    .login-split-reverse {
+        flex-direction: row-reverse;
+    }
+
+        /* Invertir animaciones para el login */
+        .login-split-reverse .login-form-side {
+            animation: slideInRight 0.6s ease-out;
+        }
+
+        .login-split-reverse .login-image-side {
+            animation: slideInLeft 0.6s ease-out;
+        }
+}
+
+/* Para tablets y móviles mantener orden normal (formulario arriba, imagen abajo) */
+@media (max-width: 992px) {
+    .login-split-reverse {
+        flex-direction: column;
+    }
+
+        .login-split-reverse .login-form-side {
+            order: 1;
+        }
+
+        .login-split-reverse .login-image-side {
+            order: 2;
+        }
+}

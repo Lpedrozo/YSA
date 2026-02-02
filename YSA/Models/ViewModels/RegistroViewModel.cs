@@ -24,5 +24,7 @@ namespace YSA.Web.Models.ViewModels
         [DataType(DataType.Password)]
         [Compare("Contrasena", ErrorMessage = "La contraseña y la confirmación no coinciden.")]
         public string ConfirmarContrasena { get; set; }
+        public string ReturnUrl { get; set; }
+
     }
 }
