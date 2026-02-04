@@ -9,277 +9,202 @@
         .OrderByDescending(e => e.FechaEvento)
         .ToList();
 
-    // Eventos para el bloque "LO ÚLTIMO" (los 6 más recientes)
-    var ultimosEventos = todosLosEventos.Take(6).ToList();
-
-    // Eventos para el bloque "EVENTOS DESTACADOS" (todos los demás)
-    var eventosDestacados = todosLosEventos.Skip(6).ToList();
+    // Tomar los primeros 9 eventos para mostrar
+    var eventosParaMostrar = todosLosEventos.Take(9).ToList();
 }
-
 @* =========================================== *@
-@* SECCIÓN DE NUESTRO PROPÓSITO (Inspirada en la imagen) *@
+@* SECCIÓN DE NUESTRO PROPÓSITO (CON BOTONES E ICONOS CENTRADOS) *@
 @* =========================================== *@
-<div class="hero-section pb-5">
+<div class="hero-section pb-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6 mb-5 mb-lg-0">
-                <div class="badge bg-light mb-3 d-inline-block">COMUNIDAD ARTÍSTICA</div>
-                <h1 class="display-4 fw-bold mb-4" style="font-family: var(--font-heading);">
-                    Descubre tu <span class="text-brand-primary">creatividad</span> interior
-                </h1>
-                <p class="lead mb-4" style="font-family: var(--font-body); line-height: 1.8;">
-                    <strong>Formamos artistas</strong> que no solo dominan la técnica, sino que entienden el arte como una vía de <strong>transformación personal y colectiva</strong>. En YSA fusionamos técnica, sensibilidad y consciencia para despertar el poder creativo que habita en ti.
-                </p>
-                <div class="d-flex flex-wrap gap-3 mb-5">
-                    <a href="#ultimos-eventos" class="btn btn-primary btn-lg px-4 py-3">
-                        <i class="fas fa-calendar-alt me-2"></i>Explorar Eventos
-                    </a>
-                    <a href="@Url.Action("Index", "Curso")" class="btn btn-outline-primary btn-lg px-4 py-3">
-                        <i class="fas fa-book-open me-2"></i>Ver Cursos
-                    </a>
-                </div>
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="text-center">
-                            <div class="display-6 fw-bold text-brand-primary mb-2">+500</div>
-                            <div class="small text-muted">Estudiantes</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="text-center">
-                            <div class="display-6 fw-bold text-brand-primary mb-2">+50</div>
-                            <div class="small text-muted">Artistas</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="text-center">
-                            <div class="display-6 fw-bold text-brand-primary mb-2">+100</div>
-                            <div class="small text-muted">Eventos</div>
-                        </div>
+            <!-- COLUMNA IZQUIERDA: IMAGEN RESPONSIVE -->
+            <div class="col-lg-6 mb-5 mb-lg-0 order-1 order-lg-1">
+                <div class="position-relative">
+                    <div class="rounded-lg overflow-hidden shadow-lg" style="border-radius: var(--border-radius-lg);">
+                        <!-- IMAGEN MEJORADA: Se adapta responsive -->
+                        <img src="/diseño/BienvenidoArtista.jpg"
+                             alt="Bienvenido a YoSoyArte"
+                             class="img-fluid w-100 hero-image"
+                             style="border-radius: var(--border-radius-lg);">
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <div class="position-relative">
-                    <div class="rounded-lg overflow-hidden shadow-lg" style="border-radius: var(--border-radius-lg);">
-                        <img src="/diseño/Expresion.png" alt="Comunidad Artística YSA" class="img-fluid w-100" style="height: 500px; object-fit: cover;">
+
+            <!-- COLUMNA DERECHA: TEXTO MEJORADO Y RESPONSIVE -->
+            <div class="col-lg-6 mb-5 mb-lg-0 order-2 order-lg-2">
+                <div class="hero-content text-center">
+                    <!-- Badge pequeño -->
+                    <div class="badge bg-light mb-4 d-inline-block" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">
+                        COMUNIDAD ARTÍSTICA
                     </div>
-                    <div class="position-absolute bottom-0 start-0 bg-white p-4 m-4 rounded shadow" style="max-width: 300px;">
-                        <strong class="text-muted small mb-0">- Equipo YoSoyArte</strong>
+
+                    <!-- Texto descriptivo - mejorado para responsive -->
+                    <div class="mb-5 mx-auto" style="max-width: 600px;">
+                        <div class="hero-text-container">
+                            <p class="mb-4" style="font-family: var(--font-body); font-size: 1rem; line-height: 1.7; text-align: center;">
+                                <strong>Formamos artistas</strong> que no solo dominan la técnica, sino que entienden el arte como una vía de <strong>transformación personal y colectiva</strong>. En Yo Soy Arte, fusionamos técnica, sensibilidad y consciencia para despertar el poder creativo que habita en ti.
+                            </p>
+                        </div>
+
+                        <!-- TRES BOTONES PEQUEÑOS - SIEMPRE CENTRADOS -->
+                        <div class="d-flex flex-wrap gap-3 mb-5 justify-content-center">
+                            <a href="#ultimos-eventos" class="btn btn-primary px-4 py-2">
+                                <i class="fas fa-calendar-alt me-2"></i>Explorar Eventos
+                            </a>
+                            <a href="@Url.Action("Index", "Curso")" class="btn btn-outline-primary px-4 py-2">
+                                <i class="fas fa-book-open me-2"></i>Ver Cursos
+                            </a>
+                            <a href="#quienes-somos" class="btn btn-outline-secondary px-4 py-2">
+                                <i class="fas fa-info-circle me-2"></i>Sobre Nosotros
+                            </a>
+                        </div>
+
+                        <!-- Iconos de redes sociales - SIEMPRE CENTRADOS -->
+                        <div class="social-icons d-flex gap-3 mt-4 justify-content-center">
+                            <a href="#" class="text-decoration-none social-icon" style="color: #333; font-size: 1.5rem;">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                            <a href="#" class="text-decoration-none social-icon" style="color: #333; font-size: 1.5rem;">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="text-decoration-none social-icon" style="color: #333; font-size: 1.5rem;">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="#" class="text-decoration-none social-icon" style="color: #333; font-size: 1.5rem;">
+                                <i class="fab fa-tiktok"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Métricas - Mejoradas para responsive -->
+                <div class="row g-4 align-items-center justify-content-center hero-metrics">
+                    <div class="col-auto">
+                        <div class="text-center">
+                            <div class="metric-number fw-bold text-brand-primary mb-2">+500</div>
+                            <div class="small text-muted">Estudiantes</div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="text-center">
+                            <div class="metric-number fw-bold text-brand-primary mb-2">+50</div>
+                            <div class="small text-muted">Artistas</div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="text-center">
+                            <div class="metric-number fw-bold text-brand-primary mb-2">+100</div>
+                            <div class="small text-muted">Eventos</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 @* =========================================== *@
 @* BANNER PRINCIPAL (Mantenido) *@
 @* =========================================== *@
-<div class="magazine-cover mt-5">
-    <img src="/diseño/Banner.png" class="cover-image" alt="Portada de la revista Yo Soy Arte">
+<div class="magazine-cover">
+    <img src="/diseño/BannerPrincipal.png" class="cover-image" alt="Portada de la revista Yo Soy Arte">
     <div class="cover-overlay">
         <div class="cover-title-block">
         </div>
     </div>
 </div>
 
-<div class="container px-0 py-5 mb-5 pb-5">
-    @* === INICIO DEL BLOQUE "LO ÚLTIMO" (2 COLUMNAS) === *@
+<div class="container px-0">
+    @* === INICIO DEL BLOQUE "PRÓXIMOS EVENTOS" === *@
     <div class="section-container" id="ultimos-eventos">
-        <div class="row align-items-center">
-            @* Columna izquierda: Texto *@
-            <div class="col-lg-5 mb-5 mb-lg-0">
-                <div class="mb-4">
-                    <span class="latest-grid-header mb-3 d-block">LO ÚLTIMO</span>
-                    <h2 class="mb-4" style="font-family: var(--font-heading); font-size: 2.5rem; line-height: 1.2;">
-                        Mantente al día con <span class="text-brand-primary">nuestros eventos</span>
+        <div class="row">
+            @* Encabezado de la sección - CENTRALIZADO *@
+            <div class="col-12 mb-5">
+                <div class="text-center">
+                    <span class="latest-grid-header mb-3 d-block">PRÓXIMOS EVENTOS</span>
+                    <h2 class="mb-0" style="font-family: var(--font-heading); font-size: 2.5rem; line-height: 1.2;">
+                        Descubre nuestras <span class="text-brand-primary">actividades</span>
                     </h2>
-                    <p class="mb-4" style="font-family: var(--font-body); font-size: 1.1rem; line-height: 1.6;">
-                        Explora nuestras actividades más recientes: talleres, exposiciones, charlas y encuentros artísticos.
-                        Cada evento es una oportunidad para <strong>conectar, aprender y crecer</strong> junto a nuestra comunidad.
-                    </p>
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-star text-brand-primary me-3 fa-2x"></i>
-                        <div>
-                            <h5 class="mb-1" style="font-family: var(--font-heading);">Experiencias únicas</h5>
-                            <p class="small text-muted mb-0">Eventos diseñados para inspirar y transformar</p>
-                        </div>
-                    </div>
+                    @* Se eliminó el párrafo descriptivo *@
                 </div>
             </div>
 
-            @* Columna derecha: Carrusel de eventos *@
-            <div class="col-lg-7">
-                @if (ultimosEventos.Any())
-                {
-                    <div id="ultimosEventosCarousel" class="carousel slide" data-bs-ride="carousel">
-                        @* Indicadores *@
-                        <div class="carousel-indicators">
-                            @for (int i = 0; i < ultimosEventos.Count; i++)
-                            {
-                                <button type="button" data-bs-target="#ultimosEventosCarousel"
-                                        data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"
-                                        aria-label="Slide @(i + 1)"></button>
-                            }
-                        </div>
-
-                        @* Contenido del carrusel *@
-                        <div class="carousel-inner rounded-lg" style="border-radius: var(--border-radius-lg);">
-                            @for (int i = 0; i < ultimosEventos.Count; i++)
-                            {
-                                var evento = ultimosEventos[i];
-                                <div class="carousel-item @(i == 0 ? "active" : "")" data-bs-interval="5000">
-                                    <a href="@Url.Action("DetalleEvento", "Revista", new { id = evento.Id })" class="text-decoration-none text-dark">
-                                        <div class="position-relative overflow-hidden rounded-lg" style="height: 450px;">
-                                            <img src="@Url.Content(evento.UrlImagen)"
-                                                 class="d-block w-100 h-100"
-                                                 alt="@evento.Titulo"
-                                                 style="object-fit: cover;">
-                                            <div class="carousel-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-end p-4"
-                                                 style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);">
-                                                <div class="text-white">
-                                                    <span class="badge bg-light mb-2">@evento.TipoEventoNombre</span>
-                                                    <h3 class="h4 mb-2" style="font-family: var(--font-heading);">@evento.Titulo</h3>
-                                                    <p class="mb-0">
-                                                        <i class="far fa-calendar me-2"></i>
-                                                        @evento.FechaEvento.ToString("dd MMMM yyyy")
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            }
-                        </div>
-
-                        @* Controles *@
-                        <button class="carousel-control-prev" type="button" data-bs-target="#ultimosEventosCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Anterior</span>
+            @* Carrusel de eventos *@
+            @if (eventosParaMostrar.Any())
+            {
+                <div class="col-12">
+                    <div class="position-relative">
+                        @* Flecha anterior *@
+                        <button class="carousel-arrow carousel-arrow-prev" aria-label="Eventos anteriores">
+                            <i class="fas fa-chevron-left"></i>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#ultimosEventosCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Siguiente</span>
+
+                        @* Contenedor del carrusel *@
+                        <div class="events-carousel-container">
+                            <div class="events-carousel-track">
+                                @foreach (var evento in eventosParaMostrar)
+                                {
+                                    <div class="event-carousel-slide">
+                                        <div class="event-card-horizontal h-100">
+                                            <a href="@Url.Action("DetalleEvento", "Revista", new { id = evento.Id })" class="text-decoration-none text-dark">
+                                                <div class="event-card-image">
+                                                    <img src="@Url.Content(evento.UrlImagen)"
+                                                         alt="@evento.Titulo"
+                                                         class="event-card-img">
+                                                    <div class="event-card-badge">
+                                                        <span class="badge">@evento.TipoEventoNombre</span>
+                                                    </div>
+                                                </div>
+                                                <div class="event-card-content">
+                                                    <div class="event-card-meta">
+                                                        <span class="event-card-date">
+                                                            <i class="far fa-calendar me-1"></i>
+                                                            @evento.FechaEvento.ToString("dd MMM yyyy")
+                                                        </span>
+                                                    </div>
+                                                    <h3 class="event-card-title">@evento.Titulo</h3>
+                                                    @if (!string.IsNullOrEmpty(evento.Descripcion))
+                                                    {
+                                                        <div class="event-card-description">@Html.Raw(evento.Descripcion)</div>
+                                                    }
+                                                    <div class="event-card-footer">
+                                                        <span class="event-card-cta">
+                                                            Más información <i class="fas fa-arrow-right ms-1"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        @* Flecha siguiente *@
+                        <button class="carousel-arrow carousel-arrow-next" aria-label="Siguientes eventos">
+                            <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
-                }
-                else
-                {
+
+                    @* Indicadores (dots) - Actualizados dinámicamente *@
+                    <div class="carousel-indicators mt-4 justify-content-center">
+                        @* Los indicadores se generarán dinámicamente con JavaScript *@
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="col-12">
                     <div class="alert alert-info text-center py-5" role="alert">
                         <i class="fas fa-calendar-times fa-3x mb-3"></i>
-                        <h4>No hay eventos recientes para mostrar</h4>
-                        <p class="mb-0">Pronto tendremos nuevas actividades para ti.</p>
+                        <h4>No hay eventos programados</h4>
+                        <p class="mb-0">Pronto anunciaremos nuevas actividades. ¡Mantente atento!</p>
                     </div>
-                }
-            </div>
+                </div>
+            }
         </div>
     </div>
-    @* === FIN DEL BLOQUE "LO ÚLTIMO" === *@
-
-    <hr class="section-divider" />
-
-    @* === INICIO DEL BLOQUE "EVENTOS DESTACADOS" (2 COLUMNAS INVERTIDAS CON CARRUSEL) === *@
-    @if (eventosDestacados.Any())
-    {
-        <div class="section-container">
-            <div class="row align-items-center">
-                @* Columna izquierda: Carrusel de eventos destacados *@
-                <div class="col-lg-7 mb-5 mb-lg-0 order-2 order-lg-1">
-                    <div id="eventosDestacadosCarousel" class="carousel slide" data-bs-ride="carousel">
-                        @* Indicadores *@
-                        <div class="carousel-indicators">
-                            @for (int i = 0; i < eventosDestacados.Count; i++)
-                            {
-                                <button type="button" data-bs-target="#eventosDestacadosCarousel"
-                                        data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"
-                                        aria-label="Slide @(i + 1)"></button>
-                            }
-                        </div>
-
-                        @* Contenido del carrusel *@
-                        <div class="carousel-inner rounded-lg" style="border-radius: var(--border-radius-lg);">
-                            @for (int i = 0; i < eventosDestacados.Count; i++)
-                            {
-                                var evento = eventosDestacados[i];
-                                <div class="carousel-item @(i == 0 ? "active" : "")" data-bs-interval="6000">
-                                    <a href="@Url.Action("DetalleEvento", "Revista", new { id = evento.Id })" class="text-decoration-none text-dark">
-                                        <div class="position-relative overflow-hidden rounded-lg" style="height: 450px;">
-                                            <img src="@Url.Content(evento.UrlImagen)"
-                                                 class="d-block w-100 h-100"
-                                                 alt="@evento.Titulo"
-                                                 style="object-fit: cover;">
-                                            <div class="carousel-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-end p-4"
-                                                 style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);">
-                                                <div class="text-white">
-                                                    <span class="badge bg-dark mb-2">DESTACADO</span>
-                                                    <span class="badge bg-light ms-2 mb-2">@evento.TipoEventoNombre</span>
-                                                    <h3 class="h4 mb-2" style="font-family: var(--font-heading);">@evento.Titulo</h3>
-                                                    <p class="mb-0">
-                                                        <i class="far fa-calendar me-2"></i>
-                                                        @evento.FechaEvento.ToString("dd MMMM yyyy")
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            }
-                        </div>
-
-                        @* Controles *@
-                        <button class="carousel-control-prev" type="button" data-bs-target="#eventosDestacadosCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Anterior</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#eventosDestacadosCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Siguiente</span>
-                        </button>
-                    </div>
-                </div>
-
-                @* Columna derecha: Texto filosófico *@
-                <div class="col-lg-5 mb-5 mb-lg-0 order-1 order-lg-2 ps-lg-5">
-                    <div class="mb-4">
-                        <span class="latest-grid-header mb-3 d-block">EVENTOS DESTACADOS</span>
-                        <h2 class="mb-4" style="font-family: var(--font-heading); font-size: 2.5rem; line-height: 1.2;">
-                            Vive el arte en <span class="text-brand-primary">su máxima expresión</span>
-                        </h2>
-                        <p class="mb-4" style="font-family: var(--font-body); font-size: 1.1rem; line-height: 1.6;">
-                            <em>"El verdadero artista no busca solo crear belleza, sino también expresar verdades profundas que conecten con el alma humana."</em>
-                        </p>
-                        <div class="border-start border-3 border-brand-primary ps-4 mb-4">
-                            <p class="mb-0">Nuestros eventos destacados son experiencias <strong>transformadoras</strong> donde el arte trasciende lo estético para convertirse en diálogo, aprendizaje y comunidad.</p>
-                        </div>
-                        @if (eventosDestacados.Any())
-                        {
-                            var proximoEvento = eventosDestacados.First();
-                            <div class="bg-light p-4 rounded" style="border-left: 4px solid var(--color-brand-primary);">
-                                <h5 class="mb-2" style="font-family: var(--font-heading);">Próximo evento especial</h5>
-                                <p class="mb-2"><strong>@proximoEvento.Titulo</strong></p>
-                                <p class="small text-muted mb-0">
-                                    <i class="far fa-clock me-1"></i>
-                                    @proximoEvento.FechaEvento.ToString("dddd, dd MMMM") a las @proximoEvento.FechaEvento.ToString("hh:mm tt")
-                                </p>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
-    else
-    {
-        <div class="section-container text-center py-5">
-            <i class="fas fa-calendar-star fa-4x text-brand-primary mb-4"></i>
-            <h3 class="mb-3" style="font-family: var(--font-heading);">Próximamente: Eventos Destacados</h3>
-            <p class="text-muted mb-0">Estamos preparando eventos especiales que pronto anunciaremos.</p>
-        </div>
-    }
-    @* === FIN DEL BLOQUE "EVENTOS DESTACADOS" === *@
-
-    <hr class="section-divider" />
 
     @* === INICIO DE LA SECCIÓN QUIÉNES SOMOS === *@
     <div class="about-us-section text-center">
@@ -501,15 +426,271 @@
     }
 
     /* =========================================== */
-    /* ESTILOS PARA EL NUEVO DISEÑO DE 2 COLUMNAS */
+    /* ESTILOS PARA TARJETAS DE EVENTOS HORIZONTALES */
     /* =========================================== */
-    .carousel-overlay {
+    .event-card-horizontal {
+        border-radius: var(--border-radius-lg);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        background-color: var(--color-card-bg);
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .event-card-horizontal:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--color-brand-primary);
+        }
+
+        .event-card-horizontal a {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            text-decoration: none;
+            color: inherit;
+        }
+
+    .event-card-image {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    }
+
+    .event-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .event-card-horizontal:hover .event-card-img {
+        transform: scale(1.05);
+    }
+
+    .event-card-badge {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
         z-index: 2;
     }
 
-    .border-brand-primary {
-        border-color: var(--color-brand-primary) !important;
+        .event-card-badge .badge {
+            background-color: var(--color-brand-primary);
+            color: white;
+            font-family: var(--font-accent);
+            font-weight: 600;
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+    .event-card-featured {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 32px;
+        height: 32px;
+        background-color: var(--color-brand-accent);
+        color: var(--color-brand-dark);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+        font-size: 0.9rem;
     }
+
+    .event-card-content {
+        padding: 1.5rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .event-card-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-family: var(--font-accent);
+        font-size: 0.85rem;
+        color: var(--color-accent);
+    }
+
+    .event-card-date,
+    .event-card-time {
+        display: flex;
+        align-items: center;
+    }
+
+        .event-card-date i,
+        .event-card-time i {
+            font-size: 0.9rem;
+        }
+
+    .event-card-title {
+        font-family: var(--font-heading);
+        font-size: 1.4rem;
+        font-weight: normal;
+        color: var(--color-secondary);
+        line-height: 1.3;
+        margin-bottom: 0.75rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .event-card-description {
+        font-family: var(--font-body);
+        color: var(--color-accent);
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        font-size: 0.95rem;
+    }
+
+    .event-card-footer {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-border);
+    }
+
+    .event-card-cta {
+        font-family: var(--font-accent);
+        color: var(--color-brand-primary);
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: color 0.2s ease;
+    }
+
+    .event-card-horizontal:hover .event-card-cta {
+        color: var(--color-brand-secondary);
+    }
+
+        .event-card-horizontal:hover .event-card-cta i {
+            transform: translateX(3px);
+        }
+
+    .event-card-cta i {
+        transition: transform 0.2s ease;
+    }
+
+    /* =========================================== */
+    /* ESTILOS PARA EL CARRUSEL DE EVENTOS */
+    /* =========================================== */
+
+    .events-carousel-container {
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        padding: 1rem 0;
+    }
+
+    .events-carousel-track {
+        display: flex;
+        gap: 1.5rem;
+        transition: transform 0.5s ease;
+        padding: 0.5rem;
+    }
+
+    .event-carousel-slide {
+        flex: 0 0 calc(33.333% - 1rem);
+        min-width: 0;
+    }
+
+    /* Flechas del carrusel */
+    .carousel-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--color-card-bg);
+        border: 2px solid var(--color-brand-primary);
+        color: var(--color-brand-primary);
+        font-size: 1.2rem;
+        cursor: pointer;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        opacity: 0.9;
+    }
+
+        .carousel-arrow:hover {
+            background-color: var(--color-brand-primary);
+            color: white;
+            opacity: 1;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+            .carousel-arrow:disabled:hover {
+                background-color: var(--color-card-bg);
+                color: var(--color-brand-primary);
+                transform: translateY(-50%) scale(1);
+            }
+
+    .carousel-arrow-prev {
+        left: -20px;
+    }
+
+    .carousel-arrow-next {
+        right: -20px;
+    }
+
+    /* Indicadores (dots) */
+    .carousel-indicators {
+        display: flex;
+        gap: 0.5rem;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .carousel-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: var(--color-border);
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        opacity: 0.5;
+    }
+
+        .carousel-indicator:hover {
+            opacity: 0.8;
+            transform: scale(1.2);
+        }
+
+        .carousel-indicator.active {
+            background-color: var(--color-brand-primary);
+            opacity: 1;
+            transform: scale(1.2);
+        }
 
     /* =========================================== */
     /* AJUSTES RESPONSIVE PARA LA NUEVA SECCIÓN */
@@ -534,10 +715,17 @@
         .ps-lg-5 {
             padding-left: 0 !important;
         }
-        /* Carrusel en tablet */
-        #ultimosEventosCarousel .carousel-item,
-        #eventosDestacadosCarousel .carousel-item {
-            height: 350px;
+        /* Tarjetas de eventos en tablet */
+        .event-card-title {
+            font-size: 1.3rem;
+        }
+
+        .event-card-image {
+            height: 180px;
+        }
+
+        .event-card-content {
+            padding: 1.25rem;
         }
 
         .order-1 {
@@ -546,6 +734,24 @@
 
         .order-2 {
             order: 2 !important;
+        }
+        /* Carrusel en tablet */
+        .event-carousel-slide {
+            flex: 0 0 calc(50% - 1rem);
+        }
+
+        .carousel-arrow-prev {
+            left: -15px;
+        }
+
+        .carousel-arrow-next {
+            right: -15px;
+        }
+
+        .carousel-arrow {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
         }
     }
 
@@ -572,20 +778,94 @@
         .d-flex.flex-wrap {
             flex-direction: column;
         }
+        /* Tarjetas de eventos en móvil */
+        .event-card-horizontal {
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .event-card-title {
+            font-size: 1.1rem;
+        }
+
+        .event-card-image {
+            height: 140px;
+        }
+
+        .event-card-content {
+            padding: 1rem;
+        }
+
+        .event-card-meta {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .event-card-badge .badge {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+        }
         /* Carrusel en móvil */
-        #ultimosEventosCarousel .carousel-item,
-        #eventosDestacadosCarousel .carousel-item {
-            height: 300px;
+        .event-carousel-slide {
+            flex: 0 0 calc(100% - 1rem);
         }
 
-        .carousel-indicators {
-            margin-bottom: 0.5rem;
+        .carousel-arrow-prev {
+            left: -10px;
         }
 
-        .carousel-control-prev,
-        .carousel-control-next {
+        .carousel-arrow-next {
+            right: -10px;
+        }
+
+        .carousel-arrow {
             width: 30px;
             height: 30px;
+            font-size: 0.9rem;
+        }
+
+        .events-carousel-container {
+            padding: 0.5rem 0;
+        }
+    }
+
+    /* =========================================== */
+    /* RESPONSIVE PARA TARJETAS DE EVENTOS */
+    /* =========================================== */
+    @@media (max-width: 767.98px) {
+        .section-container {
+            padding: 2rem 1rem;
+        }
+
+        .latest-grid-header {
+            font-size: 1.5rem;
+        }
+
+        h2 {
+            font-size: 2rem !important;
+        }
+
+        .d-flex.justify-content-between.align-items-center {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        h2 {
+            font-size: 1.8rem !important;
+        }
+
+        .btn-outline-primary {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    /* Desktop grande */
+    @@media (min-width: 1200px) {
+        .event-carousel-slide {
+            flex: 0 0 calc(25% - 1.5rem);
         }
     }
 </style>
@@ -604,26 +884,183 @@
             }
         });
 
-        // Inicializar los carruseles con autoplay
+        // Efecto hover en tarjetas
         document.addEventListener('DOMContentLoaded', function() {
-            // Carrusel de últimos eventos
-            const carouselUltimos = document.getElementById('ultimosEventosCarousel');
-            if (carouselUltimos) {
-                new bootstrap.Carousel(carouselUltimos, {
-                    interval: 5000,
-                    wrap: true,
-                    pause: 'hover'
-                });
-            }
+            const eventCards = document.querySelectorAll('.event-card-horizontal');
 
-            // Carrusel de eventos destacados
-            const carouselDestacados = document.getElementById('eventosDestacadosCarousel');
-            if (carouselDestacados) {
-                new bootstrap.Carousel(carouselDestacados, {
-                    interval: 6000,
-                    wrap: true,
-                    pause: 'hover'
+            eventCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.zIndex = '10';
                 });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.zIndex = '1';
+                });
+            });
+
+            // ===========================================
+            // FUNCIONALIDAD DEL CARRUSEL MEJORADA
+            // ===========================================
+
+            const carouselTrack = document.querySelector('.events-carousel-track');
+            const slides = document.querySelectorAll('.event-carousel-slide');
+            const prevBtn = document.querySelector('.carousel-arrow-prev');
+            const nextBtn = document.querySelector('.carousel-arrow-next');
+            const indicatorsContainer = document.querySelector('.carousel-indicators');
+
+            if (carouselTrack && slides.length > 0) {
+                let currentIndex = 0;
+                let slidesPerView = getSlidesPerView();
+                let totalSlides = slides.length;
+                let totalPages = 0;
+                let carouselItems = []; // Para almacenar grupos de slides
+
+                // Inicializar el carrusel
+                initializeCarousel();
+
+                // Configurar eventos de las flechas
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', () => {
+                        if (currentIndex > 0) {
+                            currentIndex--;
+                            updateCarousel();
+                        }
+                    });
+                }
+
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', () => {
+                        if (currentIndex < totalPages - 1) {
+                            currentIndex++;
+                            updateCarousel();
+                        }
+                    });
+                }
+
+                // Soporte para gestos táctiles
+                let touchStartX = 0;
+                let touchEndX = 0;
+
+                carouselTrack.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
+
+                carouselTrack.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                }, { passive: true });
+
+                function handleSwipe() {
+                    const swipeThreshold = 50;
+                    const diff = touchStartX - touchEndX;
+
+                    if (Math.abs(diff) > swipeThreshold) {
+                        if (diff > 0 && currentIndex < totalPages - 1) {
+                            // Swipe izquierda - siguiente
+                            currentIndex++;
+                        } else if (diff < 0 && currentIndex > 0) {
+                            // Swipe derecha - anterior
+                            currentIndex--;
+                        }
+                        updateCarousel();
+                    }
+                }
+
+                // Actualizar en resize de ventana
+                let resizeTimeout;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(() => {
+                        const newSlidesPerView = getSlidesPerView();
+                        if (newSlidesPerView !== slidesPerView) {
+                            slidesPerView = newSlidesPerView;
+                            initializeCarousel();
+                        }
+                    }, 250);
+                });
+
+                function getSlidesPerView() {
+                    const width = window.innerWidth;
+                    if (width < 768) return 1; // Móvil - 1 slide por vista
+                    if (width < 992) return 2; // Tablet - 2 slides por vista
+                    if (width < 1200) return 3; // Desktop - 3 slides por vista
+                    return 4; // Desktop grande - 4 slides por vista
+                }
+
+                function initializeCarousel() {
+                    // Limpiar contenedor de indicadores
+                    if (indicatorsContainer) {
+                        indicatorsContainer.innerHTML = '';
+                    }
+
+                    // Reorganizar slides en grupos según slidesPerView
+                    carouselItems = [];
+                    for (let i = 0; i < slides.length; i += slidesPerView) {
+                        carouselItems.push({
+                            start: i,
+                            end: Math.min(i + slidesPerView, slides.length)
+                        });
+                    }
+
+                    totalPages = carouselItems.length;
+                    currentIndex = 0;
+
+                    // Crear indicadores dinámicos
+                    if (indicatorsContainer && totalPages > 1) {
+                        for (let i = 0; i < totalPages; i++) {
+                            const indicator = document.createElement('button');
+                            indicator.className = 'carousel-indicator' + (i === 0 ? ' active' : '');
+                            indicator.setAttribute('data-slide-to', i);
+                            indicator.setAttribute('aria-label', `Ir al slide ${i + 1}`);
+                            indicator.addEventListener('click', () => {
+                                currentIndex = i;
+                                updateCarousel();
+                            });
+                            indicatorsContainer.appendChild(indicator);
+                        }
+                    }
+
+                    updateCarousel();
+                }
+
+                function updateCarousel() {
+                    if (carouselItems.length === 0) return;
+
+                    // Calcular desplazamiento basado en el índice actual
+                    let translateX = 0;
+
+                    if (currentIndex > 0) {
+                        // Calcular el ancho acumulado de los grupos anteriores
+                        for (let i = 0; i < currentIndex; i++) {
+                            const group = carouselItems[i];
+                            const groupSlides = group.end - group.start;
+                            // Calcular el ancho total del grupo
+                            translateX -= (groupSlides * (slides[0].offsetWidth + 24)); // Ancho + gap
+                        }
+                    }
+
+                    // Aplicar transformación
+                    carouselTrack.style.transform = `translateX(${translateX}px)`;
+
+                    // Actualizar estado de las flechas
+                    if (prevBtn) {
+                        prevBtn.disabled = currentIndex === 0;
+                    }
+
+                    if (nextBtn) {
+                        nextBtn.disabled = currentIndex >= totalPages - 1;
+                    }
+
+                    // Actualizar indicadores
+                    const indicators = document.querySelectorAll('.carousel-indicator');
+                    indicators.forEach((indicator, index) => {
+                        if (index === currentIndex) {
+                            indicator.classList.add('active');
+                        } else {
+                            indicator.classList.remove('active');
+                        }
+                    });
+                }
             }
         });
     </script>

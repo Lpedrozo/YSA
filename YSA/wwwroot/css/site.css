@@ -291,7 +291,7 @@ body {
 /* Portada principal */
 .magazine-cover {
     width: 100%;
-    height: 68vh;
+    height: 90vh;
     background-color: #f4f4f4;
     position: relative;
     overflow: hidden;
@@ -300,11 +300,28 @@ body {
 .cover-image {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     top: 0;
     left: 0;
     z-index: 1;
     background-color: white;
+}
+@media (min-width: 730px) {
+    .cover-image {
+        object-fit: cover;
+    }
+}
+
+/* Para pantallas menores a 730px */
+@media (max-width: 729px) {
+    .cover-image {
+        object-fit: contain;
+    }
+
+    .magazine-cover {
+        height: auto;
+        padding: 0.5rem 0;
+    }
 }
 
 .cover-overlay {
@@ -9061,4 +9078,419 @@ body {
         .login-split-reverse .login-image-side {
             order: 2;
         }
+}
+
+/* =========================================== */
+/* AJUSTES PARA LAS MÉTRICAS EN RESPONSIVE */
+/* =========================================== */
+
+/* Móvil pequeño */
+@media (max-width: 575.98px) {
+    /* Métricas en horizontal para móviles */
+    .hero-section .row.g-4 {
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+
+    .hero-section .col-auto {
+        flex: 0 0 auto;
+        width: auto;
+        min-width: 100px;
+        padding: 0 0.5rem;
+    }
+
+    .hero-section .display-6 {
+        font-size: 1.8rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+
+    .hero-section .small {
+        font-size: 0.8rem !important;
+    }
+
+    /* Ocultar scrollbar pero mantener funcionalidad */
+    .hero-section .row.g-4::-webkit-scrollbar {
+        display: none;
+    }
+
+    .hero-section .row.g-4 {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
+
+/* Tablet */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .hero-section .display-6 {
+        font-size: 2rem !important;
+    }
+
+    .hero-section .row.g-4 {
+        justify-content: space-around !important;
+    }
+}
+
+/* Estilos específicos para la nueva sección */
+.hero-section .social-icons a {
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+    .hero-section .social-icons a:hover {
+        color: var(--color-brand-primary) !important;
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+
+/* Ajustes responsive */
+@media (max-width: 991.98px) {
+    .hero-section .text-lg-start {
+        text-align: center !important;
+    }
+
+    .hero-section .social-icons {
+        justify-content: center !important;
+    }
+}
+
+/* =========================================== */
+/* ESTILOS MEJORADOS PARA LA SECCIÓN HERO */
+/* =========================================== */
+
+/* Imagen responsive */
+.hero-image {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: contain;
+}
+
+/* Contenedor de texto mejorado */
+.hero-content {
+    padding: 1rem 0;
+}
+
+.hero-text-container {
+    margin: 0 auto;
+}
+
+/* Ajustes de texto */
+p {
+    text-align: justify;
+    text-align-last: center;
+}
+
+/* Métricas responsive */
+.metric-number {
+    font-size: 2.5rem;
+    font-family: var(--font-heading);
+    line-height: 1;
+}
+
+/* Iconos sociales */
+.social-icon {
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+    .social-icon:hover {
+        color: var(--color-brand-primary) !important;
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+
+/* =========================================== */
+/* AJUSTES RESPONSIVE MEJORADOS */
+/* =========================================== */
+
+/* Tablet */
+@media (max-width: 991.98px) {
+    .hero-image {
+        max-height: 400px;
+    }
+
+    .metric-number {
+        font-size: 2.2rem;
+    }
+
+    .hero-text-container p {
+        text-align: center;
+        text-align-last: center;
+    }
+
+    .hero-content .d-flex.flex-wrap {
+        justify-content: center !important;
+    }
+
+    .hero-content .social-icons {
+        justify-content: center !important;
+    }
+}
+
+/* Móvil */
+@media (max-width: 767.98px) {
+    .hero-image {
+        max-height: 350px;
+    }
+
+    .metric-number {
+        font-size: 1.8rem;
+    }
+
+    .hero-metrics .col-auto {
+        padding: 0 1rem;
+    }
+
+    .hero-content {
+        text-align: center !important;
+    }
+
+    .hero-text-container {
+        max-width: 100% !important;
+    }
+
+        .hero-text-container p {
+            text-align: center;
+            text-align-last: center;
+            font-size: 0.95rem;
+        }
+
+    .btn {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.9rem;
+    }
+}
+
+/* Móvil pequeño */
+@media (max-width: 575.98px) {
+    .hero-image {
+        max-height: 300px;
+    }
+
+    .metric-number {
+        font-size: 1.5rem;
+    }
+
+    .hero-metrics {
+        flex-wrap: wrap;
+        justify-content: space-around !important;
+    }
+
+        .hero-metrics .col-auto {
+            flex: 0 0 33%;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+    .hero-content .d-flex.flex-wrap {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-content .btn {
+        width: 100%;
+        max-width: 250px;
+        margin-bottom: 0.5rem;
+    }
+
+    .social-icons {
+        justify-content: center !important;
+        flex-wrap: wrap;
+    }
+}
+
+/* Desktop grande */
+@media (min-width: 1200px) {
+    .hero-image {
+        max-height: 550px;
+    }
+
+    .metric-number {
+        font-size: 2.8rem;
+    }
+}
+
+/* =========================================== */
+/* ESTILOS MEJORADOS PARA LA SECCIÓN HERO */
+/* =========================================== */
+
+/* Imagen responsive */
+.hero-image {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: contain;
+}
+
+/* Contenedor de texto mejorado */
+.hero-content {
+    padding: 1rem 0;
+    text-align: center;
+}
+
+.hero-text-container {
+    margin: 0 auto;
+}
+
+    /* Ajustes de texto - Siempre centrado */
+    .hero-text-container p {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+/* Botones - Siempre centrados */
+.hero-content .d-flex.flex-wrap {
+    justify-content: center !important;
+}
+
+/* Iconos sociales - Siempre centrados */
+.hero-content .social-icons {
+    justify-content: center !important;
+}
+
+/* Métricas responsive */
+.metric-number {
+    font-size: 2.5rem;
+    font-family: var(--font-heading);
+    line-height: 1;
+}
+
+/* Iconos sociales */
+.social-icon {
+    transition: all 0.3s ease;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+    .social-icon:hover {
+        background-color: rgba(239, 136, 48, 0.1);
+        color: var(--color-brand-primary) !important;
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+
+/* =========================================== */
+/* AJUSTES RESPONSIVE MEJORADOS */
+/* =========================================== */
+
+/* Tablet */
+@media (max-width: 991.98px) {
+    .hero-image {
+        max-height: 400px;
+    }
+
+    .metric-number {
+        font-size: 2.2rem;
+    }
+
+    .hero-text-container p {
+        font-size: 1rem;
+    }
+
+    .btn {
+        padding: 0.5rem 1.5rem !important;
+    }
+}
+
+/* Móvil */
+@media (max-width: 767.98px) {
+    .hero-image {
+        max-height: 350px;
+    }
+
+    .metric-number {
+        font-size: 1.8rem;
+    }
+
+    .hero-metrics .col-auto {
+        padding: 0 1rem;
+    }
+
+    .hero-text-container p {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.9rem;
+    }
+}
+
+/* Móvil pequeño */
+@media (max-width: 575.98px) {
+    .hero-image {
+        max-height: 300px;
+    }
+
+    .metric-number {
+        font-size: 1.5rem;
+    }
+
+    .hero-metrics {
+        flex-wrap: wrap;
+        justify-content: space-around !important;
+    }
+
+        .hero-metrics .col-auto {
+            flex: 0 0 33%;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+    .hero-content .d-flex.flex-wrap {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem !important;
+    }
+
+    .hero-content .btn {
+        width: 100%;
+        max-width: 250px;
+        margin-bottom: 0;
+    }
+
+    .social-icons {
+        flex-wrap: wrap;
+        gap: 1rem !important;
+    }
+
+    .social-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 1.3rem !important;
+    }
+}
+
+/* Desktop grande */
+@media (min-width: 1200px) {
+    .hero-image {
+        max-height: 550px;
+    }
+
+    .metric-number {
+        font-size: 2.8rem;
+    }
+
+    .hero-text-container p {
+        font-size: 1.05rem;
+    }
+}
+
+/* Para pantallas extra grandes */
+@media (min-width: 1400px) {
+    .hero-image {
+        max-height: 600px;
+    }
+
+    .hero-text-container {
+        max-width: 500px !important;
+    }
 }

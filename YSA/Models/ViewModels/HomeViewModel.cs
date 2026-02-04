@@ -11,6 +11,7 @@ namespace YSA.Web.Models.ViewModels
         public string UrlImagen { get; set; }
         public DateTime FechaEvento { get; set; }
         public string Lugar { get; set; }
+        public string Descripcion { get; set; }
     }
 
     public class HomeViewModel

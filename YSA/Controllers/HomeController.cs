@@ -50,7 +50,8 @@ namespace YSA.Web.Controllers
                         TipoEventoNombre = e.TipoEvento.NombreTipo,
                         UrlImagen = e.UrlImagen,
                         FechaEvento = e.FechaEvento,
-                        Lugar = e.Lugar
+                        Lugar = e.Lugar,
+                        Descripcion = e.Descripcion
                     }).ToList()
                 );
 
