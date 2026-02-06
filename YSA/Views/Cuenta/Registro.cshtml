@@ -27,9 +27,6 @@
                         <i class="fas fa-user-plus me-1"></i>
                         ¡Crea tu cuenta!
                     </h2>
-                    <p class="login-compact-subtitle">
-                        Únete a nuestra comunidad de aprendizaje
-                    </p>
                 </div>
 
                 <!-- Formulario de registro -->
@@ -167,20 +164,24 @@
             </div>
         </div>
 
-        <!-- Imagen a la derecha -->
+        <!-- Video animado a la derecha -->
         <div class="login-image-side login-image-mobile">
-            <div class="login-image-container">
-                <img src="~/diseño/NiñaRegister.png" alt="Niño Yo Soy Arte" class="login-child-image">
-                <!-- Decoración de la imagen -->
-                <div class="image-decoration">
+            <div class="login-video-container">
+                <video autoplay loop muted playsinline class="login-animated-video">
+                    <source src="~/diseño/LOGOS YSA.mp4" type="video/mp4">
+                    <!-- Fallback en caso de que el video no se cargue -->
+                    <img src="~/diseño/NiñaRegister.png" alt="Niña Yo Soy Arte" class="login-child-image">
+                </video>
+                <!-- Indicador de video -->
+                <div class="video-indicator">
+                    <i class="fas fa-play-circle me-1"></i>
+                    Video
+                </div>
+                <!-- Decoración del video -->
+                <div class="video-decoration">
                     <div class="decoration-circle circle-1"></div>
                     <div class="decoration-circle circle-2"></div>
                     <div class="decoration-circle circle-3"></div>
-                </div>
-                <!-- Texto sobre la imagen -->
-                <div class="image-overlay-text">
-                    <h3>¡Únete a nuestra comunidad!</h3>
-                    <p>Comienza tu viaje de aprendizaje hoy mismo</p>
                 </div>
             </div>
         </div>
@@ -302,6 +303,27 @@
                         this.classList.remove('has-error');
                     }
                 });
+            }
+
+            // Control de video - Reiniciar si hay problemas
+            const video = document.querySelector('.login-animated-video');
+            if (video) {
+                // Intentar cargar el video si falla
+                video.addEventListener('error', function() {
+                    console.log('Error al cargar el video, mostrando imagen de respaldo');
+                });
+
+                // Asegurarse de que el video esté en silencio para autoplay
+                video.muted = true;
+
+                // Intentar reproducir programáticamente (para algunos navegadores)
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log('Autoplay falló, intentando con interacción del usuario');
+                        // Podríamos añadir un botón de play aquí si es necesario
+                    });
+                }
             }
         });
     </script>

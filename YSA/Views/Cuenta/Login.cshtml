@@ -18,12 +18,16 @@
 
     <!-- EN LA VISTA DE LOGIN (sustituye el div actual) -->
     <div class="login-split-container login-split-reverse mt-5 pt-5">
-        <!-- Imagen a la izquierda -->
+        <!-- Video animado a la izquierda -->
         <div class="login-image-side login-image-mobile">
-            <div class="login-image-container">
-                <img src="~/diseño/NIÑALOGIN.png" alt="Niño Yo Soy Arte" class="login-child-image">
-                <!-- Decoración de la imagen -->
-                <div class="image-decoration">
+            <div class="login-video-container">
+                <video autoplay loop muted playsinline class="login-animated-video">
+                    <source src="~/diseño/LOGOS YSA 1.mp4" type="video/mp4">
+                    <!-- Fallback en caso de que el video no se cargue -->
+                    <img src="~/diseño/NIÑALOGIN.png" alt="Niño Yo Soy Arte" class="login-child-image">
+                </video>
+                <!-- Decoración del video -->
+                <div class="video-decoration">
                     <div class="decoration-circle circle-1"></div>
                     <div class="decoration-circle circle-2"></div>
                     <div class="decoration-circle circle-3"></div>
@@ -34,16 +38,6 @@
         <!-- Formulario a la derecha -->
         <div class="login-form-side">
             <div class="login-compact-card">
-                <!-- Logo y título -->
-                <div class="login-compact-header">
-                    <h2 class="login-compact-title">
-                        <i class="fas fa-graduation-cap me-1"></i>
-                        ¡Bienvenido de vuelta!
-                    </h2>
-                    <p class="login-compact-subtitle">
-                        Continúa tu viaje de aprendizaje
-                    </p>
-                </div>
 
                 <!-- Formulario de login -->
                 <form asp-controller="Cuenta" asp-action="Login" method="post" class="login-compact-form">
