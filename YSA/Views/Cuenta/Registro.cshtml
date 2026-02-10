@@ -24,7 +24,6 @@
                 <!-- Logo y título -->
                 <div class="login-compact-header">
                     <h2 class="login-compact-title">
-                        <i class="fas fa-user-plus me-1"></i>
                         ¡Crea tu cuenta!
                     </h2>
                 </div>
@@ -37,26 +36,26 @@
                     <!-- Campos en fila para nombre y apellido -->
                     <div class="form-row-compact">
                         <div class="form-group-compact">
+                            <label class="form-label-compact-above">
+                                <i class="fas fa-user me-1"></i>
+                                Nombre
+                            </label>
                             <div class="input-group-compact">
                                 <input asp-for="Nombre" type="text" class="form-input-compact"
-                                       placeholder=" " required>
-                                <label class="form-label-compact">
-                                    <i class="fas fa-user me-1"></i>
-                                    Nombre
-                                </label>
+                                       placeholder="Ingresa tu nombre" required>
                                 <div class="form-line-compact"></div>
                             </div>
                             <span asp-validation-for="Nombre" class="form-error-compact"></span>
                         </div>
 
                         <div class="form-group-compact">
+                            <label class="form-label-compact-above">
+                                <i class="fas fa-user me-1"></i>
+                                Apellido
+                            </label>
                             <div class="input-group-compact">
                                 <input asp-for="Apellido" type="text" class="form-input-compact"
-                                       placeholder=" " required>
-                                <label class="form-label-compact">
-                                    <i class="fas fa-user me-1"></i>
-                                    Apellido
-                                </label>
+                                       placeholder="Ingresa tu apellido" required>
                                 <div class="form-line-compact"></div>
                             </div>
                             <span asp-validation-for="Apellido" class="form-error-compact"></span>
@@ -64,26 +63,26 @@
                     </div>
 
                     <div class="form-group-compact">
+                        <label class="form-label-compact-above">
+                            <i class="fas fa-envelope me-1"></i>
+                            Correo Electrónico
+                        </label>
                         <div class="input-group-compact">
                             <input asp-for="Email" type="email" class="form-input-compact"
-                                   placeholder=" " required>
-                            <label class="form-label-compact">
-                                <i class="fas fa-envelope me-1"></i>
-                                Correo Electrónico
-                            </label>
+                                   placeholder="ejemplo@correo.com" required>
                             <div class="form-line-compact"></div>
                         </div>
                         <span asp-validation-for="Email" class="form-error-compact"></span>
                     </div>
 
                     <div class="form-group-compact">
+                        <label class="form-label-compact-above">
+                            <i class="fas fa-lock me-1"></i>
+                            Contraseña
+                        </label>
                         <div class="input-group-compact">
                             <input asp-for="Contrasena" type="password"
-                                   class="form-input-compact" placeholder=" " required>
-                            <label class="form-label-compact">
-                                <i class="fas fa-lock me-1"></i>
-                                Contraseña
-                            </label>
+                                   class="form-input-compact" placeholder="Mínimo 6 caracteres" required>
                             <button type="button" class="password-toggle-compact" id="togglePasswordRegister">
                                 <i class="fas fa-eye"></i>
                             </button>
@@ -93,13 +92,13 @@
                     </div>
 
                     <div class="form-group-compact">
+                        <label class="form-label-compact-above">
+                            <i class="fas fa-lock me-1"></i>
+                            Confirmar Contraseña
+                        </label>
                         <div class="input-group-compact">
                             <input asp-for="ConfirmarContrasena" type="password"
-                                   class="form-input-compact" placeholder=" " required>
-                            <label class="form-label-compact">
-                                <i class="fas fa-lock me-1"></i>
-                                Confirmar Contraseña
-                            </label>
+                                   class="form-input-compact" placeholder="Repite tu contraseña" required>
                             <button type="button" class="password-toggle-compact" id="toggleConfirmPasswordRegister">
                                 <i class="fas fa-eye"></i>
                             </button>
@@ -172,11 +171,6 @@
                     <!-- Fallback en caso de que el video no se cargue -->
                     <img src="~/diseño/NiñaRegister.png" alt="Niña Yo Soy Arte" class="login-child-image">
                 </video>
-                <!-- Indicador de video -->
-                <div class="video-indicator">
-                    <i class="fas fa-play-circle me-1"></i>
-                    Video
-                </div>
                 <!-- Decoración del video -->
                 <div class="video-decoration">
                     <div class="decoration-circle circle-1"></div>
