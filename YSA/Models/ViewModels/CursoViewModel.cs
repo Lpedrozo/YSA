@@ -14,7 +14,6 @@ namespace YSA.Web.Models.ViewModels
         [Display(Name = "Título")]
         public string Titulo { get; set; }
 
-        [StringLength(255)]
         [Display(Name = "Descripción corta")]
         public string DescripcionCorta { get; set; }
 
