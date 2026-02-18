@@ -4,24 +4,55 @@
     var culture = System.Globalization.CultureInfo.CreateSpecificCulture("es-VE");
 }
 
-<!-- Hero del Curso -->
-<div class="curso-hero">
-    <img src="@Model.UrlImagen" class="curso-hero-imagen" alt="@Model.Titulo">
-    <div class="curso-hero-overlay">
-        <div class="curso-hero-contenido">
-            <span class="curso-hero-badge">CURSO DISPONIBLE</span>
-            <h1 class="curso-hero-titulo">@Model.Titulo</h1>
-            <div class="curso-hero-descripcion">
+<!-- Encabezado del Curso (sin banner) -->
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Curso" asp-action="Index">Cursos</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.Titulo</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <h1 class="display-5 fw-bold mb-3" style="font-family: var(--font-heading); color: var(--color-brand-primary);">
+                @Model.Titulo
+            </h1>
+            <div class="lead mb-4" style="font-size: 1.2rem; line-height: 1.6;">
                 @Html.Raw(Model.DescripcionCorta)
             </div>
+            <hr class="mb-5" style="border-color: rgba(239, 136, 48, 0.2);">
         </div>
     </div>
 </div>
 
-<div class="container px-0 py-5">
+<div class="container px-0 py-0">
     <div class="row g-4">
         <!-- Contenido Principal -->
         <div class="col-lg-8">
+            <!-- Imagen del Curso (mismo estilo que las tarjetas) -->
+            <div class="curso-detalle-imagen-container mb-5">
+                <div class="curso-detalle-imagen-wrapper">
+                    <img src="@Model.UrlImagen"
+                         class="curso-detalle-imagen"
+                         alt="@Model.Titulo"
+                         onerror="this.src='/diseño/default-course.jpg'">
+                    @if (Model.Precio == 0)
+                    {
+                        <span class="badge-free-detalle">GRATIS</span>
+                    }
+                    else
+                    {
+                        <span class="badge-price-detalle">@Model.Precio.ToString("N2", culture)</span>
+                    }
+                </div>
+            </div>
+
             <!-- Sección Acerca del Curso -->
             <div class="curso-contenido-seccion">
                 <h2 class="curso-titulo-seccion">
@@ -104,7 +135,7 @@
                     <h3 class="curso-precio-titulo">Inversión del curso</h3>
 
                     <div class="curso-precio-monto">
-                        @Model.Precio.ToString("C", culture)
+                        $@Model.Precio.ToString("N2")
                     </div>
 
                     <div class="mb-4">
@@ -162,7 +193,7 @@
 <div class="curso-barra-movil d-lg-none">
     <div>
         <div class="curso-barra-precio">
-            @Model.Precio.ToString("C", culture)
+            $@Model.Precio.ToString("N2")
         </div>
     </div>
 
@@ -193,6 +224,113 @@
 </div>
 
 @section Scripts {
+    <style>
+        /* Ajustes adicionales para el breadcrumb */
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb-item a {
+            color: var(--color-brand-primary);
+            text-decoration: none;
+            font-family: var(--font-accent);
+            font-weight: normal;
+            transition: color 0.3s ease;
+        }
+
+            .breadcrumb-item a:hover {
+                color: var(--color-brand-secondary);
+                text-decoration: underline;
+            }
+
+        .breadcrumb-item.active {
+            color: var(--color-accent);
+            font-weight: normal;
+        }
+
+        /* Estilos para la imagen del detalle (mismos que las tarjetas) */
+        .curso-detalle-imagen-container {
+            width: 100%;
+            max-width: 500px; /* Opcional: límite de ancho */
+            margin: 0 auto 2rem auto;
+        }
+
+        .curso-detalle-imagen-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1080 / 1350; /* Misma proporción que las tarjetas */
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--color-border);
+        }
+
+        .curso-detalle-imagen {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Misma propiedad que las tarjetas */
+            display: block;
+        }
+
+        /* Badges para el detalle (mismos que las tarjetas) */
+        .badge-free-detalle, .badge-price-detalle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            font-family: var(--font-accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .badge-free-detalle {
+            background-color: var(--color-brand-success);
+            color: white;
+        }
+
+        .badge-price-detalle {
+            background-color: var(--color-brand-primary);
+            color: white;
+        }
+
+        /* Ajuste responsive para el título */
+        @@media (max-width: 768px) {
+            .display-5 {
+                font-size: 2rem;
+            }
+
+            .lead {
+                font-size: 1rem !important;
+            }
+
+            .curso-detalle-imagen-container {
+                max-width: 100%;
+            }
+
+            .badge-free-detalle, .badge-price-detalle {
+                padding: 0.35rem 0.7rem;
+                font-size: 0.8rem;
+                top: 0.75rem;
+                right: 0.75rem;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .badge-free-detalle, .badge-price-detalle {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.7rem;
+                top: 0.5rem;
+                right: 0.5rem;
+            }
+        }
+    </style>
+
     <script>
         // Smooth scroll para acordeón
         document.addEventListener('DOMContentLoaded', function() {

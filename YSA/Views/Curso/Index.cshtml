@@ -113,83 +113,6 @@
     @* CONTENIDO PRINCIPAL DE CURSOS *@
     @* =========================================== *@
     <div class="container py-5">
-        @* SECCIÓN DE CURSOS DESTACADOS *@
-        @if (Model.CursosDestacados != null && Model.CursosDestacados.Any())
-        {
-            <div class="row mb-5">
-                <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="h3" style="font-family: var(--font-heading);">
-                            <span class="text-brand-primary">Cursos destacados</span>
-                            <small class="text-muted fs-6 ms-2">(@Model.CursosDestacados.Count() recomendados)</small>
-                        </h2>
-                        <div class="stats-badge bg-light text-dark px-3 py-2 rounded-pill">
-                            <i class="fas fa-star text-warning me-1"></i>
-                            <span class="small">Los más populares</span>
-                        </div>
-                    </div>
-
-                    <div class="featured-courses-slider">
-                        <div class="row g-4">
-                            @foreach (var curso in Model.CursosDestacados.Take(4))
-                            {
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="course-card h-100">
-                                        <div class="course-card-header position-relative">
-                                            <img src="@(string.IsNullOrEmpty(curso.UrlImagen) ? "/diseño/default-course.jpg" : curso.UrlImagen)"
-                                                 class="course-image"
-                                                 alt="@curso.Titulo">
-                                            @if (curso.Precio == 0)
-                                            {
-                                                <span class="badge-free">GRATIS</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge-price">@curso.Precio.ToString("C")</span>
-                                            }
-                                            <div class="course-badge position-absolute top-0 start-0 m-3">
-                                                <span class="badge bg-warning text-dark">
-                                                    <i class="fas fa-star me-1"></i>Destacado
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="course-card-body">
-                                            <div class="course-categories mb-2">
-                                                @if (curso.ListaCategorias != null)
-                                                {
-                                                    @foreach (var cat in curso.ListaCategorias.Take(2))
-                                                    {
-                                                        <span class="badge bg-light text-dark small me-1">@cat</span>
-                                                    }
-                                                }
-                                            </div>
-                                            <h3 class="h5 course-title">@curso.Titulo</h3>
-                                            <p class="course-description small text-muted mb-3">@curso.DescripcionCorta</p>
-                                            <div class="course-meta d-flex justify-content-between align-items-center">
-                                                <span class="badge-nivel @curso.Nivel.ToString().ToLower()">
-                                                    @curso.Nivel.ToString()
-                                                </span>
-                                                <div class="course-rating">
-                                                    <i class="fas fa-star text-warning small"></i>
-                                                    <span class="small text-muted">4.5</span>
-                                                </div>
-                                            </div>
-                                            <div class="course-actions mt-3">
-                                                <a href="@Url.Action("Detalles", "Curso", new { id = curso.Id })"
-                                                   class="btn btn-primary btn-sm w-100">
-                                                    <i class="fas fa-eye me-1"></i> Ver detalles
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-
         @* SECCIÓN DE TODOS LOS CURSOS *@
         <div class="row">
             <div class="col-12">
@@ -355,7 +278,8 @@
             }
         }
 
-        // Renderizar cursos
+                // Renderizar cursos - SOLO IMAGEN Y PRECIO (1080x1350)
+                // Renderizar cursos - SOLO IMAGEN Y PRECIO (1080x1350)
         function renderCursos(cursos) {
             const container = document.getElementById('cursosContainer');
 
@@ -370,47 +294,37 @@
                 return;
             }
 
-            container.innerHTML = cursos.map(curso => `
-                <div class="col-lg-4 col-md-6">
-                    <div class="course-card h-100">
-                        <div class="course-card-header position-relative">
-                            <img src="${curso.urlImagen || '/diseño/default-course.jpg'}"
-                                 class="course-image"
-                                 alt="${curso.titulo}"
-                                 onerror="this.src='/diseño/default-course.jpg'">
-                            ${curso.precio === '$0.00' || curso.precio === '0,00 $' ?
-                                '<span class="badge-free">GRATIS</span>' :
-                                `<span class="badge-price">${curso.precio}</span>`}
-                        </div>
-                        <div class="course-card-body">
-                            <div class="course-categories mb-2">
-                                ${curso.categorias && curso.categorias.length > 0 ?
-                                    curso.categorias.slice(0, 2).map(cat =>
-                                        `<span class="badge bg-light text-dark small me-1">${cat}</span>`
-                                    ).join('') :
-                                    '<span class="badge bg-light text-dark small">Sin categoría</span>'}
+            container.innerHTML = cursos.map(curso => {
+                // Extraer el número y formatearlo
+                let precioFormateado = curso.precio;
+
+                if (typeof curso.precio === 'string' && curso.precio.includes('Bs.S')) {
+                    // Extraer el número después de "Bx.S"
+                    const numero = parseFloat(curso.precio.replace('Bs.S', '').trim());
+                    precioFormateado = `$${numero.toFixed(2)}`;
+                }
+
+                const esGratis = precioFormateado === '$0.00' ||
+                                 curso.precio === 0 ||
+                                 curso.precio === '0';
+
+                return `
+                    <div class="col-lg-4 col-md-6">
+                        <a href="@Url.Action("Detalles", "Curso")/${curso.id}" class="course-card">
+                            <div class="course-card-header position-relative">
+                                <img src="${curso.urlImagen || '/diseño/default-course.jpg'}"
+                                     class="course-image"
+                                     alt="${curso.titulo}"
+                                     loading="lazy"
+                                     onerror="this.src='/diseño/default-course.jpg'">
+                                ${esGratis ?
+                                    '<span class="badge-free">GRATIS</span>' :
+                                    `<span class="badge-price">${precioFormateado}</span>`}
                             </div>
-                            <h3 class="h5 course-title">${curso.titulo}</h3>
-                            <p class="course-description small text-muted mb-3">${curso.descripcionCorta || 'Sin descripción'}</p>
-                            <div class="course-meta d-flex justify-content-between align-items-center">
-                                <span class="badge-nivel ${curso.nivel.toLowerCase()}">
-                                    ${curso.nivel}
-                                </span>
-                                <div class="course-rating">
-                                    <i class="fas fa-star text-warning small"></i>
-                                    <span class="small text-muted">4.5</span>
-                                </div>
-                            </div>
-                            <div class="course-actions mt-3">
-                                <a href="@Url.Action("Detalle", "Curso")/${curso.id}"
-                                   class="btn btn-primary btn-sm w-100">
-                                    <i class="fas fa-eye me-1"></i> Ver detalles
-                                </a>
-                            </div>
-                        </div>
+                        </a>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // Renderizar paginación

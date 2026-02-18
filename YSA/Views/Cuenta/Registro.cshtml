@@ -12,144 +12,129 @@
 <!-- Estilos específicos para esta vista -->
 <style>
     /* =========================================== */
-    /* ESTILOS PARA REGISTRO CON VIDEO DE FONDO */
+    /* ESTILOS PARA REGISTRO CON IMAGEN DE FONDO */
     /* =========================================== */
 
     .register-fullscreen {
         position: relative;
         width: 100vw;
-        height: calc(100vh - 5.5rem); /* Resta la altura de la barra superior */
+        height: calc(100vh - 5.5rem);
         overflow: hidden;
-        background-color: #000;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    /* Columna derecha - Video de fondo (invertido) */
-    .register-video-column {
-        position: absolute;
-        top: 0;
-        right: 0; /* Cambiado a right para que esté a la derecha */
-        width: 60%; /* Ancho de la columna de video */
+    /* Contenedor principal que abarca todo el espacio */
+    .register-main-container {
+        width: 100%;
         height: 100%;
+        display: flex;
+        align-items: stretch;
+        background-color: #fff;
+    }
+
+    /* Columna izquierda - Imagen de fondo (65%) */
+    .register-image-column {
+        flex: 0 0 65%;
+        position: relative;
         overflow: hidden;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    /* Video de fondo */
-    .register-background-video {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        min-width: 100%;
-        min-height: 100%;
-        width: auto;
-        height: auto;
-        object-fit: cover;
-        transition: filter 0.3s ease;
-    }
-
-    /* Overlay para oscurecer */
-    .register-video-overlay {
+    /* Imagen de fondo */
+    .register-background-image {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 2;
+        object-fit: cover;
+        object-position: center;
+        transition: transform 0.5s ease;
     }
 
-    /* Texto artístico superpuesto en el video */
-    .register-video-text {
-        position: absolute;
-        bottom: 3rem;
-        right: 3rem; /* Cambiado a right para que esté alineado a la derecha */
-        z-index: 3;
-        color: white;
-        max-width: 500px;
-        text-align: right; /* Texto alineado a la derecha */
+    .register-image-column:hover .register-background-image {
+        transform: scale(1.02);
     }
 
-        .register-video-text h1 {
-            font-family: var(--font-heading);
-            font-size: 3.5rem;
-            font-weight: normal;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            line-height: 1.2;
-        }
-
-        .register-video-text p {
-            font-family: var(--font-body);
-            font-size: 1.2rem;
-            opacity: 0.9;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            margin: 0;
-        }
-
-    /* Columna izquierda - Formulario (invertido) */
-    .register-form-column {
+    /* Overlay sutil para dar profundidad */
+    .register-image-overlay {
         position: absolute;
         top: 0;
-        left: 0; /* Cambiado a left para que esté a la izquierda */
-        width: 40%; /* Ancho de la columna del formulario */
+        left: 0;
+        width: 100%;
         height: 100%;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
-        backdrop-filter: blur(10px);
+        z-index: 1;
+    }
+
+    /* Columna derecha - Formulario (35%) */
+    .register-form-column {
+        flex: 0 0 35%;
+        background-color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 2rem;
-        z-index: 10;
-        box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15); /* Sombra invertida */
-        animation: slideInLeft 0.6s ease-out; /* Animación desde la izquierda */
+        padding: 1.5rem;
+        animation: fadeIn 0.6s ease-out;
     }
 
     /* Contenedor del formulario */
     .register-form-wrapper {
         width: 100%;
-        max-width: 420px; /* Un poco más ancho para registro */
+        max-width: 380px;
         margin: 0 auto;
     }
 
     /* Logo y título */
     .register-form-logo {
         text-align: center;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
     }
 
     .register-logo-image {
-        width: 120px;
+        width: 90px;
         height: auto;
-        margin: 0 auto 1rem;
-        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+        margin: 0 auto 0.75rem;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.05));
     }
 
     .register-form-title {
         font-family: var(--font-heading);
-        font-size: 2rem;
+        font-size: 1.6rem;
         color: var(--color-brand-primary);
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.25rem;
+        line-height: 1.2;
     }
 
     .register-form-subtitle {
         font-family: var(--font-body);
         color: var(--color-accent);
-        font-size: 0.95rem;
+        font-size: 0.8rem;
         margin: 0;
     }
 
     /* Grupos de formulario */
     .register-form-group {
-        margin-bottom: 1.2rem;
+        margin-bottom: 0.8rem;
     }
 
     .register-form-label {
         display: block;
         font-family: var(--font-accent);
         font-weight: 500;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         color: var(--color-text-dark);
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.2rem;
     }
+
+        .register-form-label i {
+            font-size: 0.7rem;
+        }
 
     .register-input-wrapper {
         position: relative;
@@ -157,21 +142,20 @@
 
     .register-form-input {
         width: 100%;
-        padding: 0.75rem 1rem;
+        padding: 0.5rem 0.75rem;
         font-family: var(--font-body);
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         color: var(--color-text-dark);
-        background-color: #f9f9f9;
+        background-color: #fff;
         border: 1px solid var(--color-border);
-        border-radius: var(--border-radius-md);
+        border-radius: var(--border-radius-sm);
         transition: all 0.2s ease;
         outline: none;
     }
 
         .register-form-input:focus {
             border-color: var(--color-brand-primary);
-            background-color: white;
-            box-shadow: 0 0 0 3px rgba(239, 136, 48, 0.1);
+            box-shadow: 0 0 0 2px rgba(239, 136, 48, 0.1);
         }
 
         .register-form-input.input-validation-error {
@@ -181,28 +165,28 @@
     /* Fila de dos columnas para nombre y apellido */
     .register-form-row {
         display: flex;
-        gap: 1rem;
+        gap: 0.75rem;
         margin-bottom: 0;
     }
 
         .register-form-row .register-form-group {
             flex: 1;
-            margin-bottom: 1.2rem;
+            margin-bottom: 0.8rem;
         }
 
     /* Toggle de contraseña */
     .register-password-toggle {
         position: absolute;
-        right: 1rem;
+        right: 0.6rem;
         top: 50%;
         transform: translateY(-50%);
         background: none;
         border: none;
         color: var(--color-accent);
         cursor: pointer;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         transition: color 0.2s ease;
-        padding: 0.25rem;
+        padding: 0.15rem;
         z-index: 5;
     }
 
@@ -212,27 +196,27 @@
 
     /* Checkbox de términos */
     .register-terms-check {
-        margin: 1rem 0;
-        padding: 0.75rem;
-        background: linear-gradient(135deg, rgba(239, 136, 48, 0.05) 0%, rgba(109, 181, 62, 0.03) 100%);
+        margin: 0.8rem 0;
+        padding: 0.6rem;
+        background: #fff;
         border-radius: var(--border-radius-sm);
-        border: 1px solid rgba(239, 136, 48, 0.1);
+        border: 1px solid var(--color-border);
     }
 
     .register-checkbox {
         display: flex;
         align-items: flex-start;
-        gap: 0.5rem;
+        gap: 0.4rem;
     }
 
     .register-checkbox-input {
-        width: 1rem;
-        height: 1rem;
+        width: 0.85rem;
+        height: 0.85rem;
         border: 1px solid var(--color-border);
-        border-radius: 4px;
+        border-radius: 3px;
         cursor: pointer;
         accent-color: var(--color-brand-primary);
-        margin-top: 0.2rem;
+        margin-top: 0.15rem;
     }
 
         .register-checkbox-input.has-error {
@@ -243,8 +227,8 @@
         font-family: var(--font-body);
         color: var(--color-text-dark);
         cursor: pointer;
-        font-size: 0.85rem;
-        line-height: 1.4;
+        font-size: 0.7rem;
+        line-height: 1.3;
     }
 
     .register-terms-link {
@@ -252,6 +236,7 @@
         text-decoration: none;
         font-weight: 600;
         transition: color 0.2s ease;
+        font-size: 0.7rem;
     }
 
         .register-terms-link:hover {
@@ -261,44 +246,49 @@
 
     /* Mensaje de error para términos */
     .register-terms-error {
-        margin-top: 0.75rem;
-        padding: 0.75rem;
-        background: linear-gradient(135deg, rgba(229, 54, 26, 0.08) 0%, rgba(229, 54, 26, 0.04) 100%);
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        background: rgba(229, 54, 26, 0.05);
         border: 1px solid rgba(229, 54, 26, 0.2);
         border-radius: var(--border-radius-sm);
         font-family: var(--font-accent);
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         color: var(--color-brand-secondary);
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
         animation: slideIn 0.3s ease-out;
     }
+
+        .register-terms-error i {
+            font-size: 0.7rem;
+        }
 
     /* Botón principal */
     .register-submit-btn {
         width: 100%;
-        padding: 0.875rem;
+        padding: 0.6rem 1rem;
         background: linear-gradient(135deg, var(--color-brand-primary) 0%, #e07a2a 100%);
         border: none;
-        border-radius: var(--border-radius-md);
+        border-radius: var(--border-radius-sm);
         color: white;
         font-family: var(--font-accent);
-        font-size: 0.95rem;
+        font-size: 0.8rem;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.75rem;
+        gap: 0.5rem;
         position: relative;
         overflow: hidden;
+        letter-spacing: 0.3px;
     }
 
         .register-submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(239, 136, 48, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 136, 48, 0.2);
             background: linear-gradient(135deg, #e07a2a 0%, var(--color-brand-secondary) 100%);
         }
 
@@ -308,51 +298,50 @@
 
         .register-submit-btn i {
             transition: transform 0.2s ease;
+            font-size: 0.8rem;
         }
 
         .register-submit-btn:hover i {
-            transform: translateX(4px);
+            transform: translateX(3px);
         }
 
     /* Separador */
     .register-separator {
         display: flex;
         align-items: center;
-        margin: 1.5rem 0;
+        margin: 1rem 0;
         color: var(--color-accent);
         font-family: var(--font-accent);
-        font-size: 0.85rem;
+        font-size: 0.7rem;
     }
 
         .register-separator::before,
         .register-separator::after {
-            content: '';
             flex: 1;
             height: 1px;
-            background: linear-gradient(90deg, transparent, var(--color-border), transparent);
         }
 
         .register-separator::before {
-            margin-right: 1rem;
+            margin-right: 0.75rem;
         }
 
         .register-separator::after {
-            margin-left: 1rem;
+            margin-left: 0.75rem;
         }
 
     /* Botones externos */
     .register-external-buttons {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
     }
 
     .register-external-btn {
         width: 100%;
-        padding: 0.75rem;
+        padding: 0.5rem;
         background: white;
         border: 1px solid var(--color-border);
-        border-radius: var(--border-radius-md);
+        border-radius: var(--border-radius-sm);
         font-family: var(--font-accent);
-        font-size: 0.9rem;
+        font-size: 0.75rem;
         font-weight: 500;
         color: var(--color-text-dark);
         cursor: pointer;
@@ -360,19 +349,23 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.75rem;
-        margin-bottom: 0.75rem;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
     }
 
         .register-external-btn:hover {
             border-color: var(--color-brand-primary);
             background: rgba(239, 136, 48, 0.05);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .register-external-btn:last-child {
             margin-bottom: 0;
+        }
+
+        .register-external-btn i {
+            font-size: 0.8rem;
         }
 
     .google-btn {
@@ -398,14 +391,14 @@
     /* Pie de página */
     .register-footer {
         text-align: center;
-        padding-top: 1rem;
+        padding-top: 0.8rem;
         border-top: 1px solid rgba(239, 136, 48, 0.1);
     }
 
     .register-footer-text {
         font-family: var(--font-body);
         color: var(--color-accent);
-        font-size: 0.85rem;
+        font-size: 0.7rem;
         margin: 0;
     }
 
@@ -414,6 +407,7 @@
         text-decoration: none;
         font-weight: 600;
         transition: color 0.2s ease;
+        font-size: 0.7rem;
     }
 
         .register-login-link:hover {
@@ -425,37 +419,37 @@
     .register-validation-summary {
         background: rgba(229, 54, 26, 0.05);
         border: 1px solid rgba(229, 54, 26, 0.2);
-        border-radius: var(--border-radius-md);
-        padding: 0.75rem;
-        margin-bottom: 1.2rem;
+        border-radius: var(--border-radius-sm);
+        padding: 0.6rem;
+        margin-bottom: 0.8rem;
         font-family: var(--font-body);
-        font-size: 0.85rem;
+        font-size: 0.7rem;
         color: var(--color-alert);
     }
 
         .register-validation-summary ul {
             margin: 0;
-            padding-left: 1.5rem;
+            padding-left: 1.2rem;
         }
 
     .field-validation-error {
         display: block;
-        margin-top: 0.25rem;
+        margin-top: 0.2rem;
         font-family: var(--font-accent);
-        font-size: 0.75rem;
+        font-size: 0.65rem;
         color: var(--color-alert);
     }
 
     /* Animaciones */
-    @@keyframes slideInLeft {
+    @@keyframes fadeIn {
         from {
             opacity: 0;
-            transform: translateX(-30px);
+            transform: translateY(10px);
         }
 
         to {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateY(0);
         }
     }
 
@@ -477,24 +471,16 @@
 
     /* Tablets y pantallas medianas */
     @@media (max-width: 992px) {
-        .register-video-column {
-            width: 50%;
+        .register-image-column {
+            flex: 0 0 50%;
         }
 
         .register-form-column {
-            width: 50%;
-        }
-
-        .register-video-text h1 {
-            font-size: 2.5rem;
-        }
-
-        .register-video-text p {
-            font-size: 1rem;
+            flex: 0 0 50%;
         }
 
         .register-form-wrapper {
-            max-width: 360px;
+            max-width: 320px;
         }
     }
 
@@ -505,22 +491,24 @@
             min-height: calc(100vh - 5.5rem);
         }
 
-        .register-video-column {
-            display: none; /* Ocultar video en móviles */
+        .register-main-container {
+            flex-direction: column;
+        }
+
+        .register-image-column {
+            flex: 0 0 250px;
+            width: 100%;
+            min-height: 250px;
         }
 
         .register-form-column {
-            position: relative;
+            flex: 1;
             width: 100%;
-            height: auto;
-            min-height: calc(100vh - 5.5rem);
-            padding: 2rem 1rem;
-            box-shadow: none;
-            animation: none;
+            padding: 1.5rem 1rem;
         }
 
         .register-form-wrapper {
-            max-width: 400px;
+            max-width: 350px;
         }
 
         .register-form-row {
@@ -529,30 +517,35 @@
         }
 
             .register-form-row .register-form-group {
-                margin-bottom: 1.2rem;
+                margin-bottom: 0.8rem;
             }
     }
 
     /* Móviles pequeños */
     @@media (max-width: 576px) {
+        .register-image-column {
+            flex: 0 0 200px;
+            min-height: 200px;
+        }
+
         .register-form-column {
-            padding: 1.5rem 1rem;
+            padding: 1rem;
         }
 
         .register-form-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
         }
 
         .register-logo-image {
-            width: 100px;
+            width: 80px;
         }
 
         .register-terms-check {
-            padding: 0.5rem;
+            padding: 0.4rem;
         }
 
         .register-checkbox-label {
-            font-size: 0.8rem;
+            font-size: 0.65rem;
         }
     }
 
@@ -563,195 +556,224 @@
             min-height: 100vh;
         }
 
+        .register-image-column {
+            flex: 0 0 150px;
+            min-height: 150px;
+        }
+
         .register-form-column {
             padding: 1rem;
         }
 
         .register-form-group {
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .register-form-logo {
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
         .register-form-title {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
+        }
+    }
+
+    /* Ajuste para quitar cualquier división visual */
+    .register-main-container {
+        box-shadow: none;
+        border: none;
+    }
+
+    .register-image-column,
+    .register-form-column {
+        box-shadow: none;
+        border: none;
+    }
+
+        /* Efecto sutil de separación solo con la imagen */
+        .register-image-column::after {
+            position: absolute;
+            right: 0;
+            top: 10%;
+            height: 80%;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, rgba(239, 136, 48, 0.2), transparent);
+            z-index: 2;
+        }
+
+    @@media (max-width: 768px) {
+        .register-image-column::after {
+            display: none;
         }
     }
 </style>
 
 <div class="register-fullscreen">
-    <!-- Columna derecha - Video de fondo -->
-    <div class="register-video-column">
-        <video autoplay loop muted playsinline class="register-background-video">
-            <source src="~/diseño/Banner.mp4" type="video/mp4">
-            <!-- Fallback en caso de que el video no se cargue -->
-            <img src="~/diseño/NiñaRegister.png" alt="Niña Yo Soy Arte" style="width:100%; height:100%; object-fit:cover;">
-        </video>
-        <div class="register-video-overlay"></div>
+    <div class="register-main-container">
+        <!-- Columna izquierda - Imagen de fondo -->
+        <div class="register-image-column">
+            <img src="~/diseño/Registro.png" alt="Yo Soy Arte" class="register-background-image">
+            <div class="register-image-overlay"></div>
+        </div>
 
-    </div>
+        <!-- Columna derecha - Formulario de registro -->
+        <div class="register-form-column">
+            <div class="register-form-wrapper">
+                <!-- Logo y título -->
+                <div class="register-form-logo">
+                    <h2 class="register-form-title">¡Crea tu cuenta!</h2>
+                    <p class="register-form-subtitle">Completa tus datos para registrarte</p>
+                </div>
 
-    <!-- Columna izquierda - Formulario de registro -->
-    <div class="register-form-column pt-5">
-        <div class="register-form-wrapper">
-            <!-- Logo y título -->
-            <div class="register-form-logo">
-                <h2 class="register-form-title">¡Crea tu cuenta!</h2>
-                <p class="register-form-subtitle">Completa tus datos para registrarte</p>
-            </div>
+                <!-- Resumen de validación -->
+                <div asp-validation-summary="ModelOnly" class="register-validation-summary"></div>
 
-            <!-- Resumen de validación -->
-            <div asp-validation-summary="ModelOnly" class="register-validation-summary"></div>
+                <!-- Formulario de registro -->
+                <form asp-controller="Cuenta" asp-action="Registro" method="post">
+                    <input type="hidden" asp-for="ReturnUrl" value="@ViewData["ReturnUrl"]" />
 
-            <!-- Formulario de registro -->
-            <form asp-controller="Cuenta" asp-action="Registro" method="post">
-                <input type="hidden" asp-for="ReturnUrl" value="@ViewData["ReturnUrl"]" />
+                    <!-- Fila para Nombre y Apellido -->
+                    <div class="register-form-row">
+                        <!-- Campo de Nombre -->
+                        <div class="register-form-group">
+                            <label class="register-form-label" asp-for="Nombre">
+                                <i class="fas fa-user me-1"></i> Nombre
+                            </label>
+                            <div class="register-input-wrapper">
+                                <input asp-for="Nombre" type="text" class="register-form-input"
+                                       placeholder="Tu nombre" id="nombre">
+                            </div>
+                            <span asp-validation-for="Nombre" class="field-validation-error"></span>
+                        </div>
 
-                <!-- Fila para Nombre y Apellido -->
-                <div class="register-form-row">
-                    <!-- Campo de Nombre -->
+                        <!-- Campo de Apellido -->
+                        <div class="register-form-group">
+                            <label class="register-form-label" asp-for="Apellido">
+                                <i class="fas fa-user me-1"></i> Apellido
+                            </label>
+                            <div class="register-input-wrapper">
+                                <input asp-for="Apellido" type="text" class="register-form-input"
+                                       placeholder="Tu apellido" id="apellido">
+                            </div>
+                            <span asp-validation-for="Apellido" class="field-validation-error"></span>
+                        </div>
+                    </div>
+
+                    <!-- Campo de Correo Electrónico -->
                     <div class="register-form-group">
-                        <label class="register-form-label" asp-for="Nombre">
-                            <i class="fas fa-user me-1"></i> Nombre
+                        <label class="register-form-label" asp-for="Email">
+                            <i class="fas fa-envelope me-1"></i> Correo Electrónico
                         </label>
                         <div class="register-input-wrapper">
-                            <input asp-for="Nombre" type="text" class="register-form-input"
-                                   placeholder="Tu nombre" id="nombre">
+                            <input asp-for="Email" type="email" class="register-form-input"
+                                   placeholder="ejemplo@correo.com" id="email">
                         </div>
-                        <span asp-validation-for="Nombre" class="field-validation-error"></span>
+                        <span asp-validation-for="Email" class="field-validation-error"></span>
                     </div>
 
-                    <!-- Campo de Apellido -->
+                    <!-- Campo de Contraseña -->
                     <div class="register-form-group">
-                        <label class="register-form-label" asp-for="Apellido">
-                            <i class="fas fa-user me-1"></i> Apellido
+                        <label class="register-form-label" asp-for="Contrasena">
+                            <i class="fas fa-lock me-1"></i> Contraseña
                         </label>
                         <div class="register-input-wrapper">
-                            <input asp-for="Apellido" type="text" class="register-form-input"
-                                   placeholder="Tu apellido" id="apellido">
+                            <input asp-for="Contrasena" type="password" class="register-form-input"
+                                   placeholder="Mínimo 6 caracteres" id="password">
+                            <button type="button" class="register-password-toggle" id="togglePassword" aria-label="Mostrar contraseña">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
-                        <span asp-validation-for="Apellido" class="field-validation-error"></span>
+                        <span asp-validation-for="Contrasena" class="field-validation-error"></span>
                     </div>
-                </div>
 
-                <!-- Campo de Correo Electrónico -->
-                <div class="register-form-group">
-                    <label class="register-form-label" asp-for="Email">
-                        <i class="fas fa-envelope me-1"></i> Correo Electrónico
-                    </label>
-                    <div class="register-input-wrapper">
-                        <input asp-for="Email" type="email" class="register-form-input"
-                               placeholder="ejemplo@correo.com" id="email">
-                    </div>
-                    <span asp-validation-for="Email" class="field-validation-error"></span>
-                </div>
-
-                <!-- Campo de Contraseña -->
-                <div class="register-form-group">
-                    <label class="register-form-label" asp-for="Contrasena">
-                        <i class="fas fa-lock me-1"></i> Contraseña
-                    </label>
-                    <div class="register-input-wrapper">
-                        <input asp-for="Contrasena" type="password" class="register-form-input"
-                               placeholder="Mínimo 6 caracteres" id="password">
-                        <button type="button" class="register-password-toggle" id="togglePassword" aria-label="Mostrar contraseña">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    <span asp-validation-for="Contrasena" class="field-validation-error"></span>
-                </div>
-
-                <!-- Campo de Confirmar Contraseña -->
-                <div class="register-form-group">
-                    <label class="register-form-label" asp-for="ConfirmarContrasena">
-                        <i class="fas fa-lock me-1"></i> Confirmar Contraseña
-                    </label>
-                    <div class="register-input-wrapper">
-                        <input asp-for="ConfirmarContrasena" type="password" class="register-form-input"
-                               placeholder="Repite tu contraseña" id="confirmPassword">
-                        <button type="button" class="register-password-toggle" id="toggleConfirmPassword" aria-label="Mostrar contraseña">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    <span asp-validation-for="ConfirmarContrasena" class="field-validation-error"></span>
-                </div>
-
-                <!-- Checkbox de términos -->
-                <div class="register-terms-check">
-                    <div class="register-checkbox">
-                        <input class="register-checkbox-input" type="checkbox" id="acceptTerms" required>
-                        <label class="register-checkbox-label" for="acceptTerms">
-                            Acepto los <a asp-controller="Home" asp-action="Terms" target="_blank" class="register-terms-link">Términos de Servicio</a> y la <a asp-controller="Home" asp-action="Privacy" target="_blank" class="register-terms-link">Política de Privacidad</a>
+                    <!-- Campo de Confirmar Contraseña -->
+                    <div class="register-form-group">
+                        <label class="register-form-label" asp-for="ConfirmarContrasena">
+                            <i class="fas fa-lock me-1"></i> Confirmar Contraseña
                         </label>
+                        <div class="register-input-wrapper">
+                            <input asp-for="ConfirmarContrasena" type="password" class="register-form-input"
+                                   placeholder="Repite tu contraseña" id="confirmPassword">
+                            <button type="button" class="register-password-toggle" id="toggleConfirmPassword" aria-label="Mostrar contraseña">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="ConfirmarContrasena" class="field-validation-error"></span>
                     </div>
-                </div>
 
-                <!-- Botón de Crear Cuenta -->
-                <button type="submit" class="register-submit-btn">
-                    <span>Crear Cuenta</span>
-                    <i class="fas fa-user-plus"></i>
-                </button>
-            </form>
+                    <!-- Checkbox de términos -->
+                    <div class="register-terms-check">
+                        <div class="register-checkbox">
+                            <input class="register-checkbox-input" type="checkbox" id="acceptTerms" required>
+                            <label class="register-checkbox-label" for="acceptTerms">
+                                Acepto los <a asp-controller="Home" asp-action="Terms" target="_blank" class="register-terms-link">Términos</a> y la <a asp-controller="Home" asp-action="Privacy" target="_blank" class="register-terms-link">Política de Privacidad</a>
+                            </label>
+                        </div>
+                    </div>
 
-            <!-- Separador para opciones externas -->
-            @{
-                var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            }
+                    <!-- Botón de Crear Cuenta -->
+                    <button type="submit" class="register-submit-btn">
+                        <span>Crear Cuenta</span>
+                    </button>
+                </form>
 
-            @if (loginProviders.Count > 0)
-            {
-                <div class="register-separator">
-                    <span>O registrarse con</span>
-                </div>
+                <!-- Separador para opciones externas -->
+                @{
+                    var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+                }
 
-                <!-- Botones de registro externo -->
-                <div class="register-external-buttons">
-                    <form asp-controller="Cuenta" asp-action="ExternalLogin"
-                          asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
-                        @foreach (var p in loginProviders)
-                        {
-                            if (p.Name.ToLower().Contains("google"))
+                @if (loginProviders.Count > 0)
+                {
+                    <div class="register-separator">
+                    </div>
+
+                    <!-- Botones de registro externo -->
+                    <div class="register-external-buttons">
+                        <form asp-controller="Cuenta" asp-action="ExternalLogin"
+                              asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                            @foreach (var p in loginProviders)
                             {
-                                <button type="submit" class="register-external-btn google-btn"
-                                        name="provider" value="@p.Name"
-                                        title="Registrarse con tu cuenta de @p.DisplayName">
-                                    <i class="fab fa-google"></i>
-                                    <span>@p.DisplayName</span>
-                                </button>
+                                if (p.Name.ToLower().Contains("google"))
+                                {
+                                    <button type="submit" class="register-external-btn google-btn"
+                                            name="provider" value="@p.Name"
+                                            title="Registrarse con tu cuenta de @p.DisplayName">
+                                        <i class="fab fa-google"></i>
+                                        <span>@p.DisplayName</span>
+                                    </button>
+                                }
+                                else if (p.Name.ToLower().Contains("facebook"))
+                                {
+                                    <button type="submit" class="register-external-btn facebook-btn"
+                                            name="provider" value="@p.Name"
+                                            title="Registrarse con tu cuenta de @p.DisplayName">
+                                        <i class="fab fa-facebook-f"></i>
+                                        <span>@p.DisplayName</span>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="register-external-btn"
+                                            name="provider" value="@p.Name"
+                                            title="Registrarse con tu cuenta de @p.DisplayName">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        <span>@p.DisplayName</span>
+                                    </button>
+                                }
                             }
-                            else if (p.Name.ToLower().Contains("facebook"))
-                            {
-                                <button type="submit" class="register-external-btn facebook-btn"
-                                        name="provider" value="@p.Name"
-                                        title="Registrarse con tu cuenta de @p.DisplayName">
-                                    <i class="fab fa-facebook-f"></i>
-                                    <span>@p.DisplayName</span>
-                                </button>
-                            }
-                            else
-                            {
-                                <button type="submit" class="register-external-btn"
-                                        name="provider" value="@p.Name"
-                                        title="Registrarse con tu cuenta de @p.DisplayName">
-                                    <i class="fas fa-external-link-alt"></i>
-                                    <span>@p.DisplayName</span>
-                                </button>
-                            }
-                        }
-                    </form>
-                </div>
-            }
+                        </form>
+                    </div>
+                }
 
-            <!-- Pie de página con enlace a login -->
-            <div class="register-footer">
-                <p class="register-footer-text">
-                    ¿Ya tienes una cuenta?
-                    <a asp-controller="Cuenta" asp-action="Login" class="register-login-link">
-                        Inicia sesión aquí
-                    </a>
-                </p>
+                <!-- Pie de página con enlace a login -->
+                <div class="register-footer">
+                    <p class="register-footer-text">
+                        ¿Ya tienes una cuenta?
+                        <a asp-controller="Cuenta" asp-action="Login" class="register-login-link">
+                            Inicia sesión
+                        </a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -760,38 +782,6 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Manejo del video
-            const video = document.querySelector('.register-background-video');
-
-            if (video) {
-                // Asegurar que el video esté muteado (para autoplay)
-                video.muted = true;
-
-                // Forzar reproducción
-                const playPromise = video.play();
-
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        console.log('Auto-play fue prevenido:', error);
-                        video.style.opacity = '0.8';
-                    });
-                }
-
-                // Pausar video en móviles para ahorrar batería
-                if (window.innerWidth <= 768) {
-                    video.pause();
-
-                    // Reproducir al hacer clic en el contenedor
-                    document.querySelector('.register-video-column').addEventListener('click', function() {
-                        if (video.paused) {
-                            video.play();
-                        } else {
-                            video.pause();
-                        }
-                    });
-                }
-            }
-
             // Toggle para mostrar/ocultar contraseña
             const togglePassword = document.getElementById('togglePassword');
             const passwordInput = document.getElementById('password');
@@ -827,16 +817,11 @@
             inputs.forEach(input => {
                 input.addEventListener('input', function() {
                     if (this.value.trim() !== '') {
-                        this.style.backgroundColor = '#ffffff';
+                        this.style.borderColor = 'var(--color-brand-primary)';
                     } else {
-                        this.style.backgroundColor = '#f9f9f9';
+                        this.style.borderColor = 'var(--color-border)';
                     }
                 });
-
-                // Inicializar estado si ya tiene valor
-                if (input.value.trim() !== '') {
-                    input.style.backgroundColor = '#ffffff';
-                }
             });
 
             // Validación del checkbox de términos
@@ -851,7 +836,7 @@
                         // Mostrar mensaje de error
                         const errorMessage = document.createElement('div');
                         errorMessage.className = 'register-terms-error';
-                        errorMessage.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>Debes aceptar los Términos de Servicio y la Política de Privacidad para continuar.';
+                        errorMessage.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>Debes aceptar los Términos y Política de Privacidad';
 
                         // Remover mensajes de error previos
                         const existingError = document.querySelector('.register-terms-error');

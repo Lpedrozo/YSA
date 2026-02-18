@@ -393,33 +393,35 @@
 
             <!-- Total Cursos -->
             <div class="col">
-                <div class="metric-card">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div class="metric-value">@Model.TotalCursos</div>
-                            <div class="metric-label">Total cursos</div>
+                    <a href="@Url.Action("GestionarCursos", "Admin")" class="metric-card metric-pending d-block">
+
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="metric-value">@Model.TotalCursos</div>
+                                <div class="metric-label">Total cursos</div>
+                            </div>
+                            <i class="fas fa-book-open metric-icon"></i>
                         </div>
-                        <i class="fas fa-book-open metric-icon"></i>
-                    </div>
-                </div>
+                    </a>
+
             </div>
 
             <!-- Estudiantes Activos -->
             <div class="col">
-                <div class="metric-card">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div class="metric-value">@Model.TotalEstudiantes</div>
-                            <div class="metric-label">Estudiantes activos</div>
+                    <a href="@Url.Action("GestionarEstudiantes", "Admin")" class="metric-card metric-pending d-block">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="metric-value">@Model.TotalEstudiantes</div>
+                                <div class="metric-label">Estudiantes activos</div>
+                            </div>
+                            <i class="fas fa-users metric-icon"></i>
                         </div>
-                        <i class="fas fa-users metric-icon"></i>
-                    </div>
-                </div>
+                    </a>
             </div>
 
             <!-- Pedidos Pendientes -->
             <div class="col">
-                <a href="@Url.Action("PedidosPendientes", "Admin")" class="metric-card metric-pending d-block">
+                <a href="@Url.Action("GestionarPedidos", "Admin")" class="metric-card metric-pending d-block">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <div class="metric-value">@Model.PedidosPendientes</div>
@@ -432,7 +434,6 @@
         </div>
     </div>
 
-    <hr class="section-divider" />
 
     <!-- SECCIÓN DE ACCESOS RÁPIDOS -->
     <div class="section-container">
