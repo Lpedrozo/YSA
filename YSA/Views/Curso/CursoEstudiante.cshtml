@@ -15,17 +15,53 @@
     var todasLasResenas = Model.Resenas?.OrderByDescending(r => r.Fecha).ToList() ?? new List<ResenaViewModel>();
 }
 
-<div class="container px-0 py-5">
+<div class="container px-0 py-4">
+    <!-- === BREADCRUMB === -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Curso" asp-action="Index">Cursos</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.Titulo</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
 
-    <!-- === HERO SECTION DEL CURSO === -->
-    <div class="curso-hero">
-        <img class="curso-hero-imagen" src="@Model.UrlImagen" alt="@Model.Titulo">
-        <div class="curso-hero-overlay">
-            <div class="curso-hero-contenido">
-                <span class="curso-hero-badge">CURSO</span>
-                <h1 class="curso-hero-titulo">@Model.Titulo</h1>
-                <p class="curso-hero-descripcion">@Html.Raw(Model.DescripcionCorta)</p>
+    <!-- === IMAGEN CENTRADA === -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            <!-- Contenedor de la imagen centrado -->
+            <div class="curso-detalle-imagen-container">
+                <div class="curso-detalle-imagen-wrapper">
+                    <img src="@Model.UrlImagen"
+                         class="curso-detalle-imagen"
+                         alt="@Model.Titulo"
+                         onerror="this.src='/diseño/default-course.jpg'">
+                    @if (Model.Precio == 0)
+                    {
+                        <span class="badge-free-detalle">GRATIS</span>
+                    }
+                    else
+                    {
+                        <span class="badge-price-detalle">$@Model.Precio.ToString("N2")</span>
+                    }
+                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- === TÍTULO Y DESCRIPCIÓN === -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-lg-10">
+            <h1 class="h2 fw-bold mb-3 text-center" style="font-family: var(--font-heading); color: var(--color-brand-primary);">
+                @Model.Titulo
+            </h1>
+            <div class="text-muted text-center" style="font-size: 1rem; line-height: 1.5;">
+                @Html.Raw(Model.DescripcionCorta)
+            </div>
+            <hr class="my-4" style="border-color: rgba(239, 136, 48, 0.2);">
         </div>
     </div>
 
@@ -68,10 +104,10 @@
         <!-- TAB 1: PRESENTACIÓN -->
         <div class="tab-pane fade show active" id="presentacion-tab-pane" role="tabpanel" tabindex="0">
             <div class="curso-contenido-seccion">
-                <h2 class="curso-titulo-seccion">
-                    <i class="fas fa-book-open me-2"></i>Acerca de este curso
+                <h2 class="h4 fw-bold mb-3">
+                    <i class="fas fa-book-open me-2" style="color: var(--color-brand-primary);"></i>Acerca de este curso
                 </h2>
-                <div class="curso-descripcion">
+                <div class="curso-descripcion small">
                     @Html.Raw(Model.DescripcionLarga)
                 </div>
             </div>
@@ -79,11 +115,11 @@
 
         <!-- TAB 2: CONTENIDO -->
         <div class="tab-pane fade" id="contenido-tab-pane" role="tabpanel" tabindex="0">
-            <div class="row g-5">
+            <div class="row g-4">
                 <div class="col-lg-8">
                     <div class="curso-leccion-contenido">
-                        <h3 class="curso-leccion-titulo" id="lessonTitle">Selecciona una lección para empezar</h3>
-                        <div class="curso-leccion-descripcion" id="lessonContent">
+                        <h3 class="h5 fw-bold mb-3" id="lessonTitle">Selecciona una lección para empezar</h3>
+                        <div class="curso-leccion-descripcion small" id="lessonContent">
                             Usa la lista de lecciones a continuación para navegar por el contenido del curso.
                         </div>
                     </div>
@@ -96,12 +132,12 @@
 
                 <div class="col-lg-4">
                     <div class="curso-panel-lecciones">
-                        <h4 class="curso-panel-titulo">Módulos del Curso</h4>
+                        <h4 class="h6 fw-bold mb-3">Módulos del Curso</h4>
                         <div class="curso-modulo-acordeon" id="courseAccordion">
                             @foreach (var modulo in Model.Modulos ?? Enumerable.Empty<ModuloConLeccionesViewModel>())
                             {
                                 <div class="curso-modulo-item">
-                                    <button class="curso-modulo-header" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
+                                    <button class="curso-modulo-header small" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
                                         @modulo.Titulo
                                         <i class="fas fa-chevron-down modulo-icono"></i>
                                     </button>
@@ -118,14 +154,14 @@
                                                         <div class="curso-leccion-icono">
                                                             @if (leccion.CompletadaPorEstudiante)
                                                             {
-                                                                <i class="fas fa-check-circle text-success"></i>
+                                                                <i class="fas fa-check-circle text-success small"></i>
                                                             }
                                                             else
                                                             {
-                                                                <i class="fas fa-play-circle"></i>
+                                                                <i class="fas fa-play-circle small"></i>
                                                             }
                                                         </div>
-                                                        <div class="curso-leccion-texto">
+                                                        <div class="curso-leccion-texto small">
                                                             @leccion.Titulo
                                                         </div>
                                                     </a>
@@ -143,21 +179,21 @@
 
         <!-- TAB 3: COMUNIDAD -->
         <div class="tab-pane fade" id="comunidad-tab-pane" role="tabpanel" tabindex="0">
-            <div class="row g-5">
+            <div class="row g-4">
                 <div class="col-lg-8">
-                    <div class="mb-5">
-                        <h3 class="curso-titulo-seccion">
-                            <i class="fas fa-bullhorn me-2"></i>Anuncios del Curso
+                    <div class="mb-4">
+                        <h3 class="h5 fw-bold mb-3">
+                            <i class="fas fa-bullhorn me-2" style="color: var(--color-brand-primary);"></i>Anuncios del Curso
                         </h3>
 
                         @if (Model.Anuncios != null && Model.Anuncios.Any())
                         {
                             foreach (var anuncio in Model.Anuncios.OrderByDescending(a => a.FechaPublicacion))
                             {
-                                <div class="curso-anuncio-card">
-                                    <h4 class="curso-anuncio-titulo">@anuncio.Titulo</h4>
-                                    <span class="curso-anuncio-fecha">Publicado el @anuncio.FechaPublicacion.ToString("dd MMMM yyyy")</span>
-                                    <div class="curso-anuncio-contenido">
+                                <div class="curso-anuncio-card p-3 mb-3">
+                                    <h4 class="h6 fw-bold mb-1">@anuncio.Titulo</h4>
+                                    <span class="small text-muted d-block mb-2">Publicado el @anuncio.FechaPublicacion.ToString("dd MMMM yyyy")</span>
+                                    <div class="small">
                                         @Html.Raw(anuncio.Contenido)
                                     </div>
                                 </div>
@@ -165,7 +201,7 @@
                         }
                         else
                         {
-                            <div class="alert alert-info" role="alert">
+                            <div class="alert alert-info small" role="alert">
                                 No hay anuncios publicados para este curso.
                             </div>
                         }
@@ -173,13 +209,13 @@
 
                     @if (User.Identity.IsAuthenticated && !yaHaHechoResena)
                     {
-                        <div class="curso-formulario-resena">
-                            <h3 class="curso-formulario-titulo">Deja tu Reseña</h3>
+                        <div class="curso-formulario-resena p-4">
+                            <h3 class="h5 fw-bold mb-3">Deja tu Reseña</h3>
                             <form asp-action="CrearResena" asp-controller="Curso" method="post">
                                 <input type="hidden" name="CursoId" value="@Model.Id" />
 
                                 <div class="mb-3">
-                                    <label class="form-label confirmacion-form-label">Calificación</label>
+                                    <label class="form-label small fw-bold">Calificación</label>
                                     <div class="curso-calificacion-estrellas">
                                         @for (int i = 5; i >= 1; i--)
                                         {
@@ -190,11 +226,11 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="Comentario" class="form-label confirmacion-form-label">Comentario</label>
-                                    <textarea class="form-control confirmacion-form-input" id="Comentario" name="Comentario" rows="3" required placeholder="Cuéntanos tu experiencia con el curso..."></textarea>
+                                    <label for="Comentario" class="form-label small fw-bold">Comentario</label>
+                                    <textarea class="form-control form-control-sm" id="Comentario" name="Comentario" rows="3" required placeholder="Cuéntanos tu experiencia con el curso..."></textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-action curso-btn-inscribirse">
+                                <button type="submit" class="btn btn-primary btn-sm">
                                     <i class="fas fa-paper-plane me-2"></i>Enviar Reseña
                                 </button>
                             </form>
@@ -202,22 +238,22 @@
                     }
                     else if (User.Identity.IsAuthenticated && yaHaHechoResena)
                     {
-                        <div class="alert alert-success" role="alert">
+                        <div class="alert alert-success small" role="alert">
                             <i class="fas fa-check-circle me-2"></i> Ya has dejado una reseña para este curso. ¡Gracias por tu opinión!
                         </div>
                     }
                 </div>
 
                 <div class="col-lg-4">
-                    <div class="curso-resenas-container">
-                        <div class="curso-resenas-header">
+                    <div class="curso-resenas-container p-4">
+                        <div class="curso-resenas-header mb-3">
                             <div class="curso-resenas-promedio">
                                 @{
                                     var promedio = Model.Resenas.Any() ? Model.Resenas.Average(r => r.Calificacion) : 0;
                                     var roundedRating = (int)Math.Round(promedio);
                                 }
-                                <div class="curso-resenas-puntuacion">@promedio.ToString("F1")</div>
-                                <div class="curso-resenas-estrellas">
+                                <div class="h3 fw-bold mb-1" style="color: var(--color-brand-primary);">@promedio.ToString("F1")</div>
+                                <div class="small text-warning mb-1">
                                     @for (int i = 0; i < roundedRating; i++)
                                     {
                                         <i class="fas fa-star"></i>
@@ -227,7 +263,7 @@
                                         <i class="far fa-star"></i>
                                     }
                                 </div>
-                                <div class="curso-resenas-contador">@Model.Resenas.Count() reseñas</div>
+                                <div class="small text-muted">@Model.Resenas.Count() reseñas</div>
                             </div>
                         </div>
 
@@ -235,12 +271,12 @@
                         {
                             foreach (var resena in topResenas)
                             {
-                                <div class="curso-resena-card">
-                                    <div class="curso-resena-header">
-                                        <div class="curso-resena-usuario">@resena.NombreUsuario</div>
-                                        <div class="curso-resena-fecha">@resena.Fecha.ToString("dd/MM/yyyy")</div>
+                                <div class="curso-resena-card p-3 mb-2">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div class="small fw-bold">@resena.NombreUsuario</div>
+                                        <div class="small text-muted">@resena.Fecha.ToString("dd/MM/yyyy")</div>
                                     </div>
-                                    <div class="curso-resena-rating text-warning mb-2">
+                                    <div class="small text-warning mb-2">
                                         @for (int i = 0; i < resena.Calificacion; i++)
                                         {
                                             <i class="fas fa-star"></i>
@@ -250,18 +286,18 @@
                                             <i class="far fa-star"></i>
                                         }
                                     </div>
-                                    <div class="curso-resena-texto">@resena.Comentario</div>
+                                    <div class="small">@resena.Comentario</div>
                                 </div>
                             }
 
-                            <button type="button" class="btn btn-outline-primary w-100 mt-3" data-bs-toggle="modal" data-bs-target="#allReviewsModal">
-                                <i class="fas fa-list me-2"></i>Ver todas las reseñas (@Model.Resenas.Count())
+                            <button type="button" class="btn btn-outline-primary btn-sm w-100 mt-2" data-bs-toggle="modal" data-bs-target="#allReviewsModal">
+                                <i class="fas fa-list me-2"></i>Ver todas (@Model.Resenas.Count())
                             </button>
                         }
                         else
                         {
-                            <div class="alert alert-info" role="alert">
-                                Este curso aún no tiene reseñas. ¡Sé el primero en dejar una!
+                            <div class="alert alert-info small" role="alert">
+                                Este curso aún no tiene reseñas.
                             </div>
                         }
                     </div>
@@ -271,61 +307,61 @@
 
         <!-- TAB 4: PREGUNTAS -->
         <div class="tab-pane fade" id="preguntas-tab-pane" role="tabpanel" tabindex="0">
-            <div class="curso-preguntas-container">
-                <h3 class="curso-titulo-seccion">
-                    <i class="fas fa-question-circle me-2"></i>Preguntas y Respuestas
+            <div class="curso-preguntas-container p-4">
+                <h3 class="h5 fw-bold mb-4">
+                    <i class="fas fa-question-circle me-2" style="color: var(--color-brand-primary);"></i>Preguntas y Respuestas
                 </h3>
 
                 <div class="mb-4">
-                    <h5 class="mb-3">Hacer una Nueva Pregunta</h5>
+                    <h5 class="h6 fw-bold mb-3">Hacer una Nueva Pregunta</h5>
                     <form id="formHacerPregunta" action="@Url.Action("CrearPregunta", "Curso", new { tab = "preguntas-tab" })" method="post">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="cursoId" value="@Model.Id" />
 
                         <div class="mb-3">
-                            <label for="preguntaInput" class="form-label confirmacion-form-label">Tu Pregunta:</label>
-                            <textarea class="form-control confirmacion-form-input" id="preguntaInput" name="pregunta" rows="3" required placeholder="Escribe tu duda o consulta aquí..."></textarea>
+                            <label for="preguntaInput" class="form-label small fw-bold">Tu Pregunta:</label>
+                            <textarea class="form-control form-control-sm" id="preguntaInput" name="pregunta" rows="3" required placeholder="Escribe tu duda o consulta aquí..."></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-action">
+                        <button type="submit" class="btn btn-primary btn-sm">
                             <i class="fas fa-paper-plane me-2"></i>Enviar Pregunta
                         </button>
                     </form>
                 </div>
 
-                <h4 class="curso-titulo-seccion mt-5">
-                    <i class="fas fa-comments me-2"></i>Consultas Recientes (@(Model.Preguntas?.Count ?? 0))
+                <h4 class="h6 fw-bold mt-5 mb-3">
+                    <i class="fas fa-comments me-2" style="color: var(--color-brand-primary);"></i>Consultas Recientes (@(Model.Preguntas?.Count ?? 0))
                 </h4>
 
                 @if (Model.Preguntas != null && Model.Preguntas.Any())
                 {
                     foreach (var p in Model.Preguntas.OrderByDescending(p => p.FechaPregunta))
                     {
-                        <div class="curso-pregunta-card">
-                            <div class="curso-pregunta-header">
-                                <div class="curso-pregunta-usuario">
-                                    <i class="fas fa-question-circle me-2 text-primary"></i>@p.NombreEstudiante
+                        <div class="curso-pregunta-card p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="small fw-bold">
+                                    <i class="fas fa-question-circle me-2 text-primary small"></i>@p.NombreEstudiante
                                 </div>
-                                <div class="curso-pregunta-fecha">@p.FechaPregunta.ToString("dd/MM/yyyy HH:mm")</div>
+                                <div class="small text-muted">@p.FechaPregunta.ToString("dd/MM/yyyy HH:mm")</div>
                             </div>
-                            <div class="curso-pregunta-texto">@p.Pregunta</div>
+                            <div class="small mb-2">@p.Pregunta</div>
 
                             @if (!string.IsNullOrEmpty(p.Respuesta))
                             {
-                                <div class="curso-respuesta-container">
-                                    <div class="curso-respuesta-header">
-                                        <div class="curso-respuesta-instructor">
+                                <div class="curso-respuesta-container p-3 mt-2">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div class="small fw-bold text-success">
                                             <i class="fas fa-reply me-2"></i>@p.NombreInstructor
                                         </div>
-                                        <div class="curso-respuesta-fecha">@p.FechaRespuesta?.ToString("dd/MM/yyyy HH:mm")</div>
+                                        <div class="small text-muted">@p.FechaRespuesta?.ToString("dd/MM/yyyy HH:mm")</div>
                                     </div>
-                                    <div class="curso-respuesta-texto">@p.Respuesta</div>
+                                    <div class="small">@p.Respuesta</div>
                                 </div>
                             }
                             else
                             {
-                                <div class="alert alert-warning mt-3 py-2">
-                                    <i class="fas fa-hourglass-half me-2"></i>Pendiente de respuesta del instructor.
+                                <div class="alert alert-warning small py-2 mt-2">
+                                    <i class="fas fa-hourglass-half me-2"></i>Pendiente de respuesta
                                 </div>
                             }
                         </div>
@@ -333,8 +369,8 @@
                 }
                 else
                 {
-                    <div class="alert alert-info" role="alert">
-                        Aún no hay preguntas para este curso. ¡Sé el primero en preguntar!
+                    <div class="alert alert-info small" role="alert">
+                        Aún no hay preguntas para este curso.
                     </div>
                 }
             </div>
@@ -342,34 +378,32 @@
 
         <!-- TAB 5: ACTIVIDADES -->
         <div class="tab-pane fade" id="proyectos-tab-pane" role="tabpanel" tabindex="0">
-            <div class="curso-actividades-container">
-                <h3 class="curso-titulo-seccion">
-                    <i class="fas fa-tasks me-2"></i>Actividades del Curso
+            <div class="curso-actividades-container p-4">
+                <h3 class="h5 fw-bold mb-4">
+                    <i class="fas fa-tasks me-2" style="color: var(--color-brand-primary);"></i>Actividades del Curso
                 </h3>
 
                 @if (Model.Actividades != null && Model.Actividades.Any())
                 {
                     foreach (var actividad in Model.Actividades)
                     {
-                        <div class="curso-actividad-card">
-                            <div class="curso-actividad-header">
-                                <div>
-                                    <h5 class="curso-actividad-titulo">@actividad.Titulo</h5>
-                                </div>
+                        <div class="curso-actividad-card p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="h6 fw-bold mb-0">@actividad.Titulo</h5>
                                 @if (actividad.EntregaEstudiante != null)
                                 {
-                                    var badgeClass = actividad.EntregaEstudiante.Estado == "Calificado" ? "calificado" :
-                                    actividad.EntregaEstudiante.Estado == "Rechazado" ? "rechazado" : "pendiente";
-                                    <span class="curso-estado-badge @badgeClass">@actividad.EntregaEstudiante.Estado</span>
+                                    var badgeClass = actividad.EntregaEstudiante.Estado == "Calificado" ? "success" :
+                                    actividad.EntregaEstudiante.Estado == "Rechazado" ? "danger" : "warning";
+                                    <span class="badge bg-@badgeClass small">@actividad.EntregaEstudiante.Estado</span>
                                 }
                             </div>
-                            <div class="curso-actividad-descripcion">@Html.Raw(actividad.Descripcion)</div>
+                            <div class="small mb-3">@Html.Raw(actividad.Descripcion)</div>
 
-                            <div class="curso-actividad-acciones">
+                            <div class="d-flex flex-wrap gap-2">
                                 @if (!string.IsNullOrEmpty(actividad.Url))
                                 {
                                     <a href="@actividad.Url" target="_blank" class="btn btn-outline-primary btn-sm">
-                                        <i class="fas fa-download me-1"></i> Material Adicional
+                                        <i class="fas fa-download me-1"></i> Material
                                     </a>
                                 }
 
@@ -377,17 +411,17 @@
                                 {
                                     @if (actividad.EntregaEstudiante == null)
                                     {
-                                        <button type="button" class="btn btn-action btn-sm"
+                                        <button type="button" class="btn btn-primary btn-sm"
                                                 data-bs-toggle="modal" data-bs-target="#entregaModal"
                                                 data-actividad-id="@actividad.Id"
                                                 data-actividad-titulo="@actividad.Titulo">
-                                            <i class="fas fa-upload me-1"></i> Subir Mi Entrega
+                                            <i class="fas fa-upload me-1"></i> Subir
                                         </button>
                                     }
                                     else
                                     {
                                         <a href="@actividad.EntregaEstudiante.UrlArchivoEntrega" target="_blank" class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-file-alt me-1"></i> Ver Archivo
+                                            <i class="fas fa-file-alt me-1"></i> Ver
                                         </a>
 
                                         @if (actividad.EntregaEstudiante.Estado == "Calificado")
@@ -398,7 +432,7 @@
                                                     data-observacion="@actividad.EntregaEstudiante.ObservacionInstructor"
                                                     data-fecha="@actividad.EntregaEstudiante.FechaCalificacion?.ToString("dd/MM/yyyy")"
                                                     data-actividad-titulo="@actividad.Titulo">
-                                                <i class="fas fa-star me-1"></i> Calificación: @actividad.EntregaEstudiante.Calificacion.GetValueOrDefault(0).ToString("F0")/100
+                                                <i class="fas fa-star me-1"></i> @actividad.EntregaEstudiante.Calificacion.GetValueOrDefault(0).ToString("F0")/100
                                             </button>
                                         }
                                         else if (actividad.EntregaEstudiante.Estado == "Pendiente" || actividad.EntregaEstudiante.Estado == "Rechazado")
@@ -408,16 +442,10 @@
                                                     data-actividad-id="@actividad.Id"
                                                     data-actividad-titulo="@actividad.Titulo"
                                                     data-comentario-previo="@actividad.EntregaEstudiante.ComentarioEstudiante">
-                                                <i class="fas fa-redo me-1"></i> Reemplazar Entrega
+                                                <i class="fas fa-redo me-1"></i> Reemplazar
                                             </button>
                                         }
                                     }
-                                }
-                                else
-                                {
-                                    <div class="alert alert-info mt-2" role="alert">
-                                        <i class="fas fa-info-circle me-2"></i>Esta actividad no requiere entrega para ser evaluada. Es para práctica.
-                                    </div>
                                 }
                             </div>
                         </div>
@@ -425,7 +453,7 @@
                 }
                 else
                 {
-                    <div class="alert alert-info" role="alert">
+                    <div class="alert alert-info small" role="alert">
                         No hay actividades publicadas para este curso.
                     </div>
                 }
@@ -439,8 +467,8 @@
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="allReviewsModalLabel">
-                    <i class="fas fa-star me-2"></i>Todas las Reseñas de "@Model.Titulo"
+                <h5 class="modal-title h6" id="allReviewsModalLabel">
+                    <i class="fas fa-star me-2"></i>Todas las Reseñas
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -448,9 +476,9 @@
                 @if (Model.Resenas != null && Model.Resenas.Any())
                 {
                     var promedioReseña = Model.Resenas.Average(r => r.Calificacion);
-                    <div class="text-center mb-4 p-4 bg-light rounded">
-                        <h4 class="mb-2">@promedioReseña.ToString("F1") / 5</h4>
-                        <div class="text-warning mb-2">
+                    <div class="text-center mb-4 p-3 bg-light rounded">
+                        <h4 class="h5 mb-2">@promedioReseña.ToString("F1") / 5</h4>
+                        <div class="text-warning small mb-2">
                             @for (int i = 0; i < Math.Round(promedioReseña); i++)
                             {
                                 <i class="fas fa-star"></i>
@@ -460,17 +488,17 @@
                                 <i class="far fa-star"></i>
                             }
                         </div>
-                        <p class="text-muted">Puntuación promedio de @Model.Resenas.Count() reseñas</p>
+                        <p class="small text-muted mb-0">@Model.Resenas.Count() reseñas</p>
                     </div>
 
                     @foreach (var resena in todasLasResenas)
                     {
-                        <div class="curso-resena-card mb-3">
-                            <div class="curso-resena-header">
-                                <div class="curso-resena-usuario">@resena.NombreUsuario</div>
-                                <div class="curso-resena-fecha">@resena.Fecha.ToString("dd/MM/yyyy")</div>
+                        <div class="curso-resena-card p-3 mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="small fw-bold">@resena.NombreUsuario</div>
+                                <div class="small text-muted">@resena.Fecha.ToString("dd/MM/yyyy")</div>
                             </div>
-                            <div class="curso-resena-rating text-warning mb-2">
+                            <div class="small text-warning mb-2">
                                 @for (int i = 0; i < resena.Calificacion; i++)
                                 {
                                     <i class="fas fa-star"></i>
@@ -480,19 +508,19 @@
                                     <i class="far fa-star"></i>
                                 }
                             </div>
-                            <div class="curso-resena-texto">@resena.Comentario</div>
+                            <div class="small">@resena.Comentario</div>
                         </div>
                     }
                 }
                 else
                 {
-                    <div class="alert alert-info" role="alert">
+                    <div class="alert alert-info small" role="alert">
                         Este curso aún no tiene reseñas.
                     </div>
                 }
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
@@ -502,7 +530,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="entregaModalLabel">
+                <h5 class="modal-title h6" id="entregaModalLabel">
                     <i class="fas fa-upload me-2"></i>Subir entrega
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -513,25 +541,24 @@
                 @Html.AntiForgeryToken()
 
                 <div class="modal-body">
-                    <p class="mb-3">Actividad: <strong id="actividadTituloPlaceholder"></strong></p>
+                    <p class="small mb-3">Actividad: <strong id="actividadTituloPlaceholder"></strong></p>
 
                     <div class="mb-3">
-                        <label for="archivoEntrega" class="form-label confirmacion-form-label">Archivo de la tarea</label>
-                        <input class="form-control confirmacion-form-input" type="file" id="archivoEntrega" name="archivoEntrega" required>
-                        <div class="form-text">Formatos aceptados: PDF, ZIP, DOCX, JPG, etc.</div>
+                        <label for="archivoEntrega" class="form-label small fw-bold">Archivo</label>
+                        <input class="form-control form-control-sm" type="file" id="archivoEntrega" name="archivoEntrega" required>
+                        <div class="form-text small">PDF, ZIP, DOCX, JPG, etc.</div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="comentarioEstudiante" class="form-label confirmacion-form-label">Comentarios para el maestro (Opcional)</label>
-                        <textarea class="form-control confirmacion-form-input" id="comentarioEstudiante" name="comentario" rows="3" placeholder="Escribe cualquier nota sobre tu entrega..."></textarea>
-                        <div class="form-text">Si estás reemplazando una entrega, tu nuevo comentario sobrescribirá el anterior.</div>
+                        <label for="comentarioEstudiante" class="form-label small fw-bold">Comentarios</label>
+                        <textarea class="form-control form-control-sm" id="comentarioEstudiante" name="comentario" rows="2" placeholder="Notas sobre tu entrega..."></textarea>
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-action">
-                        <i class="fas fa-check-circle me-1"></i> Confirmar entrega
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fas fa-check-circle me-1"></i> Confirmar
                     </button>
                 </div>
             </form>
@@ -543,33 +570,168 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="calificacionModalLabel">
-                    <i class="fas fa-trophy me-2"></i>Calificación de actividad
+                <h5 class="modal-title h6" id="calificacionModalLabel">
+                    <i class="fas fa-trophy me-2"></i>Calificación
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p class="mb-3">Actividad: <strong id="calificacionActividadTituloPlaceholder"></strong></p>
-                <div class="text-center mb-4 p-4 border rounded bg-light">
-                    <p class="mb-0 text-muted">Tu puntuación final:</p>
-                    <h1 class="display-3 fw-bold text-primary" id="calificacionPlaceholder">--</h1>
+                <p class="small mb-3">Actividad: <strong id="calificacionActividadTituloPlaceholder"></strong></p>
+                <div class="text-center mb-4 p-3 border rounded bg-light">
+                    <p class="small text-muted mb-1">Tu puntuación final:</p>
+                    <h2 class="h2 fw-bold text-primary" id="calificacionPlaceholder">--</h2>
                 </div>
 
-                <h6 class="text-primary mt-4 border-bottom pb-2">Retroalimentación del maestro:</h6>
-                <blockquote class="blockquote border-start border-3 ps-3" id="observacionPlaceholder">
+                <h6 class="small fw-bold text-primary mt-3 mb-2">Retroalimentación:</h6>
+                <blockquote class="small border-start border-3 ps-3" id="observacionPlaceholder">
                     <p class="mb-0 fst-italic text-dark"></p>
                 </blockquote>
 
-                <small class="text-muted d-block text-end">Calificado el: <span id="fechaCalificacionPlaceholder"></span></small>
+                <small class="text-muted d-block text-end mt-2">Calificado el: <span id="fechaCalificacionPlaceholder"></span></small>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
+    <style>
+        /* Ajustes adicionales para el breadcrumb */
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb-item a {
+            color: var(--color-brand-primary);
+            text-decoration: none;
+            font-family: var(--font-accent);
+            font-weight: normal;
+            transition: color 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+            .breadcrumb-item a:hover {
+                color: var(--color-brand-secondary);
+                text-decoration: underline;
+            }
+
+        .breadcrumb-item.active {
+            color: var(--color-accent);
+            font-weight: normal;
+            font-size: 0.85rem;
+        }
+
+        /* Estilos para la imagen del detalle (mismos que las tarjetas) */
+        .curso-detalle-imagen-container {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .curso-detalle-imagen-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1080 / 1350;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--color-border);
+        }
+
+        .curso-detalle-imagen {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Badges para el detalle (mismos que las tarjetas) */
+        .badge-free-detalle, .badge-price-detalle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--border-radius-sm);
+            font-family: var(--font-accent);
+            font-weight: 600;
+            font-size: 0.8rem;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .badge-free-detalle {
+            background-color: var(--color-brand-success);
+            color: white;
+        }
+
+        .badge-price-detalle {
+            background-color: var(--color-brand-primary);
+            color: white;
+        }
+
+        /* Ajustes de tamaño para textos y botones */
+        .small {
+            font-size: 0.85rem !important;
+        }
+
+        .h2 {
+            font-size: 1.8rem;
+        }
+
+        .h3 {
+            font-size: 1.4rem;
+        }
+
+        .h4 {
+            font-size: 1.2rem;
+        }
+
+        .h5 {
+            font-size: 1.1rem;
+        }
+
+        .h6 {
+            font-size: 1rem;
+        }
+
+        .btn-sm {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .form-control-sm {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.85rem;
+        }
+
+        /* Ajuste responsive */
+        @@media (max-width: 768px) {
+            .curso-detalle-imagen-container {
+                max-width: 100%;
+            }
+
+            .badge-free-detalle, .badge-price-detalle {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.7rem;
+                top: 0.75rem;
+                right: 0.75rem;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .badge-free-detalle, .badge-price-detalle {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.65rem;
+                top: 0.5rem;
+                right: 0.5rem;
+            }
+        }
+    </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const mainVideoFrame = document.getElementById('mainVideoFrame');
