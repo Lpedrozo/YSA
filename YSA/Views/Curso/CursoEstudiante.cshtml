@@ -114,35 +114,47 @@
         </div>
 
         <!-- TAB 2: CONTENIDO -->
-        <div class="tab-pane fade" id="contenido-tab-pane" role="tabpanel" tabindex="0">
-            <div class="row g-4">
-                <div class="col-lg-8">
-                    <div class="curso-leccion-contenido">
-                        <h3 class="h5 fw-bold mb-3" id="lessonTitle">Selecciona una lección para empezar</h3>
-                        <div class="curso-leccion-descripcion small" id="lessonContent">
-                            Usa la lista de lecciones a continuación para navegar por el contenido del curso.
-                        </div>
-                    </div>
-
-                    <div class="curso-video-container">
-                        <iframe class="curso-video-frame d-none" id="mainVideoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        <img class="curso-video-imagen" id="mainCourseImage" src="@Model.UrlImagen" alt="Imagen de presentación del curso">
-                    </div>
+        <!-- TAB 2: CONTENIDO -->
+<div class="tab-pane fade" id="contenido-tab-pane" role="tabpanel" tabindex="0">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="curso-leccion-contenido">
+                <h3 class="h5 fw-bold mb-3" id="lessonTitle">Selecciona una lección para empezar</h3>
+                <div class="curso-leccion-descripcion small" id="lessonContent">
+                    Usa la lista de lecciones a continuación para navegar por el contenido del curso.
                 </div>
+            </div>
 
-                <div class="col-lg-4">
-                    <div class="curso-panel-lecciones">
-                        <h4 class="h6 fw-bold mb-3">Módulos del Curso</h4>
-                        <div class="curso-modulo-acordeon" id="courseAccordion">
+            <!-- Contenedor de video/imagen con estilo de tarjeta -->
+            <div class="curso-video-tarjeta">
+                <div class="curso-video-wrapper position-relative">
+                    <iframe class="curso-video-frame d-none" id="mainVideoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <img class="curso-video-imagen" id="mainCourseImage" src="@Model.UrlImagen" alt="Imagen de presentación del curso">
+                            @if (Model.Precio == 0)
+                            {
+                            <span class="badge-free-video">GRATIS</span>
+                            }
+                            else
+                            {
+                            <span class="badge-price-video">$@Model.Precio.ToString("N2")</span>
+                            }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="curso-panel-lecciones">
+                <h4 class="h6 fw-bold mb-3">Módulos del Curso</h4>
+                <div class="curso-modulo-acordeon" id="courseAccordion">
                             @foreach (var modulo in Model.Modulos ?? Enumerable.Empty<ModuloConLeccionesViewModel>())
                             {
-                                <div class="curso-modulo-item">
-                                    <button class="curso-modulo-header small" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
+                            <div class="curso-modulo-item">
+                                <button class="curso-modulo-header small" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
                                         @modulo.Titulo
-                                        <i class="fas fa-chevron-down modulo-icono"></i>
-                                    </button>
-                                    <div id="collapse_@modulo.Id" class="curso-modulo-contenido collapse">
-                                        <ul class="curso-lecciones-lista">
+                                    <i class="fas fa-chevron-down modulo-icono"></i>
+                                </button>
+                                <div id="collapse_@modulo.Id" class="curso-modulo-contenido collapse">
+                                    <ul class="curso-lecciones-lista">
                                             @foreach (var leccion in modulo.Lecciones ?? Enumerable.Empty<LeccionViewModel>())
                                             {
                                                 <li>
@@ -154,11 +166,11 @@
                                                         <div class="curso-leccion-icono">
                                                             @if (leccion.CompletadaPorEstudiante)
                                                             {
-                                                                <i class="fas fa-check-circle text-success small"></i>
+                                                                    <i class="fas fa-check-circle text-success small"></i>
                                                             }
                                                             else
                                                             {
-                                                                <i class="fas fa-play-circle small"></i>
+                                                                    <i class="fas fa-play-circle small"></i>
                                                             }
                                                         </div>
                                                         <div class="curso-leccion-texto small">
@@ -167,15 +179,15 @@
                                                     </a>
                                                 </li>
                                             }
-                                        </ul>
-                                    </div>
+                                    </ul>
                                 </div>
+                            </div>
                             }
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
         <!-- TAB 3: COMUNIDAD -->
         <div class="tab-pane fade" id="comunidad-tab-pane" role="tabpanel" tabindex="0">
@@ -730,6 +742,81 @@
                 right: 0.5rem;
             }
         }
+            /* Estilos para la tarjeta de video en el tab de contenido */
+    .curso-video-tarjeta {
+        width: 100%;
+        max-width: 500px;
+        margin: 1.5rem auto 0;
+    }
+
+    .curso-video-wrapper {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1080 / 1350;
+        background-color: #f8f9fa;
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--color-border);
+    }
+
+    .curso-video-frame,
+    .curso-video-imagen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        object-fit: cover;
+    }
+
+    /* Badges para la tarjeta de video */
+    .badge-free-video, .badge-price-video {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: var(--border-radius-sm);
+        font-family: var(--font-accent);
+        font-weight: 600;
+        font-size: 0.8rem;
+        z-index: 2;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .badge-free-video {
+        background-color: var(--color-brand-success);
+        color: white;
+    }
+
+    .badge-price-video {
+        background-color: var(--color-brand-primary);
+        color: white;
+    }
+
+    /* Ajuste responsive para la tarjeta de video */
+        @@media (max-width: 768px) {
+        .curso-video-tarjeta {
+            max-width: 100%;
+        }
+
+        .badge-free-video, .badge-price-video {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.7rem;
+            top: 0.75rem;
+            right: 0.75rem;
+        }
+    }
+
+        @@media (max-width: 576px) {
+        .badge-free-video, .badge-price-video {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.65rem;
+            top: 0.5rem;
+            right: 0.5rem;
+        }
+    }
     </style>
 
     <script>
