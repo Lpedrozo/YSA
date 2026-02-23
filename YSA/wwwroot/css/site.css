@@ -10114,3 +10114,101 @@ p {
         transform: translateX(0) scale(1);
     }
 }
+
+/* =========================================== */
+/* MEJORAS PARA BÚSQUEDA EN MÓVILES */
+/* =========================================== */
+
+@media (max-width: 575.98px) {
+    /* Mejorar la experiencia de búsqueda en móviles */
+    .input-group.input-group-lg {
+        flex-direction: row !important; /* Mantener en fila en móviles */
+        display: flex !important;
+        flex-wrap: nowrap !important;
+    }
+
+        .input-group.input-group-lg .form-control {
+            border-radius: var(--border-radius-md) 0 0 var(--border-radius-md) !important;
+            border-right: none !important;
+            font-size: 16px !important; /* Evitar zoom automático en iOS */
+            padding: 0.75rem 1rem !important;
+            min-height: 48px; /* Altura mínima para mejor touch */
+            width: auto !important;
+            flex: 1 1 auto !important;
+        }
+
+        .input-group.input-group-lg .btn-primary {
+            border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0 !important;
+            width: auto !important;
+            padding: 0.75rem 1rem !important;
+            min-height: 48px; /* Altura mínima para mejor touch */
+            flex: 0 0 auto !important;
+            white-space: nowrap;
+        }
+
+    .input-group-text {
+        display: none !important; /* Ocultar el icono de búsqueda en móviles */
+    }
+
+    /* Mejorar los selects para que sean más táctiles */
+    .filters-section .form-select-sm {
+        width: 100% !important;
+        margin-bottom: 0.5rem;
+        min-height: 44px;
+        font-size: 16px !important;
+        padding: 0.5rem 2rem 0.5rem 0.75rem !important;
+    }
+
+    .filters-section .d-flex {
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+
+    .filters-section .text-muted {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 0.25rem;
+    }
+
+    /* Asegurar que los selects ocupen el espacio adecuado */
+    .filters-section .form-select-sm {
+        flex: 1 1 calc(50% - 0.25rem) !important;
+        min-width: 130px;
+    }
+
+        /* Mejorar el hover y focus en móviles */
+        .input-group.input-group-lg .form-control:focus,
+        .input-group.input-group-lg .btn-primary:focus,
+        .filters-section .form-select-sm:focus {
+            outline: none;
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 3px rgba(239, 136, 48, 0.25);
+        }
+
+    /* Prevenir el zoom automático en iOS */
+    .input-group.input-group-lg .form-control,
+    .filters-section .form-select-sm {
+        -webkit-text-size-adjust: 100%;
+    }
+}
+
+/* Ajustes específicos para pantallas muy pequeñas (400px) */
+@media (max-width: 400px) {
+    .filters-section .form-select-sm {
+        flex: 1 1 100% !important; /* Los selects ocupan todo el ancho */
+    }
+
+    .input-group.input-group-lg .btn-primary {
+        padding: 0.75rem 0.75rem !important;
+        font-size: 0.9rem !important;
+    }
+}
+
+/* Para iOS, asegurar que el input no haga zoom */
+@supports (-webkit-touch-callout: none) {
+    .input-group.input-group-lg .form-control,
+    .filters-section .form-select-sm {
+        font-size: 16px !important;
+    }
+}

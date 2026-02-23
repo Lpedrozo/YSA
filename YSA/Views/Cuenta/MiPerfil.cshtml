@@ -3,29 +3,30 @@
     ViewData["Title"] = "Mi perfil y cursos";
 }
 
-<div class="container main-container mt-5 pt-5 mb-5">
-    <div class="row g-5">
+<div class="container main-container mt-5 pt-5 mb-5 px-3 px-md-4">
+    <div class="row g-4">
         <!-- BARRA LATERAL DE PERFIL -->
         <div class="col-lg-4">
-            <div class="curso-sidebar" style="position: sticky; top: 20px;">
-                <div class="curso-precio-card">
+            <!-- IMPORTANTE: Agregamos una clase personalizada para evitar que el CSS global la oculte -->
+            <div class="curso-sidebar profile-sidebar" style="position: sticky; top: 20px;">
+                <div class="curso-precio-card p-3 p-md-4">
                     <!-- FOTO DE PERFIL -->
                     <form asp-action="UpdateProfileImage" method="post" enctype="multipart/form-data" id="imageUploadForm" class="text-center">
                         <label for="imageUpload" class="d-inline-block cursor-pointer">
-                            <div class="position-relative mb-4" style="width: 140px; height: 140px; margin: 0 auto;">
+                            <div class="position-relative mb-3" style="width: 120px; height: 120px; margin: 0 auto;">
                                 @if (!string.IsNullOrEmpty(Model.UrlImagen))
                                 {
                                     <img src="@Model.UrlImagen" alt="Foto de perfil"
-                                         class="persona-imagen"
-                                         style="width: 140px; height: 140px;">
-                                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center justify-content-center rounded-circle opacity-0 transition-all hover:opacity-100">
-                                        <i class="fas fa-camera text-white fs-3"></i>
+                                         class="rounded-circle"
+                                         style="width: 120px; height: 120px; object-fit: cover;">
+                                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center justify-content-center rounded-circle opacity-0 hover-opacity-100 transition-all">
+                                        <i class="fas fa-camera text-white fs-4"></i>
                                     </div>
                                 }
                                 else
                                 {
-                                    <div class="persona-imagen d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary fs-2 fw-bold"
-                                         style="width: 140px; height: 140px;">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary fs-2 fw-bold"
+                                         style="width: 120px; height: 120px;">
                                         @{
                                             string initials = "";
                                             if (!string.IsNullOrEmpty(Model.Nombre) && !string.IsNullOrEmpty(Model.Apellido))
@@ -37,6 +38,7 @@
                                     </div>
                                 }
                             </div>
+                            <small class="text-muted d-block mt-2">Cambiar foto</small>
                         </label>
                         <input type="file" id="imageUpload" name="file" accept="image/*" class="d-none" />
                         @Html.AntiForgeryToken()
@@ -44,30 +46,31 @@
 
                     <!-- INFORMACIÓN DEL USUARIO -->
                     <div class="text-center mb-4">
-                        <h3 class="persona-nombre mb-1">@Model.Nombre @Model.Apellido</h3>
-                        <p class="text-muted mb-0">@Model.Email</p>
+                        <h5 class="fw-bold mb-1">@Model.Nombre @Model.Apellido</h5>
+                        <p class="text-muted small mb-0">@Model.Email</p>
                     </div>
 
-                    <!-- MENÚ DE NAVEGACIÓN -->
+                    <!-- ***** MENÚ DE NAVEGACIÓN - VISIBLE EN TODOS LOS DISPOSITIVOS ***** -->
                     <div class="miscursos-filtros mb-0">
                         <div class="miscursos-filtros-botones flex-column gap-2">
-                            <button type="button" class="miscursos-filtro-btn text-start active" data-section="profile">
+                            <!-- Versión con texto completo para todos los dispositivos -->
+                            <button type="button" class="miscursos-filtro-btn text-start active w-100" data-section="profile">
                                 <i class="fas fa-user-circle me-2"></i> Mi Perfil
                             </button>
-                            <button type="button" class="miscursos-filtro-btn text-start" data-section="security">
+                            <button type="button" class="miscursos-filtro-btn text-start w-100" data-section="security">
                                 <i class="fas fa-lock me-2"></i> Seguridad
                             </button>
-                            <button type="button" class="miscursos-filtro-btn text-start" data-section="courses">
+                            <button type="button" class="miscursos-filtro-btn text-start w-100" data-section="courses">
                                 <i class="fas fa-book-open me-2"></i> Mis Cursos
                             </button>
-                            <button type="button" class="miscursos-filtro-btn text-start" data-section="products">
+                            <button type="button" class="miscursos-filtro-btn text-start w-100" data-section="products">
                                 <i class="fas fa-file-pdf me-2"></i> Mis Productos
                             </button>
-                            <form asp-controller="Cuenta" asp-action="Logout" method="post" class="w-100">
+                            <form asp-controller="Cuenta" asp-action="Logout" method="post" class="w-100" id="logoutFormDesktop">
+                                @Html.AntiForgeryToken()
                                 <button type="submit" class="miscursos-filtro-btn text-start w-100">
                                     <i class="fas fa-power-off me-2"></i> Cerrar Sesión
                                 </button>
-                                @Html.AntiForgeryToken()
                             </form>
                         </div>
                     </div>
@@ -75,32 +78,32 @@
             </div>
         </div>
 
-        <!-- CONTENIDO PRINCIPAL -->
+        <!-- CONTENIDO PRINCIPAL (se mantiene igual) -->
         <div class="col-lg-8">
-            <div class="curso-precio-card">
+            <div class="curso-precio-card p-3 p-md-4 content-card">
                 <!-- SECCIÓN DE PERFIL -->
-                <div id="profileSection" class="content-section active-section">
-                    <h2 class="curso-titulo-seccion">
-                        <i class="fas fa-user-circle me-2"></i>INFORMACIÓN DEL PERFIL
-                    </h2>
-                    <p class="text-muted mb-4">Actualiza tus datos personales y mantén tu perfil al día</p>
+                <div id="profileSection" class="content-section">
+                    <h4 class="h5 fw-bold mb-3">
+                        <i class="fas fa-user-circle me-2" style="color: var(--color-brand-primary);"></i>INFORMACIÓN DEL PERFIL
+                    </h4>
+                    <p class="text-muted small mb-4">Actualiza tus datos personales y mantén tu perfil al día</p>
 
                     <form asp-action="UpdateProfile" method="post">
                         <div class="row g-3">
                             <div class="col-12">
-                                <label for="email" class="form-label confirmacion-form-label">Correo Electrónico</label>
-                                <input type="text" id="email" class="form-control confirmacion-form-input" value="@Model.Email" readonly />
+                                <label for="email" class="form-label small fw-bold">Correo Electrónico</label>
+                                <input type="text" id="email" class="form-control form-control-sm bg-light" value="@Model.Email" readonly />
                             </div>
                             <div class="col-md-6">
-                                <label for="nombre" class="form-label confirmacion-form-label">Nombre</label>
-                                <input type="text" id="nombre" name="Nombre" class="form-control confirmacion-form-input" value="@Model.Nombre" />
+                                <label for="nombre" class="form-label small fw-bold">Nombre</label>
+                                <input type="text" id="nombre" name="Nombre" class="form-control form-control-sm" value="@Model.Nombre" />
                             </div>
                             <div class="col-md-6">
-                                <label for="apellido" class="form-label confirmacion-form-label">Apellido</label>
-                                <input type="text" id="apellido" name="Apellido" class="form-control confirmacion-form-input" value="@Model.Apellido" />
+                                <label for="apellido" class="form-label small fw-bold">Apellido</label>
+                                <input type="text" id="apellido" name="Apellido" class="form-control form-control-sm" value="@Model.Apellido" />
                             </div>
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary curso-btn-inscribirse">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">
                                     <i class="fas fa-save me-2"></i>Guardar Cambios
                                 </button>
                             </div>
@@ -110,30 +113,27 @@
 
                 <!-- SECCIÓN DE SEGURIDAD -->
                 <div id="securitySection" class="content-section d-none">
-                    <h2 class="curso-titulo-seccion">
-                        <i class="fas fa-lock me-2"></i>SEGURIDAD DE LA CUENTA
-                    </h2>
-                    <p class="text-muted mb-4">Mantén tu cuenta segura actualizando tu contraseña periódicamente</p>
+                    <h4 class="h5 fw-bold mb-3">
+                        <i class="fas fa-lock me-2" style="color: var(--color-brand-primary);"></i>SEGURIDAD DE LA CUENTA
+                    </h4>
+                    <p class="text-muted small mb-4">Mantén tu cuenta segura actualizando tu contraseña periódicamente</p>
 
                     <form asp-action="ChangePassword" method="post">
                         <div class="row g-3">
                             <div class="col-12">
-                                <label for="currentPassword" class="form-label confirmacion-form-label">Contraseña Actual</label>
-                                <input type="password" id="currentPassword" name="CurrentPassword" class="form-control confirmacion-form-input" />
-                                <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                                <label for="currentPassword" class="form-label small fw-bold">Contraseña Actual</label>
+                                <input type="password" id="currentPassword" name="CurrentPassword" class="form-control form-control-sm" />
                             </div>
                             <div class="col-md-6">
-                                <label for="newPassword" class="form-label confirmacion-form-label">Nueva Contraseña</label>
-                                <input type="password" id="newPassword" name="NewPassword" class="form-control confirmacion-form-input" />
-                                <span asp-validation-for="NewPassword" class="text-danger"></span>
+                                <label for="newPassword" class="form-label small fw-bold">Nueva Contraseña</label>
+                                <input type="password" id="newPassword" name="NewPassword" class="form-control form-control-sm" />
                             </div>
                             <div class="col-md-6">
-                                <label for="confirmPassword" class="form-label confirmacion-form-label">Confirmar Contraseña</label>
-                                <input type="password" id="confirmPassword" name="ConfirmPassword" class="form-control confirmacion-form-input" />
-                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                <label for="confirmPassword" class="form-label small fw-bold">Confirmar Contraseña</label>
+                                <input type="password" id="confirmPassword" name="ConfirmPassword" class="form-control form-control-sm" />
                             </div>
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary curso-btn-inscribirse">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">
                                     <i class="fas fa-key me-2"></i>Actualizar Contraseña
                                 </button>
                             </div>
@@ -143,34 +143,35 @@
 
                 <!-- SECCIÓN DE CURSOS -->
                 <div id="coursesSection" class="content-section d-none">
-                    <h2 class="curso-titulo-seccion">
-                        <i class="fas fa-book-open me-2"></i>MIS CURSOS ADQUIRIDOS
-                    </h2>
+                    <h4 class="h5 fw-bold mb-3">
+                        <i class="fas fa-book-open me-2" style="color: var(--color-brand-primary);"></i>MIS CURSOS ADQUIRIDOS
+                    </h4>
 
                     @if (Model.CursosComprados != null && Model.CursosComprados.Any())
                     {
-                        <div class="row g-4">
+                        <div class="row g-3">
                             @foreach (var curso in Model.CursosComprados)
                             {
                                 <div class="col-md-6">
-                                    <div class="magazine-card">
-                                        <div class="magazine-card-img-container">
-                                            <img src="@curso.UrlImagen" class="magazine-card-img" alt="@curso.Titulo" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFF/000?text=Sin+Imagen';" />
+                                    <div class="card h-100">
+                                        <div class="position-relative">
+                                            <img src="@curso.UrlImagen" class="card-img-top" alt="@curso.Titulo"
+                                                 style="height: 140px; object-fit: cover;"
+                                                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFF/000?text=Sin+Imagen';" />
                                             @if (curso.Precio > 0)
                                             {
-                                                <div class="badge-price">@curso.Precio.ToString("C")</div>
+                                                <span class="badge-free position-absolute top-0 end-0 m-2">@curso.Precio.ToString("C")</span>
                                             }
                                             else
                                             {
-                                                <div class="badge-free">Gratis</div>
+                                                <span class="badge-free position-absolute top-0 end-0 m-2">Gratis</span>
                                             }
                                         </div>
-                                        <div class="magazine-card-body">
-                                            <span class="card-category">CURSO</span>
-                                            <h5 class="magazine-card-body h5">@curso.Titulo</h5>
-                                            <div class="magazine-card-body .card-text">@Html.Raw(curso.DescripcionCorta)</div>
-                                            <a asp-controller="Curso" asp-action="VerCurso" asp-route-id="@curso.Id" class="btn btn-primary w-100 mt-3">
-                                                <i class="fas fa-eye me-2"></i>Continuar Aprendiendo
+                                        <div class="card-body p-3">
+                                            <h6 class="card-title fw-bold mb-2">@curso.Titulo</h6>
+                                            <p class="card-text small text-muted mb-3">@Html.Raw(curso.DescripcionCorta)</p>
+                                            <a asp-controller="Curso" asp-action="VerCurso" asp-route-id="@curso.Id" class="btn btn-primary btn-sm w-100">
+                                                <i class="fas fa-play-circle me-2"></i>Continuar
                                             </a>
                                         </div>
                                     </div>
@@ -180,11 +181,11 @@
                     }
                     else
                     {
-                        <div class="alert alert-info text-center py-4">
-                            <i class="fas fa-book-open fa-3x mb-3 opacity-25"></i>
-                            <h5 class="mb-2">Aún no has comprado ningún curso</h5>
-                            <p class="mb-3">¡Descubre nuestro catálogo y comienza tu viaje de aprendizaje!</p>
-                            <a asp-controller="Curso" asp-action="Index" class="btn btn-primary">
+                        <div class="text-center py-5">
+                            <i class="fas fa-book-open text-muted mb-3" style="font-size: 3rem;"></i>
+                            <h6 class="mb-2">Aún no has comprado ningún curso</h6>
+                            <p class="small text-muted mb-3">¡Descubre nuestro catálogo y comienza tu viaje de aprendizaje!</p>
+                            <a asp-controller="Curso" asp-action="Index" class="btn btn-primary btn-sm">
                                 <i class="fas fa-search me-2"></i>Explorar Cursos
                             </a>
                         </div>
@@ -193,30 +194,30 @@
 
                 <!-- SECCIÓN DE PRODUCTOS -->
                 <div id="productsSection" class="content-section d-none">
-                    <h2 class="curso-titulo-seccion">
-                        <i class="fas fa-file-pdf me-2"></i>MIS PRODUCTOS DIGITALES
-                    </h2>
+                    <h4 class="h5 fw-bold mb-3">
+                        <i class="fas fa-file-pdf me-2" style="color: var(--color-brand-primary);"></i>MIS PRODUCTOS DIGITALES
+                    </h4>
 
                     @if (Model.ProductosComprados != null && Model.ProductosComprados.Any())
                     {
-                        <div class="row g-4">
+                        <div class="row g-3">
                             @foreach (var producto in Model.ProductosComprados)
                             {
                                 <div class="col-md-6">
-                                    <div class="product-card">
-                                        <div class="product-card-header">
-                                            <img src="@producto.UrlImagen" class="product-image" alt="@producto.Titulo" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFF/000?text=Sin+Imagen';" />
-                                            <div class="product-badge price">@producto.Precio.ToString("C")</div>
-                                            <div class="product-badge category">DIGITAL</div>
+                                    <div class="card h-100">
+                                        <div class="position-relative">
+                                            <img src="@producto.UrlImagen" class="card-img-top" alt="@producto.Titulo"
+                                                 style="height: 140px; object-fit: cover;"
+                                                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFF/000?text=Sin+Imagen';" />
+                                            <span class="badge-price position-absolute top-0 end-0 m-2">@producto.Precio.ToString("C")</span>
+                                            <span class="badge bg-dark position-absolute top-0 start-0 m-2 small">DIGITAL</span>
                                         </div>
-                                        <div class="product-card-body">
-                                            <h5 class="product-title">@producto.Titulo</h5>
-                                            <div class="product-description">@Html.Raw(producto.DescripcionCorta)</div>
-                                            <div class="product-actions">
-                                                <a asp-controller="Producto" asp-action="Descargar" asp-route-id="@producto.Id" class="btn btn-success w-100">
-                                                    <i class="fas fa-download me-2"></i>Descargar Producto
-                                                </a>
-                                            </div>
+                                        <div class="card-body p-3">
+                                            <h6 class="card-title fw-bold mb-2">@producto.Titulo</h6>
+                                            <p class="card-text small text-muted mb-3">@Html.Raw(producto.DescripcionCorta)</p>
+                                            <a asp-controller="Producto" asp-action="Descargar" asp-route-id="@producto.Id" class="btn btn-success btn-sm w-100">
+                                                <i class="fas fa-download me-2"></i>Descargar
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -225,11 +226,11 @@
                     }
                     else
                     {
-                        <div class="alert alert-info text-center py-4">
-                            <i class="fas fa-file-pdf fa-3x mb-3 opacity-25"></i>
-                            <h5 class="mb-2">Aún no has adquirido productos digitales</h5>
-                            <p class="mb-3">Explora nuestra tienda y descubre recursos exclusivos.</p>
-                            <a asp-controller="Producto" asp-action="Index" class="btn btn-primary">
+                        <div class="text-center py-5">
+                            <i class="fas fa-file-pdf text-muted mb-3" style="font-size: 3rem;"></i>
+                            <h6 class="mb-2">Aún no has adquirido productos digitales</h6>
+                            <p class="small text-muted mb-3">Explora nuestra tienda y descubre recursos exclusivos.</p>
+                            <a asp-controller="Producto" asp-action="Index" class="btn btn-primary btn-sm">
                                 <i class="fas fa-store me-2"></i>Visitar Tienda
                             </a>
                         </div>
@@ -240,17 +241,180 @@
     </div>
 </div>
 
+<!-- Formulario oculto para el Logout (por si acaso) -->
+<form asp-controller="Cuenta" asp-action="Logout" method="post" id="logoutFormMobile" class="d-none">
+    @Html.AntiForgeryToken()
+</form>
+
 @section Scripts {
+    <style>
+        /* Estilos responsivos para mi perfil */
+        @@media (max-width: 991.98px) {
+            .curso-sidebar {
+                position: relative !important;
+                top: 0 !important;
+            }
+        }
+
+        /* IMPORTANTE: Sobrescribir la regla del CSS global que oculta la barra lateral */
+        @@media (max-width: 991.98px) {
+            .curso-sidebar.profile-sidebar {
+                display: block !important;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .curso-precio-card {
+                padding: 1rem !important;
+            }
+
+            .hover-opacity-100:hover {
+                opacity: 1 !important;
+            }
+
+            .opacity-0 {
+                opacity: 0;
+            }
+
+            .transition-all {
+                transition: all 0.3s ease;
+            }
+        }
+
+        @@media (max-width: 400px) {
+            .curso-precio-card {
+                padding: 0.75rem !important;
+            }
+
+            h4.h5 {
+                font-size: 1rem !important;
+            }
+
+            .btn-sm {
+                padding: 0.4rem 0.5rem !important;
+                font-size: 0.75rem !important;
+            }
+        }
+
+        /* Estilos para las tarjetas */
+        .card {
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                border-color: var(--color-brand-primary);
+            }
+
+        /* Badges */
+        .badge-free {
+            background-color: var(--color-brand-success);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-price {
+            background-color: var(--color-brand-primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* Estilos para el menú en móviles */
+        .miscursos-filtro-btn {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border-radius: var(--border-radius-sm);
+            background-color: var(--color-section-bg);
+            border: 1px solid var(--color-border);
+            color: var(--color-text-dark);
+            transition: all 0.2s ease;
+            width: 100%;
+            text-align: left;
+        }
+
+            .miscursos-filtro-btn.active {
+                background-color: var(--color-brand-primary);
+                color: white !important;
+                border-color: var(--color-brand-primary);
+            }
+
+                .miscursos-filtro-btn.active i {
+                    color: white !important;
+                }
+
+        /* Ajustes para móviles pequeños */
+        @@media (max-width: 768px) {
+            .miscursos-filtro-btn {
+                padding: 0.75rem;
+                font-size: 0.95rem;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .miscursos-filtro-btn {
+                padding: 0.6rem 0.75rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @@media (max-width: 400px) {
+            .miscursos-filtro-btn {
+                padding: 0.5rem 0.6rem;
+                font-size: 0.85rem;
+            }
+
+                .miscursos-filtro-btn i {
+                    font-size: 0.9rem;
+                }
+        }
+
+        /* Asegurar que el contenido no tenga márgenes inesperados */
+        .content-card {
+            overflow: hidden;
+        }
+    </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Referencias a elementos
+            console.log('DOM Listo - Inicializando perfil');
+
+            // Elementos
             const sectionButtons = document.querySelectorAll('[data-section]');
             const sections = document.querySelectorAll('.content-section');
+            const logoutFormMobile = document.getElementById('logoutFormMobile');
             const imageUploadInput = document.getElementById('imageUpload');
+            const imageUploadForm = document.getElementById('imageUploadForm');
 
             // Función para cambiar de sección
             function showSection(sectionId) {
-                // Actualizar botones activos
+                console.log('showSection llamado con:', sectionId);
+
+                // Caso especial para logout
+                if (sectionId === 'logout') {
+                    console.log('Ejecutando logout');
+                    if (logoutFormMobile) {
+                        logoutFormMobile.submit();
+                    } else {
+                        document.querySelector('form[asp-action="Logout"]')?.submit();
+                    }
+                    return;
+                }
+
+                if (!sectionId) {
+                    console.warn('showSection recibió sectionId vacío');
+                    return;
+                }
+
+                // Actualizar botones del menú
                 sectionButtons.forEach(btn => {
                     btn.classList.remove('active');
                     if (btn.dataset.section === sectionId) {
@@ -259,92 +423,93 @@
                 });
 
                 // Mostrar sección correspondiente
+                let sectionFound = false;
                 sections.forEach(section => {
-                    section.classList.add('d-none');
-                    if (section.id === sectionId + 'Section') {
+                    const targetSectionId = sectionId + 'Section';
+                    if (section.id === targetSectionId) {
                         section.classList.remove('d-none');
+                        sectionFound = true;
+                        console.log('Mostrando sección:', section.id);
+                    } else {
+                        section.classList.add('d-none');
                     }
                 });
+
+                if (!sectionFound) {
+                    console.warn('No se encontró ninguna sección con el ID:', sectionId + 'Section');
+                }
+
+                // Scroll suave en móvil
+                if (window.innerWidth < 992) {
+                    const contentCard = document.querySelector('.content-card');
+                    if (contentCard) {
+                        contentCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
             }
 
-            // Event listeners para los botones de navegación
+            // Event Listeners para los botones
             sectionButtons.forEach(btn => {
                 btn.addEventListener('click', function (e) {
-                    if (this.tagName === 'BUTTON') {
-                        e.preventDefault();
-                        const sectionId = this.dataset.section;
-                        showSection(sectionId);
+                    e.preventDefault();
+                    const sectionId = this.dataset.section;
+                    showSection(sectionId);
 
-                        // Actualizar URL sin recargar la página
-                        const url = new URL(window.location);
-                        url.searchParams.set('section', sectionId);
-                        window.history.pushState({}, '', url);
-                    }
+                    // Actualizar URL
+                    const url = new URL(window.location);
+                    url.searchParams.set('section', sectionId);
+                    window.history.pushState({}, '', url);
                 });
             });
 
-            // Subida de imagen
-            imageUploadInput?.addEventListener('change', function () {
-                if (this.files && this.files[0]) {
-                    // Mostrar loader
-                    const form = document.getElementById('imageUploadForm');
-                    const originalButton = form.querySelector('button[type="submit"]');
-                    const originalHtml = originalButton?.innerHTML;
-
-                    if (originalButton) {
-                        originalButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Subiendo...';
-                        originalButton.disabled = true;
-                    }
-
-                    // Enviar formulario
-                    form.submit();
-                }
-            });
-
-            // Manejar parámetros de URL al cargar la página
+            // Manejar el estado inicial basado en la URL
             const urlParams = new URLSearchParams(window.location.search);
-            const sectionParam = urlParams.get('section');
+            let sectionParam = urlParams.get('section');
+            const validSections = ['profile', 'security', 'courses', 'products'];
 
-            if (sectionParam && ['profile', 'security', 'courses', 'products'].includes(sectionParam)) {
+            if (sectionParam && validSections.includes(sectionParam)) {
+                console.log('Cargando sección desde URL:', sectionParam);
                 showSection(sectionParam);
             } else {
-                // Por defecto, mostrar perfil
+                console.log('Sin parámetro válido en URL, cargando perfil por defecto.');
                 showSection('profile');
             }
 
-            // Validación de formularios
-            const forms = document.querySelectorAll('form');
-            forms.forEach(form => {
-                form.addEventListener('submit', function (e) {
-                    if (!form.checkValidity()) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-
-            // Previsualización de imagen antes de subir
-            const imagePreview = (input, previewId) => {
-                if (input.files && input.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        const preview = document.getElementById(previewId);
-                        if (preview) {
-                            preview.src = e.target.result;
+            // Subida de Imagen
+            if (imageUploadInput && imageUploadForm) {
+                imageUploadInput.addEventListener('change', function () {
+                    if (this.files && this.files[0]) {
+                        if (this.files[0].size > 2 * 1024 * 1024) {
+                            alert('La imagen no debe superar los 2MB');
+                            this.value = '';
+                            return;
                         }
-                    };
-                    reader.readAsDataURL(input.files[0]);
-                }
-            };
-
-            // Efecto hover en tarjetas
-            const cards = document.querySelectorAll('.magazine-card, .product-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function () {
-                    this.style.transition = 'all 0.3s ease';
+                        if (!this.files[0].type.startsWith('image/')) {
+                            alert('Solo se permiten archivos de imagen');
+                            this.value = '';
+                            return;
+                        }
+                        console.log('Archivo válido, enviando formulario de imagen.');
+                        imageUploadForm.submit();
+                    }
                 });
-            });
+
+                // Previsualización
+                imageUploadInput.addEventListener('change', function () {
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const profileImg = document.querySelector('label[for="imageUpload"] img');
+                            if (profileImg) {
+                                profileImg.src = e.target.result;
+                            }
+                        };
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
+            }
+
+            console.log('Inicialización de perfil completada.');
         });
     </script>
 }

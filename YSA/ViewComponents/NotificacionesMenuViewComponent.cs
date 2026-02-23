@@ -20,17 +20,22 @@ public class NotificacionesMenuViewComponent : ViewComponent
         _userManager = userManager;
     }
 
-    public async Task<IViewComponentResult> InvokeAsync()
+    public async Task<IViewComponentResult> InvokeAsync(string version = "desktop")
     {
         var userId = _userManager.GetUserId(User as ClaimsPrincipal);
 
         if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int usuarioId))
         {
-            return View(new NotificacionMenuWrapperViewModel
+            var emptyWrapper = new NotificacionMenuWrapperViewModel
             {
                 Notificaciones = new List<NotificacionMenuViewModel>(),
                 TotalNoLeidas = 0
-            });
+            };
+
+            if (version == "mobile")
+                return View("_NotificacionesMenuMobile", emptyWrapper);
+            else
+                return View("Default", emptyWrapper);
         }
 
         var notificaciones = await _notificacionService.ObtenerNotificacionesUsuarioAsync(usuarioId);
@@ -59,7 +64,10 @@ public class NotificacionesMenuViewComponent : ViewComponent
             TotalNoLeidas = noLeidas
         };
 
-        return View(wrapper);
+        if (version == "mobile")
+            return View("_NotificacionesMenuMobile", wrapper);
+        else
+            return View("Default", wrapper);
     }
 
     private string CalcularTiempoTranscurrido(DateTime fechaCreacion)

@@ -16,44 +16,8 @@
 }
 
 <div class="container px-0 py-4">
-    <!-- === BREADCRUMB === -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
-                    <li class="breadcrumb-item"><a asp-controller="Curso" asp-action="Index">Cursos</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">@Model.Titulo</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-
-    <!-- === IMAGEN CENTRADA === -->
-    <div class="row justify-content-center mb-4">
-        <div class="col-12 col-md-8 col-lg-6">
-            <!-- Contenedor de la imagen centrado -->
-            <div class="curso-detalle-imagen-container">
-                <div class="curso-detalle-imagen-wrapper">
-                    <img src="@Model.UrlImagen"
-                         class="curso-detalle-imagen"
-                         alt="@Model.Titulo"
-                         onerror="this.src='/diseño/default-course.jpg'">
-                    @if (Model.Precio == 0)
-                    {
-                        <span class="badge-free-detalle">GRATIS</span>
-                    }
-                    else
-                    {
-                        <span class="badge-price-detalle">$@Model.Precio.ToString("N2")</span>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- === TÍTULO Y DESCRIPCIÓN === -->
-    <div class="row justify-content-center mb-4">
+    <div class="row justify-content-center mt-4 mb-4">
         <div class="col-12 col-lg-10">
             <h1 class="h2 fw-bold mb-3 text-center" style="font-family: var(--font-heading); color: var(--color-brand-primary);">
                 @Model.Titulo
@@ -114,47 +78,47 @@
         </div>
 
         <!-- TAB 2: CONTENIDO -->
-        <!-- TAB 2: CONTENIDO -->
-<div class="tab-pane fade" id="contenido-tab-pane" role="tabpanel" tabindex="0">
-    <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="curso-leccion-contenido">
-                <h3 class="h5 fw-bold mb-3" id="lessonTitle">Selecciona una lección para empezar</h3>
-                <div class="curso-leccion-descripcion small" id="lessonContent">
-                    Usa la lista de lecciones a continuación para navegar por el contenido del curso.
-                </div>
-            </div>
+        <div class="tab-pane fade" id="contenido-tab-pane" role="tabpanel" tabindex="0">
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="curso-leccion-contenido">
+                        <h3 class="h5 fw-bold mb-3" id="lessonTitle">Selecciona una lección para empezar</h3>
+                        <div class="curso-leccion-descripcion small" id="lessonContent">
+                            Usa la lista de lecciones a continuación para navegar por el contenido del curso.
+                        </div>
+                    </div>
 
-            <!-- Contenedor de video/imagen con estilo de tarjeta -->
-            <div class="curso-video-tarjeta">
-                <div class="curso-video-wrapper position-relative">
-                    <iframe class="curso-video-frame d-none" id="mainVideoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    <img class="curso-video-imagen" id="mainCourseImage" src="@Model.UrlImagen" alt="Imagen de presentación del curso">
-                            @if (Model.Precio == 0)
-                            {
-                            <span class="badge-free-video">GRATIS</span>
-                            }
-                            else
-                            {
-                            <span class="badge-price-video">$@Model.Precio.ToString("N2")</span>
-                            }
-                </div>
-            </div>
-        </div>
+                    <!-- Contenedor multimedia horizontal (siempre 16:9) -->
+                    <div class="curso-multimedia-horizontal" id="contenidoMultimedia">
+                        <!-- Imagen de inicio horizontal (visible por defecto) -->
+                        <div class="curso-imagen-inicio active" id="imagenInicioContainer">
+                            <div class="curso-multimedia-wrapper position-relative">
+                                <img class="curso-multimedia-imagen" id="imagenInicio" src="/diseño/InicioCurso.png" alt="Inicio del curso">
+                            </div>
+                        </div>
 
-        <div class="col-lg-4">
-            <div class="curso-panel-lecciones">
-                <h4 class="h6 fw-bold mb-3">Módulos del Curso</h4>
-                <div class="curso-modulo-acordeon" id="courseAccordion">
+                        <!-- Video horizontal (se muestra cuando hay video) -->
+                        <div class="curso-video-contenido d-none" id="videoContenidoContainer">
+                            <div class="curso-multimedia-wrapper position-relative">
+                                <iframe class="curso-video-frame" id="mainVideoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="curso-panel-lecciones">
+                        <h4 class="h6 fw-bold mb-3">Módulos del Curso</h4>
+                        <div class="curso-modulo-acordeon" id="courseAccordion">
                             @foreach (var modulo in Model.Modulos ?? Enumerable.Empty<ModuloConLeccionesViewModel>())
                             {
-                            <div class="curso-modulo-item">
-                                <button class="curso-modulo-header small" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
+                                <div class="curso-modulo-item">
+                                    <button class="curso-modulo-header" style="font-size:1rem" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@modulo.Id" aria-expanded="false" aria-controls="collapse_@modulo.Id">
                                         @modulo.Titulo
-                                    <i class="fas fa-chevron-down modulo-icono"></i>
-                                </button>
-                                <div id="collapse_@modulo.Id" class="curso-modulo-contenido collapse">
-                                    <ul class="curso-lecciones-lista">
+                                        <i class="fas fa-chevron-down modulo-icono"></i>
+                                    </button>
+                                    <div id="collapse_@modulo.Id" class="curso-modulo-contenido collapse">
+                                        <ul class="curso-lecciones-lista">
                                             @foreach (var leccion in modulo.Lecciones ?? Enumerable.Empty<LeccionViewModel>())
                                             {
                                                 <li>
@@ -166,11 +130,11 @@
                                                         <div class="curso-leccion-icono">
                                                             @if (leccion.CompletadaPorEstudiante)
                                                             {
-                                                                    <i class="fas fa-check-circle text-success small"></i>
+                                                                <i class="fas fa-check-circle text-success small"></i>
                                                             }
                                                             else
                                                             {
-                                                                    <i class="fas fa-play-circle small"></i>
+                                                                <i class="fas fa-play-circle small"></i>
                                                             }
                                                         </div>
                                                         <div class="curso-leccion-texto small">
@@ -179,15 +143,15 @@
                                                     </a>
                                                 </li>
                                             }
-                                    </ul>
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
                             }
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
         <!-- TAB 3: COMUNIDAD -->
         <div class="tab-pane fade" id="comunidad-tab-pane" role="tabpanel" tabindex="0">
@@ -610,7 +574,11 @@
 
 @section Scripts {
     <style>
-        /* Ajustes adicionales para el breadcrumb */
+        /* =========================================== */
+        /* ESTILOS BASE Y UTILIDADES */
+        /* =========================================== */
+
+        /* Breadcrumb */
         .breadcrumb {
             background-color: transparent;
             padding: 0;
@@ -635,54 +603,6 @@
             color: var(--color-accent);
             font-weight: normal;
             font-size: 0.85rem;
-        }
-
-        /* Estilos para la imagen del detalle (mismos que las tarjetas) */
-        .curso-detalle-imagen-container {
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        .curso-detalle-imagen-wrapper {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 1080 / 1350;
-            background-color: #f8f9fa;
-            border-radius: var(--border-radius-lg);
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--color-border);
-        }
-
-        .curso-detalle-imagen {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* Badges para el detalle (mismos que las tarjetas) */
-        .badge-free-detalle, .badge-price-detalle {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.4rem 0.8rem;
-            border-radius: var(--border-radius-sm);
-            font-family: var(--font-accent);
-            font-weight: 600;
-            font-size: 0.8rem;
-            z-index: 2;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .badge-free-detalle {
-            background-color: var(--color-brand-success);
-            color: white;
-        }
-
-        .badge-price-detalle {
-            background-color: var(--color-brand-primary);
-            color: white;
         }
 
         /* Ajustes de tamaño para textos y botones */
@@ -720,105 +640,127 @@
             font-size: 0.85rem;
         }
 
-        /* Ajuste responsive */
-        @@media (max-width: 768px) {
-            .curso-detalle-imagen-container {
-                max-width: 100%;
-            }
+        /* =========================================== */
+        /* TARJETA PRINCIPAL DEL CURSO (IMAGEN VERTICAL) */
+        /* =========================================== */
 
-            .badge-free-detalle, .badge-price-detalle {
-                padding: 0.3rem 0.6rem;
-                font-size: 0.7rem;
-                top: 0.75rem;
-                right: 0.75rem;
-            }
+        .curso-detalle-imagen-container {
+            width: 100%;
+            margin: 0 auto;
         }
 
-        @@media (max-width: 576px) {
-            .badge-free-detalle, .badge-price-detalle {
-                padding: 0.2rem 0.4rem;
-                font-size: 0.65rem;
-                top: 0.5rem;
-                right: 0.5rem;
-            }
+        .curso-detalle-imagen-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1080 / 1350;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--color-border);
         }
-            /* Estilos para la tarjeta de video en el tab de contenido */
-    .curso-video-tarjeta {
-        width: 100%;
-        max-width: 500px;
-        margin: 1.5rem auto 0;
-    }
 
-    .curso-video-wrapper {
-        position: relative;
-        width: 100%;
-        aspect-ratio: 1080 / 1350;
-        background-color: #f8f9fa;
-        border-radius: var(--border-radius-lg);
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        border: 1px solid var(--color-border);
-    }
+        .curso-detalle-imagen {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
 
-    .curso-video-frame,
-    .curso-video-imagen {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: none;
-        object-fit: cover;
-    }
+        /* Badges para la tarjeta principal */
+        .badge-free-detalle,
+        .badge-price-detalle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--border-radius-sm);
+            font-family: var(--font-accent);
+            font-weight: 600;
+            font-size: 0.8rem;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
 
-    /* Badges para la tarjeta de video */
-    .badge-free-video, .badge-price-video {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        padding: 0.4rem 0.8rem;
-        border-radius: var(--border-radius-sm);
-        font-family: var(--font-accent);
-        font-weight: 600;
-        font-size: 0.8rem;
-        z-index: 2;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
+        .badge-free-detalle {
+            background-color: var(--color-brand-success);
+            color: white;
+        }
 
-    .badge-free-video {
-        background-color: var(--color-brand-success);
-        color: white;
-    }
+        .badge-price-detalle {
+            background-color: var(--color-brand-primary);
+            color: white;
+        }
 
-    .badge-price-video {
-        background-color: var(--color-brand-primary);
-        color: white;
-    }
+        /* =========================================== */
+        /* CONTENEDOR MULTIMEDIA HORIZONTAL (TAB CONTENIDO) */
+        /* =========================================== */
 
-    /* Ajuste responsive para la tarjeta de video */
+        .curso-multimedia-horizontal {
+            width: 100%;
+            margin: 1.5rem auto 0;
+        }
+
+        .curso-multimedia-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--color-border);
+        }
+
+        .curso-multimedia-imagen {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .curso-video-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* =========================================== */
+        /* RESPONSIVE */
+        /* =========================================== */
+
         @@media (max-width: 768px) {
-        .curso-video-tarjeta {
+            .curso-detalle-imagen-container, .curso-multimedia-horizontal
+
+        {
             max-width: 100%;
         }
 
-        .badge-free-video, .badge-price-video {
+        .badge-free-detalle,
+        .badge-price-detalle {
             padding: 0.3rem 0.6rem;
             font-size: 0.7rem;
             top: 0.75rem;
             right: 0.75rem;
         }
-    }
+
+        }
 
         @@media (max-width: 576px) {
-        .badge-free-video, .badge-price-video {
+            .badge-free-detalle, .badge-price-detalle
+
+        {
             padding: 0.2rem 0.4rem;
             font-size: 0.65rem;
             top: 0.5rem;
             right: 0.5rem;
         }
-    }
-    </style>
 
+        }
+    </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const mainVideoFrame = document.getElementById('mainVideoFrame');
@@ -830,67 +772,77 @@
             const initialLessonContent = 'Usa la lista de lecciones a continuación para navegar por el contenido del curso.';
 
             // Función para actualizar la vista de la lección
-            function updateLessonView(lessonLink) {
-                // 1. Manejo de la clase 'active'
-                document.querySelectorAll('.curso-leccion-enlace').forEach(l => l.classList.remove('activa'));
-                lessonLink.classList.add('activa');
+        // Función para actualizar la vista de la lección
+                // Función para actualizar la vista de la lección
+        function updateLessonView(lessonLink) {
+            // 1. Manejo de la clase 'active'
+            document.querySelectorAll('.curso-leccion-enlace').forEach(l => l.classList.remove('activa'));
+            lessonLink.classList.add('activa');
 
-                // 2. Obtener los datos
-                const videoUrl = lessonLink.dataset.videoUrl;
-                const lessonId = lessonLink.dataset.lessonId;
-                const lessonTitle = lessonLink.dataset.lessonTitle;
-                const lessonContent = lessonLink.dataset.lessonContent;
+            // 2. Obtener los datos
+            const videoUrl = lessonLink.dataset.videoUrl;
+            const lessonId = lessonLink.dataset.lessonId;
+            const lessonTitle = lessonLink.dataset.lessonTitle;
+            const lessonContent = lessonLink.dataset.lessonContent;
 
-                // 3. Actualizar el reproductor
-                if (videoUrl) {
-                    const videoIdMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})(?:\S+)?/);
-                    const videoId = videoIdMatch ? videoIdMatch[1] : null;
+            // 3. Actualizar el contenido multimedia (imagen de inicio vs video)
+            const imagenInicioContainer = document.getElementById('imagenInicioContainer');
+            const videoContenidoContainer = document.getElementById('videoContenidoContainer');
+            const mainVideoFrame = document.getElementById('mainVideoFrame');
 
-                    if (videoId) {
-                        mainCourseImage.classList.add('d-none');
-                        mainVideoFrame.classList.remove('d-none');
-                        const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`;
-                        mainVideoFrame.src = embedUrl;
-                    } else {
-                        mainVideoFrame.classList.add('d-none');
-                        mainCourseImage.classList.remove('d-none');
-                        mainVideoFrame.src = '';
-                        console.error("URL de YouTube inválida o no reconocida:", videoUrl);
-                    }
+            if (videoUrl) {
+                const videoIdMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})(?:\S+)?/);
+                const videoId = videoIdMatch ? videoIdMatch[1] : null;
+
+                if (videoId) {
+                    // Ocultar imagen de inicio, mostrar video
+                    imagenInicioContainer.classList.add('d-none');
+                    videoContenidoContainer.classList.remove('d-none');
+
+                    // Cargar video
+                    const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`;
+                    mainVideoFrame.src = embedUrl;
                 } else {
-                    mainVideoFrame.classList.add('d-none');
-                    mainCourseImage.classList.remove('d-none');
+                    // URL inválida, mostrar imagen de inicio
+                    imagenInicioContainer.classList.remove('d-none');
+                    videoContenidoContainer.classList.add('d-none');
                     mainVideoFrame.src = '';
+                    console.error("URL de YouTube inválida o no reconocida:", videoUrl);
                 }
-
-                // 4. Actualizar el contenido de la lección
-                lessonTitleEl.textContent = lessonTitle;
-                lessonContentEl.innerHTML = lessonContent;
-
-                // 5. Llamada a la API para marcar como completada (SOLO SI NO ESTÁ COMPLETA)
-                if (lessonId && !lessonLink.classList.contains('completada')) {
-                    fetch(`${progresoEndpoint}?leccionId=${lessonId}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            console.log('Lección marcada como completada con éxito.');
-                            lessonLink.classList.add('completada');
-                            const icon = lessonLink.querySelector('.curso-leccion-icono i');
-                            if (icon) {
-                                icon.classList.remove('fa-play-circle');
-                                icon.classList.add('fa-check-circle', 'text-success');
-                            }
-                        } else {
-                            console.error('Error al marcar la lección:', data.message);
-                        }
-                    })
-                    .catch(error => console.error('Hubo un error en la solicitud:', error));
-                }
+            } else {
+                // No hay video, mostrar imagen de inicio
+                imagenInicioContainer.classList.remove('d-none');
+                videoContenidoContainer.classList.add('d-none');
+                mainVideoFrame.src = '';
             }
 
+            // 4. Actualizar el contenido de la lección
+            lessonTitleEl.textContent = lessonTitle;
+            lessonContentEl.innerHTML = lessonContent;
+
+            // 5. Llamada a la API para marcar como completada (SOLO SI NO ESTÁ COMPLETA)
+            if (lessonId && !lessonLink.classList.contains('completada')) {
+                fetch(`${progresoEndpoint}?leccionId=${lessonId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Lección marcada como completada con éxito.');
+                        lessonLink.classList.add('completada');
+                        const icon = lessonLink.querySelector('.curso-leccion-icono i');
+                        if (icon) {
+                            icon.classList.remove('fa-play-circle');
+                            icon.classList.add('fa-check-circle', 'text-success');
+                        }
+                    } else {
+                        console.error('Error al marcar la lección:', data.message);
+                    }
+                })
+                .catch(error => console.error('Hubo un error en la solicitud:', error));
+            }
+        }
             // Delegación de eventos para manejar clics en las lecciones
             document.getElementById('courseAccordion').addEventListener('click', function(e) {
                 const lessonLink = e.target.closest('.curso-leccion-enlace');
@@ -900,17 +852,18 @@
             });
 
             // Lógica para el cambio de tabs (mantener el estado inicial en contenido)
-            const contenidoTabButton = document.getElementById('contenido-tab');
-            if (contenidoTabButton) {
-                contenidoTabButton.addEventListener('shown.bs.tab', function () {
-                    mainVideoFrame.classList.add('d-none');
-                    mainCourseImage.classList.remove('d-none');
-                    mainVideoFrame.src = '';
-                    lessonTitleEl.textContent = initialLessonTitle;
-                    lessonContentEl.innerHTML = initialLessonContent;
-                    document.querySelectorAll('.curso-leccion-enlace').forEach(l => l.classList.remove('activa'));
-                });
-            }
+                    const contenidoTabButton = document.getElementById('contenido-tab');
+        if (contenidoTabButton) {
+            contenidoTabButton.addEventListener('shown.bs.tab', function () {
+                // Restablecer a imagen de inicio
+                document.getElementById('imagenInicioContainer').classList.remove('d-none');
+                document.getElementById('videoContenidoContainer').classList.add('d-none');
+                document.getElementById('mainVideoFrame').src = '';
+                lessonTitleEl.textContent = initialLessonTitle;
+                lessonContentEl.innerHTML = initialLessonContent;
+                document.querySelectorAll('.curso-leccion-enlace').forEach(l => l.classList.remove('activa'));
+            });
+        }
 
             // Lógica para preseleccionar la estrella al hacer clic en el formulario
             const starRating = document.querySelector('.curso-calificacion-estrellas');

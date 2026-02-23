@@ -193,206 +193,181 @@
         /* ============ CORRECCIÓN PARA DESKTOP ============ */
         /* En desktop: Logo izquierda, menú centro, usuario derecha */
         @@media (min-width: 992px) {
-            .whatsapp-top-bar
+            .whatsapp-top-bar {
+                font-size: 0.9rem;
+                padding: 0.5rem 0;
+            }
 
-        {
-            font-size: 0.9rem;
-            padding: 0.5rem 0;
-        }
+            .navbar-collapse {
+                background-color: transparent;
+                box-shadow: none;
+                margin-top: 0;
+                padding: 0;
+                max-height: none;
+                overflow-y: visible;
+                display: flex !important;
+                justify-content: space-between;
+                flex-grow: 1;
+            }
+            /* Menú del centro */
+            .navbar-nav-center {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                width: auto;
+                order: 1;
+                border-top: none;
+                margin-top: 0 !important;
+                padding-top: 0;
+                display: flex !important;
+                flex-direction: row !important;
+            }
+            /* Menú de usuario a la derecha */
+            .navbar-nav-right {
+                margin-left: auto !important;
+                width: auto;
+                order: 2;
+                border-top: none;
+                margin-top: 0 !important;
+                padding-top: 0;
+                display: flex !important;
+                flex-direction: row !important;
+            }
+            /* Elementos del menú */
+            .nav-item {
+                margin: 0 0.2rem;
+            }
 
-        .navbar-collapse {
-            background-color: transparent;
-            box-shadow: none;
-            margin-top: 0;
-            padding: 0;
-            max-height: none;
-            overflow-y: visible;
-            display: flex !important;
-            justify-content: space-between;
-            flex-grow: 1;
-        }
-
-        /* Menú del centro */
-        .navbar-nav-center {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: auto;
-            order: 1;
-            border-top: none;
-            margin-top: 0 !important;
-            padding-top: 0;
-            display: flex !important;
-            flex-direction: row !important;
-        }
-
-        /* Menú de usuario a la derecha */
-        .navbar-nav-right {
-            margin-left: auto !important;
-            width: auto;
-            order: 2;
-            border-top: none;
-            margin-top: 0 !important;
-            padding-top: 0;
-            display: flex !important;
-            flex-direction: row !important;
-        }
-
-        /* Elementos del menú */
-        .nav-item {
-            margin: 0 0.2rem;
-        }
-
-        .nav-link {
-            padding: 0.5rem 0.75rem !important;
-        }
-
-        /* Dropdowns en desktop */
-        .dropdown-menu {
-            transform: none !important;
-            max-width: none;
-            margin-top: 0.5rem;
-        }
-
-        /* Ocultar versión móvil del dropdown de usuario */
-        .navbar-nav-right .dropdown.d-lg-none {
-            display: none !important;
-        }
-
-        /* Mostrar elementos desktop */
-        .navbar-nav-right .d-none.d-lg-block {
-            display: flex !important;
-            align-items: center;
-        }
-
-        /* Asegurar que los elementos desktop estén visibles */
-        .d-lg-inline-flex {
-            display: inline-flex !important;
-        }
-
+            .nav-link {
+                padding: 0.5rem 0.75rem !important;
+            }
+            /* Dropdowns en desktop */
+            .dropdown-menu {
+                transform: none !important;
+                max-width: none;
+                margin-top: 0.5rem;
+            }
+            /* Ocultar versión móvil del dropdown de usuario */
+            .navbar-nav-right .dropdown.d-lg-none {
+                display: none !important;
+            }
+            /* Mostrar elementos desktop */
+            .navbar-nav-right .d-none.d-lg-block {
+                display: flex !important;
+                align-items: center;
+            }
+            /* Asegurar que los elementos desktop estén visibles */
+            .d-lg-inline-flex {
+                display: inline-flex !important;
+            }
         }
 
         /* Ajustes específicos para móviles muy pequeños (hasta 400px) */
         @@media (max-width: 400px) {
-            .whatsapp-top-bar
-
-        {
-            font-size: 0.7rem;
-            padding: 0.3rem 0;
-        }
-
-        .whatsapp-top-bar span {
-            display: none;
-        }
-
-        .whatsapp-top-bar a {
-            padding: 0.2rem;
-        }
-
-        .whatsapp-top-bar i {
-            font-size: 1rem;
-        }
-
-        .navbar-brand img {
-            height: 40px !important;
-            max-width: 130px;
-        }
-
-        .nav-link {
-            padding: 0.5rem 0.6rem !important;
-            font-size: 0.85rem;
-        }
-
-            .nav-link i {
-                font-size: 0.85rem;
-                width: 18px;
+            .whatsapp-top-bar {
+                font-size: 0.7rem;
+                padding: 0.3rem 0;
             }
 
-        .dropdown-item {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.85rem;
-        }
+                .whatsapp-top-bar span {
+                    display: none;
+                }
 
-        .main-content {
-            margin-top: 4.5rem;
-        }
+                .whatsapp-top-bar a {
+                    padding: 0.2rem;
+                }
 
-        /* Ocultar elementos desktop en móvil */
-        .navbar-nav-right .d-none.d-lg-block {
-            display: none !important;
-        }
+                .whatsapp-top-bar i {
+                    font-size: 1rem;
+                }
 
-        /* Mostrar dropdown móvil */
-        .navbar-nav-right .dropdown.d-lg-none {
-            display: block !important;
-        }
+            .navbar-brand img {
+                height: 40px !important;
+                max-width: 130px;
+            }
 
+            .nav-link {
+                padding: 0.5rem 0.6rem !important;
+                font-size: 0.85rem;
+            }
+
+                .nav-link i {
+                    font-size: 0.85rem;
+                    width: 18px;
+                }
+
+            .dropdown-item {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+            }
+
+            .main-content {
+                margin-top: 4.5rem;
+            }
+            /* Ocultar elementos desktop en móvil */
+            .navbar-nav-right .d-none.d-lg-block {
+                display: none !important;
+            }
+            /* Mostrar dropdown móvil */
+            .navbar-nav-right .dropdown.d-lg-none {
+                display: block !important;
+            }
         }
 
         /* Ajustes para tablets pequeñas (401px - 575px) */
         @@media (min-width: 401px) and (max-width: 575px) {
-            .whatsapp-top-bar span
+            .whatsapp-top-bar span {
+                display: inline;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 200px;
+            }
 
-        {
-            display: inline;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 200px;
-        }
+            .navbar-brand img {
+                height: 50px !important;
+            }
 
-        .navbar-brand img {
-            height: 50px !important;
-        }
-
-        .nav-link {
-            font-size: 0.88rem;
-        }
-
-        /* Ocultar elementos desktop en tablet */
-        .navbar-nav-right .d-none.d-lg-block {
-            display: none !important;
-        }
-
-        /* Mostrar dropdown móvil */
-        .navbar-nav-right .dropdown.d-lg-none {
-            display: block !important;
-        }
-
+            .nav-link {
+                font-size: 0.88rem;
+            }
+            /* Ocultar elementos desktop en tablet */
+            .navbar-nav-right .d-none.d-lg-block {
+                display: none !important;
+            }
+            /* Mostrar dropdown móvil */
+            .navbar-nav-right .dropdown.d-lg-none {
+                display: block !important;
+            }
         }
 
         /* Ajustes para tablets (576px - 991px) */
         @@media (min-width: 576px) and (max-width: 991.98px) {
-            .whatsapp-top-bar
+            .whatsapp-top-bar {
+                font-size: 0.85rem;
+            }
 
-        {
-            font-size: 0.85rem;
-        }
+            .navbar-collapse {
+                padding: 1rem;
+            }
 
-        .navbar-collapse {
-            padding: 1rem;
-        }
+            .navbar-nav-center,
+            .navbar-nav-right {
+                display: flex;
+                flex-direction: column;
+            }
 
-        .navbar-nav-center,
-        .navbar-nav-right {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-item {
-            margin: 0.15rem 0;
-        }
-
-        /* Ocultar elementos desktop en tablet */
-        .navbar-nav-right .d-none.d-lg-block {
-            display: none !important;
-        }
-
-        /* Mostrar dropdown móvil */
-        .navbar-nav-right .dropdown.d-lg-none {
-            display: block !important;
-        }
-
+            .nav-item {
+                margin: 0.15rem 0;
+            }
+            /* Ocultar elementos desktop en tablet */
+            .navbar-nav-right .d-none.d-lg-block {
+                display: none !important;
+            }
+            /* Mostrar dropdown móvil */
+            .navbar-nav-right .dropdown.d-lg-none {
+                display: block !important;
+            }
         }
 
         /* Mejoras de accesibilidad */
@@ -405,6 +380,68 @@
         /* Smooth scrolling */
         html {
             scroll-behavior: smooth;
+        }
+        /* Estilos para modales en móvil */
+        .modal-fullscreen-lg-down {
+            margin: 0;
+        }
+
+        @@media (max-width: 991.98px) {
+            .modal-fullscreen-lg-down
+
+        {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+        }
+
+        .modal-fullscreen-lg-down .modal-content {
+            min-height: 100vh;
+            border-radius: 0;
+            border: none;
+        }
+
+        .modal-header {
+            padding: 1rem;
+            background-color: var(--color-brand-primary) !important;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+            .modal-header .modal-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+            }
+
+        .modal-body {
+            padding: 0 !important;
+            background-color: #f8f9fa;
+        }
+
+        .modal-footer {
+            padding: 0.75rem 1rem;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            background-color: white;
+        }
+
+        }
+
+        /* Ajustes para el contenido dentro de los modales */
+        .modal-body .mobile-aprendizaje-container,
+        .modal-body .mobile-notificaciones-container {
+            padding: 1rem !important;
+        }
+
+        .modal-body .cursos-lista-mobile,
+        .modal-body .notificaciones-lista-mobile {
+            max-height: none !important;
+            overflow-y: visible !important;
+        }
+
+        .modal-body .btn-outline-primary,
+        .modal-body .btn-primary {
+            border-radius: 8px;
+            padding: 0.6rem;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -476,30 +513,23 @@
                                id="mobileUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user-circle"></i>Mi cuenta
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="mobileUserDropdown">
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="mobileUserDropdown" style="width: 90vw; max-width: 350px; padding: 0.5rem;">
+
                                 @if (User.IsInRole("Estudiante"))
                                 {
                                     <li>
-                                        <a class="dropdown-item" href="#" data-bs-toggle="collapse" data-bs-target="#miAprendizajeMobile">
-                                            <i class="fas fa-graduation-cap"></i>Mi aprendizaje
-                                        </a>
-                                        <div class="collapse" id="miAprendizajeMobile">
-                                            <div class="p-2">
-                                                @await Component.InvokeAsync("CursosUsuario")
-                                            </div>
-                                        </div>
+                                        <button type="button" class="dropdown-item" onclick="abrirModalAprendizaje()" style="background: none; border: none; width: 100%; text-align: left;">
+                                            <i class="fas fa-graduation-cap me-2"></i>Mi aprendizaje
+                                        </button>
                                     </li>
                                 }
+
                                 <li>
-                                    <a class="dropdown-item" href="#" data-bs-toggle="collapse" data-bs-target="#notificacionesMobile">
-                                        <i class="fas fa-bell"></i>Notificaciones
-                                    </a>
-                                    <div class="collapse" id="notificacionesMobile">
-                                        <div class="p-2">
-                                            @await Component.InvokeAsync("NotificacionesMenu")
-                                        </div>
-                                    </div>
+                                    <button type="button" class="dropdown-item" onclick="abrirModalNotificaciones()" style="background: none; border: none; width: 100%; text-align: left;">
+                                        <i class="fas fa-bell me-2"></i>Notificaciones
+                                    </button>
                                 </li>
+
                                 @if (User.IsInRole("Administrador") || User.IsInRole("Asistente"))
                                 {
                                     <li>
@@ -508,6 +538,7 @@
                                         </a>
                                     </li>
                                 }
+
                                 @if (User.IsInRole("Artista"))
                                 {
                                     <li>
@@ -516,11 +547,13 @@
                                         </a>
                                     </li>
                                 }
+
                                 <li>
                                     <a class="dropdown-item" asp-controller="Cuenta" asp-action="MiPerfil">
                                         <i class="fas fa-user"></i>Mi perfil
                                     </a>
                                 </li>
+
                                 @if (User.IsInRole("Artista"))
                                 {
                                     <li>
@@ -534,15 +567,15 @@
                                         </a>
                                     </li>
                                 }
+
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <a class="dropdown-item text-danger" href="#" onclick="document.getElementById('logoutForm').submit();">
+                                    <a class="dropdown-item text-danger" href="#" onclick="document.getElementById('logoutForm').submit(); return false;">
                                         <i class="fas fa-sign-out-alt"></i>Cerrar sesión
                                     </a>
                                 </li>
                             </ul>
                         </li>
-
                         <!-- Versión desktop (solo en desktop) -->
                         <div class="d-none d-lg-flex align-items-center">
                             @if (User.IsInRole("Estudiante"))
@@ -552,35 +585,35 @@
                                    id="miAprendizajeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-graduation-cap"></i>Mi aprendizaje
                                 </a>
-                                @await Component.InvokeAsync("CursosUsuario")
+                                    @await Component.InvokeAsync("CursosUsuario")
                             </li>
-                        }
+                            }
 
                         <li class="nav-item dropdown">
                             <a class="nav-link text-dark header-nav-link position-relative" href="#"
                                id="notificacionesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-bell"></i>
-                                @await Component.InvokeAsync("NotificacionesMenu")
+                                    @await Component.InvokeAsync("NotificacionesMenu")
                             </a>
                         </li>
 
-                        @if (User.IsInRole("Administrador") || User.IsInRole("Asistente"))
-                        {
+                            @if (User.IsInRole("Administrador") || User.IsInRole("Asistente"))
+                            {
                             <li class="nav-item">
                                 <a class="nav-link text-dark header-nav-link" asp-controller="Admin" asp-action="Panel">
                                     <i class="fas fa-chart-bar"></i>Panel
                                 </a>
                             </li>
-                        }
+                            }
 
-                        @if (User.IsInRole("Artista"))
-                        {
+                            @if (User.IsInRole("Artista"))
+                            {
                             <li class="nav-item">
                                 <a class="nav-link text-dark header-nav-link" asp-controller="Artista" asp-action="GestionarPortafolio">
                                     <i class="fas fa-file-alt"></i>Portafolio
                                 </a>
                             </li>
-                        }
+                            }
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark header-nav-link" href="#"
@@ -593,8 +626,8 @@
                                         <i class="fas fa-user"></i>Mi perfil
                                     </a>
                                 </li>
-                                @if (User.IsInRole("Artista"))
-                                {
+                                    @if (User.IsInRole("Artista"))
+                                    {
                                     <li>
                                         <a class="dropdown-item" asp-controller="Artista" asp-action="PreguntasPendientes">
                                             <i class="fas fa-question-circle"></i>Preguntas
@@ -605,10 +638,10 @@
                                             <i class="fas fa-tasks"></i>Actividades
                                         </a>
                                     </li>
-                                }
+                                    }
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <a class="dropdown-item text-danger" href="#" onclick="document.getElementById('logoutForm').submit();">
+                                    <a class="dropdown-item text-danger" href="#" onclick="document.getElementById('logoutForm').submit(); return false;">
                                         <i class="fas fa-sign-out-alt"></i>Cerrar sesión
                                     </a>
                                 </li>
@@ -616,9 +649,9 @@
                         </li>
                 </div>
                 <form asp-controller="Cuenta" asp-action="Logout" method="post" id="logoutForm" style="display: none;"></form>
-            }
-            else
-            {
+                    }
+                    else
+                    {
                 <!-- Usuario NO logeado -->
                 <!-- Versión móvil (solo en móvil/tablet) -->
                 <li class="nav-item d-lg-none">
@@ -645,12 +678,70 @@
                         </a>
                     </li>
                 </div>
-            }
+                    }
             </ul>
         </div>
         </div>
     </header>
+    <!-- MODALES PARA MÓVIL -->
+    <!-- Modal de Aprendizaje -->
+    <div class="modal fade" id="modalAprendizaje" tabindex="-1" aria-labelledby="modalAprendizajeLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen-lg-down">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: var(--color-brand-primary); color: white;">
+                    <h5 class="modal-title" id="modalAprendizajeLabel">
+                        <i class="fas fa-graduation-cap me-2"></i>Mi Aprendizaje
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <!-- Usamos el mismo componente mobile pero sin el header duplicado -->
+                    <div id="contenidoModalAprendizaje">
+                        @await Component.InvokeAsync("CursosUsuario", new { version = "mobile" })
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <a href="/Curso/MisCursos" class="btn btn-primary w-100">
+                        <i class="fas fa-graduation-cap me-2"></i>Ir a mi aprendizaje
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Modal de Notificaciones -->
+    <div class="modal fade" id="modalNotificaciones" tabindex="-1" aria-labelledby="modalNotificacionesLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen-lg-down">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: var(--color-brand-primary); color: white;">
+                    <h5 class="modal-title" id="modalNotificacionesLabel">
+                        <i class="fas fa-bell me-2"></i>Notificaciones
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <!-- Usamos el mismo componente mobile -->
+                    <div id="contenidoModalNotificaciones">
+                        @{
+                            // Temporalmente establecemos ViewBag para el componente
+                            ViewBag.MostrarHeader = false;
+                        }
+                        @await Component.InvokeAsync("NotificacionesMenu", new { version = "mobile" })
+                        @{
+                            // Restauramos ViewBag
+                            ViewBag.MostrarHeader = true;
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <a href="/Notificaciones" class="btn btn-outline-primary">Ver todas</a>
+                    <button class="btn btn-primary" onclick="marcarTodasNotificacionesDesdeModal()">
+                        <i class="fas fa-check-double me-2"></i>Marcar todas
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="main-content">
         @RenderBody()
     </div>
@@ -687,6 +778,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
+        // Función para alternar collapse manualmente
+        function toggleCollapse(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                const bsCollapse = bootstrap.Collapse.getOrCreateInstance(element);
+                bsCollapse.toggle();
+            }
+        }
+
         // Lógica optimizada para header dinámico
         document.addEventListener('DOMContentLoaded', () => {
             const mainHeader = document.querySelector('.main-header');
@@ -717,7 +817,7 @@
 
             navLinks.forEach(link => {
                 link.addEventListener('click', () => {
-                    if (window.innerWidth < 992) {
+                    if (window.innerWidth < 992 && !link.closest('.dropdown-toggle')) {
                         const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
                         if (bsCollapse) {
                             bsCollapse.hide();
@@ -738,6 +838,16 @@
                     el.style.alignItems = 'center';
                 });
             }
+
+            // Prevenir que los dropdowns en móvil cierren el menú principal
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', (e) => {
+                    if (window.innerWidth < 992) {
+                        e.stopPropagation();
+                    }
+                });
+            });
         });
 
         // Manejar el logout con confirmación
@@ -746,6 +856,157 @@
                 e.preventDefault();
             }
         });
+                // Funciones para móvil
+        function toggleAprendizajeMobile() {
+            const content = document.getElementById('miAprendizajeMobileContent');
+            if (content) {
+                if (content.style.display === 'none') {
+                    content.style.display = 'block';
+                } else {
+                    content.style.display = 'none';
+                }
+            }
+        }
+
+        function toggleNotificacionesMobile() {
+            const content = document.getElementById('notificacionesMobileContent');
+            if (content) {
+                if (content.style.display === 'none') {
+                    content.style.display = 'block';
+                } else {
+                    content.style.display = 'none';
+                }
+            }
+        }
+
+        // Cerrar dropdowns al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const isClickInside = event.target.closest('.dropdown-menu, .dropdown-toggle');
+            if (!isClickInside) {
+                document.querySelectorAll('#miAprendizajeMobileContent, #notificacionesMobileContent').forEach(el => {
+                    el.style.display = 'none';
+                });
+            }
+        });
+                // Funciones para las secciones expandibles en móvil
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = document.getElementById('icon-' + sectionId.replace('MobileSection', '').toLowerCase());
+
+            if (section) {
+                if (section.style.display === 'none' || section.style.display === '') {
+                    section.style.display = 'block';
+                    if (icon) icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                } else {
+                    section.style.display = 'none';
+                    if (icon) icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                }
+            }
+        }
+
+        // Funciones para notificaciones móvil
+        function marcarComoLeidaMobile(id, element) {
+            // Marcar visualmente
+            element.style.backgroundColor = '#f8f9fa';
+            element.style.borderLeftColor = 'transparent';
+            const badge = element.querySelector('.badge');
+            if (badge) badge.remove();
+
+            // Llamada AJAX
+            fetch('/Notificaciones/MarcarComoLeida', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': getAntiForgeryToken()
+                },
+                body: JSON.stringify({ id: id })
+            });
+        }
+
+        function marcarTodasComoLeidasMobile() {
+            if (confirm('¿Marcar todas las notificaciones como leídas?')) {
+                fetch('/Notificaciones/MarcarTodasComoLeidas', {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': getAntiForgeryToken()
+                    }
+                }).then(() => location.reload());
+            }
+        }
+
+        function getAntiForgeryToken() {
+            const token = document.querySelector('input[name="__RequestVerificationToken"]');
+            return token ? token.value : '';
+        }
+
+        // Cerrar secciones al hacer clic fuera del dropdown
+        document.addEventListener('click', function(event) {
+            const dropdown = event.target.closest('.dropdown-menu, .dropdown-toggle');
+            if (!dropdown) {
+                document.querySelectorAll('#aprendizajeMobileSection, #notificacionesMobileSection').forEach(el => {
+                    el.style.display = 'none';
+                });
+                document.querySelectorAll('[id^="icon-"]').forEach(icon => {
+                    if (icon.classList.contains('fa-chevron-up')) {
+                        icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                    }
+                });
+            }
+        });
+                // Funciones para abrir modales
+        function abrirModalAprendizaje() {
+            const modalElement = document.getElementById('modalAprendizaje');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+
+            // Cerrar el dropdown después de abrir el modal
+            const dropdownElement = document.getElementById('mobileUserDropdown');
+            const dropdown = bootstrap.Dropdown.getInstance(dropdownElement);
+            if (dropdown) {
+                dropdown.hide();
+            }
+        }
+
+        function abrirModalNotificaciones() {
+            const modalElement = document.getElementById('modalNotificaciones');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+
+            // Cerrar el dropdown después de abrir el modal
+            const dropdownElement = document.getElementById('mobileUserDropdown');
+            const dropdown = bootstrap.Dropdown.getInstance(dropdownElement);
+            if (dropdown) {
+                dropdown.hide();
+            }
+        }
+
+        // Función para marcar todas las notificaciones desde el modal
+        function marcarTodasNotificacionesDesdeModal() {
+            if (confirm('¿Marcar todas las notificaciones como leídas?')) {
+                fetch('/Notificaciones/MarcarTodasComoLeidas', {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': getAntiForgeryToken()
+                    }
+                }).then(() => {
+                    // Recargar solo el contenido del modal sin recargar toda la página
+                    fetch('/Notificaciones/MarcarTodasComoLeidas', {
+                        method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': getAntiForgeryToken()
+                        }
+                    }).then(() => {
+                        // Cerrar el modal y recargar la página para actualizar todo
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalNotificaciones'));
+                        if (modal) modal.hide();
+                        location.reload();
+                    });
+                });
+            }
+        }
+
+        // Modificar la función existente marcarComoLeidaMobile para que también funcione dentro del modal
+        // (No necesitas cambiarla, ya funciona con ambos)
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -1,110 +1,214 @@
 ﻿@model YSA.Web.Models.ViewModels.NotificacionMenuWrapperViewModel
 
-<div class="dropdown-menu dropdown-menu-end shadow p-3" aria-labelledby="notificacionesDropdown" style="min-width: 350px; max-height: 500px; overflow-y: auto;">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+@{
+    var totalNoLeidas = Model.TotalNoLeidas;
+}
+
+<div class="dropdown-menu dropdown-menu-end shadow p-3" aria-labelledby="notificacionesDropdown"
+     style="min-width: 350px; max-width: 100%; max-height: 500px; overflow-y: auto; width: 90vw; right: 0; left: auto !important;">
+
+    <!-- Header con título y contador -->
+    <div class="d-flex justify-content-between align-items-center mb-3 px-2">
         <h6 class="mb-0 fw-bold">Notificaciones</h6>
-        @if (Model.TotalNoLeidas > 0)
+        @if (totalNoLeidas > 0)
         {
-            <span class="badge bg-danger">@Model.TotalNoLeidas nuevas</span>
+            <span class="badge bg-danger rounded-pill">@totalNoLeidas nuevas</span>
         }
     </div>
 
     @if (Model.Notificaciones != null && Model.Notificaciones.Any())
     {
-        @foreach (var notificacion in Model.Notificaciones)
-        {
-            <a class="dropdown-item d-flex align-items-start p-3 mb-2 rounded @(notificacion.EsLeida ? "" : "bg-light")"
-               href="@notificacion.UrlDestino"
-               onclick="marcarComoLeida(@notificacion.Id, this)">
-                <div class="me-3">
-                    <i class="fas fa-@notificacion.Icono text-@notificacion.Color fs-5"></i>
-                </div>
-                <div class="flex-grow-1">
-                    <h6 class="mb-1 @(notificacion.EsLeida ? "text-muted" : "fw-bold")">@notificacion.Titulo</h6>
-                    <p class="mb-1 small text-muted">@notificacion.Mensaje</p>
-                    <small class="text-muted">@notificacion.TiempoTranscurrido</small>
-                </div>
-                @if (!notificacion.EsLeida)
-                {
-                    <span class="ms-2 badge bg-primary rounded-pill">Nuevo</span>
-                }
-            </a>
-        }
-
-        <div class="dropdown-divider"></div>
-        <div class="d-flex justify-content-between">
-            <a class="dropdown-item small text-center" href="/Notificaciones">
-                Ver todas las notificaciones
-            </a>
-            @if (Model.TotalNoLeidas > 0)
+        <div class="notificaciones-lista">
+            @foreach (var notificacion in Model.Notificaciones)
             {
-                <a class="dropdown-item small text-center text-primary" href="#" onclick="marcarTodasComoLeidas()">
-                    Marcar todas como leídas
+                <a class="dropdown-item d-flex align-items-start p-3 mb-2 rounded @(notificacion.EsLeida ? "" : "bg-light notificacion-no-leida")"
+                   href="@notificacion.UrlDestino"
+                   onclick="marcarComoLeida(@notificacion.Id, this)">
+
+                    <!-- Icono -->
+                    <div class="me-3 mt-1">
+                        <i class="fas fa-@notificacion.Icono text-@notificacion.Color fs-5"></i>
+                    </div>
+
+                    <!-- Contenido -->
+                    <div class="flex-grow-1 min-width-0">
+                        <h6 class="mb-1 @(notificacion.EsLeida ? "text-muted" : "fw-bold")" style="font-size: 0.9rem;">@notificacion.Titulo</h6>
+                        <p class="mb-1 small text-muted text-truncate-2">@notificacion.Mensaje</p>
+                        <small class="text-muted d-block">@notificacion.TiempoTranscurrido</small>
+                    </div>
+
+                    <!-- Badge "Nuevo" -->
+                    @if (!notificacion.EsLeida)
+                    {
+                        <span class="ms-2 badge bg-primary rounded-pill align-self-center">Nuevo</span>
+                    }
+                </a>
+            }
+        </div>
+
+        <!-- Footer con acciones -->
+        <div class="dropdown-divider my-2"></div>
+        <div class="d-flex flex-column flex-sm-row gap-2 p-2">
+            <a class="dropdown-item small text-center btn btn-outline-primary btn-sm" href="/Notificaciones">
+                <i class="fas fa-list me-1"></i>Ver todas
+            </a>
+            @if (totalNoLeidas > 0)
+            {
+                <a class="dropdown-item small text-center btn btn-outline-secondary btn-sm" href="#" onclick="marcarTodasComoLeidas(); return false;">
+                    <i class="fas fa-check-double me-1"></i>Marcar todas
                 </a>
             }
         </div>
     }
     else
     {
-        <div class="text-center py-4">
-            <i class="fas fa-bell-slash text-muted fs-1 mb-3"></i>
-            <p class="text-muted mb-0">No tienes notificaciones</p>
+        <!-- Estado vacío -->
+        <div class="text-center py-5">
+            <i class="fas fa-bell-slash text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-3 mb-0">No tienes notificaciones</p>
         </div>
     }
 </div>
 
+<style>
+    /* Estilos responsivos para el dropdown */
+    @@media (max-width: 576px) {
+        .dropdown-menu[aria-labelledby="notificacionesDropdown"] {
+            position: fixed !important;
+            top: 60px !important;
+            left: 5% !important;
+            right: 5% !important;
+            width: 90% !important;
+            min-width: auto !important;
+            max-width: none !important;
+            transform: none !important;
+            margin: 0 auto !important;
+        }
+    }
+
+    @@media (max-width: 400px) {
+        .dropdown-menu[aria-labelledby="notificacionesDropdown"] {
+            top: 50px !important;
+            left: 2% !important;
+            right: 2% !important;
+            width: 96% !important;
+            padding: 0.75rem !important;
+        }
+
+        .notificaciones-lista .dropdown-item {
+            padding: 0.75rem !important;
+        }
+
+        .notificaciones-lista h6 {
+            font-size: 0.85rem !important;
+        }
+
+        .notificaciones-lista p {
+            font-size: 0.75rem !important;
+        }
+
+        .notificaciones-lista small {
+            font-size: 0.7rem !important;
+        }
+    }
+
+    /* Límite de texto para mensajes largos */
+    .text-truncate-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Animación para nuevas notificaciones */
+    .notificacion-no-leida {
+        border-left: 3px solid var(--color-brand-primary);
+        transition: all 0.2s ease;
+    }
+
+        .notificacion-no-leida:hover {
+            background-color: rgba(239, 136, 48, 0.05) !important;
+        }
+</style>
+
 <script>
     function marcarComoLeida(notificacionId, element) {
-        // Marcar visualmente como leída inmediatamente
-        element.classList.remove('bg-light');
-        element.querySelector('.fw-bold')?.classList.add('text-muted');
-        element.querySelector('.badge')?.remove();
+        // Marcar visualmente como leída
+        element.classList.remove('bg-light', 'notificacion-no-leida');
+        const title = element.querySelector('h6');
+        if (title) {
+            title.classList.remove('fw-bold');
+            title.classList.add('text-muted');
+        }
+        const badge = element.querySelector('.badge.bg-primary');
+        if (badge) badge.remove();
 
-        // Llamar al servicio para actualizar en base de datos
+        // Llamada AJAX
         fetch('/Notificaciones/MarcarComoLeida', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'RequestVerificationToken': getAntiForgeryToken()
             },
             body: JSON.stringify({ id: notificacionId })
-        }).then(response => {
-            if (response.ok) {
-                // Actualizar el contador de notificaciones no leídas
-                actualizarContadorNotificaciones();
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                actualizarContadorNotificaciones(data.totalNoLeidas);
             }
-        });
+        })
+        .catch(error => console.error('Error:', error));
     }
 
     function marcarTodasComoLeidas() {
         fetch('/Notificaciones/MarcarTodasComoLeidas', {
-            method: 'POST'
-        }).then(response => {
-            if (response.ok) {
-                // Recargar el dropdown de notificaciones
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': getAntiForgeryToken()
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Recargar dropdown o actualizar visualmente
                 location.reload();
             }
-        });
+        })
+        .catch(error => console.error('Error:', error));
     }
 
-    function actualizarContadorNotificaciones() {
-        // Esta función se puede llamar para actualizar el badge del contador
-        fetch('/Notificaciones/ObtenerCantidadNoLeidas')
-            .then(response => response.json())
-            .then(data => {
-                const badge = document.querySelector('#notificacionesDropdown .badge');
-                if (data > 0) {
-                    if (badge) {
-                        badge.textContent = data;
-                    } else {
-                        // Crear badge si no existe
-                        const newBadge = document.createElement('span');
-                        newBadge.className = 'badge bg-danger ms-1';
-                        newBadge.textContent = data;
-                        document.querySelector('#notificacionesDropdown').appendChild(newBadge);
-                    }
-                } else if (badge) {
-                    badge.remove();
+    function actualizarContadorNotificaciones(total) {
+        const badge = document.querySelector('#notificacionesDropdown + .dropdown-menu .badge.bg-danger');
+        const dropdownIcon = document.querySelector('#notificacionesDropdown .badge');
+
+        if (total > 0) {
+            if (badge) {
+                badge.textContent = total + ' nuevas';
+            }
+            if (dropdownIcon) {
+                dropdownIcon.textContent = total;
+            } else {
+                // Crear badge en el icono si no existe
+                const iconContainer = document.querySelector('#notificacionesDropdown');
+                if (iconContainer) {
+                    const newBadge = document.createElement('span');
+                    newBadge.className = 'badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle';
+                    newBadge.style.fontSize = '0.6rem';
+                    newBadge.textContent = total;
+                    iconContainer.style.position = 'relative';
+                    iconContainer.appendChild(newBadge);
                 }
-            });
+            }
+        } else {
+            if (badge) badge.remove();
+            if (dropdownIcon) dropdownIcon.remove();
+        }
+    }
+
+    function getAntiForgeryToken() {
+        const token = document.querySelector('input[name="__RequestVerificationToken"]');
+        return token ? token.value : '';
     }
 </script>

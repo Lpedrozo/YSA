@@ -238,6 +238,7 @@
             font-family: var(--font-accent);
             font-weight: normal;
             transition: color 0.3s ease;
+            font-size: 0.9rem;
         }
 
             .breadcrumb-item a:hover {
@@ -248,19 +249,20 @@
         .breadcrumb-item.active {
             color: var(--color-accent);
             font-weight: normal;
+            font-size: 0.9rem;
         }
 
         /* Estilos para la imagen del detalle (mismos que las tarjetas) */
         .curso-detalle-imagen-container {
             width: 100%;
-            max-width: 500px; /* Opcional: límite de ancho */
+            max-width: 500px;
             margin: 0 auto 2rem auto;
         }
 
         .curso-detalle-imagen-wrapper {
             position: relative;
             width: 100%;
-            aspect-ratio: 1080 / 1350; /* Misma proporción que las tarjetas */
+            aspect-ratio: 1080 / 1350;
             background-color: #f8f9fa;
             border-radius: var(--border-radius-lg);
             overflow: hidden;
@@ -271,7 +273,7 @@
         .curso-detalle-imagen {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Misma propiedad que las tarjetas */
+            object-fit: cover;
             display: block;
         }
 
@@ -299,35 +301,144 @@
             color: white;
         }
 
-        /* Ajuste responsive para el título */
-        @@media (max-width: 768px) {
+        /* Estilos para el acordeón - módulos vs lecciones */
+        .curso-modulo-header {
+            font-size: 1.1rem !important;
+            font-weight: 600 !important;
+            padding: 1rem 1.25rem !important;
+        }
+
+        .curso-leccion-titulo {
+            font-size: 0.95rem !important;
+            line-height: 1.4;
+        }
+
+        .leccion-icono i {
+            font-size: 0.9rem !important;
+        }
+
+        /* =========================================== */
+        /* MEJORAS PARA MÓVILES */
+        /* =========================================== */
+
+        @@media (max-width: 767.98px) {
+            /* Padding en los costados para que no choque con los bordes */
+            .container {
+                padding-left: 1.25rem !important;
+                padding-right: 1.25rem !important;
+            }
+                /* Ajustes para el contenedor principal */
+                .container.px-0 {
+                    padding-left: 1.25rem !important;
+                    padding-right: 1.25rem !important;
+                }
+            /* Reducir tamaño de títulos en móviles */
             .display-5 {
-                font-size: 2rem;
+                font-size: 1.8rem !important;
             }
 
             .lead {
-                font-size: 1rem !important;
+                font-size: 0.95rem !important;
+                line-height: 1.5 !important;
             }
-
+            /* Ajustar imagen */
             .curso-detalle-imagen-container {
                 max-width: 100%;
+                margin-bottom: 1.5rem !important;
             }
-
+            /* Badges más pequeños en móviles */
             .badge-free-detalle, .badge-price-detalle {
                 padding: 0.35rem 0.7rem;
-                font-size: 0.8rem;
+                font-size: 0.75rem;
                 top: 0.75rem;
                 right: 0.75rem;
             }
+            /* Ajustes para el acordeón en móviles */
+            .curso-modulo-header {
+                font-size: 1rem !important;
+                padding: 0.875rem 1rem !important;
+            }
+
+            .curso-leccion-titulo {
+                font-size: 0.85rem !important;
+            }
+
+            .leccion-icono i {
+                font-size: 0.8rem !important;
+            }
+            /* Mejorar espaciado del contenido */
+            .curso-contenido-seccion {
+                margin-bottom: 2rem;
+            }
+
+            .curso-titulo-seccion {
+                font-size: 1.3rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+
+            .curso-descripcion {
+                font-size: 0.9rem !important;
+                line-height: 1.5;
+            }
+            /* Breadcrumb más compacto */
+            .breadcrumb {
+                margin-bottom: 1rem !important;
+            }
+
+            .breadcrumb-item a,
+            .breadcrumb-item.active {
+                font-size: 0.8rem !important;
+            }
         }
 
-        @@media (max-width: 576px) {
+        /* Ajustes para pantallas muy pequeñas (400px) */
+        @@media (max-width: 400px) {
+            .container {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+
+                .container.px-0 {
+                    padding-left: 1rem !important;
+                    padding-right: 1rem !important;
+                }
+
+            .display-5 {
+                font-size: 1.6rem !important;
+            }
+
+            .lead {
+                font-size: 0.9rem !important;
+            }
+
             .badge-free-detalle, .badge-price-detalle {
                 padding: 0.25rem 0.5rem;
                 font-size: 0.7rem;
                 top: 0.5rem;
                 right: 0.5rem;
             }
+
+            .curso-modulo-header {
+                font-size: 0.95rem !important;
+                padding: 0.75rem 0.875rem !important;
+            }
+
+            .curso-leccion-titulo {
+                font-size: 0.8rem !important;
+            }
+        }
+
+        /* Ajustes para tablets */
+        @@media (min-width: 768px) and (max-width: 991.98px) {
+            .container {
+                padding-left: 2rem !important;
+                padding-right: 2rem !important;
+            }
+
+                .container.px-0 {
+                    padding-left: 2rem !important;
+                    padding-right: 2rem !important;
+                }
         }
     </style>
 
