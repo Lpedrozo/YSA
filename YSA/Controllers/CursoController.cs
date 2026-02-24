@@ -328,20 +328,18 @@ public class CursoController : Controller
 
         // Inicializar la lista de actividades del ViewModel
         var actividadesViewModel = new List<RecursoActividadViewModel>();
+        var recursosViewModel = new List<RecursoActividadViewModel>();
 
         if (recursos != null && recursos.Any())
         {
-            // 4. Filtrar y mapear solo las Actividades que requieren entrega o son de tipo "Actividad"
-            foreach (var recurso in recursos.Where(r => r.TipoRecurso == "Actividad" || r.RequiereEntrega))
+            foreach (var recurso in recursos)
             {
                 EntregaActividadViewModel? entregaEstudianteVm = null;
 
-                // Ya tenemos 'idUsuario' de la parte superior del método, lo reutilizamos.
+                // Si requiere entrega, obtener la entrega del estudiante
                 if (recurso.RequiereEntrega && idUsuario > 0)
                 {
-                    // Obtener la entrega del estudiante para esta actividad específica
                     var entrega = await _recursoActividadService.ObtenerEntregaPorActividadYEstudianteAsync(recurso.Id, idUsuario);
-
                     if (entrega != null)
                     {
                         entregaEstudianteVm = new EntregaActividadViewModel
@@ -358,7 +356,7 @@ public class CursoController : Controller
                     }
                 }
 
-                actividadesViewModel.Add(new RecursoActividadViewModel
+                var recursoVm = new RecursoActividadViewModel
                 {
                     Id = recurso.Id,
                     Titulo = recurso.Titulo,
@@ -366,8 +364,21 @@ public class CursoController : Controller
                     TipoRecurso = recurso.TipoRecurso,
                     Url = recurso.Url,
                     RequiereEntrega = recurso.RequiereEntrega,
-                    EntregaEstudiante = entregaEstudianteVm
-                });
+                    EntregaEstudiante = entregaEstudianteVm,
+                    // Podemos agregar info de a qué entidad pertenece
+                    TipoEntidad = recurso.TipoEntidad,
+                    EntidadId = recurso.EntidadId
+                };
+
+                // Clasificar: si requiere entrega o es tipo "Actividad" va a actividades
+                if (recurso.RequiereEntrega || recurso.TipoRecurso == "Actividad")
+                {
+                    actividadesViewModel.Add(recursoVm);
+                }
+                else
+                {
+                    recursosViewModel.Add(recursoVm);
+                }
             }
         }
 
@@ -416,6 +427,7 @@ public class CursoController : Controller
             UrlImagen = curso.UrlImagen,
             TieneAcceso = tieneAcceso,
             EstaEnValidacion = estaEnValidacion,
+            Recursos = recursosViewModel,
             Modulos = curso.Modulos?.Select(m => new ModuloConLeccionesViewModel
             {
                 Id = m.Id,

@@ -15,7 +15,7 @@
     var todasLasResenas = Model.Resenas?.OrderByDescending(r => r.Fecha).ToList() ?? new List<ResenaViewModel>();
 }
 
-<div class="container px-0 py-4">
+<div class="container px-3 px-sm-4 px-md-5 py-4">
     <!-- === TÍTULO Y DESCRIPCIÓN === -->
     <div class="row justify-content-center mt-4 mb-4">
         <div class="col-12 col-lg-10">
@@ -34,29 +34,32 @@
         <ul class="curso-tabs-lista" id="courseTabs" role="tablist">
             <li class="curso-tab-item" role="presentation">
                 <button class="curso-tab-boton active" id="presentacion-tab" data-bs-toggle="tab" data-bs-target="#presentacion-tab-pane" type="button" role="tab">
-                    <i class="fas fa-info-circle me-2"></i>Presentación
+                    Presentación
                 </button>
             </li>
             <li class="curso-tab-item" role="presentation">
                 <button class="curso-tab-boton" id="contenido-tab" data-bs-toggle="tab" data-bs-target="#contenido-tab-pane" type="button" role="tab">
-                    <i class="fas fa-play-circle me-2"></i>Contenido
+                    Contenido
                 </button>
             </li>
             <li class="curso-tab-item" role="presentation">
-                <button class="curso-tab-boton" id="comunidad-tab" data-bs-toggle="tab" data-bs-target="#comunidad-tab-pane" type="button" role="tab">
-                    <i class="fas fa-users me-2"></i>Comunidad
-                </button>
-            </li>
-            <li class="curso-tab-item" role="presentation">
-                <button class="curso-tab-boton" id="preguntas-tab" data-bs-toggle="tab" data-bs-target="#preguntas-tab-pane" type="button" role="tab">
-                    <i class="fas fa-question-circle me-2"></i>Preguntas
-                    <span class="curso-tab-badge badge bg-secondary">@(Model.Preguntas?.Count ?? 0)</span>
+                <button class="curso-tab-boton" id="recursos-tab" data-bs-toggle="tab" data-bs-target="#recursos-tab-pane" type="button" role="tab">
+                    Recursos
                 </button>
             </li>
             <li class="curso-tab-item" role="presentation">
                 <button class="curso-tab-boton" id="proyectos-tab" data-bs-toggle="tab" data-bs-target="#proyectos-tab-pane" type="button" role="tab">
-                    <i class="fas fa-tasks me-2"></i>Actividades
-                    <span class="curso-tab-badge badge bg-warning">@Model.Actividades.Count()</span>
+                    Actividades
+                </button>
+            </li>
+            <li class="curso-tab-item" role="presentation">
+                <button class="curso-tab-boton" id="preguntas-tab" data-bs-toggle="tab" data-bs-target="#preguntas-tab-pane" type="button" role="tab">
+                    Preguntas
+                </button>
+            </li>
+            <li class="curso-tab-item" role="presentation">
+                <button class="curso-tab-boton" id="comunidad-tab" data-bs-toggle="tab" data-bs-target="#comunidad-tab-pane" type="button" role="tab">
+                    Comunidad
                 </button>
             </li>
         </ul>
@@ -76,7 +79,115 @@
                 </div>
             </div>
         </div>
+        <!-- TAB 6: RECURSOS (NUEVO) -->
+        <div class="tab-pane fade" id="recursos-tab-pane" role="tabpanel" tabindex="0">
+            <div class="curso-recursos-container p-4">
+                <h3 class="h5 fw-bold mb-4">
+                    <i class="fas fa-paperclip me-2" style="color: var(--color-brand-primary);"></i>Materiales y Recursos del Curso
+                </h3>
 
+                @if (Model.Recursos != null && Model.Recursos.Any())
+                {
+                    <!-- Organizar por tipo de entidad o tipo de recurso -->
+                    <div class="row g-3">
+                        @foreach (var recurso in Model.Recursos.OrderBy(r => r.TipoEntidad).ThenBy(r => r.Titulo))
+                        {
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-start gap-2">
+                                            <!-- Icono según tipo de recurso -->
+                                            <div class="flex-shrink-0">
+                                                @if (recurso.TipoRecurso == "PDF")
+                                                {
+                                                    <i class="fas fa-file-pdf text-danger" style="font-size: 1.8rem;"></i>
+                                                }
+                                                else if (recurso.TipoRecurso == "Enlace" || recurso.TipoRecurso == "Link")
+                                                {
+                                                    <i class="fas fa-link text-primary" style="font-size: 1.8rem;"></i>
+                                                }
+                                                else if (recurso.TipoRecurso == "Video")
+                                                {
+                                                    <i class="fas fa-video text-success" style="font-size: 1.8rem;"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fas fa-file-alt text-secondary" style="font-size: 1.8rem;"></i>
+                                                }
+                                            </div>
+
+                                            <div class="flex-grow-1">
+                                                <h6 class="fw-bold mb-1">@recurso.Titulo</h6>
+
+                                                <!-- Badge de ubicación -->
+                                                    @if (recurso.TipoEntidad == "Curso")
+                                                    {
+                                                        <i class="fas fa-book me-1"></i>
+                                                        <span class="badge bg-light text-dark mb-2" style="font-size: 0.65rem;">General</span>
+                                                        
+                                                    }
+                                                    else if (recurso.TipoEntidad == "Modulo")
+                                                    {
+                                                        <i class="fas fa-folder me-1"></i>
+                                                <span class="badge bg-light text-dark mb-2" style="font-size: 0.65rem;">Módulo</span>
+                                                                            }
+                                                    else if (recurso.TipoEntidad == "Leccion")
+                                                    {
+                                                        <i class="fas fa-play-circle me-1"></i>
+                                                <span class="badge bg-light text-dark mb-2" style="font-size: 0.65rem;">lección</span>
+                                                                            }
+                                                @if (!string.IsNullOrEmpty(recurso.Descripcion))
+                                                {
+                                                    <p class="small text-muted mb-2">@Html.Raw(recurso.Descripcion)</p>
+                                                }
+
+                                                <!-- Botón de acceso según tipo -->
+                                                <div class="mt-2">
+                                                    @if (recurso.TipoRecurso == "PDF")
+                                                    {
+                                                        <a href="@recurso.Url" target="_blank" class="btn btn-outline-danger btn-sm w-100">
+                                                            <i class="fas fa-download me-2"></i>Descargar PDF
+                                                        </a>
+                                                    }
+                                                    else if (recurso.TipoRecurso == "Enlace" || recurso.TipoRecurso == "Link")
+                                                    {
+                                                        <a href="@recurso.Url" target="_blank" class="btn btn-outline-primary btn-sm w-100">
+                                                            <i class="fas fa-external-link-alt me-2"></i>Abrir enlace
+                                                        </a>
+                                                    }
+                                                    else if (recurso.TipoRecurso == "Video")
+                                                    {
+                                                        <a href="@recurso.Url" target="_blank" class="btn btn-outline-success btn-sm w-100">
+                                                            <i class="fas fa-play me-2"></i>Ver video
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="@recurso.Url" target="_blank" class="btn btn-outline-secondary btn-sm w-100">
+                                                            <i class="fas fa-download me-2"></i>Descargar
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                   
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="fas fa-paperclip text-muted" style="font-size: 3rem;"></i>
+                        <h6 class="mt-3 mb-2">No hay recursos adicionales</h6>
+                        <p class="small text-muted">Este curso no tiene materiales complementarios por el momento.</p>
+                    </div>
+                }
+            </div>
+        </div>
         <!-- TAB 2: CONTENIDO -->
         <div class="tab-pane fade" id="contenido-tab-pane" role="tabpanel" tabindex="0">
             <div class="row g-4">
@@ -700,7 +811,51 @@
             width: 100%;
             margin: 1.5rem auto 0;
         }
+        /* Estilos para el tab de Recursos */
+        .curso-recursos-container {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius-lg);
+        }
 
+            .curso-recursos-container .card {
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                border: 1px solid var(--color-border) !important;
+            }
+
+                .curso-recursos-container .card:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 8px 20px rgba(0,0,0,0.08) !important;
+                    border-color: var(--color-brand-primary) !important;
+                }
+
+            .curso-recursos-container .badge.bg-light {
+                background-color: #e9ecef !important;
+                color: #495057 !important;
+                font-weight: 500;
+            }
+
+        /* Responsive para recursos */
+        @@media (max-width: 768px) {
+            .curso-recursos-container .card-body
+
+        {
+            padding: 1rem !important;
+        }
+
+        .curso-recursos-container i[style*="font-size: 1.8rem"] {
+            font-size: 1.5rem !important;
+        }
+
+        }
+
+        @@media (max-width: 576px) {
+            .curso-recursos-container .col-md-6
+
+        {
+            margin-bottom: 0.75rem;
+        }
+
+        }
         .curso-multimedia-wrapper {
             position: relative;
             width: 100%;
@@ -757,6 +912,242 @@
             font-size: 0.65rem;
             top: 0.5rem;
             right: 0.5rem;
+        }
+
+        }
+        /* =========================================== */
+        /* MEJORAS DE ESPACIADO PARA MÓVILES */
+        /* =========================================== */
+
+        /* Ajustes generales para móviles */
+        @@media (max-width: 575.98px) {
+            /* Contenedor principal */
+            .container
+
+        {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+
+        /* Tabs en móvil */
+        .curso-tabs-lista {
+            padding: 0 0.5rem;
+        }
+
+        .curso-tab-boton {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* Contenido de los tabs */
+        .curso-contenido-seccion,
+        .curso-recursos-container,
+        .curso-preguntas-container,
+        .curso-actividades-container,
+        .curso-resenas-container {
+            padding: 1rem !important;
+        }
+
+        /* Tarjetas y elementos */
+        .curso-anuncio-card,
+        .curso-pregunta-card,
+        .curso-actividad-card,
+        .curso-resena-card {
+            padding: 0.75rem !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        /* Panel de lecciones */
+        .curso-panel-lecciones {
+            padding: 1rem !important;
+        }
+
+        .curso-modulo-header {
+            padding: 0.75rem !important;
+            font-size: 0.9rem !important;
+        }
+
+        .curso-leccion-enlace {
+            padding: 0.6rem 0.75rem !important;
+        }
+
+        /* Formularios */
+        .curso-formulario-resena {
+            padding: 1rem !important;
+        }
+
+        /* Modales */
+        .modal-body {
+            padding: 1rem !important;
+        }
+
+        /* Títulos */
+        h1.h2 {
+            font-size: 1.5rem !important;
+            padding: 0 0.5rem;
+        }
+
+        h2.h4 {
+            font-size: 1.2rem !important;
+        }
+
+        h3.h5 {
+            font-size: 1.1rem !important;
+        }
+
+        /* Descripción del curso */
+        .text-muted.text-center {
+            padding: 0 0.5rem;
+            font-size: 0.9rem !important;
+        }
+
+        }
+
+        /* Ajustes para móviles muy pequeños (hasta 400px) */
+        @@media (max-width: 400px) {
+            .container
+
+        {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+
+        .curso-tab-boton {
+            padding: 0.6rem 0.4rem;
+            font-size: 0.75rem;
+        }
+
+            .curso-tab-boton i {
+                font-size: 0.8rem;
+                margin-right: 0.3rem !important;
+            }
+
+        .curso-tab-badge {
+            display: none; /* Ocultar badges en móviles muy pequeños */
+        }
+
+        .curso-contenido-seccion,
+        .curso-recursos-container,
+        .curso-preguntas-container,
+        .curso-actividades-container,
+        .curso-resenas-container {
+            padding: 0.75rem !important;
+        }
+
+            /* Recursos: hacer que ocupen todo el ancho */
+            .curso-recursos-container .col-md-6 {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+
+            .curso-recursos-container .card {
+                margin-bottom: 0.5rem;
+            }
+
+            .curso-recursos-container .card-body {
+                padding: 0.75rem !important;
+            }
+
+        /* Botones más compactos */
+        .btn-sm {
+            padding: 0.25rem 0.5rem !important;
+            font-size: 0.75rem !important;
+        }
+
+        /* Iconos más pequeños */
+        .curso-recursos-container i[style*="font-size: 1.8rem"] {
+            font-size: 1.3rem !important;
+        }
+
+        }
+
+        /* Ajustes para tablets */
+        @@media (min-width: 576px) and (max-width: 991.98px) {
+            .container
+
+        {
+            padding-left: 1.5rem !important;
+            padding-right: 1.5rem !important;
+        }
+
+        .curso-contenido-seccion,
+        .curso-recursos-container,
+        .curso-preguntas-container,
+        .curso-actividades-container,
+        .curso-resenas-container {
+            padding: 1.5rem !important;
+        }
+
+        }
+
+        /* Mejoras generales de espaciado */
+        .curso-contenido-seccion,
+        .curso-recursos-container,
+        .curso-preguntas-container,
+        .curso-actividades-container,
+        .curso-resenas-container {
+            transition: padding 0.2s ease;
+        }
+
+        /* Espaciado entre elementos en móvil */
+        @@media (max-width: 575.98px) {
+            .row.g-4
+
+        {
+            --bs-gutter-y: 1rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem !important;
+        }
+
+        .mt-4 {
+            margin-top: 1rem !important;
+        }
+
+        .my-4 {
+            margin-top: 1rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        .gap-2 {
+            gap: 0.5rem !important;
+        }
+
+        .gap-3 {
+            gap: 0.75rem !important;
+        }
+
+        }
+        @@media (max-width: 575.98px) {
+            .curso-recursos-container .d-flex.align-items-start
+
+        {
+            flex-direction: column;
+        }
+
+        .curso-recursos-container .flex-shrink-0 {
+            margin-bottom: 0.5rem;
+            align-self: flex-start;
+        }
+
+        .curso-recursos-container .btn-sm.w-100 {
+            padding: 0.4rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        }
+
+        @@media (max-width: 400px) {
+            .curso-recursos-container .d-flex.align-items-start
+
+        {
+            flex-direction: column;
+        }
+
+        .curso-recursos-container .flex-shrink-0 {
+            margin-bottom: 0.5rem;
         }
 
         }

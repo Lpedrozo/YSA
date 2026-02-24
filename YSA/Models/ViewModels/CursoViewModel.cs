@@ -104,7 +104,7 @@ namespace YSA.Web.Models.ViewModels
         public List<AnuncioViewModel> Anuncios { get; set; }
         public List<Curso> CursosDestacados { get; set; }
         public List<RecursoActividadViewModel> Actividades { get; set; } = new List<RecursoActividadViewModel>();
-
+        public List<RecursoActividadViewModel> Recursos { get; set; } = new List<RecursoActividadViewModel>();
     }
 
     public class ResenaViewModel
