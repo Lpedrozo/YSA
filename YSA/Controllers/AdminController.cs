@@ -1800,11 +1800,24 @@ namespace YSA.Web.Controllers
         {
             // --- 1. Validación de Archivo/URL específica ---
             // Si no es una Actividad y no tiene URL ni Archivo, agregamos un error.
-            if (model.TipoRecurso != "Actividad")
+            if (string.IsNullOrEmpty(model.Url) && (model.Archivo == null || model.Archivo.Length == 0))
             {
-                if (string.IsNullOrEmpty(model.Url) && (model.Archivo == null || model.Archivo.Length == 0))
+                ModelState.AddModelError("Url", "Debe proporcionar una URL o subir un archivo para este recurso.");
+            }
+
+            // Validación adicional para actividades: si tiene URL, debe ser válida
+            if (model.TipoRecurso == "Actividad" && !string.IsNullOrEmpty(model.Url))
+            {
+                // Si es una URL de YouTube, extraer el ID para validación básica
+                if (model.Url.Contains("youtube.com") || model.Url.Contains("youtu.be"))
                 {
-                    ModelState.AddModelError("Url", "Debe proporcionar una URL o subir un archivo para este tipo de recurso.");
+                    var videoIdMatch = System.Text.RegularExpressions.Regex.Match(model.Url,
+                        @"(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})");
+
+                    if (!videoIdMatch.Success)
+                    {
+                        ModelState.AddModelError("Url", "La URL de YouTube no es válida. Debe ser un enlace de video estándar.");
+                    }
                 }
             }
 
@@ -1942,11 +1955,23 @@ namespace YSA.Web.Controllers
             // --- 2. Validación de Archivo/URL específica ---
             // Si no es una Actividad y no tiene URL ni Archivo, agregamos un error.
             // Esto es crítico si el usuario borra la URL existente y no sube un archivo nuevo.
-            if (model.TipoRecurso != "Actividad")
+            if (string.IsNullOrEmpty(model.Url) && (model.Archivo == null || model.Archivo.Length == 0))
             {
-                if (string.IsNullOrEmpty(model.Url) && (model.Archivo == null || model.Archivo.Length == 0))
+                ModelState.AddModelError("Url", "Debe proporcionar una URL o subir/reemplazar un archivo para este recurso.");
+            }
+
+            // Validación adicional para actividades
+            if (model.TipoRecurso == "Actividad" && !string.IsNullOrEmpty(model.Url))
+            {
+                if (model.Url.Contains("youtube.com") || model.Url.Contains("youtu.be"))
                 {
-                    ModelState.AddModelError("Url", "Debe proporcionar una URL o subir/reemplazar un archivo para este tipo de recurso.");
+                    var videoIdMatch = System.Text.RegularExpressions.Regex.Match(model.Url,
+                        @"(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})");
+
+                    if (!videoIdMatch.Success)
+                    {
+                        ModelState.AddModelError("Url", "La URL de YouTube no es válida. Debe ser un enlace de video estándar.");
+                    }
                 }
             }
 

@@ -94,7 +94,24 @@
         line-height: var(--line-height-tight);
         margin-bottom: 0.5rem;
     }
+    @@media (max-width: 768px) {
+        #seccion-url-archivo .form-group
 
+    {
+        margin-bottom: 1rem;
+    }
+
+    #seccion-url-archivo .btn-group {
+        width: 100%;
+    }
+
+    /* Hacer que los botones de tipo de recurso sean más fáciles de tocar */
+    .form-select {
+        min-height: 44px;
+        font-size: 16px; /* Evitar zoom en iOS */
+    }
+
+    }
     .cover-subtitle {
         font-family: var(--font-body);
         font-size: 1.3rem;
@@ -843,34 +860,34 @@
                 }
             }
 
-            function setupTipoRecursoLogic(selectElement, urlArchivoSection, requiereEntregaCheckbox) {
-                const updateVisibility = () => {
-                    const selectedValue = selectElement.value;
-                    const isActivity = selectedValue === "Actividad";
+                    function setupTipoRecursoLogic(selectElement, urlArchivoSection, requiereEntregaCheckbox) {
+            const updateVisibility = () => {
+                const selectedValue = selectElement.value;
 
-                    urlArchivoSection.style.display = isActivity ? 'none' : 'block';
+                // PARA ACTIVIDAD: Mostrar sección de URL/archivo y checkbox de entrega
+                // PARA OTROS TIPOS: Mostrar sección de URL/archivo y ocultar checkbox de entrega
+                const isActivity = selectedValue === "Actividad";
 
-                    const entregaContainer = requiereEntregaCheckbox.closest('.form-check');
-                    // Muestra/Oculta la opción de Requiere Entrega (generalmente solo para Actividad)
-                    if (isActivity) {
-                        entregaContainer.style.display = 'block';
-                    } else {
-                        entregaContainer.style.display = 'none';
-                        // Desmarca si se cambia de tipo, ya que no aplica
-                        requiereEntregaCheckbox.checked = false;
-                    }
-                };
+                // La sección de URL/archivo se muestra SIEMPRE (para todos los tipos)
+                urlArchivoSection.style.display = 'block';
 
-                selectElement.addEventListener('change', updateVisibility);
-                updateVisibility(); // Llamar al cargar para establecer el estado inicial
-            }
+                // El checkbox de entrega SOLO se muestra para Actividades
+                const entregaContainer = requiereEntregaCheckbox.closest('.form-check');
+                if (isActivity) {
+                    entregaContainer.style.display = 'block';
+                } else {
+                    entregaContainer.style.display = 'none';
+                    requiereEntregaCheckbox.checked = false; // Desmarcar si no es actividad
+                }
+            };
 
-            // --- 1. Lógica de UI (Creación y Edición) ---
-            setupTipoRecursoLogic(tipoRecursoSelectCrear, seccionUrlArchivoCrear, requiereEntregaCheckboxCrear);
-            setupTipoRecursoLogic(tipoRecursoSelectEditar, seccionUrlArchivoEditar, requiereEntregaCheckboxEditar);
+            selectElement.addEventListener('change', updateVisibility);
+            updateVisibility(); // Llamar al cargar para establecer el estado inicial
+        } // <--- CIERRE DE LA FUNCIÓN PRINCIPAL
 
-
-            // --- 2. Funciones CRUD Asíncronas ---
+        // Ahora sí, llamamos a la función para configurar los selects
+        setupTipoRecursoLogic(tipoRecursoSelectCrear, seccionUrlArchivoCrear, requiereEntregaCheckboxCrear);
+        setupTipoRecursoLogic(tipoRecursoSelectEditar, seccionUrlArchivoEditar, requiereEntregaCheckboxEditar);
 
             // A. CREAR RECURSO
             crearForm.addEventListener('submit', async function (e) {

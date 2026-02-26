@@ -17,9 +17,10 @@
 
     .login-fullscreen {
         position: relative;
-        width: 100vw;
-        height: calc(100vh - 5.5rem);
-        overflow: hidden;
+        width: 100%;
+        min-height: calc(100vh - 5.5rem);
+        overflow-x: hidden;
+        overflow-y: auto;
         background-color: #fff;
         display: flex;
         align-items: center;
@@ -29,33 +30,35 @@
     /* Contenedor principal que abarca todo el espacio */
     .login-main-container {
         width: 100%;
-        height: 100%;
+        min-height: 100%;
         display: flex;
         align-items: stretch;
         background-color: #fff;
     }
 
-    /* Columna izquierda - Imagen de fondo */
+    /* Columna izquierda - Imagen de fondo - 70% */
     .login-image-column {
-        flex: 0 0 65%;
+        flex: 0 0 70%;
         position: relative;
         overflow: hidden;
         background-color: white;
         display: flex;
         align-items: center;
         justify-content: center;
+        /* Altura automática basada en el contenido */
+        height: auto;
     }
 
-    /* Imagen de fondo */
+    /* Imagen de fondo - CONTAINER para mantener proporciones 16:9 */
     .login-background-image {
-        position: absolute;
-        top: 0;
-        left: 0;
+        position: relative;
         width: 100%;
-        height: 100%;
-        object-fit: cover;
+        height: auto;
+        aspect-ratio: 16 / 9; /* Mantener proporción 1920x1080 */
+        object-fit: contain; /* Asegura que la imagen completa sea visible */
         object-position: center;
         transition: transform 0.5s ease;
+        display: block;
     }
 
     .login-image-column:hover .login-background-image {
@@ -70,44 +73,19 @@
         width: 100%;
         height: 100%;
         z-index: 1;
+        pointer-events: none; /* Para no interferir con clicks */
     }
 
-    /* Texto superpuesto en la imagen */
-    .login-image-text {
-        position: absolute;
-        bottom: 3rem;
-        left: 3rem;
-        z-index: 2;
-        color: white;
-        max-width: 400px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-        .login-image-text h1 {
-            font-family: var(--font-heading);
-            font-size: 2.5rem;
-            font-weight: normal;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-
-        .login-image-text p {
-            font-family: var(--font-body);
-            font-size: 1.1rem;
-            opacity: 0.95;
-            margin: 0;
-            line-height: 1.5;
-        }
-
-    /* Columna derecha - Formulario */
+    /* Columna derecha - Formulario - 30% */
     .login-form-column {
-        flex: 0 0 35%;
+        flex: 0 0 30%;
         background-color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 1.5rem;
+        padding: 2rem 1.5rem;
         animation: fadeIn 0.6s ease-out;
+        height: auto;
     }
 
     /* Contenedor del formulario */
@@ -305,8 +283,10 @@
 
         .login-separator::before,
         .login-separator::after {
+            content: '';
             flex: 1;
             height: 1px;
+            background: linear-gradient(to right, transparent, var(--color-border), transparent);
         }
 
         .login-separator::before {
@@ -442,93 +422,36 @@
     }
 
     /* =========================================== */
-    /* RESPONSIVE */
+    /* RESPONSIVE - CON OCULTAR IMAGEN A 1100px (IGUAL QUE REGISTRO) */
     /* =========================================== */
 
-    /* Tablets y pantallas medianas */
-    @@media (max-width: 992px) {
-        .login-image-text {
-            bottom: 2rem;
-            left: 2rem;
-            max-width: 300px;
-        }
-
-            .login-image-text h1 {
-                font-size: 2rem;
-            }
-
-            .login-image-text p {
-                font-size: 1rem;
-            }
-
-        .login-form-wrapper {
-            max-width: 320px;
-        }
-    }
-
-    /* Móviles y tablets pequeñas */
-    @@media (max-width: 768px) {
-        .login-fullscreen {
-            height: auto;
-            min-height: calc(100vh - 5.5rem);
-        }
-
-        .login-main-container {
-            flex-direction: column;
-        }
-
+    /* A 1100px o menos - OCULTAR IMAGEN y centrar formulario */
+    @@media (max-width: 1100px) {
         .login-image-column {
-            flex: 0 0 250px;
-            width: 100%;
-            min-height: 250px;
+            display: none; /* Ocultar imagen */
         }
-
-        .login-image-text {
-            bottom: 1.5rem;
-            left: 1.5rem;
-            max-width: 250px;
-        }
-
-            .login-image-text h1 {
-                font-size: 1.8rem;
-            }
-
-            .login-image-text p {
-                font-size: 0.9rem;
-            }
 
         .login-form-column {
-            flex: 1;
+            flex: 0 0 100%; /* Ocupar todo el ancho */
             width: 100%;
-            padding: 1.5rem;
+            padding: 2rem 1rem;
         }
 
         .login-form-wrapper {
-            max-width: 350px;
+            max-width: 400px;
+            margin: 0 auto;
         }
     }
 
-    /* Móviles pequeños */
+    /* Tablets y pantallas medianas (entre 768px y 1100px) */
+    @@media (min-width: 768px) and (max-width: 1100px) {
+        .login-form-wrapper {
+            max-width: 380px;
+        }
+    }
+
+    /* Ajustes para móviles pequeños */
     @@media (max-width: 576px) {
-        .login-image-column {
-            flex: 0 0 200px;
-            min-height: 200px;
-        }
-
-        .login-image-text {
-            bottom: 1rem;
-            left: 1rem;
-            max-width: 200px;
-        }
-
-            .login-image-text h1 {
-                font-size: 1.5rem;
-            }
-
-            .login-image-text p {
-                font-size: 0.8rem;
-            }
-
         .login-form-column {
             padding: 1rem;
         }
@@ -553,15 +476,10 @@
     }
 
     /* Landscape en móviles */
-    @@media (max-height: 600px) and (orientation: landscape) {
+    @@media (max-height: 600px) and (orientation: landscape) and (max-width: 1100px) {
         .login-fullscreen {
+            min-height: auto;
             height: auto;
-            min-height: 100vh;
-        }
-
-        .login-image-column {
-            flex: 0 0 150px;
-            min-height: 150px;
         }
 
         .login-form-column {
@@ -569,57 +487,87 @@
         }
 
         .login-form-group {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
 
         .login-form-logo {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
 
         .login-form-title {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
+        }
+
+        .login-logo-image {
+            width: 50px;
+        }
+
+        .login-submit-btn {
+            padding: 0.4rem 0.8rem;
+        }
+
+        .login-footer {
+            padding-top: 0.4rem;
         }
     }
 
-    /* Ajuste para quitar cualquier división visual */
-    .login-main-container {
-        box-shadow: none;
-        border: none;
-    }
-
-    .login-image-column,
-    .login-form-column {
-        box-shadow: none;
-        border: none;
-    }
-
-        /* Efecto sutil de separación solo con la imagen */
-        .login-image-column::after {
-            position: absolute;
-            right: 0;
-            top: 10%;
-            height: 80%;
-            width: 1px;
-            background: linear-gradient(to bottom, transparent, rgba(239, 136, 48, 0.2), transparent);
-            z-index: 2;
+    /* Para pantallas mayores a 1100px - mantener columnas */
+    @@media (min-width: 1101px) {
+        .login-image-column {
+            flex: 0 0 70%;
         }
 
-    @@media (max-width: 768px) {
-        .login-image-column::after {
-            display: none;
+        .login-form-column {
+            flex: 0 0 30%;
         }
+
+        .login-background-image {
+            aspect-ratio: 16 / 9;
+        }
+    }
+
+    /* Ajuste para laptops con poca altura */
+    @@media (min-width: 1101px) and (max-height: 700px) {
+        .login-image-column {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-background-image {
+            max-height: 600px;
+            width: auto;
+            max-width: 100%;
+        }
+
+        .login-form-column {
+            padding: 1rem;
+        }
+
+        .login-form-group {
+            margin-bottom: 0.75rem;
+        }
+
+        .login-form-logo {
+            margin-bottom: 1rem;
+        }
+    }
+
+    /* Eliminar pseudo-elemento que no se usa */
+    .login-image-column::after {
+        display: none;
     }
 </style>
 
 <div class="login-fullscreen">
     <div class="login-main-container">
-        <!-- Columna izquierda - Imagen de fondo -->
+        <!-- Columna izquierda - Imagen de fondo - 70% (se oculta en <1100px) -->
         <div class="login-image-column">
             <img src="~/diseño/InicioSesion.png" alt="Yo Soy Arte" class="login-background-image">
             <div class="login-image-overlay"></div>
         </div>
 
-        <!-- Columna derecha - Formulario de inicio de sesión -->
+        <!-- Columna derecha - Formulario - 30% (ocupa 100% en <1100px) -->
         <div class="login-form-column">
             <div class="login-form-wrapper">
                 <!-- Logo -->
@@ -731,6 +679,15 @@
                     </div>
                 }
 
+                <!-- Pie de página -->
+                <div class="login-footer">
+                    <p class="login-footer-text">
+                        ¿No tienes una cuenta?
+                        <a asp-controller="Cuenta" asp-action="Registro" class="login-register-link">
+                            Regístrate
+                        </a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
