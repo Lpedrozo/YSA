@@ -940,10 +940,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
-                (function() {
-            // Configuración de fechas
-            const fechaInicio = new Date(2026, 2, 9); // 09 Marzo 2026
-            const fechaFin = new Date(2026, 2, 13, 23, 59, 59); // 13 Marzo 2026
+            (function() {
+            const fechaInicio = new Date(2026, 2, 11); // 11 Marzo 2026
+            const fechaFin = new Date(2026, 2, 13, 23, 59, 59);
             const fechaActual = new Date();
             const dentroDeRango = fechaActual >= fechaInicio && fechaActual <= fechaFin;
 
@@ -973,6 +972,26 @@
                     }
                 }
 
+                // Variable para controlar el estado del modal
+                let modalAbierto = false;
+
+                // Función para abrir el modal
+                function abrirModalRegalo() {
+                    if (modalAbierto) return; // No hacer nada si ya está abierto
+
+                    const modalElement = document.getElementById('modalRegaloBienvenida');
+                    if (modalElement) {
+                        const modal = new bootstrap.Modal(modalElement);
+                        modal.show();
+                        modalAbierto = true;
+
+                        // Detectar cuando se cierra el modal
+                        modalElement.addEventListener('hidden.bs.modal', function() {
+                            modalAbierto = false;
+                        }, { once: true });
+                    }
+                }
+
                 // Crear banner si no existe
                 if (!document.getElementById('banner-regalo')) {
                     const banner = document.createElement('div');
@@ -993,16 +1012,26 @@
                         box-shadow: 0 2px 8px rgba(0,0,0,0.15);
                     `;
 
+                    // Hacer TODO el banner clickeable
+                    banner.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        abrirModalRegalo();
+                    };
+
+                    // Estilo para indicar que es clickeable
+                    banner.style.cursor = 'pointer';
+
                     banner.innerHTML = `
                         <div class="container-fluid px-3">
-                            <a href="#" onclick="event.preventDefault(); const modal = new bootstrap.Modal(document.getElementById('modalRegaloBienvenida')); modal.show();" style="color: white; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
+                            <div style="color: white; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
                                 <i class="fas fa-gift"></i>
                                 <span class="d-none d-sm-inline">🎁 ¡Regalo especial! Las horas están contadas</span>
                                 <span class="d-inline d-sm-none">🎁 ¡Regalo!</span>
                                 <span style="background-color: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 50px; font-size: 0.75rem; white-space: nowrap;">
                                     <span id="bannerCountdown">${calcularTiempoRestante()}</span>
                                 </span>
-                            </a>
+                            </div>
                         </div>
                     `;
 
@@ -1035,16 +1064,13 @@
                 // Mostrar modal automático (solo una vez)
                 if (!sessionStorage.getItem('regaloModalMostrado')) {
                     setTimeout(() => {
-                        const modalElement = document.getElementById('modalRegaloBienvenida');
-                        if (modalElement) {
-                            const modal = new bootstrap.Modal(modalElement);
-                            modal.show();
-                            sessionStorage.setItem('regaloModalMostrado', 'true');
-                        }
+                        abrirModalRegalo();
+                        sessionStorage.setItem('regaloModalMostrado', 'true');
                     }, 2000);
                 }
             }
         })();
+
         // Función para alternar collapse manualmente
         function toggleCollapse(elementId) {
             const element = document.getElementById(elementId);
@@ -1123,7 +1149,8 @@
                 e.preventDefault();
             }
         });
-                // Funciones para móvil
+
+        // Funciones para móvil
         function toggleAprendizajeMobile() {
             const content = document.getElementById('miAprendizajeMobileContent');
             if (content) {
@@ -1155,7 +1182,8 @@
                 });
             }
         });
-                // Funciones para las secciones expandibles en móvil
+
+        // Funciones para las secciones expandibles en móvil
         function toggleSection(sectionId) {
             const section = document.getElementById(sectionId);
             const icon = document.getElementById('icon-' + sectionId.replace('MobileSection', '').toLowerCase());
@@ -1220,7 +1248,8 @@
                 });
             }
         });
-                // Funciones para abrir modales
+
+        // Funciones para abrir modales
         function abrirModalAprendizaje() {
             const modalElement = document.getElementById('modalAprendizaje');
             const modal = new bootstrap.Modal(modalElement);
@@ -1247,7 +1276,6 @@
             }
         }
 
-        // Función para marcar todas las notificaciones desde el modal
         function marcarTodasNotificacionesDesdeModal() {
             if (confirm('¿Marcar todas las notificaciones como leídas?')) {
                 fetch('/Notificaciones/MarcarTodasComoLeidas', {
@@ -1271,9 +1299,6 @@
                 });
             }
         }
-
-        // Modificar la función existente marcarComoLeidaMobile para que también funcione dentro del modal
-        // (No necesitas cambiarla, ya funciona con ambos)
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
