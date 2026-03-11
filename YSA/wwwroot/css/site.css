@@ -5,9 +5,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Garet:wght@400;700&display=swap');
 
 /* Fuente Garet Book (normal) */
+/* Fuente Garet Book (normal) */
 @font-face {
     font-family: 'Garet Book';
-    src: url('/Garet-Book.woff2') format('woff2'), url('/Garet-Book.woff') format('woff');
+    /* AÑADE 'fonts/' A LAS RUTAS */
+    src: url('/css/fonts/Garet-Book.woff2') format('woff2'), url('/css/fonts/Garet-Book.woff') format('woff');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -16,7 +18,8 @@
 /* Fuente Garet Heavy (bold) */
 @font-face {
     font-family: 'Garet Book';
-    src: url('/Garet-Heavy.woff2') format('woff2'), url('/Garet-Heavy.woff') format('woff');
+    /* AÑADE 'fonts/' A LAS RUTAS */
+    src: url('/css/fonts/Garet-Heavy.woff2') format('woff2'), url('/css/fonts/Garet-Heavy.woff') format('woff');
     font-weight: bold;
     font-style: normal;
     font-display: swap;
@@ -25,12 +28,12 @@
 /* Fuente Salks */
 @font-face {
     font-family: 'Salks';
-    src: url('/Salks.woff') format('woff');
+    /* AÑADE 'fonts/' A LA RUTA */
+    src: url('/css/fonts/Salks.woff') format('woff');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
 }
-
 /* =========================================== */
 /* VARIABLES GLOBALES */
 /* =========================================== */
