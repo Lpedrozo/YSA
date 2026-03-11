@@ -401,11 +401,9 @@ body {
 }
 
 .latest-grid-header {
-    font-family: var(--font-heading);
     font-size: 1.8rem;
     font-weight: normal;
     color: var(--color-secondary);
-    text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: 2rem;
     border-bottom: 2px solid var(--color-brand-primary);
@@ -1383,7 +1381,6 @@ body {
 .category-card h3 {
     font-family: var(--font-body);
     color: var(--color-text-dark);
-    font-weight: 600;
 }
 
 .category-card.active .badge {
