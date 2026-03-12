@@ -486,7 +486,7 @@
         .register-form-column {
             flex: 0 0 100%; /* Ocupar todo el ancho */
             width: 100%;
-            padding: 2rem 1rem;
+            margin-top:0;
         }
 
         .register-form-wrapper {
@@ -505,7 +505,9 @@
     /* Móviles pequeños */
     @@media (max-width: 576px) {
         .register-form-column {
-            padding: 1rem;
+            padding-left: 3rem;
+            padding-right: 3rem;
+            margin-top: 0;
         }
 
         .register-form-title {
@@ -628,7 +630,6 @@
     {
         min-height: auto; /* Elimina la altura mínima forzada */
         height: auto;
-        padding-top: 0.5rem; /* Espacio mínimo superior */
         align-items: flex-start; /* Alinea el contenido al inicio */
     }
 
@@ -638,7 +639,7 @@
     }
 
     .register-form-column {
-        padding: 0.5rem 1rem 2rem 1rem; /* Reduce padding superior, mantiene inferior */
+        padding: 0.5rem 3rem 2rem 3rem; /* Reduce padding superior, mantiene inferior */
         min-height: auto;
         height: auto;
         margin-top: 0; /* Elimina el margen superior extra */

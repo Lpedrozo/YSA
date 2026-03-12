@@ -402,6 +402,7 @@ body {
 
 .latest-grid-header {
     font-size: 1.8rem;
+    text-transform: uppercase;
     font-weight: normal;
     color: var(--color-secondary);
     letter-spacing: 2px;
@@ -828,13 +829,12 @@ body {
 }
 
 .alert-info {
-    background-color: rgba(109, 181, 62, 0.1);
-    border-color: var(--color-brand-success);
+    background-color: white;
     color: var(--color-text-dark);
-    border-radius: var(--border-radius-md);
     padding: 1.5rem;
     font-family: var(--font-body);
     font-weight: normal;
+    border-color: white
 }
 
 /* =========================================== */
