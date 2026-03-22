@@ -19,7 +19,7 @@
 
 <!-- Hero de confirmación -->
 <div class="confirmacion-hero">
-    <img src="/diseño/HeaderAcademia.jpg" class="confirmacion-hero-imagen" alt="Confirmación de pago">
+    <img src="/diseño/BannerYSA.png" class="confirmacion-hero-imagen" alt="Confirmación de pago">
     <div class="confirmacion-hero-overlay">
         <div class="confirmacion-hero-contenido">
             <span class="confirmacion-hero-badge">CONFIRMACIÓN DE PAGO</span>
@@ -88,7 +88,7 @@
                             <input type="text" class="form-control confirmacion-form-input"
                                    id="ReferenciaPago"
                                    name="referenciaPago"
-                                   placeholder="Ingrese N° de transacción o Hash"
+                                   placeholder="Ingrese N° de referencia"
                                    required>
                         </div>
 
@@ -214,14 +214,31 @@
 </div>
 
 @section Scripts {
+    <!-- Primero carga jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Luego las validaciones que dependen de jQuery -->
     <partial name="_ValidationScriptsPartial" />
 
+    <!-- SweetAlert2 si lo necesitas -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
+        // Esperar a que jQuery esté completamente cargado
         $(document).ready(function () {
             // Variables con formato para USD, VES y Tasa
-            const formattedTotalUSD = '@Html.Raw(Model.Total.ToString("N2", cultureUS))';
-            const formattedTotalVES = '@Html.Raw(totalVes.ToString("N2", cultureVE))';
-            const tasaHoy = '@Model.TasaBCV.Value.ToString("N4", cultureUS)';
+            var totalUSD = parseFloat(@Model.Total.ToString("N2", CultureInfo.InvariantCulture).Replace(",", ""));
+            var tasaBCV = parseFloat(@Model.TasaBCV.Value.ToString("N4", CultureInfo.InvariantCulture).Replace(",", ""));
+            var totalVES = totalUSD * tasaBCV;
+
+            const formattedTotalUSD = totalUSD.toFixed(2);
+            const formattedTotalVES = totalVES.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const tasaHoy = tasaBCV.toFixed(4);
+
+            // Verificar que los valores se están calculando correctamente
+            console.log("Total USD:", formattedTotalUSD);
+            console.log("Tasa BCV:", tasaHoy);
+            console.log("Total VES:", formattedTotalVES);
 
             // Información de pago por método
             const PAYMENT_DETAILS = {
@@ -234,9 +251,7 @@
                         <span class="confirmacion-info-label">Tasa Aplicada:</span>
                         <span class="confirmacion-info-valor">${tasaHoy} VES/USD</span>
                     </div>
-
                     <div class="confirmacion-info-divider"></div>
-
                     <div class="confirmacion-info-item">
                         <span class="confirmacion-info-label">Banco:</span>
                         <span class="confirmacion-info-valor">Banco Universal Monocromático</span>
@@ -263,20 +278,18 @@
                         <span class="confirmacion-info-label">Tasa Aplicada:</span>
                         <span class="confirmacion-info-valor">${tasaHoy} VES/USD</span>
                     </div>
-
                     <div class="confirmacion-info-divider"></div>
-
                     <div class="confirmacion-info-item">
                         <span class="confirmacion-info-label">Banco:</span>
-                        <span class="confirmacion-info-valor">Banco Móvil Digital</span>
+                        <span class="confirmacion-info-valor">Bancaribe</span>
                     </div>
                     <div class="confirmacion-info-item">
                         <span class="confirmacion-info-label">C.I.:</span>
-                        <span class="confirmacion-info-valor">V-8.765.432</span>
+                        <span class="confirmacion-info-valor">J-500504314</span>
                     </div>
                     <div class="confirmacion-info-item">
                         <span class="confirmacion-info-label">Teléfono:</span>
-                        <span class="confirmacion-info-valor">0412-1234567</span>
+                        <span class="confirmacion-info-valor">04129290589</span>
                     </div>
                 `,
                 "PayPal": `
@@ -288,12 +301,10 @@
                         <span class="confirmacion-info-label">Tasa de Referencia:</span>
                         <span class="confirmacion-info-valor">${tasaHoy} VES/USD</span>
                     </div>
-
                     <div class="confirmacion-info-divider"></div>
-
                     <div class="confirmacion-info-item">
                         <span class="confirmacion-info-label">Cuenta PayPal:</span>
-                        <span class="confirmacion-info-valor">pagos@yosoyarte.com</span>
+                        <span class="confirmacion-info-valor">desiarr@gmail.com</span>
                     </div>
                     <div class="confirmacion-info-item">
                         <span class="confirmacion-info-label">Instrucciones:</span>
@@ -307,36 +318,58 @@
             const $infoBox = $('#confirmacion-info-caja');
             const $content = $('#confirmacion-info-detalle');
 
+            // Verificar que los elementos existen
+            console.log("Select encontrado:", $select.length);
+            console.log("InfoBox encontrado:", $infoBox.length);
+            console.log("Content encontrado:", $content.length);
+
             // Función para actualizar información de pago
             function updatePaymentInfo() {
                 const selectedMethod = $select.val();
+                console.log("Método seleccionado:", selectedMethod);
 
                 if (selectedMethod && PAYMENT_DETAILS[selectedMethod]) {
+                    console.log("Mostrando información para:", selectedMethod);
                     $content.html(PAYMENT_DETAILS[selectedMethod]);
                     $infoBox.slideDown(300);
                 } else {
+                    console.log("No hay información para:", selectedMethod);
                     $infoBox.slideUp(300);
                 }
             }
 
             // Evento cambio de método de pago
-            $select.on('change', updatePaymentInfo);
+            if ($select.length) {
+                $select.on('change', updatePaymentInfo);
+                console.log("Evento change asignado correctamente");
+            } else {
+                console.error("No se encontró el elemento #MetodoPago");
+            }
+
+            // Si hay un método preseleccionado, mostrar la información
+            if ($select.val()) {
+                updatePaymentInfo();
+            }
 
             // Validación del formulario
             $('form').on('submit', function(e) {
                 const fileInput = $('#comprobanteArchivo')[0];
                 const maxSize = 5 * 1024 * 1024; // 5MB
 
-                if (fileInput.files.length > 0) {
+                if (fileInput && fileInput.files.length > 0) {
                     const fileSize = fileInput.files[0].size;
                     if (fileSize > maxSize) {
                         e.preventDefault();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Archivo muy grande',
-                            text: 'El comprobante no debe superar los 5MB.',
-                            confirmButtonColor: '#ef8830'
-                        });
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Archivo muy grande',
+                                text: 'El comprobante no debe superar los 5MB.',
+                                confirmButtonColor: '#ef8830'
+                            });
+                        } else {
+                            alert('El comprobante no debe superar los 5MB.');
+                        }
                     }
                 }
             });

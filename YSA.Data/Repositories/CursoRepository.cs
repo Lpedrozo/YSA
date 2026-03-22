@@ -46,8 +46,15 @@ namespace YSA.Data.Repositories
 
         public async Task AddAsync(Curso curso)
         {
-            await _context.Cursos.AddAsync(curso);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.Cursos.AddAsync(curso);
+                await _context.SaveChangesAsync();
+            } catch (Exception ex)
+            {
+
+            }
+            
         }
 
         public async Task UpdateAsync(Curso curso)
