@@ -11,7 +11,7 @@
     decimal totalVes = Model.TasaBCV > 0 ? Model.Total * Model.TasaBCV.Value : 0;
 
     // Datos para WhatsApp
-    var whatsappNumber = "584241544523";
+    var whatsappNumber = "584121463374";
     var whatsappMessage = $"Hola, necesito asistencia con el pago del Pedido #{Model.PedidoId}. ¿Me pueden ayudar?";
     var encodedMessage = System.Web.HttpUtility.UrlEncode(whatsappMessage);
     var whatsappLink = $"https://wa.me/{whatsappNumber}?text={encodedMessage}";
