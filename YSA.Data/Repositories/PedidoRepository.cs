@@ -141,5 +141,14 @@ namespace YSA.Data.Repositories
                 .Include(vi => vi.Curso) 
                 .ToListAsync();
         }
+        public async Task<Pedido> ObtenerPedidoActivoPorCursoAsync(int estudianteId, int cursoId, string[] estadosActivos)
+        {
+            return await _context.Pedidos
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                .FirstOrDefaultAsync(p => p.EstudianteId == estudianteId
+                    && estadosActivos.Contains(p.Estado)
+                    && p.PedidoItems.Any(pi => pi.VentaItem.CursoId == cursoId));
+        }
     }
 }

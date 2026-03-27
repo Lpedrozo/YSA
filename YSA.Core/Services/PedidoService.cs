@@ -141,5 +141,12 @@ namespace YSA.Core.Services
                 throw new KeyNotFoundException($"No se pudo anular el pedido. Pedido ID: {pedidoId} no encontrado.");
             }
         }
+        public async Task<Pedido> ObtenerPedidoActivoPorCursoAsync(int estudianteId, int cursoId)
+        {
+            // Estados que consideramos como "activos" (no finalizados)
+            var estadosActivos = new[] { "Pendiente", "Validando" };
+
+            return await _pedidoRepository.ObtenerPedidoActivoPorCursoAsync(estudianteId, cursoId, estadosActivos);
+        }
     }
 }

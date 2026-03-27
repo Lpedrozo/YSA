@@ -21,6 +21,6 @@ namespace YSA.Core.Interfaces
         Task<Pago> GetPagoWithPedido(int id);
         Task<int> GetPedidosPendientesAsync();
         Task<Pedido> GetByIdWithDetailsAsync(int id);
-
+        Task<Pedido> ObtenerPedidoActivoPorCursoAsync(int estudianteId, int cursoId, string[] estadosActivos);
     }
 }

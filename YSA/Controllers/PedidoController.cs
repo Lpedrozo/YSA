@@ -47,14 +47,19 @@ public class PedidoController : Controller
             return Unauthorized("Usuario no autenticado.");
         }
 
-        // Obtener el VentaItem asociado al curso
+        var pedidoExistente = await _pedidoService.ObtenerPedidoActivoPorCursoAsync(Convert.ToInt32(estudianteId), cursoId);
+
+        if (pedidoExistente != null)
+        {
+            return RedirectToAction("Confirmar", new { pedidoId = pedidoExistente.Id });
+        }
+
         var ventaItem = await _ventaItemService.ObtenerVentaItemPorCursoIdAsync(cursoId);
         if (ventaItem == null)
         {
             return NotFound("El curso no está disponible para la venta.");
         }
 
-        // Crear el pedido usando el VentaItem
         var pedido = await _pedidoService.CrearPedidoAsync(Convert.ToInt32(estudianteId), new List<int> { ventaItem.Id });
 
         return RedirectToAction("Confirmar", new { pedidoId = pedido.Id });
