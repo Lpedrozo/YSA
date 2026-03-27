@@ -148,5 +148,9 @@ namespace YSA.Core.Services
 
             return await _pedidoRepository.ObtenerPedidoActivoPorCursoAsync(estudianteId, cursoId, estadosActivos);
         }
+        public async Task<IEnumerable<Pedido>> ObtenerPedidosPorUsuarioYEstadoAsync(int estudianteId, string estado)
+        {
+            return await _pedidoRepository.GetPedidosByUsuarioAndEstadoAsync(estudianteId, estado);
+        }
     }
 }

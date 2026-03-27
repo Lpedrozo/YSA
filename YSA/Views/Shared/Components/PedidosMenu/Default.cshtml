@@ -1,0 +1,107 @@
+﻿@model YSA.Web.Models.ViewModels.PedidosMenuWrapperViewModel
+
+@{
+    var totalActivos = Model.TotalActivos;
+}
+
+<div class="dropdown-menu dropdown-menu-end shadow p-3" aria-labelledby="pedidosDropdown"
+     style="min-width: 380px; max-width: 100%; max-height: 500px; overflow-y: auto; width: 90vw; right: 0; left: auto !important;">
+
+    <!-- Header con título y contador -->
+    <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+        <h6 class="mb-0 fw-bold">Mis compras activas</h6>
+        @if (totalActivos > 0)
+        {
+            <span class="badge bg-warning rounded-pill">@totalActivos pendiente(s)</span>
+        }
+    </div>
+
+    @if (totalActivos > 0)
+    {
+        <!-- Pedidos Pendientes -->
+        @if (Model.PedidosPendientes.Any())
+        {
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2 px-2">
+                    <small class="text-muted fw-semibold">
+                        Pendientes de pago
+                    </small>
+                </div>
+                @foreach (var pedido in Model.PedidosPendientes)
+                {
+                    <a class="dropdown-item d-flex align-items-start p-3 mb-2 rounded pedido-pendiente"
+                       asp-controller="Pedido" asp-action="Confirmar" asp-route-pedidoId="@pedido.Id"
+                       style="background-color: #fff3e0">
+
+                        <!-- Contenido -->
+                        <div class="flex-grow-1 min-width-0">
+                            <h6 class="mb-1 fw-bold" style="font-size: 0.8rem;">@pedido.CursoTitulo</h6>
+                            <div class="d-flex justify-content-between align-items-center mt-1">
+                                <span class="fw-bold text-success">$@pedido.Total.ToString("N2")</span>
+                            </div>
+                        </div>
+
+                        <i class="fas fa-chevron-right text-muted align-self-center ms-2"></i>
+                    </a>
+                }
+            </div>
+        }
+
+        <!-- Pedidos en Validación -->
+        @if (Model.PedidosValidando.Any())
+        {
+            <div>
+                <div class="d-flex justify-content-between align-items-center mb-2 px-2">
+                    <small class="text-muted fw-semibold">
+                        En validación
+                    </small>
+                </div>
+                @foreach (var pedido in Model.PedidosValidando)
+                {
+                    <a class="dropdown-item d-flex align-items-start p-3 mb-2 rounded pedido-validando"
+                       asp-controller="Pedido" asp-action="Detalle" asp-route-pedidoId="@pedido.Id"
+                       style="background-color: #e3f2fd;">
+
+                        <div class="flex-grow-1 min-width-0">
+                            <h6 class="mb-1 fw-bold" style="font-size: 0.8rem;">@pedido.CursoTitulo</h6>
+                            <div class="d-flex justify-content-between align-items-center mt-1">
+                                <span class="fw-bold text-success">$@pedido.Total.ToString("N2")</span>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+
+    }
+    else
+    {
+        <!-- Estado vacío -->
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-cart text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-3 mb-2">No tienes compras activas</p>
+        </div>
+    }
+</div>
+
+<style>
+    @@media (max-width: 576px) {
+        .dropdown-menu[aria-labelledby="pedidosDropdown"] {
+            position: fixed !important;
+            top: 60px !important;
+            left: 5% !important;
+            right: 5% !important;
+            width: 90% !important;
+            min-width: auto !important;
+            max-width: none !important;
+            transform: none !important;
+            margin: 0 auto !important;
+        }
+    }
+
+    .pedido-pendiente:hover,
+    .pedido-validando:hover {
+        transform: translateX(4px);
+        transition: all 0.2s ease;
+    }
+</style>

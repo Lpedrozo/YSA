@@ -4619,9 +4619,9 @@ body {
     background: #25d366;
     border: none;
     color: white;
-    padding: 1.25rem;
+    padding: 0.75rem;
     font-family: var(--font-accent);
-    font-weight: 600;
+    font-weight: 400;
     font-size: 1.1rem;
     border-radius: var(--border-radius-md);
     transition: all 0.3s ease;
@@ -4642,9 +4642,9 @@ body {
     background: var(--color-brand-primary);
     border: none;
     color: white;
-    padding: 1.25rem;
+    padding: 0.75rem;
     font-family: var(--font-accent);
-    font-weight: 600;
+    font-weight: 400;
     font-size: 1.1rem;
     border-radius: var(--border-radius-md);
     transition: all 0.3s ease;

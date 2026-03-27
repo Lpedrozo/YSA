@@ -1,0 +1,95 @@
+﻿@model YSA.Web.Models.ViewModels.PedidosMenuWrapperViewModel
+
+@{
+    var totalActivos = Model.TotalActivos;
+    var mostrarHeader = ViewBag.MostrarHeader ?? true;
+}
+
+<div class="mobile-pedidos-container p-2">
+    <!-- Header -->
+    @if (mostrarHeader)
+    {
+        <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+            <h6 class="mb-0 fw-bold small">Mis compras activas</h6>
+            @if (totalActivos > 0)
+            {
+                <span class="badge bg-warning rounded-pill" style="font-size: 0.7rem;">@totalActivos pendiente(s)</span>
+            }
+        </div>
+    }
+
+    @if (totalActivos > 0)
+    {
+        <div class="pedidos-lista-mobile" style="max-height: 350px; overflow-y: auto;">
+            <!-- Pedidos Pendientes -->
+            @if (Model.PedidosPendientes.Any())
+            {
+                <div class="mb-3">
+                    @foreach (var pedido in Model.PedidosPendientes)
+                    {
+                        <a class="d-flex align-items-center p-2 mb-2 rounded text-decoration-none"
+                           asp-controller="Pedido" asp-action="Confirmar" asp-route-pedidoId="@pedido.Id"
+                           style="background-color: #fff3e0;">
+                            <div class="flex-grow-1 min-width-0">
+                                <div class="small fw-bold text-black">@pedido.CursoTitulo</div>
+                                <div class="d-flex justify-content-between align-items-center mt-1">
+                                    <span class="fw-bold text-success small">$@pedido.Total.ToString("N2")</span>
+                                </div>
+                            </div>
+                        </a>
+                    }
+                </div>
+            }
+
+            <!-- Pedidos en Validación -->
+            @if (Model.PedidosValidando.Any())
+            {
+                <div>
+                    <div class="d-flex align-items-center gap-1 mb-2 px-1">
+                        <i class="fas fa-hourglass-half text-primary small"></i>
+                        <small class="text-muted">En validación</small>
+                    </div>
+                    @foreach (var pedido in Model.PedidosValidando)
+                    {
+                        <a class="d-flex align-items-center p-2 mb-2 rounded text-decoration-none"
+                           asp-controller="Pedido" asp-action="Confirmar" asp-route-pedidoId="@pedido.Id"
+                           style="background-color: #e3f2fd; border-left: 3px solid #0d6efd;">
+
+                            <div class="me-2">
+                                <i class="fas fa-hourglass-half text-primary" style="font-size: 1rem;"></i>
+                            </div>
+
+                            <div class="flex-grow-1 min-width-0">
+                                <div class="small fw-bold">@pedido.CursoTitulo</div>
+                                <div class="d-flex justify-content-between align-items-center mt-1">
+                                    <span class="fw-bold text-success small">$@pedido.Total.ToString("N2")</span>
+                                    <span class="badge bg-info text-dark" style="font-size: 0.6rem;">Validando</span>
+                                </div>
+                                <small class="text-muted" style="font-size: 0.6rem;">Hace @pedido.TiempoTranscurrido</small>
+                            </div>
+
+                            <i class="fas fa-chevron-right text-muted ms-1" style="font-size: 0.7rem;"></i>
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <!-- Estado vacío -->
+        <div class="text-center py-4">
+            <i class="fas fa-shopping-cart text-muted mb-2" style="font-size: 2rem;"></i>
+            <p class="small text-muted mb-2">No tienes compras activas</p>
+            <a asp-controller="Curso" asp-action="Index" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-book-open me-1"></i>Explorar cursos
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .mobile-pedidos-container a:active {
+        opacity: 0.7;
+    }
+</style>

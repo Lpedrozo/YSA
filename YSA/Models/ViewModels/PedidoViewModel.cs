@@ -37,4 +37,21 @@
         // Propiedad para saber qué pestaña está activa inicialmente
         public string EstadoActivo { get; set; } = "Validando";
     }
+    public class PedidosMenuViewModel
+    {
+        public int Id { get; set; }
+        public DateTime FechaPedido { get; set; }
+        public decimal Total { get; set; }
+        public string Estado { get; set; }
+        public string CursoTitulo { get; set; }
+        public int CursoId { get; set; }
+        public string TiempoTranscurrido { get; set; }
+    }
+
+    public class PedidosMenuWrapperViewModel
+    {
+        public List<PedidosMenuViewModel> PedidosPendientes { get; set; }
+        public List<PedidosMenuViewModel> PedidosValidando { get; set; }
+        public int TotalActivos { get; set; }
+    }
 }

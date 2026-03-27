@@ -22,6 +22,7 @@ namespace YSA.Core.Services
         Task<int> GetPedidosPendientesAsync();
         Task<Pedido> ObtenerPedidoConDetallesCompletosAsync(int id);
         Task<Pedido> ObtenerPedidoActivoPorCursoAsync(int estudianteId, int cursoId);
+        Task<IEnumerable<Pedido>> ObtenerPedidosPorUsuarioYEstadoAsync(int estudianteId, string estado);
 
     }
 }
