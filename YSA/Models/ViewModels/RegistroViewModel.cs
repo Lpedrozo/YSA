@@ -25,6 +25,19 @@ namespace YSA.Web.Models.ViewModels
         [Compare("Contrasena", ErrorMessage = "La contraseña y la confirmación no coinciden.")]
         public string ConfirmarContrasena { get; set; }
         public string ReturnUrl { get; set; }
+        [Required(ErrorMessage = "Debes seleccionar un tipo de cuenta")]
+        [Display(Name = "Tipo de cuenta")]
+        public string TipoCuenta { get; set; } // "Estudiante" o "Artista"
 
+        [StringLength(255)]
+        [Display(Name = "Nombre artístico")]
+        public string? NombreArtistico { get; set; }
+
+        [Display(Name = "Biografía")]
+        public string? Biografia { get; set; }
+
+        [StringLength(255)]
+        [Display(Name = "Estilo principal")]
+        public string? EstiloPrincipal { get; set; }
     }
 }

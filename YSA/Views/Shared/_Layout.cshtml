@@ -584,16 +584,17 @@
                         <!-- Versión desktop (solo en desktop) -->
                         <div class="d-none d-lg-flex align-items-center">
                             <!-- Pedidos Activos Dropdown -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link text-dark header-nav-link position-relative" href="#"
-                               id="pedidosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-shopping-cart"></i>
-                            </a>
-                                @await Component.InvokeAsync("PedidosMenu", new { version = "desktop" })
-                        </li>
+                        
 
                             @if (User.IsInRole("Estudiante"))
                             {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-dark header-nav-link position-relative" href="#"
+                                   id="pedidosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </a>
+                                    @await Component.InvokeAsync("PedidosMenu", new { version = "desktop" })
+                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link text-dark header-nav-link" href="#"
                                    id="miAprendizajeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -601,6 +602,7 @@
                                 </a>
                                     @await Component.InvokeAsync("CursosUsuario")
                             </li>
+                            
                             }
 
                         <li class="nav-item dropdown">

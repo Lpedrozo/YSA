@@ -16,6 +16,6 @@ namespace YSA.Core.Entities
         public ICollection<MetodoPago> MetodosPago { get; set; }
         public ICollection<PreguntaRespuesta> PreguntasRespuestas { get; set; }
         public ICollection<Resena> Resenas { get; set; }
-
+        public virtual ICollection<Artista> ArtistasAprobados { get; set; }
     }
 }

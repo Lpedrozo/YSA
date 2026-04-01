@@ -5,1088 +5,963 @@
 
 @{
     ViewData["Title"] = "Crear una cuenta";
-    ViewData["ReturnUrl"] = ViewData["ReturnUrl"] ?? Url.Content("~/");
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
 }
 
-<!-- Estilos específicos para esta vista -->
-<style>
-    /* =========================================== */
-    /* ESTILOS PARA REGISTRO CON IMAGEN DE FONDO */
-    /* =========================================== */
-
-    .register-fullscreen {
-        position: relative;
-        width: 100%;
-        min-height: calc(100vh - 5.5rem);
-        overflow-x: hidden;
-        overflow-y: auto;
-        background-color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Contenedor principal que abarca todo el espacio */
-    .register-main-container {
-        width: 100%;
-        min-height: 100%;
-        display: flex;
-        align-items: stretch;
-        background-color: #fff;
-    }
-
-    /* Columna izquierda - Imagen de fondo (70%) - Altura completa */
-    .register-image-column {
-        flex: 0 0 70%;
-        position: relative;
-        overflow: hidden;
-        background-color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: auto;
-        min-height: 100%; /* Asegura altura completa */
-    }
-
-    /* Imagen de fondo - COVER para ocupar todo el ancho y altura */
-    .register-background-image {
-        position: relative;
-        width: 100%;
-        height: 100%; /* Cambiado de auto a 100% para llenar el contenedor */
-        object-fit: cover; /* Mantiene proporción y cubre todo el espacio */
-        object-position: center;
-        transition: transform 0.5s ease;
-        display: block;
-    }
-
-    .register-image-column:hover .register-background-image {
-        transform: scale(1.02);
-    }
-
-    /* Overlay sutil para dar profundidad */
-    .register-image-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        pointer-events: none;
-    }
-
-    /* Columna derecha - Formulario (30%) */
-    .register-form-column {
-        flex: 0 0 30%;
-        background-color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 1.5rem;
-        animation: fadeIn 0.6s ease-out;
-        height: auto;
-        min-height: 100%;
-        margin-top: 3rem;
-    }
-
-    /* Contenedor del formulario */
-    .register-form-wrapper {
-        width: 100%;
-        max-width: 380px;
-        margin: 0 auto;
-    }
-
-    /* Logo y título */
-    .register-form-logo {
-        text-align: center;
-        margin-bottom: 1rem;
-    }
-
-    .register-logo-image {
-        width: 90px;
-        height: auto;
-        margin: 0 auto 0.75rem;
-        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.05));
-    }
-
-    .register-form-title {
-        font-family: var(--font-heading);
-        font-size: 1.6rem;
-        color: var(--color-brand-primary);
-        margin-bottom: 0.25rem;
-        line-height: 1.2;
-    }
-
-    .register-form-subtitle {
-        font-family: var(--font-body);
-        color: var(--color-accent);
-        font-size: 0.8rem;
-        margin: 0;
-    }
-
-    /* Grupos de formulario */
-    .register-form-group {
-        margin-bottom: 0.8rem;
-    }
-
-    .register-form-label {
-        display: block;
-        font-family: var(--font-accent);
-        font-weight: 500;
-        font-size: 0.75rem;
-        color: var(--color-text-dark);
-        margin-bottom: 0.2rem;
-    }
-
-        .register-form-label i {
-            font-size: 0.7rem;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>@ViewData["Title"] - Yo Soy Arte</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* =========================================== */
+        /* FUENTES PERSONALIZADAS */
+        /* =========================================== */
+        @@font-face {
+            font-family: 'Garet Book';
+            src: url('/css/fonts/Garet-Book.woff2') format('woff2'), url('/css/fonts/Garet-Book.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
         }
 
-    .register-input-wrapper {
-        position: relative;
-    }
-
-    .register-form-input {
-        width: 100%;
-        padding: 0.5rem 0.75rem;
-        font-family: var(--font-body);
-        font-size: 0.8rem;
-        color: var(--color-text-dark);
-        background-color: #fff;
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius-sm);
-        transition: all 0.2s ease;
-        outline: none;
-    }
-
-        .register-form-input:focus {
-            border-color: var(--color-brand-primary);
-            box-shadow: 0 0 0 2px rgba(239, 136, 48, 0.1);
+        @@font-face {
+            font-family: 'Garet Book';
+            src: url('/css/fonts/Garet-Heavy.woff2') format('woff2'), url('/css/fonts/Garet-Heavy.woff') format('woff');
+            font-weight: bold;
+            font-style: normal;
+            font-display: swap;
         }
 
-        .register-form-input.input-validation-error {
-            border-color: var(--color-brand-secondary);
+        @@font-face {
+            font-family: 'Salks';
+            src: url('/css/fonts/Salks.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
         }
 
-    /* Fila de dos columnas para nombre y apellido */
-    .register-form-row {
-        display: flex;
-        gap: 0.75rem;
-        margin-bottom: 0;
-    }
-
-        .register-form-row .register-form-group {
-            flex: 1;
-            margin-bottom: 0.8rem;
+        /* =========================================== */
+        /* VARIABLES GLOBALES */
+        /* =========================================== */
+        :root {
+            --font-heading: 'Salks', serif;
+            --font-body: 'Garet Book', 'Garet', 'Arial', 'Helvetica', sans-serif;
+            --font-accent: 'Garet Book', 'Garet', sans-serif;
+            --color-brand-primary: #ef8830;
+            --color-brand-secondary: #e5361a;
+            --color-brand-accent: #f2e514;
+            --color-text-dark: #212529;
+            --color-accent: #6c757d;
+            --color-border: #E8E8E8;
         }
 
-    /* Toggle de contraseña */
-    .register-password-toggle {
-        position: absolute;
-        right: 0.6rem;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: var(--color-accent);
-        cursor: pointer;
-        font-size: 0.8rem;
-        transition: color 0.2s ease;
-        padding: 0.15rem;
-        z-index: 5;
-    }
-
-        .register-password-toggle:hover {
-            color: var(--color-brand-primary);
-        }
-
-    /* Checkbox de términos */
-    .register-terms-check {
-        margin: 0.8rem 0;
-        padding: 0.6rem;
-        background: #fff;
-        border-radius: var(--border-radius-sm);
-        border: 1px solid var(--color-border);
-    }
-
-    .register-checkbox {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.4rem;
-    }
-
-    .register-checkbox-input {
-        width: 0.85rem;
-        height: 0.85rem;
-        border: 1px solid var(--color-border);
-        border-radius: 3px;
-        cursor: pointer;
-        accent-color: var(--color-brand-primary);
-        margin-top: 0.15rem;
-    }
-
-        .register-checkbox-input.has-error {
-            border-color: var(--color-brand-secondary);
-        }
-
-    .register-checkbox-label {
-        font-family: var(--font-body);
-        color: var(--color-text-dark);
-        cursor: pointer;
-        font-size: 0.7rem;
-        line-height: 1.3;
-    }
-
-    .register-terms-link {
-        color: var(--color-brand-primary);
-        text-decoration: none;
-        font-weight: 600;
-        transition: color 0.2s ease;
-        font-size: 0.7rem;
-    }
-
-        .register-terms-link:hover {
-            color: var(--color-brand-secondary);
-            text-decoration: underline;
-        }
-
-    /* Mensaje de error para términos */
-    .register-terms-error {
-        margin-top: 0.5rem;
-        padding: 0.5rem;
-        background: rgba(229, 54, 26, 0.05);
-        border: 1px solid rgba(229, 54, 26, 0.2);
-        border-radius: var(--border-radius-sm);
-        font-family: var(--font-accent);
-        font-size: 0.7rem;
-        color: var(--color-brand-secondary);
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        animation: slideIn 0.3s ease-out;
-    }
-
-        .register-terms-error i {
-            font-size: 0.7rem;
-        }
-
-    /* Botón principal */
-    .register-submit-btn {
-        width: 100%;
-        padding: 0.6rem 1rem;
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, #e07a2a 100%);
-        border: none;
-        border-radius: var(--border-radius-sm);
-        color: white;
-        font-family: var(--font-accent);
-        font-size: 0.8rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        position: relative;
-        overflow: hidden;
-        letter-spacing: 0.3px;
-    }
-
-        .register-submit-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(239, 136, 48, 0.2);
-            background: linear-gradient(135deg, #e07a2a 0%, var(--color-brand-secondary) 100%);
-        }
-
-        .register-submit-btn:active {
-            transform: translateY(0);
-        }
-
-        .register-submit-btn i {
-            transition: transform 0.2s ease;
-            font-size: 0.8rem;
-        }
-
-        .register-submit-btn:hover i {
-            transform: translateX(3px);
-        }
-
-    /* Separador */
-    .register-separator {
-        display: flex;
-        align-items: center;
-        margin: 1rem 0;
-        color: var(--color-accent);
-        font-family: var(--font-accent);
-        font-size: 0.7rem;
-    }
-
-        .register-separator::before,
-        .register-separator::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(to right, transparent, var(--color-border), transparent);
-        }
-
-        .register-separator::before {
-            margin-right: 0.75rem;
-        }
-
-        .register-separator::after {
-            margin-left: 0.75rem;
-        }
-
-    /* Botones externos */
-    .register-external-buttons {
-        margin-bottom: 1rem;
-    }
-
-    .register-external-btn {
-        width: 100%;
-        padding: 0.5rem;
-        background: white;
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius-sm);
-        font-family: var(--font-accent);
-        font-size: 0.75rem;
-        font-weight: 500;
-        color: var(--color-text-dark);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-        .register-external-btn:hover {
-            border-color: var(--color-brand-primary);
-            background: rgba(239, 136, 48, 0.05);
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .register-external-btn:last-child {
-            margin-bottom: 0;
-        }
-
-        .register-external-btn i {
-            font-size: 0.8rem;
-        }
-
-    .google-btn {
-        border-color: #DB4437;
-        color: #DB4437;
-    }
-
-        .google-btn:hover {
-            background: rgba(219, 68, 55, 0.05);
-            border-color: #DB4437;
-        }
-
-    .facebook-btn {
-        border-color: #4267B2;
-        color: #4267B2;
-    }
-
-        .facebook-btn:hover {
-            background: rgba(66, 103, 178, 0.05);
-            border-color: #4267B2;
-        }
-
-    /* Pie de página */
-    .register-footer {
-        text-align: center;
-        padding-top: 0.8rem;
-        border-top: 1px solid rgba(239, 136, 48, 0.1);
-    }
-
-    .register-footer-text {
-        font-family: var(--font-body);
-        color: var(--color-accent);
-        font-size: 0.7rem;
-        margin: 0;
-    }
-
-    .register-login-link {
-        color: var(--color-brand-primary);
-        text-decoration: none;
-        font-weight: 600;
-        transition: color 0.2s ease;
-        font-size: 0.7rem;
-    }
-
-        .register-login-link:hover {
-            color: var(--color-brand-secondary);
-            text-decoration: underline;
-        }
-
-    /* Mensajes de validación */
-    .register-validation-summary {
-        background: rgba(229, 54, 26, 0.05);
-        border: 1px solid rgba(229, 54, 26, 0.2);
-        border-radius: var(--border-radius-sm);
-        padding: 0.6rem;
-        margin-bottom: 0.8rem;
-        font-family: var(--font-body);
-        font-size: 0.7rem;
-        color: var(--color-alert);
-    }
-
-        .register-validation-summary ul {
+        body {
+            font-family: var(--font-body);
+            background: url('/diseño/InicioRegistro.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
             margin: 0;
-            padding-left: 1.2rem;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-    .field-validation-error {
-        display: block;
-        margin-top: 0.2rem;
-        font-family: var(--font-accent);
-        font-size: 0.65rem;
-        color: var(--color-alert);
-    }
+        /* Transiciones suaves para cambios de paso */
+        .step-transition {
+            transition: opacity 0.35s ease-in-out, transform 0.3s ease;
+        }
 
-    /* Animaciones */
-    @@keyframes fadeIn {
-        from {
+        .step-enter {
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateX(12px);
         }
 
-        to {
+        .step-active {
             opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @@keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
+            transform: translateX(0);
         }
 
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* =========================================== */
-    /* RESPONSIVE - CON OCULTAR IMAGEN A 1100px */
-    /* =========================================== */
-
-    /* A 1100px o menos - OCULTAR IMAGEN y centrar formulario */
-    @@media (max-width: 1100px) {
-        .register-image-column {
-            display: none; /* Ocultar imagen */
+        /* Tarjetas de rol */
+        .role-card {
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            cursor: pointer;
         }
 
-        .register-form-column {
-            flex: 0 0 100%; /* Ocupar todo el ancho */
-            width: 100%;
-            margin-top:0;
-        }
-
-        .register-form-wrapper {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-    }
-
-    /* Tablets y pantallas medianas (entre 768px y 1100px) */
-    @@media (min-width: 768px) and (max-width: 1100px) {
-        .register-form-wrapper {
-            max-width: 380px;
-        }
-    }
-
-    /* Móviles pequeños */
-    @@media (max-width: 576px) {
-        .register-form-column {
-            padding-left: 3rem;
-            padding-right: 3rem;
-            margin-top: 0;
-        }
-
-        .register-form-title {
-            font-size: 1.5rem;
-        }
-
-        .register-logo-image {
-            width: 80px;
-        }
-
-        .register-form-row {
-            flex-direction: column;
-            gap: 0;
-        }
-
-            .register-form-row .register-form-group {
-                margin-bottom: 0.8rem;
+            .role-card.selected {
+                border-color: var(--color-brand-primary);
+                background-color: #fff7ed;
+                box-shadow: 0 8px 20px rgba(239, 136, 48, 0.12);
+                transform: scale(1.01);
             }
 
-        .register-terms-check {
-            padding: 0.4rem;
+        /* Círculo de progreso */
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.4s ease;
         }
 
-        .register-checkbox-label {
-            font-size: 0.65rem;
+        /* Input focus */
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            ring: 2px solid var(--color-brand-primary);
         }
-    }
 
-    /* Landscape en móviles (cuando la imagen está oculta) */
-    @@media (max-height: 600px) and (orientation: landscape) and (max-width: 1100px) {
-        .register-fullscreen {
-            min-height: auto;
+        /* Animación para toast */
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        .toast-show {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        /* Personalización para campos de artista */
+        .artist-fields {
+            background: #fef9e8;
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin-top: 1rem;
+            border: 1px solid #fde68a;
+        }
+
+        /* Tarjeta principal */
+        .registro-card {
+            max-width: 550px;
+            width: 100%;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Encabezado */
+        .registro-header {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .registro-logo {
+            max-width: 100px;
             height: auto;
+            margin: 0 auto 0.5rem auto;
+            display: block;
         }
 
-        .register-form-column {
-            padding: 1rem;
+        .registro-header h1 {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: normal;
+            color: var(--color-brand-primary);
+            margin-bottom: 0.25rem;
         }
 
-        .register-form-group {
-            margin-bottom: 0.4rem;
+        .registro-header p {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            color: var(--color-accent);
+            margin: 0;
         }
 
-        .register-form-logo {
-            margin-bottom: 0.4rem;
+        /* Formulario */
+        .form-label {
+            font-family: var(--font-accent);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--color-text-dark);
         }
 
-        .register-form-title {
-            font-size: 1.2rem;
-        }
-
-        .register-logo-image {
-            width: 50px;
-        }
-
-        .register-submit-btn {
-            padding: 0.4rem 0.8rem;
-        }
-
-        .register-footer {
-            padding-top: 0.4rem;
-        }
-
-        .register-form-row {
-            gap: 0.4rem;
-        }
-    }
-
-    /* Para pantallas mayores a 1100px - mantener columnas con altura completa */
-    @@media (min-width: 1101px) {
-        .register-image-column {
-            flex: 0 0 70%;
-            height: 100%; /* Asegurar altura completa */
-        }
-
-        .register-form-column {
-            flex: 0 0 30%;
-            height: 100%; /* Asegurar altura completa */
-        }
-
-        .register-background-image {
+        .form-control {
+            font-family: var(--font-body);
+            border-radius: 0.75rem;
+            border: 1px solid var(--color-border);
+            padding: 0.7rem 1rem;
             width: 100%;
-            height: 100%; /* Ocupa toda la altura del contenedor */
-            object-fit: cover; /* Cubre todo el espacio sin deformarse */
-        }
-    }
-
-    /* Ajuste para laptops con poca altura (>1100px) */
-    @@media (min-width: 1101px) and (max-height: 700px) {
-        .register-image-column {
-            height: 100%;
+            transition: all 0.2s;
         }
 
-        .register-background-image {
-            height: 100%;
+            .form-control:focus {
+                border-color: var(--color-brand-primary);
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(239, 136, 48, 0.1);
+            }
+
+        .input-group {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--color-accent);
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-brand-primary) 0%, #e07a2a 100%);
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            font-family: var(--font-accent);
+            font-weight: 600;
             width: 100%;
+            transition: all 0.2s;
+            cursor: pointer;
+            color: white;
         }
 
-        .register-form-column {
-            padding: 1rem;
-            height: 100%;
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #e07a2a 0%, var(--color-brand-secondary) 100%);
+                transform: translateY(-1px);
+            }
+
+            .btn-primary:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+        .btn-outline {
+            background: none;
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+            padding: 0.7rem;
+            font-family: var(--font-accent);
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.2s;
+            cursor: pointer;
+            color: var(--color-text-dark);
         }
 
-        .register-form-group {
-            margin-bottom: 0.6rem;
+            .btn-outline:hover {
+                border-color: var(--color-brand-primary);
+                background: rgba(239, 136, 48, 0.05);
+            }
+
+        .text-danger {
+            color: var(--color-brand-secondary);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            font-family: var(--font-accent);
         }
 
-        .register-form-logo {
-            margin-bottom: 0.8rem;
-        }
-    }
-
-    /* Eliminar pseudo-elemento que no se usa */
-    .register-image-column::after {
-        display: none;
-    }
-    @@media (max-width: 400px) {
-        .register-fullscreen
-
-    {
-        min-height: auto; /* Elimina la altura mínima forzada */
-        height: auto;
-        align-items: flex-start; /* Alinea el contenido al inicio */
-    }
-
-    .register-main-container {
-        min-height: auto;
-        height: auto;
-    }
-
-    .register-form-column {
-        padding: 0.5rem 3rem 2rem 3rem; /* Reduce padding superior, mantiene inferior */
-        min-height: auto;
-        height: auto;
-        margin-top: 0; /* Elimina el margen superior extra */
-    }
-
-    .register-form-wrapper {
-        margin: 0 auto;
-        width: 100%;
-    }
-
-    .register-form-logo {
-        margin-bottom: 0.75rem; /* Reduce el espacio del logo */
-    }
-
-    .register-form-title {
-        font-size: 1.4rem; /* Ligeramente más pequeño para ajustarse */
-        margin-bottom: 0.15rem;
-    }
-
-    .register-form-subtitle {
-        font-size: 0.75rem;
-    }
-
-    /* Ajusta los márgenes de los grupos del formulario */
-    .register-form-group {
-        margin-bottom: 0.6rem;
-    }
-
-    /* Fila de nombre y apellido */
-    .register-form-row {
-        gap: 0.5rem;
-        margin-bottom: 0;
-    }
-
-        .register-form-row .register-form-group {
-            margin-bottom: 0.6rem;
+        /* Indicador de pasos */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
         }
 
-    /* Reduce el padding del botón principal */
-    .register-submit-btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.75rem;
-    }
-
-    /* Ajusta el checkbox de términos */
-    .register-terms-check {
-        margin: 0.6rem 0;
-        padding: 0.5rem;
-    }
-
-    .register-checkbox-label {
-        font-size: 0.65rem;
-        line-height: 1.2;
-    }
-
-    .register-checkbox-input {
-        width: 0.8rem;
-        height: 0.8rem;
-        margin-top: 0.1rem;
-    }
-
-    /* Ajusta el footer */
-    .register-footer {
-        padding-top: 0.5rem;
-        margin-top: 0.5rem;
-    }
-
-    .register-footer-text {
-        font-size: 0.65rem;
-    }
-
-    .register-login-link {
-        font-size: 0.65rem;
-    }
-
-    /* Si hay validación, reducir su margen */
-    .register-validation-summary {
-        margin-bottom: 0.6rem;
-        padding: 0.4rem;
-        font-size: 0.65rem;
-    }
-
-    /* Mensaje de error de términos */
-    .register-terms-error {
-        margin-top: 0.4rem;
-        padding: 0.4rem;
-        font-size: 0.65rem;
-    }
-
-    /* Ajusta los botones externos */
-    .register-external-btn {
-        padding: 0.4rem;
-        font-size: 0.7rem;
-        margin-bottom: 0.4rem;
-    }
-
-    .register-separator {
-        margin: 0.6rem 0;
-        font-size: 0.65rem;
-    }
-
-    }
-
-    @@media (max-width: 400px) and (max-height: 700px) {
-        .register-form-logo
-
-    {
-        margin-bottom: 0.5rem;
-    }
-
-    .register-form-group {
-        margin-bottom: 0.4rem;
-    }
-
-    .register-form-row {
-        gap: 0.4rem;
-    }
-
-        .register-form-row .register-form-group {
-            margin-bottom: 0.4rem;
+        .step-dot {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-accent);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--color-accent);
+            transition: all 0.3s;
         }
 
-    .register-footer {
-        padding-top: 0.25rem;
-        margin-top: 0.25rem;
-    }
+            .step-dot.active {
+                background: var(--color-brand-primary);
+                color: white;
+            }
 
-    .register-image-overlay {
-        display: none;
-    }
+            .step-dot.completed {
+                background: #28a745;
+                color: white;
+            }
 
-    }
-
-    @@media (max-width: 400px) {
-        .register-password-toggle
-
-    {
-        right: 0.4rem;
-        font-size: 0.7rem;
-        padding: 0.1rem;
-    }
-
-    .register-form-input {
-        padding: 0.4rem 0.6rem;
-        font-size: 0.75rem;
-    }
-
-    .register-form-label {
-        font-size: 0.7rem;
-        margin-bottom: 0.1rem;
-    }
-
-        .register-form-label i {
-            font-size: 0.65rem;
+        .step-line {
+            width: 3rem;
+            height: 2px;
+            background: #e9ecef;
         }
 
-    .field-validation-error {
-        font-size: 0.6rem;
-        margin-top: 0.1rem;
-    }
+            .step-line.completed {
+                background: #28a745;
+            }
 
-    }
-</style>
+        /* Contenedor de progreso */
+        .progress-container {
+            margin-bottom: 1rem;
+        }
 
-<div class="register-fullscreen">
-    <div class="register-main-container">
-        <!-- Columna izquierda - Imagen de fondo (70% en desktop) - Altura completa -->
-        <div class="register-image-column">
-            <img src="~/diseño/Registro.png" alt="Yo Soy Arte" class="register-background-image">
-            <div class="register-image-overlay"></div>
-        </div>
+        /* Botones externos */
+        .btn-google {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+            padding: 0.7rem;
+            font-family: var(--font-accent);
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--color-text-dark);
+        }
 
-        <!-- Columna derecha - Formulario de registro (30% en desktop, 100% en móvil) -->
-        <div class="register-form-column">
-            <div class="register-form-wrapper">
-                <!-- Logo y título -->
-                <div class="register-form-logo">
-                    <h2 class="register-form-title">¡Crea tu cuenta!</h2>
-                    <p class="register-form-subtitle">Completa tus datos para registrarte</p>
+            .btn-google:hover {
+                border-color: #db4437;
+                background: rgba(219, 68, 55, 0.02);
+            }
+
+        .separator {
+            position: relative;
+            text-align: center;
+            margin: 1.25rem 0;
+        }
+
+            .separator hr {
+                border: none;
+                height: 1px;
+                background: var(--color-border);
+            }
+
+            .separator span {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 0 0.75rem;
+                font-family: var(--font-accent);
+                font-size: 0.75rem;
+                color: var(--color-accent);
+            }
+
+        /* Enlaces */
+        .register-link, .home-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+            .register-link a, .home-link a {
+                font-family: var(--font-body);
+                font-size: 0.85rem;
+                text-decoration: none;
+            }
+
+            .register-link a {
+                color: var(--color-brand-primary);
+                font-weight: 500;
+            }
+
+                .register-link a:hover {
+                    text-decoration: underline;
+                }
+
+            .home-link a {
+                color: var(--color-accent);
+            }
+
+                .home-link a:hover {
+                    color: var(--color-brand-primary);
+                }
+
+        /* Toast */
+        .toast-message {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 0.625rem 1.25rem;
+            border-radius: 9999px;
+            font-family: var(--font-accent);
+            font-size: 0.875rem;
+            transition: all 0.3s;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 50;
+            white-space: nowrap;
+        }
+
+            .toast-message.show {
+                opacity: 1;
+            }
+
+        /* Responsive */
+        @@media (max-width: 576px) {
+            .registro-card {
+                max-width: 100%;
+                margin: 0 1rem;
+            }
+
+            .step-line {
+                width: 1.5rem;
+            }
+
+            .step-dot {
+                width: 1.75rem;
+                height: 1.75rem;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 md:p-6">
+
+    <div class="w-full max-w-2xl mx-auto">
+        <!-- Tarjeta principal -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+
+            <!-- Encabezado con logo e indicador de progreso -->
+            <div class="registro-header">
+                <img src="~/diseño/logo-neutro.png" alt="Yo Soy Arte" class="registro-logo">
+                <h1>Crear cuenta</h1>
+                <p>Únete a nuestra comunidad de arte</p>
+            </div>
+
+            <div class="p-6 sm:p-8 relative">
+
+                <!-- Indicador de pasos -->
+                <div class="step-indicator">
+                    <div class="step-dot active" id="step1Dot">1</div>
+                    <div class="step-line" id="stepLine"></div>
+                    <div class="step-dot" id="step2Dot">2</div>
                 </div>
 
-                <!-- Resumen de validación -->
-                <div asp-validation-summary="ModelOnly" class="register-validation-summary"></div>
+                <!-- PASO 1: Datos Básicos -->
+                <div id="step1" class="step-transition w-full transition-all duration-300">
+                    <form id="step1Form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="ReturnUrl" value="@ViewData["ReturnUrl"]" />
+                        <input type="hidden" asp-for="TipoCuenta" id="tipoCuentaHidden" />
+                        <input type="hidden" name="NombreArtistico" id="nombreArtisticoHidden" />
+                        <input type="hidden" name="EstiloPrincipal" id="estiloPrincipalHidden" />
+                        <input type="hidden" name="Biografia" id="biografiaHidden" />
 
-                <!-- Formulario de registro -->
-                <form asp-controller="Cuenta" asp-action="Registro" method="post">
-                    <input type="hidden" asp-for="ReturnUrl" value="@ViewData["ReturnUrl"]" />
-
-                    <!-- Fila para Nombre y Apellido -->
-                    <div class="register-form-row">
-                        <!-- Campo de Nombre -->
-                        <div class="register-form-group">
-                            <label class="register-form-label" asp-for="Nombre">
-                                <i class="fas fa-user me-1"></i> Nombre
-                            </label>
-                            <div class="register-input-wrapper">
-                                <input asp-for="Nombre" type="text" class="register-form-input"
-                                       placeholder="Tu nombre" id="nombre">
+                        <div class="space-y-4">
+                            <!-- Nombre y Apellido en dos columnas -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="form-label">Nombre</label>
+                                    <input type="text" asp-for="Nombre" id="nombreInput" placeholder="Tu nombre" class="form-control">
+                                    <span asp-validation-for="Nombre" class="text-danger hidden" id="nombreError"></span>
+                                </div>
+                                <div>
+                                    <label class="form-label">Apellido</label>
+                                    <input type="text" asp-for="Apellido" id="apellidoInput" placeholder="Tu apellido" class="form-control">
+                                    <span asp-validation-for="Apellido" class="text-danger hidden" id="apellidoError"></span>
+                                </div>
                             </div>
-                            <span asp-validation-for="Nombre" class="field-validation-error"></span>
-                        </div>
 
-                        <!-- Campo de Apellido -->
-                        <div class="register-form-group">
-                            <label class="register-form-label" asp-for="Apellido">
-                                <i class="fas fa-user me-1"></i> Apellido
-                            </label>
-                            <div class="register-input-wrapper">
-                                <input asp-for="Apellido" type="text" class="register-form-input"
-                                       placeholder="Tu apellido" id="apellido">
+                            <!-- Email -->
+                            <div>
+                                <label class="form-label">Correo electrónico</label>
+                                <input type="email" asp-for="Email" id="emailInput" placeholder="hola@ejemplo.com" class="form-control">
+                                <span asp-validation-for="Email" class="text-danger hidden" id="emailError"></span>
                             </div>
-                            <span asp-validation-for="Apellido" class="field-validation-error"></span>
-                        </div>
-                    </div>
 
-                    <!-- Campo de Correo Electrónico -->
-                    <div class="register-form-group">
-                        <label class="register-form-label" asp-for="Email">
-                            <i class="fas fa-envelope me-1"></i> Correo Electrónico
-                        </label>
-                        <div class="register-input-wrapper">
-                            <input asp-for="Email" type="email" class="register-form-input"
-                                   placeholder="ejemplo@correo.com" id="email">
-                        </div>
-                        <span asp-validation-for="Email" class="field-validation-error"></span>
-                    </div>
+                            <!-- Contraseña y Confirmar -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="form-label">Contraseña</label>
+                                    <div class="input-group">
+                                        <input type="password" asp-for="Contrasena" id="passwordInput" placeholder="••••••••" class="form-control pr-10">
+                                        <button type="button" class="password-toggle" id="togglePassword">
+                                            <i class="far fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <span asp-validation-for="Contrasena" class="text-danger hidden" id="passwordError"></span>
+                                </div>
+                                <div>
+                                    <label class="form-label">Confirmar contraseña</label>
+                                    <div class="input-group">
+                                        <input type="password" asp-for="ConfirmarContrasena" id="confirmPasswordInput" placeholder="••••••••" class="form-control pr-10">
+                                        <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                                            <i class="far fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <span asp-validation-for="ConfirmarContrasena" class="text-danger hidden" id="confirmError"></span>
+                                </div>
+                            </div>
 
-                    <!-- Campo de Contraseña -->
-                    <div class="register-form-group">
-                        <label class="register-form-label" asp-for="Contrasena">
-                            <i class="fas fa-lock me-1"></i> Contraseña
-                        </label>
-                        <div class="register-input-wrapper">
-                            <input asp-for="Contrasena" type="password" class="register-form-input"
-                                   placeholder="Mínimo 6 caracteres" id="password">
-                            <button type="button" class="register-password-toggle" id="togglePassword" aria-label="Mostrar contraseña">
-                                <i class="fas fa-eye"></i>
+                            <!-- Términos y Condiciones -->
+                            <div class="pt-2">
+                                <label class="flex items-start gap-3 cursor-pointer">
+                                    <input type="checkbox" id="acceptTerms" class="mt-0.5 w-4 h-4 text-orange-600 rounded border-gray-300 focus:ring-orange-500">
+                                    <span class="text-sm text-gray-600">
+                                        Acepto los <a href="#" class="text-orange-600 hover:text-orange-700 font-medium">Términos y Condiciones</a>
+                                        y la <a href="#" class="text-orange-600 hover:text-orange-700 font-medium">Política de Privacidad</a>
+                                    </span>
+                                </label>
+                                <p id="termsError" class="text-danger hidden mt-1">Debes aceptar los términos para continuar</p>
+                            </div>
+
+                            <!-- Botón Siguiente -->
+                            <div class="pt-4 flex justify-end">
+                                <button type="button" id="nextToStep2" class="btn-primary flex items-center justify-center gap-2 w-auto px-6 py-3">
+                                    Siguiente <i class="fas fa-arrow-right text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- PASO 2: Selección de Rol -->
+                <div id="step2" class="step-transition w-full hidden transition-all duration-300">
+                    <div class="space-y-6">
+                        <div class="text-center">
+                            <h2 class="text-xl font-medium text-gray-800" style="font-family: var(--font-heading);">Elige tu rol</h2>
+                            <p class="text-sm text-gray-500 mt-1">Selecciona una opción para continuar</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
+                            <!-- Tarjeta Estudiante -->
+                            <div id="roleStudent" class="role-card p-6 rounded-2xl border-2 border-gray-200 bg-white flex flex-col items-center text-center hover:border-orange-300 transition-all cursor-pointer">
+                                <div class="w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center mb-4">
+                                    <i class="fas fa-graduation-cap text-2xl text-orange-600"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-800" style="font-family: var(--font-heading);">Estudiante</h3>
+                                <p class="text-xs text-gray-500 mt-2">Quiero aprender y acceder a cursos</p>
+                            </div>
+
+                            <!-- Tarjeta Artista -->
+                            <div id="roleArtist" class="role-card p-6 rounded-2xl border-2 border-gray-200 bg-white flex flex-col items-center text-center hover:border-orange-300 transition-all cursor-pointer">
+                                <div class="w-16 h-16 rounded-full bg-purple-50 flex items-center justify-center mb-4">
+                                    <i class="fas fa-palette text-2xl text-purple-600"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-800" style="font-family: var(--font-heading);">Artista</h3>
+                                <p class="text-xs text-gray-500 mt-2">Quiero publicar y vender mi arte</p>
+                            </div>
+                        </div>
+
+                        <!-- Botón Volver -->
+                        <div class="pt-6 flex justify-start">
+                            <button id="backFromStep2" class="btn-outline flex items-center gap-2 px-5 py-2.5">
+                                <i class="fas fa-arrow-left text-sm"></i> Anterior
                             </button>
                         </div>
-                        <span asp-validation-for="Contrasena" class="field-validation-error"></span>
                     </div>
+                </div>
 
-                    <!-- Campo de Confirmar Contraseña -->
-                    <div class="register-form-group">
-                        <label class="register-form-label" asp-for="ConfirmarContrasena">
-                            <i class="fas fa-lock me-1"></i> Confirmar Contraseña
-                        </label>
-                        <div class="register-input-wrapper">
-                            <input asp-for="ConfirmarContrasena" type="password" class="register-form-input"
-                                   placeholder="Repite tu contraseña" id="confirmPassword">
-                            <button type="button" class="register-password-toggle" id="toggleConfirmPassword" aria-label="Mostrar contraseña">
-                                <i class="fas fa-eye"></i>
+                <!-- PASO 3: Datos del Artista -->
+                <div id="step3" class="step-transition w-full hidden transition-all duration-300">
+                    <div class="space-y-6">
+                        <div class="text-center">
+                            <h2 class="text-xl font-medium text-gray-800" style="font-family: var(--font-heading);">Información de artista</h2>
+                            <p class="text-sm text-gray-500 mt-1">Completa los detalles de tu perfil artístico</p>
+                        </div>
+
+                        <div class="artist-fields space-y-4">
+                            <div class="flex items-start gap-2 text-sm text-amber-700 bg-amber-50 p-3 rounded-lg">
+                                <i class="fas fa-info-circle mt-0.5"></i>
+                                <span>Los artistas requieren aprobación del administrador. Te notificaremos cuando tu cuenta esté activa.</span>
+                            </div>
+
+                            <div>
+                                <label class="form-label">Nombre artístico <span class="text-red-500">*</span></label>
+                                <input type="text" id="nombreArtisticoField" placeholder="¿Cómo quieres ser conocido?" class="form-control">
+                            </div>
+
+                            <div>
+                                <label class="form-label">Estilo principal <span class="text-red-500">*</span></label>
+                                <input type="text" id="estiloField" placeholder="Pintura, Música, Escultura, Fotografía..." class="form-control">
+                            </div>
+
+                            <div>
+                                <label class="form-label">Biografía</label>
+                                <textarea id="biografiaField" rows="3" placeholder="Cuéntanos sobre ti, tu trayectoria artística..." class="form-control resize-none"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 flex justify-between">
+                            <button id="backFromStep3" class="btn-outline flex items-center gap-2 px-5 py-2.5">
+                                <i class="fas fa-arrow-left text-sm"></i> Anterior
+                            </button>
+                            <button id="submitFormBtn" class="btn-primary flex items-center gap-2 px-6 py-2.5">
+                                Finalizar registro <i class="fas fa-check-circle"></i>
                             </button>
                         </div>
-                        <span asp-validation-for="ConfirmarContrasena" class="field-validation-error"></span>
                     </div>
-
-                    <!-- Checkbox de términos -->
-                    <div class="register-terms-check">
-                        <div class="register-checkbox">
-                            <input class="register-checkbox-input" type="checkbox" id="acceptTerms" required>
-                            <label class="register-checkbox-label" for="acceptTerms">
-                                Acepto los <a asp-controller="Home" asp-action="Terms" target="_blank" class="register-terms-link">Términos</a> y la <a asp-controller="Home" asp-action="Privacy" target="_blank" class="register-terms-link">Política de Privacidad</a>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Botón de Crear Cuenta -->
-                    <button type="submit" class="register-submit-btn">
-                        <span>Crear Cuenta</span>
-                    </button>
-                </form>
-
-                <!-- Separador para opciones externas -->
-                @{
-                    var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-                }
-
-                @if (loginProviders.Count > 0)
-                {
-                    <div class="register-separator">
-                        <span>O registrarse con</span>
-                    </div>
-
-                    <!-- Botones de registro externo -->
-                    <div class="register-external-buttons">
-                        <form asp-controller="Cuenta" asp-action="ExternalLogin"
-                              asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
-                            @foreach (var p in loginProviders)
-                            {
-                                if (p.Name.ToLower().Contains("google"))
-                                {
-                                    <button type="submit" class="register-external-btn google-btn"
-                                            name="provider" value="@p.Name"
-                                            title="Registrarse con tu cuenta de @p.DisplayName">
-                                        <i class="fab fa-google"></i>
-                                        <span>@p.DisplayName</span>
-                                    </button>
-                                }
-                                else if (p.Name.ToLower().Contains("facebook"))
-                                {
-                                    <button type="submit" class="register-external-btn facebook-btn"
-                                            name="provider" value="@p.Name"
-                                            title="Registrarse con tu cuenta de @p.DisplayName">
-                                        <i class="fab fa-facebook-f"></i>
-                                        <span>@p.DisplayName</span>
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button type="submit" class="register-external-btn"
-                                            name="provider" value="@p.Name"
-                                            title="Registrarse con tu cuenta de @p.DisplayName">
-                                        <i class="fas fa-external-link-alt"></i>
-                                        <span>@p.DisplayName</span>
-                                    </button>
-                                }
-                            }
-                        </form>
-                    </div>
-                }
-
-                <!-- Pie de página con enlace a login -->
-                <div class="register-footer">
-                    <p class="register-footer-text">
-                        ¿Ya tienes una cuenta?
-                        <a asp-controller="Cuenta" asp-action="Login" class="register-login-link">
-                            Inicia sesión
-                        </a>
-                    </p>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-@section Scripts {
+        <!-- Registro externo (Google, Facebook) -->
+        @{
+            var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+        }
+
+        @if (loginProviders.Count > 0)
+        {
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600 mb-3">O registrarse con</p>
+                <div class="flex gap-3 justify-center">
+                    @foreach (var p in loginProviders)
+                    {
+                        if (p.Name.ToLower().Contains("google"))
+                        {
+                            <form asp-controller="Cuenta" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="inline">
+                                <button type="submit" name="provider" value="@p.Name" class="btn-google">
+                                    <i class="fab fa-google text-red-500"></i>
+                                    <span>Google</span>
+                                </button>
+                            </form>
+                        }
+                        else if (p.Name.ToLower().Contains("facebook"))
+                        {
+                            <form asp-controller="Cuenta" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="inline">
+                                <button type="submit" name="provider" value="@p.Name" class="btn-google">
+                                    <i class="fab fa-facebook-f text-blue-600"></i>
+                                    <span>Facebook</span>
+                                </button>
+                            </form>
+                        }
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Enlaces inferiores -->
+        <div class="mt-6 text-center space-y-2">
+            <p class="text-sm text-gray-600">
+                ¿Ya tienes cuenta?
+                <a asp-controller="Cuenta" asp-action="Login" class="text-orange-600 hover:text-orange-700 font-medium">Inicia sesión</a>
+            </p>
+            <div>
+                <a asp-controller="Home" asp-action="Index" class="text-sm text-gray-500 hover:text-orange-600 transition-colors inline-flex items-center gap-1">
+                    <i class="fas fa-arrow-left text-xs"></i> Volver al inicio
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toastMessage" class="toast-message">✅ Mensaje</div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Toggle para mostrar/ocultar contraseña
-            const togglePassword = document.getElementById('togglePassword');
-            const passwordInput = document.getElementById('password');
+            // Elementos DOM
+            const step1Div = document.getElementById('step1');
+            const step2Div = document.getElementById('step2');
+            const step3Div = document.getElementById('step3');
+            const nextToStep2Btn = document.getElementById('nextToStep2');
+            const backFromStep2Btn = document.getElementById('backFromStep2');
+            const backFromStep3Btn = document.getElementById('backFromStep3');
+            const submitBtn = document.getElementById('submitFormBtn');
+            const roleStudent = document.getElementById('roleStudent');
+            const roleArtist = document.getElementById('roleArtist');
+            const step1Dot = document.getElementById('step1Dot');
+            const step2Dot = document.getElementById('step2Dot');
+            const stepLine = document.getElementById('stepLine');
 
-            if (togglePassword && passwordInput) {
-                togglePassword.addEventListener('click', function() {
-                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                    passwordInput.setAttribute('type', type);
+            // Inputs paso 1
+            const nombreInput = document.getElementById('nombreInput');
+            const apellidoInput = document.getElementById('apellidoInput');
+            const emailInput = document.getElementById('emailInput');
+            const passwordInput = document.getElementById('passwordInput');
+            const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+            const acceptTerms = document.getElementById('acceptTerms');
 
-                    const icon = this.querySelector('i');
-                    icon.classList.toggle('fa-eye');
-                    icon.classList.toggle('fa-eye-slash');
-                });
+            // Inputs artista
+            const nombreArtisticoField = document.getElementById('nombreArtisticoField');
+            const estiloField = document.getElementById('estiloField');
+            const biografiaField = document.getElementById('biografiaField');
+
+            // Hidden fields
+            const tipoCuentaHidden = document.getElementById('tipoCuentaHidden');
+            const nombreArtisticoHidden = document.getElementById('nombreArtisticoHidden');
+            const estiloPrincipalHidden = document.getElementById('estiloPrincipalHidden');
+            const biografiaHidden = document.getElementById('biografiaHidden');
+
+            // Variables de estado
+            let currentStep = 1;
+            let selectedRole = null;
+
+            // Toggle de contraseñas
+            setupPasswordToggle('togglePassword', 'passwordInput');
+            setupPasswordToggle('toggleConfirmPassword', 'confirmPasswordInput');
+
+            function updateStepIndicator() {
+                if (currentStep === 1) {
+                    step1Dot.classList.add('active');
+                    step1Dot.classList.remove('completed');
+                    step2Dot.classList.remove('active', 'completed');
+                    stepLine.classList.remove('completed');
+                } else if (currentStep === 2) {
+                    step1Dot.classList.remove('active');
+                    step1Dot.classList.add('completed');
+                    step2Dot.classList.add('active');
+                    step2Dot.classList.remove('completed');
+                    stepLine.classList.add('completed');
+                } else if (currentStep === 3) {
+                    step1Dot.classList.remove('active');
+                    step1Dot.classList.add('completed');
+                    step2Dot.classList.remove('active');
+                    step2Dot.classList.add('completed');
+                    stepLine.classList.add('completed');
+                }
             }
 
-            // Toggle para confirmar contraseña
-            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
-            const confirmPasswordInput = document.getElementById('confirmPassword');
+            function showStep(step) {
+                step1Div.style.display = 'none';
+                step2Div.classList.add('hidden');
+                step3Div.classList.add('hidden');
 
-            if (toggleConfirmPassword && confirmPasswordInput) {
-                toggleConfirmPassword.addEventListener('click', function() {
-                    const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                    confirmPasswordInput.setAttribute('type', type);
+                if (step === 1) {
+                    step1Div.style.display = 'block';
+                } else if (step === 2) {
+                    step2Div.classList.remove('hidden');
+                } else if (step === 3) {
+                    step3Div.classList.remove('hidden');
+                }
 
-                    const icon = this.querySelector('i');
-                    icon.classList.toggle('fa-eye');
-                    icon.classList.toggle('fa-eye-slash');
-                });
+                currentStep = step;
+                updateStepIndicator();
             }
 
-            // Animación para inputs cuando tienen valor
-            const inputs = document.querySelectorAll('.register-form-input');
-            inputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    if (this.value.trim() !== '') {
-                        this.style.borderColor = 'var(--color-brand-primary)';
-                    } else {
-                        this.style.borderColor = 'var(--color-border)';
-                    }
-                });
-            });
-
-            // Validación del checkbox de términos
-            const form = document.querySelector('form[asp-controller="Cuenta"][asp-action="Registro"]');
-            const termsCheckbox = document.getElementById('acceptTerms');
-
-            if (form && termsCheckbox) {
-                form.addEventListener('submit', function(e) {
-                    if (!termsCheckbox.checked) {
-                        e.preventDefault();
-
-                        // Mostrar mensaje de error
-                        const errorMessage = document.createElement('div');
-                        errorMessage.className = 'register-terms-error';
-                        errorMessage.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i>Debes aceptar los Términos y Política de Privacidad';
-
-                        // Remover mensajes de error previos
-                        const existingError = document.querySelector('.register-terms-error');
-                        if (existingError) {
-                            existingError.remove();
-                        }
-
-                        // Añadir mensaje de error
-                        termsCheckbox.closest('.register-terms-check').appendChild(errorMessage);
-
-                        // Resaltar el checkbox
-                        termsCheckbox.classList.add('has-error');
-
-                        // Scroll al error
-                        errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                });
-
-                // Remover mensaje de error cuando se marque el checkbox
-                termsCheckbox.addEventListener('change', function() {
-                    const errorMessage = document.querySelector('.register-terms-error');
-                    if (errorMessage && this.checked) {
-                        errorMessage.remove();
-                        this.classList.remove('has-error');
-                    }
-                });
+            function showToast(message, type = 'info') {
+                const toast = document.getElementById('toastMessage');
+                const icon = type === 'success' ? '✅' : (type === 'error' ? '⚠️' : 'ℹ️');
+                toast.innerHTML = `${icon} ${message}`;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 4000);
             }
 
-            // Manejo de errores de validación del lado del cliente
-            document.querySelectorAll('[data-valmsg-for]').forEach(span => {
-                const inputId = span.getAttribute('data-valmsg-for');
-                const input = document.getElementById(inputId);
+            function validateStep1() {
+                let isValid = true;
+                const nombre = nombreInput.value.trim();
+                const apellido = apellidoInput.value.trim();
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
 
-                if (!input) return;
+                document.querySelectorAll('.text-danger').forEach(el => el.classList.add('hidden'));
 
-                const observer = new MutationObserver(mutations => {
-                    mutations.forEach(mutation => {
-                        if (mutation.type === 'childList' || mutation.type === 'characterData') {
-                            if (span.innerHTML.trim() !== "" && span.innerHTML.trim() !== "[]") {
-                                input.classList.add('input-validation-error');
-                            } else {
-                                input.classList.remove('input-validation-error');
-                            }
-                        }
+                if (!nombre || nombre.length < 2) {
+                    document.getElementById('nombreError').textContent = 'El nombre es requerido';
+                    document.getElementById('nombreError').classList.remove('hidden');
+                    isValid = false;
+                }
+                if (!apellido || apellido.length < 2) {
+                    document.getElementById('apellidoError').textContent = 'El apellido es requerido';
+                    document.getElementById('apellidoError').classList.remove('hidden');
+                    isValid = false;
+                }
+
+                const emailRegex = /^[^\s@@]+@@([^\s@@]+\.)+[^\s@@]+$/;
+                if (!emailRegex.test(email)) {
+                    document.getElementById('emailError').textContent = 'Correo inválido';
+                    document.getElementById('emailError').classList.remove('hidden');
+                    isValid = false;
+                }
+
+                if (!password || password.length < 6) {
+                    document.getElementById('passwordError').textContent = 'Mínimo 6 caracteres';
+                    document.getElementById('passwordError').classList.remove('hidden');
+                    isValid = false;
+                }
+
+                if (password !== confirmPassword) {
+                    document.getElementById('confirmError').textContent = 'No coinciden';
+                    document.getElementById('confirmError').classList.remove('hidden');
+                    isValid = false;
+                }
+
+                if (!acceptTerms.checked) {
+                    document.getElementById('termsError').classList.remove('hidden');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            async function validateStep1Server() {
+                const data = {
+                    Nombre: nombreInput.value.trim(),
+                    Apellido: apellidoInput.value.trim(),
+                    Email: emailInput.value.trim(),
+                    Contrasena: passwordInput.value,
+                    ConfirmarContrasena: confirmPasswordInput.value,
+                    AceptaTerminos: acceptTerms.checked
+                };
+
+                try {
+                    const response = await fetch('@Url.Action("ValidarDatosBasicos", "Cuenta")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        },
+                        body: JSON.stringify(data)
                     });
+
+                    const result = await response.json();
+
+                    if (result.error) {
+                        showToast(result.mensaje, 'error');
+                        return false;
+                    }
+
+                    if (result.existe && result.tieneRoles) {
+                        showToast(result.mensaje, 'error');
+                        return false;
+                    }
+
+                    return true;
+                } catch (error) {
+                    showToast('Error al validar', 'error');
+                    return false;
+                }
+            }
+
+            nextToStep2Btn.addEventListener('click', async function() {
+                if (!validateStep1()) return;
+
+                const btn = nextToStep2Btn;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Validando...';
+
+                const isValid = await validateStep1Server();
+
+                btn.disabled = false;
+                btn.innerHTML = 'Siguiente <i class="fas fa-arrow-right text-sm"></i>';
+
+                if (isValid) showStep(2);
+            });
+
+            backFromStep2Btn.addEventListener('click', () => showStep(1));
+            backFromStep3Btn.addEventListener('click', () => showStep(2));
+
+            roleStudent.addEventListener('click', async () => {
+                selectedRole = 'Estudiante';
+                tipoCuentaHidden.value = 'Estudiante';
+                roleStudent.classList.add('selected');
+                roleArtist.classList.remove('selected');
+                await asignarRol('Estudiante');
+            });
+
+            roleArtist.addEventListener('click', () => {
+                selectedRole = 'Artista';
+                tipoCuentaHidden.value = 'Artista';
+                roleArtist.classList.add('selected');
+                roleStudent.classList.remove('selected');
+                showStep(3);
+            });
+
+            submitBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                const nombreArtistico = nombreArtisticoField.value.trim();
+                const estilo = estiloField.value.trim();
+
+                if (!nombreArtistico) {
+                    showToast('El nombre artístico es obligatorio', 'error');
+                    nombreArtisticoField.focus();
+                    return;
+                }
+                if (!estilo) {
+                    showToast('El estilo principal es obligatorio', 'error');
+                    estiloField.focus();
+                    return;
+                }
+
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Registrando...';
+
+                await asignarRol('Artista', {
+                    nombreArtistico: nombreArtistico,
+                    estiloPrincipal: estilo,
+                    biografia: biografiaField.value
                 });
 
-                observer.observe(span, { childList: true, characterData: true, subtree: true });
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
             });
+
+            async function asignarRol(tipoCuenta, datosArtista = null) {
+                const data = { TipoCuenta: tipoCuenta };
+                if (datosArtista) {
+                    data.NombreArtistico = datosArtista.nombreArtistico;
+                    data.EstiloPrincipal = datosArtista.estiloPrincipal;
+                    data.Biografia = datosArtista.biografia;
+                }
+
+                try {
+                    const response = await fetch('@Url.Action("AsignarRol", "Cuenta")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showToast(result.mensaje, 'success');
+                        setTimeout(() => window.location.href = result.redirectUrl, 1500);
+                    } else {
+                        showToast(result.mensaje, 'error');
+                    }
+                } catch (error) {
+                    showToast('Error al procesar', 'error');
+                }
+            }
+
+            function setupPasswordToggle(toggleId, inputId) {
+                const toggle = document.getElementById(toggleId);
+                const input = document.getElementById(inputId);
+                if (toggle && input) {
+                    toggle.addEventListener('click', () => {
+                        const type = input.type === 'password' ? 'text' : 'password';
+                        input.type = type;
+                        toggle.querySelector('i').classList.toggle('fa-eye');
+                        toggle.querySelector('i').classList.toggle('fa-eye-slash');
+                    });
+                }
+            }
+
+            showStep(1);
         });
     </script>
 
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-}
+</body>
+</html>

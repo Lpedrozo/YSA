@@ -5,830 +5,769 @@
 
 @{
     ViewData["Title"] = "Iniciar Sesión";
-    ViewData["ReturnUrl"] = ViewData["ReturnUrl"] ?? Url.Content("~/");
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
 }
 
-<!-- Estilos específicos para esta vista -->
-<style>
-    /* =========================================== */
-    /* ESTILOS PARA LOGIN CON IMAGEN DE FONDO */
-    /* =========================================== */
-
-    .login-fullscreen {
-        position: relative;
-        width: 100%;
-        min-height: calc(100vh - 5.5rem);
-        overflow-x: hidden;
-        overflow-y: auto;
-        background-color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Contenedor principal que abarca todo el espacio */
-    .login-main-container {
-        width: 100%;
-        min-height: 100%;
-        display: flex;
-        align-items: stretch;
-        background-color: #fff;
-    }
-
-    /* Columna izquierda - Imagen de fondo - 70% */
-    .login-image-column {
-        flex: 0 0 70%;
-        position: relative;
-        overflow: hidden;
-        background-color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        /* Altura automática basada en el contenido */
-        height: auto;
-    }
-
-    /* Imagen de fondo - CONTAINER para mantener proporciones 16:9 */
-    .login-background-image {
-        position: relative;
-        width: 100%;
-        height: auto;
-        aspect-ratio: 16 / 9; /* Mantener proporción 1920x1080 */
-        object-fit: contain; /* Asegura que la imagen completa sea visible */
-        object-position: center;
-        transition: transform 0.5s ease;
-        display: block;
-    }
-
-    .login-image-column:hover .login-background-image {
-        transform: scale(1.02);
-    }
-
-    /* Overlay sutil para dar profundidad */
-    .login-image-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        pointer-events: none; /* Para no interferir con clicks */
-    }
-
-    /* Columna derecha - Formulario - 30% */
-    .login-form-column {
-        flex: 0 0 30%;
-        background-color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem 1.5rem;
-        animation: fadeIn 0.6s ease-out;
-        height: auto;
-    }
-
-    /* Contenedor del formulario */
-    .login-form-wrapper {
-        width: 100%;
-        max-width: 380px;
-        margin: 0 auto;
-    }
-
-    /* Logo y título */
-    .login-form-logo {
-        text-align: center;
-        margin-bottom: 1.5rem;
-    }
-
-    .login-logo-image {
-        width: 90px;
-        height: auto;
-        margin: 0 auto 1rem;
-        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.05));
-    }
-
-    .login-form-title {
-        font-family: var(--font-heading);
-        font-size: 1.6rem;
-        color: var(--color-brand-primary);
-        margin-bottom: 0.25rem;
-        line-height: 1.2;
-    }
-
-    .login-form-subtitle {
-        font-family: var(--font-body);
-        color: var(--color-accent);
-        font-size: 0.8rem;
-        margin: 0;
-    }
-
-    /* Grupos de formulario */
-    .login-form-group {
-        margin-bottom: 1rem;
-    }
-
-    .login-form-label {
-        display: block;
-        font-family: var(--font-accent);
-        font-weight: 500;
-        font-size: 0.75rem;
-        color: var(--color-text-dark);
-        margin-bottom: 0.25rem;
-    }
-
-        .login-form-label i {
-            font-size: 0.7rem;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>@ViewData["Title"] - Yo Soy Arte</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Importación de fuentes */
+        @@font-face {
+            font-family: 'Garet Book';
+            src: url('/css/fonts/Garet-Book.woff2') format('woff2'), url('/css/fonts/Garet-Book.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
         }
 
-    .login-input-wrapper {
-        position: relative;
-    }
-
-    .login-form-input {
-        width: 100%;
-        padding: 0.5rem 0.75rem;
-        font-family: var(--font-body);
-        font-size: 0.8rem;
-        color: var(--color-text-dark);
-        background-color: #fff;
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius-sm);
-        transition: all 0.2s ease;
-        outline: none;
-    }
-
-        .login-form-input:focus {
-            border-color: var(--color-brand-primary);
-            box-shadow: 0 0 0 2px rgba(239, 136, 48, 0.1);
+        @@font-face {
+            font-family: 'Garet Book';
+            src: url('/css/fonts/Garet-Heavy.woff2') format('woff2'), url('/css/fonts/Garet-Heavy.woff') format('woff');
+            font-weight: bold;
+            font-style: normal;
+            font-display: swap;
         }
 
-        .login-form-input.input-validation-error {
-            border-color: var(--color-brand-secondary);
+        @@font-face {
+            font-family: 'Salks';
+            src: url('/css/fonts/Salks.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
         }
 
-    /* Toggle de contraseña */
-    .login-password-toggle {
-        position: absolute;
-        right: 0.6rem;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: var(--color-accent);
-        cursor: pointer;
-        font-size: 0.8rem;
-        transition: color 0.2s ease;
-        padding: 0.15rem;
-    }
-
-        .login-password-toggle:hover {
-            color: var(--color-brand-primary);
+        :root {
+            --font-heading: 'Salks', serif;
+            --font-body: 'Garet Book', 'Garet', 'Arial', 'Helvetica', sans-serif;
+            --font-accent: 'Garet Book', 'Garet', sans-serif;
+            --color-brand-primary: #ef8830;
+            --color-brand-secondary: #e5361a;
+            --color-brand-accent: #f2e514;
+            --color-text-dark: #212529;
+            --color-accent: #6c757d;
+            --color-border: #E8E8E8;
         }
 
-    /* Opciones del formulario */
-    .login-form-options {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-        font-size: 0.8rem;
-    }
-
-    .login-checkbox {
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-    }
-
-    .login-checkbox-input {
-        width: 0.9rem;
-        height: 0.9rem;
-        border: 1px solid var(--color-border);
-        border-radius: 3px;
-        cursor: pointer;
-        accent-color: var(--color-brand-primary);
-    }
-
-    .login-checkbox-label {
-        font-family: var(--font-accent);
-        color: var(--color-text-dark);
-        cursor: pointer;
-        font-size: 0.75rem;
-    }
-
-    .login-forgot-link {
-        font-family: var(--font-accent);
-        color: var(--color-brand-primary);
-        text-decoration: none;
-        font-size: 0.75rem;
-        transition: color 0.2s ease;
-    }
-
-        .login-forgot-link:hover {
-            color: var(--color-brand-secondary);
-            text-decoration: underline;
-        }
-
-    /* Botón principal */
-    .login-submit-btn {
-        width: 100%;
-        padding: 0.6rem 1rem;
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, #e07a2a 100%);
-        border: none;
-        border-radius: var(--border-radius-sm);
-        color: white;
-        font-family: var(--font-accent);
-        font-size: 0.8rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        position: relative;
-        overflow: hidden;
-        letter-spacing: 0.3px;
-    }
-
-        .login-submit-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(239, 136, 48, 0.2);
-            background: linear-gradient(135deg, #e07a2a 0%, var(--color-brand-secondary) 100%);
-        }
-
-        .login-submit-btn:active {
-            transform: translateY(0);
-        }
-
-        .login-submit-btn i {
-            transition: transform 0.2s ease;
-            font-size: 0.8rem;
-        }
-
-        .login-submit-btn:hover i {
-            transform: translateX(3px);
-        }
-
-    /* Separador */
-    .login-separator {
-        display: flex;
-        align-items: center;
-        margin: 1rem 0;
-        color: var(--color-accent);
-        font-family: var(--font-accent);
-        font-size: 0.7rem;
-    }
-
-        .login-separator::before,
-        .login-separator::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(to right, transparent, var(--color-border), transparent);
-        }
-
-        .login-separator::before {
-            margin-right: 0.75rem;
-        }
-
-        .login-separator::after {
-            margin-left: 0.75rem;
-        }
-
-    /* Botones externos */
-    .login-external-buttons {
-        margin-bottom: 1rem;
-    }
-
-    .login-external-btn {
-        width: 100%;
-        padding: 0.5rem;
-        background: white;
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius-sm);
-        font-family: var(--font-accent);
-        font-size: 0.75rem;
-        font-weight: 500;
-        color: var(--color-text-dark);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-        .login-external-btn:hover {
-            border-color: var(--color-brand-primary);
-            background: rgba(239, 136, 48, 0.05);
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .login-external-btn:last-child {
-            margin-bottom: 0;
-        }
-
-        .login-external-btn i {
-            font-size: 0.8rem;
-        }
-
-    .google-btn {
-        border-color: #DB4437;
-        color: #DB4437;
-    }
-
-        .google-btn:hover {
-            background: rgba(219, 68, 55, 0.05);
-            border-color: #DB4437;
-        }
-
-    .facebook-btn {
-        border-color: #4267B2;
-        color: #4267B2;
-    }
-
-        .facebook-btn:hover {
-            background: rgba(66, 103, 178, 0.05);
-            border-color: #4267B2;
-        }
-
-    /* Pie de página */
-    .login-footer {
-        text-align: center;
-        padding-top: 0.8rem;
-        border-top: 1px solid rgba(239, 136, 48, 0.1);
-    }
-
-    .login-footer-text {
-        font-family: var(--font-body);
-        color: var(--color-accent);
-        font-size: 0.7rem;
-        margin: 0;
-    }
-
-    .login-register-link {
-        color: var(--color-brand-primary);
-        text-decoration: none;
-        font-weight: 600;
-        transition: color 0.2s ease;
-        font-size: 0.7rem;
-    }
-
-        .login-register-link:hover {
-            color: var(--color-brand-secondary);
-            text-decoration: underline;
-        }
-
-    /* Mensajes de validación */
-    .login-validation-summary {
-        background: rgba(229, 54, 26, 0.05);
-        border: 1px solid rgba(229, 54, 26, 0.2);
-        border-radius: var(--border-radius-sm);
-        padding: 0.6rem;
-        font-family: var(--font-body);
-        font-size: 0.7rem;
-        color: var(--color-alert);
-        margin-bottom: 1rem;
-    }
-
-        .login-validation-summary ul {
+        body {
+            font-family: var(--font-body);
+            background: url('/diseño/InicioRegistro.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
             margin: 0;
-            padding-left: 1.2rem;
-        }
-
-    .field-validation-error {
-        display: block;
-        margin-top: 0.2rem;
-        font-family: var(--font-accent);
-        font-size: 0.65rem;
-        color: var(--color-alert);
-    }
-
-    /* Animaciones */
-    @@keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* =========================================== */
-    /* RESPONSIVE - CON OCULTAR IMAGEN A 1100px (IGUAL QUE REGISTRO) */
-    /* =========================================== */
-
-    /* A 1100px o menos - OCULTAR IMAGEN y centrar formulario */
-    @@media (max-width: 1100px) {
-        .login-image-column {
-            display: none; /* Ocultar imagen */
-        }
-
-        .login-form-column {
-            flex: 0 0 100%; /* Ocupar todo el ancho */
-            width: 100%;
-            margin-top:0;
-            padding-top:0;
-        }
-
-        .login-form-wrapper {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-    }
-
-    /* Tablets y pantallas medianas (entre 768px y 1100px) */
-    @@media (min-width: 768px) and (max-width: 1100px) {
-        .login-form-wrapper {
-            max-width: 380px;
-        }
-    }
-
-    /* Ajustes para móviles pequeños */
-    @@media (max-width: 576px) {
-        .login-form-column {
-            padding: 3rem;
-        }
-
-        .login-form-title {
-            font-size: 1.5rem;
-        }
-
-        .login-logo-image {
-            width: 80px;
-        }
-
-        .login-form-options {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
-        }
-
-        .login-forgot-link {
-            align-self: flex-end;
-        }
-    }
-
-    /* Landscape en móviles */
-    @@media (max-height: 600px) and (orientation: landscape) and (max-width: 1100px) {
-        .login-fullscreen {
-            min-height: auto;
-            height: auto;
-        }
-
-        .login-form-column {
-            padding: 1rem;
-        }
-
-        .login-form-group {
-            margin-bottom: 0.4rem;
-        }
-
-        .login-form-logo {
-            margin-bottom: 0.4rem;
-        }
-
-        .login-form-title {
-            font-size: 1.2rem;
-        }
-
-        .login-logo-image {
-            width: 50px;
-        }
-
-        .login-submit-btn {
-            padding: 0.4rem 0.8rem;
-        }
-
-        .login-footer {
-            padding-top: 0.4rem;
-        }
-    }
-
-    /* Para pantallas mayores a 1100px - mantener columnas */
-    @@media (min-width: 1101px) {
-        .login-image-column {
-            flex: 0 0 70%;
-        }
-
-        .login-form-column {
-            flex: 0 0 30%;
-        }
-
-        .login-background-image {
-            aspect-ratio: 16 / 9;
-        }
-    }
-
-    /* Ajuste para laptops con poca altura */
-    @@media (min-width: 1101px) and (max-height: 700px) {
-        .login-image-column {
+            padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .login-background-image {
-            max-height: 600px;
-            width: auto;
-            max-width: 100%;
+        /* Tarjeta principal */
+        .login-card {
+            max-width: 420px;
+            width: 100%;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
-        .login-form-column {
-            padding: 1rem;
+            .login-card.hidden {
+                display: none;
+            }
+
+        .login-header {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .login-form-group {
-            margin-bottom: 0.75rem;
+        .login-logo {
+            max-width: 100px;
+            height: auto;
+            margin: 0 auto 0.5rem auto;
+            display: block;
         }
 
-        .login-form-logo {
+        .login-header h1 {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: normal;
+            color: var(--color-brand-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .login-header p {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            color: var(--color-accent);
+            margin: 0;
+        }
+
+        .login-body {
+            padding: 1.75rem;
+        }
+
+        .form-label {
+            font-family: var(--font-accent);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--color-text-dark);
+        }
+
+        .form-control {
+            font-family: var(--font-body);
+            border-radius: 0.75rem;
+            border: 1px solid var(--color-border);
+            padding: 0.7rem 1rem;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+            .form-control:focus {
+                border-color: var(--color-brand-primary);
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(239, 136, 48, 0.1);
+            }
+
+        .input-group {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--color-accent);
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-brand-primary) 0%, #e07a2a 100%);
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            font-family: var(--font-accent);
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.2s;
+            cursor: pointer;
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #e07a2a 0%, var(--color-brand-secondary) 100%);
+                transform: translateY(-1px);
+            }
+
+            .btn-primary:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 1rem;
+            font-size: 0.8rem;
         }
-    }
 
-    /* Eliminar pseudo-elemento que no se usa */
-    .login-image-column::after {
-        display: none;
-    }
-    @@media (max-width: 400px) {
-        .login-fullscreen
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-    {
-        min-height: auto; /* Elimina la altura mínima forzada */
-        height: auto;
-        padding-top: 0.5rem; /* Espacio mínimo superior */
-        align-items: flex-start; /* Alinea el contenido al inicio */
-    }
+        .checkbox-input {
+            width: 0.9rem;
+            height: 0.9rem;
+            cursor: pointer;
+            accent-color: var(--color-brand-primary);
+        }
 
-    .login-main-container {
-        min-height: auto;
-        height: auto;
-    }
+        .checkbox span {
+            font-family: var(--font-accent);
+            font-size: 0.75rem;
+            color: var(--color-text-dark);
+        }
 
-    .login-form-column {
-        padding: 0.5rem 3rem 2rem 3rem; /* Reduce padding superior, mantiene inferior */
-        min-height: auto;
-        height: auto;
-    }
+        .forgot-link {
+            color: var(--color-brand-primary);
+            text-decoration: none;
+            font-family: var(--font-accent);
+            font-size: 0.75rem;
+        }
 
-    .login-form-wrapper {
-        margin: 0 auto;
-        width: 100%;
-    }
+            .forgot-link:hover {
+                text-decoration: underline;
+            }
 
-    .login-form-logo {
-        margin-bottom: 1rem; /* Reduce el espacio del logo */
-    }
+        .separator {
+            position: relative;
+            text-align: center;
+            margin: 1.25rem 0;
+        }
 
-    .login-form-title {
-        font-size: 1.5rem; /* Mantiene un tamaño legible */
-        margin-bottom: 0.25rem;
-    }
+            .separator hr {
+                border: none;
+                height: 1px;
+                background: var(--color-border);
+            }
 
-    .login-form-subtitle {
-        font-size: 0.8rem;
-    }
+            .separator span {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 0 0.75rem;
+                font-family: var(--font-accent);
+                font-size: 0.75rem;
+                color: var(--color-accent);
+            }
 
-    /* Ajusta los márgenes de los grupos del formulario */
-    .login-form-group {
-        margin-bottom: 0.75rem;
-    }
+        .btn-google {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+            padding: 0.7rem;
+            font-family: var(--font-accent);
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--color-text-dark);
+        }
 
-    /* Reduce el padding del botón principal */
-    .login-submit-btn {
-        padding: 0.5rem 1rem;
-    }
+            .btn-google:hover {
+                border-color: #db4437;
+                background: rgba(219, 68, 55, 0.02);
+            }
 
-    /* Ajusta el footer */
-    .login-footer {
-        padding-top: 0.5rem;
-        margin-top: 0.5rem;
-    }
+        .register-link {
+            text-align: center;
+            margin-top: 1rem;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            color: var(--color-accent);
+        }
 
-    /* Si hay validación, reducir su margen */
-    .login-validation-summary {
-        margin-bottom: 0.75rem;
-        padding: 0.5rem;
-    }
+            .register-link a {
+                color: var(--color-brand-primary);
+                text-decoration: none;
+                font-weight: 500;
+            }
 
-    }
+                .register-link a:hover {
+                    text-decoration: underline;
+                }
 
-    /* Ajuste adicional para pantallas muy pequeñas con poca altura */
-    @@media (max-width: 400px) and (max-height: 700px) {
-        .login-form-logo
+        .home-link {
+            text-align: center;
+            margin-top: 0.5rem;
+        }
 
-    {
-        margin-bottom: 0.5rem;
-    }
+            .home-link a {
+                color: var(--color-accent);
+                text-decoration: none;
+                font-family: var(--font-body);
+                font-size: 0.85rem;
+            }
 
-    .login-form-group {
-        margin-bottom: 0.5rem;
-    }
+                .home-link a:hover {
+                    color: var(--color-brand-primary);
+                }
 
-    .login-footer {
-        padding-top: 0.25rem;
-    }
+        .text-danger {
+            color: var(--color-brand-secondary);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            font-family: var(--font-accent);
+        }
 
-    }
-</style>
+        /* Contenedor de roles - fuera de la tarjeta */
+        .roles-container {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-<div class="login-fullscreen">
-    <div class="login-main-container">
-        <!-- Columna izquierda - Imagen de fondo - 70% (se oculta en <1100px) -->
-        <div class="login-image-column">
-            <img src="~/diseño/InicioSesion.png" alt="Yo Soy Arte" class="login-background-image">
-            <div class="login-image-overlay"></div>
-        </div>
+            .roles-container.visible {
+                display: block;
+            }
 
-        <!-- Columna derecha - Formulario - 30% (ocupa 100% en <1100px) -->
-        <div class="login-form-column">
-            <div class="login-form-wrapper">
-                <!-- Logo -->
-                <div class="login-form-logo">
-                    <h2 class="login-form-title">¡Inicia sesión!</h2>
-                    <p class="login-form-subtitle">Para continuar tu viaje artístico</p>
-                </div>
+        .role-card {
+            background: white;
+            border: 2px solid var(--color-border);
+            border-radius: 1.5rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            height: 100%;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-                <!-- Resumen de validación -->
-                <div asp-validation-summary="ModelOnly" class="login-validation-summary"></div>
+            .role-card:hover {
+                border-color: var(--color-brand-primary);
+                transform: translateY(-5px);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            }
 
-                <!-- Formulario de login -->
-                <form asp-controller="Cuenta" asp-action="Login" method="post">
-                    <input type="hidden" asp-for="ReturnUrl" value="@ViewData["ReturnUrl"]" />
+        .role-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.25rem;
+        }
 
-                    <!-- Campo de Correo Electrónico -->
-                    <div class="login-form-group">
-                        <label class="login-form-label" asp-for="Email">
-                            <i class="fas fa-envelope me-1"></i> Correo Electrónico
-                        </label>
-                        <div class="login-input-wrapper">
-                            <input asp-for="Email" type="email" class="login-form-input"
-                                   placeholder="tu@email.com">
-                        </div>
-                        <span asp-validation-for="Email" class="field-validation-error"></span>
+        .role-title {
+            font-family: var(--font-heading);
+            font-weight: normal;
+            font-size: 1.35rem;
+            margin-bottom: 0.75rem;
+            color: var(--color-text-dark);
+        }
+
+        .role-desc {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--color-accent);
+            line-height: 1.4;
+            max-width: 200px;
+        }
+
+        .back-to-login {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+            .back-to-login button {
+                background: none;
+                border: none;
+                color: white;
+                font-family: var(--font-accent);
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+                border-radius: 2rem;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+                .back-to-login button:hover {
+                    background: rgba(0, 0, 0, 0.1);
+                }
+
+        /* Toast */
+        .toast-message {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 0.625rem 1.25rem;
+            border-radius: 9999px;
+            font-family: var(--font-accent);
+            font-size: 0.875rem;
+            transition: all 0.3s;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 50;
+            white-space: nowrap;
+        }
+
+            .toast-message.show {
+                opacity: 1;
+            }
+
+        /* Responsive */
+        @@media (max-width: 576px) {
+            .login-card {
+                max-width: 100%;
+            }
+
+            .login-body {
+                padding: 1.5rem;
+            }
+
+            .role-card {
+                padding: 1.5rem;
+                min-height: 240px;
+            }
+
+            .role-icon {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .role-title {
+                font-size: 1.2rem;
+            }
+
+            .role-desc {
+                font-size: 0.8rem;
+            }
+        }
+
+        @@media (min-width: 577px) and (max-width: 768px) {
+            .role-card {
+                min-height: 260px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 md:p-6">
+
+    <div class="max-w-2xl mx-auto w-full">
+        <!-- Tarjeta del formulario de login -->
+        <div id="loginCard" class="login-card mx-auto">
+            <div class="login-header">
+                <img src="~/diseño/logo-neutro.png" alt="Yo Soy Arte" class="login-logo">
+                <h1>¡Bienvenido!</h1>
+                <p>Ingresa a tu cuenta artística</p>
+            </div>
+
+            <div class="login-body">
+                <div id="errorMessage" class="text-danger text-center mb-3" style="display: none;"></div>
+
+                <form id="loginForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Correo electrónico</label>
+                        <input type="email" id="emailInput" name="Email" class="form-control" placeholder="tu@email.com" autocomplete="email">
+                        <div id="emailError" class="text-danger" style="display: none;">Ingresa un correo válido</div>
                     </div>
 
-                    <!-- Campo de Contraseña -->
-                    <div class="login-form-group">
-                        <label class="login-form-label" asp-for="Contrasena">
-                            <i class="fas fa-lock me-1"></i> Contraseña
-                        </label>
-                        <div class="login-input-wrapper">
-                            <input asp-for="Contrasena" type="password" class="login-form-input"
-                                   placeholder="••••••••" id="password">
-                            <button type="button" class="login-password-toggle" id="togglePassword" aria-label="Mostrar contraseña">
-                                <i class="fas fa-eye"></i>
+                    <div class="mb-3">
+                        <label class="form-label">Contraseña</label>
+                        <div class="input-group">
+                            <input type="password" id="passwordInput" name="Contrasena" class="form-control" placeholder="••••••••" autocomplete="current-password">
+                            <button type="button" class="password-toggle" id="togglePassword">
+                                <i class="far fa-eye"></i>
                             </button>
                         </div>
-                        <span asp-validation-for="Contrasena" class="field-validation-error"></span>
+                        <div id="passwordError" class="text-danger" style="display: none;">La contraseña es requerida</div>
                     </div>
 
-                    <!-- Opciones: Recordarme y Olvidé contraseña -->
-                    <div class="login-form-options">
-                        <div class="login-checkbox">
-                            <input class="login-checkbox-input" type="checkbox" id="rememberMe" name="rememberMe">
-                            <label class="login-checkbox-label" for="rememberMe">
-                                Recordarme
-                            </label>
-                        </div>
-                        <a asp-controller="Cuenta" asp-action="ForgotPassword" class="login-forgot-link">
-                            ¿Olvidaste tu contraseña?
-                        </a>
+                    <div class="form-options">
+                        <label class="checkbox">
+                            <input type="checkbox" id="rememberMe" name="RecordarMe" class="checkbox-input">
+                            <span>Recordarme</span>
+                        </label>
+                        <a asp-controller="Cuenta" asp-action="ForgotPassword" class="forgot-link">¿Olvidaste tu contraseña?</a>
                     </div>
 
-                    <!-- Botón de Iniciar Sesión -->
-                    <button type="submit" class="login-submit-btn">
-                        <span>Iniciar Sesión</span>
-                        <i class="fas fa-arrow-right"></i>
+                    <button type="submit" id="loginButton" class="btn-primary">
+                        Iniciar Sesión <i class="fas fa-arrow-right ms-2"></i>
                     </button>
                 </form>
 
-                <!-- Separador para opciones externas -->
+                <div class="separator">
+                    <hr>
+                    <span>O continuar con</span>
+                </div>
+
                 @{
                     var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
                 }
 
                 @if (loginProviders.Count > 0)
                 {
-                    <div class="login-separator">
-                        <span>O continuar con</span>
-                    </div>
-
-                    <!-- Botones de login externo -->
-                    <div class="login-external-buttons">
-                        <form asp-controller="Cuenta" asp-action="ExternalLogin"
-                              asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
-                            @foreach (var p in loginProviders)
+                    <div class="d-grid gap-2">
+                        @foreach (var p in loginProviders)
+                        {
+                            if (p.Name.ToLower().Contains("google"))
                             {
-                                if (p.Name.ToLower().Contains("google"))
-                                {
-                                    <button type="submit" class="login-external-btn google-btn"
-                                            name="provider" value="@p.Name"
-                                            title="Iniciar sesión con tu cuenta de @p.DisplayName">
-                                        <i class="fab fa-google"></i>
-                                        <span>@p.DisplayName</span>
+                                <form asp-controller="Cuenta" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="inline">
+                                    <button type="submit" name="provider" value="@p.Name" class="btn-google">
+                                        <i class="fab fa-google text-red-500"></i>
+                                        Continuar con Google
                                     </button>
-                                }
-                                else if (p.Name.ToLower().Contains("facebook"))
-                                {
-                                    <button type="submit" class="login-external-btn facebook-btn"
-                                            name="provider" value="@p.Name"
-                                            title="Iniciar sesión con tu cuenta de @p.DisplayName">
-                                        <i class="fab fa-facebook-f"></i>
-                                        <span>@p.DisplayName</span>
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button type="submit" class="login-external-btn"
-                                            name="provider" value="@p.Name"
-                                            title="Iniciar sesión con tu cuenta de @p.DisplayName">
-                                        <i class="fas fa-external-link-alt"></i>
-                                        <span>@p.DisplayName</span>
-                                    </button>
-                                }
+                                </form>
                             }
-                        </form>
+                            else if (p.Name.ToLower().Contains("facebook"))
+                            {
+                                <form asp-controller="Cuenta" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="inline">
+                                    <button type="submit" name="provider" value="@p.Name" class="btn-google">
+                                        <i class="fab fa-facebook-f text-blue-600"></i>
+                                        Continuar con Facebook
+                                    </button>
+                                </form>
+                            }
+                        }
                     </div>
                 }
 
-                <!-- Pie de página -->
-                <div class="login-footer">
-                    <p class="login-footer-text">
-                        ¿No tienes una cuenta?
-                        <a asp-controller="Cuenta" asp-action="Registro" class="login-register-link">
-                            Regístrate
-                        </a>
-                    </p>
+                <div class="register-link">
+                    ¿No tienes una cuenta? <a asp-controller="Cuenta" asp-action="Registro">Regístrate</a>
+                </div>
+
+                <div class="home-link">
+                    <a asp-controller="Home" asp-action="Index"><i class="fas fa-arrow-left me-1"></i> Volver al inicio</a>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-@section Scripts {
+        <!-- Contenedor de selección de roles (aparece si tiene múltiples roles) -->
+        <div id="rolesContainer" class="roles-container">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div id="roleStudentCard" class="role-card" data-role="Estudiante">
+                    <div class="role-icon">
+                        <i class="fas fa-graduation-cap text-orange-600"></i>
+                    </div>
+                    <div class="role-title">Estudiante</div>
+                    <div class="role-desc">Acceder a mis cursos, contenido educativo y seguimiento de aprendizaje</div>
+                </div>
+                <div id="roleArtistCard" class="role-card" data-role="Artista">
+                    <div class="role-icon">
+                        <i class="fas fa-palette text-purple-600"></i>
+                    </div>
+                    <div class="role-title">Artista</div>
+                    <div class="role-desc">Gestionar mi portafolio, publicar contenido, eventos y ventas</div>
+                </div>
+            </div>
+            <div class="back-to-login">
+                <button id="backToLoginBtn">
+                    <i class="fas fa-arrow-left me-2"></i> Volver
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastMessage" class="toast-message">✅ Mensaje</div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Toggle para mostrar/ocultar contraseña
-            const togglePassword = document.getElementById('togglePassword');
-            const passwordInput = document.getElementById('password');
+            // Elementos DOM
+            const loginCard = document.getElementById('loginCard');
+            const rolesContainer = document.getElementById('rolesContainer');
+            const loginForm = document.getElementById('loginForm');
+            const loginButton = document.getElementById('loginButton');
+            const emailInput = document.getElementById('emailInput');
+            const passwordInput = document.getElementById('passwordInput');
+            const rememberMe = document.getElementById('rememberMe');
+            const errorMessageDiv = document.getElementById('errorMessage');
+            const backToLoginBtn = document.getElementById('backToLoginBtn');
+            const roleStudentCard = document.getElementById('roleStudentCard');
+            const roleArtistCard = document.getElementById('roleArtistCard');
 
+            // Toggle de contraseña
+            const togglePassword = document.getElementById('togglePassword');
             if (togglePassword && passwordInput) {
                 togglePassword.addEventListener('click', function() {
                     const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                     passwordInput.setAttribute('type', type);
-
                     const icon = this.querySelector('i');
                     icon.classList.toggle('fa-eye');
                     icon.classList.toggle('fa-eye-slash');
                 });
             }
 
-            // Animación para inputs cuando tienen valor
-            const inputs = document.querySelectorAll('.login-form-input');
-            inputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    if (this.value.trim() !== '') {
-                        this.style.borderColor = 'var(--color-brand-primary)';
-                    } else {
-                        this.style.borderColor = 'var(--color-border)';
-                    }
-                });
-            });
+            // Mostrar toast
+            function showToast(message, type = 'info') {
+                const toast = document.getElementById('toastMessage');
+                const icon = type === 'success' ? '✅' : (type === 'error' ? '⚠️' : 'ℹ️');
+                toast.innerHTML = `${icon} ${message}`;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 4000);
+            }
 
-            // Manejo de errores de validación
-            document.querySelectorAll('[data-valmsg-for]').forEach(span => {
-                const inputId = span.getAttribute('data-valmsg-for');
-                const input = document.getElementById(inputId);
+            // Validar formulario
+            function validateForm() {
+                let isValid = true;
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
 
-                if (!input) return;
+                document.getElementById('emailError').style.display = 'none';
+                document.getElementById('passwordError').style.display = 'none';
 
-                const observer = new MutationObserver(mutations => {
-                    mutations.forEach(mutation => {
-                        if (mutation.type === 'childList' || mutation.type === 'characterData') {
-                            if (span.innerHTML.trim() !== "" && span.innerHTML.trim() !== "[]") {
-                                input.classList.add('input-validation-error');
-                            } else {
-                                input.classList.remove('input-validation-error');
-                            }
-                        }
+                const emailRegex = /^[^\s@@]+@@([^\s@@]+\.)+[^\s@@]+$/;
+                if (!emailRegex.test(email)) {
+                    document.getElementById('emailError').style.display = 'block';
+                    isValid = false;
+                }
+
+                if (!password) {
+                    document.getElementById('passwordError').style.display = 'block';
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            // Mostrar error
+            function showError(message) {
+                errorMessageDiv.textContent = message;
+                errorMessageDiv.style.display = 'block';
+                setTimeout(() => {
+                    errorMessageDiv.style.display = 'none';
+                }, 5000);
+            }
+
+            // Función para iniciar sesión con rol específico
+            async function loginWithRole(role) {
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+                const remember = rememberMe.checked;
+
+                loginButton.disabled = true;
+                loginButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Iniciando sesión...';
+
+                try {
+                    const response = await fetch('@Url.Action("Login", "Cuenta")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        },
+                        body: JSON.stringify({
+                            Email: email,
+                            Contrasena: password,
+                            RecordarMe: remember,
+                            RolSeleccionado: role,
+                            ReturnUrl: '@ViewData["ReturnUrl"]'
+                        })
                     });
-                });
 
-                observer.observe(span, { childList: true, characterData: true, subtree: true });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showToast(result.mensaje, 'success');
+                        setTimeout(() => {
+                            window.location.href = "/";
+                        }, 1000);
+                    } else {
+                        showToast(result.mensaje, 'error');
+                        loginButton.disabled = false;
+                        loginButton.innerHTML = 'Iniciar Sesión <i class="fas fa-arrow-right ms-2"></i>';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Error al iniciar sesión', 'error');
+                    loginButton.disabled = false;
+                    loginButton.innerHTML = 'Iniciar Sesión <i class="fas fa-arrow-right ms-2"></i>';
+                }
+            }
+
+            // Envío del formulario (primera validación)
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                if (!validateForm()) {
+                    return;
+                }
+
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+                const remember = rememberMe.checked;
+
+                loginButton.disabled = true;
+                loginButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Validando...';
+
+                try {
+                    const response = await fetch('@Url.Action("ValidarLogin", "Cuenta")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        },
+                        body: JSON.stringify({
+                            Email: email,
+                            Contrasena: password,
+                            RecordarMe: remember
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        if (result.multiplesRoles) {
+                            // Guardar credenciales en sesión temporal
+                            sessionStorage.setItem('loginEmail', email);
+                            sessionStorage.setItem('loginPassword', password);
+                            sessionStorage.setItem('loginRemember', remember);
+
+                            // Mostrar selector de roles
+                            loginCard.classList.add('hidden');
+                            rolesContainer.classList.add('visible');
+                        } else {
+                            // Un solo rol, iniciar sesión directamente
+                            await loginWithRole(result.rolUnico);
+                        }
+                    } else {
+                        showToast(result.mensaje, 'error');
+                        loginButton.disabled = false;
+                        loginButton.innerHTML = 'Iniciar Sesión <i class="fas fa-arrow-right ms-2"></i>';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('Error al validar credenciales', 'error');
+                    loginButton.disabled = false;
+                    loginButton.innerHTML = 'Iniciar Sesión <i class="fas fa-arrow-right ms-2"></i>';
+                }
             });
+
+            // Volver al formulario de login
+            backToLoginBtn.addEventListener('click', function() {
+                rolesContainer.classList.remove('visible');
+                loginCard.classList.remove('hidden');
+                loginButton.disabled = false;
+                loginButton.innerHTML = 'Iniciar Sesión <i class="fas fa-arrow-right ms-2"></i>';
+            });
+
+            // Selección de rol Estudiante
+            roleStudentCard.addEventListener('click', function() {
+                loginWithRole('Estudiante');
+            });
+
+            // Selección de rol Artista
+            roleArtistCard.addEventListener('click', function() {
+                loginWithRole('Artista');
+            });
+
+            // Restaurar valores de sesión si existen
+            const savedEmail = sessionStorage.getItem('loginEmail');
+            const savedPassword = sessionStorage.getItem('loginPassword');
+            if (savedEmail && savedPassword) {
+                emailInput.value = savedEmail;
+                passwordInput.value = savedPassword;
+                // No limpiamos aquí porque el usuario podría elegir otro rol
+            }
         });
     </script>
 
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-}
+</body>
+</html>

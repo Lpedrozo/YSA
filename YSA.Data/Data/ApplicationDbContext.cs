@@ -57,12 +57,26 @@ namespace YSA.Data.Data
                 .HasOne(pc => pc.Producto)
                 .WithMany(p => p.ProductoCategorias)
                 .HasForeignKey(pc => pc.ProductoId);
-
+            modelBuilder.Entity<Artista>()
+                .HasOne(a => a.AprobadoPor)
+                .WithMany(u => u.ArtistasAprobados)
+                .HasForeignKey(a => a.AprobadoPorId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Usuario>()
+                .HasMany(u => u.ArtistasAprobados)
+                .WithOne(a => a.AprobadoPor)
+                .HasForeignKey(a => a.AprobadoPorId)
+                .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<ProductoCategoria>()
                 .HasOne(pc => pc.Categoria)
                 .WithMany(c => c.ProductoCategorias)
                 .HasForeignKey(pc => pc.CategoriaId);
-
+            modelBuilder.Entity<Artista>()
+                .Property(a => a.EsAcademia)
+                .HasDefaultValue(false);
+            modelBuilder.Entity<Artista>()
+                .Property(a => a.EstadoAprobacion)
+                .HasDefaultValue("PendienteAprobacion");
             modelBuilder.Entity<CursoCategoria>()
                 .HasKey(cc => new { cc.CursoId, cc.CategoriaId });
 

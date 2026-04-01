@@ -37,7 +37,6 @@ namespace YSA.Web.Controllers
             return View();
         }
 
-        // POST: /Cuenta/Registro
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registro(RegistroViewModel viewModel)
@@ -61,11 +60,47 @@ namespace YSA.Web.Controllers
 
             if (resultado.Succeeded)
             {
-                // Asigna el rol "Estudiante" por defecto
-                await _userManager.AddToRoleAsync(usuario, "Estudiante");
+                // Asignar rol según el tipo de cuenta seleccionado
+                if (viewModel.TipoCuenta == "Artista")
+                {
+                    // Asignar rol Artista
+                    await _userManager.AddToRoleAsync(usuario, "Artista");
 
-                // Inicia sesión al usuario recién registrado
+                    // Crear registro en tabla Artistas
+                    var artista = new Artista
+                    {
+                        UsuarioId = usuario.Id,
+                        NombreArtistico = viewModel.NombreArtistico ?? usuario.Nombre,
+                        Biografia = viewModel.Biografia ?? "",
+                        EstiloPrincipal = viewModel.EstiloPrincipal ?? "",
+                        EsAcademia = false,                     // Es artista externo
+                        EstadoAprobacion = "PendienteAprobacion", // Pendiente de aprobación
+                        FechaSolicitud = DateTime.UtcNow
+                    };
+
+                    _context.Artistas.Add(artista);
+                    await _context.SaveChangesAsync();
+
+                    await _userManager.AddToRoleAsync(usuario, "Estudiante");
+
+                    TempData["SuccessMessage"] = "Tu cuenta de artista ha sido creada. Está pendiente de aprobación por el administrador. Recibirás una notificación cuando sea activada.";
+                }
+                else
+                {
+                    // Asignar rol Estudiante
+                    await _userManager.AddToRoleAsync(usuario, "Estudiante");
+                    TempData["SuccessMessage"] = "¡Cuenta creada exitosamente!";
+                }
+
+                // Iniciar sesión
                 await _signInManager.SignInAsync(usuario, isPersistent: false);
+
+                // Redirigir según el tipo de cuenta
+                if (viewModel.TipoCuenta == "Artista")
+                {
+                    return RedirectToAction("Dashboard", "Artista"); // Pendiente crear
+                }
+
                 return RedirectToAction("Index", "Home");
             }
 
@@ -81,40 +116,6 @@ namespace YSA.Web.Controllers
         public IActionResult Login()
         {
             return View();
-        }
-
-        // POST: /Cuenta/Login
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel viewModel)
-        {
-            if (ModelState.IsValid)
-            {
-                var usuario = await _userManager.FindByEmailAsync(viewModel.Email);
-                if (usuario != null)
-                {
-                    var resultado = await _signInManager.PasswordSignInAsync(usuario, viewModel.Contrasena, viewModel.RecordarMe, lockoutOnFailure: false);
-
-                    if (resultado.Succeeded)
-                    {
-                        // Inicia sesión exitosa, guardamos el estado de autenticación.
-                        HttpContext.Session.SetString("IsSignedIn", "true");
-
-                        // **Paso clave: Obtener y guardar el rol en la sesión**
-                        var roles = await _userManager.GetRolesAsync(usuario);
-                        if (roles.Any())
-                        {
-                            // Asume un solo rol para simplificar. Puedes ajustar esto si un usuario puede tener múltiples roles.
-                            var rol = roles.First();
-                            HttpContext.Session.SetString("UserRole", rol);
-                        }
-
-                        return RedirectToAction("Index", "Home");
-                    }
-                }
-                ModelState.AddModelError(string.Empty, "Intento de inicio de sesión no válido.");
-            }
-            return View(viewModel);
         }
 
         [HttpPost]
@@ -499,6 +500,361 @@ namespace YSA.Web.Controllers
             // Si el flujo no cae en Succeeded ni en las demás condiciones, devuelve un error genérico.
             TempData["Error"] = "Fallo al procesar el inicio de sesión externo (Resultado desconocido).";
             return RedirectToAction(nameof(Registro));
+        }
+        // En CuentaController.cs - Agregar después del método Registro()
+
+        // POST: /Cuenta/ValidarDatosBasicos
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ValidarDatosBasicos([FromBody] ValidarDatosBasicosRequest request)
+        {
+            try
+            {
+                // Validar si el email ya existe
+                var existingUser = await _userManager.FindByEmailAsync(request.Email);
+
+                if (existingUser != null)
+                {
+                    // Verificar si el usuario ya tiene roles asignados
+                    var roles = await _userManager.GetRolesAsync(existingUser);
+
+                    // Si el usuario tiene roles, no puede registrarse de nuevo
+                    if (roles.Any())
+                    {
+                        return Json(new
+                        {
+                            existe = true,
+                            tieneRoles = true,
+                            mensaje = "Este correo ya está registrado. Por favor inicia sesión."
+                        });
+                    }
+
+                    // Usuario existe pero no tiene roles (registro incompleto)
+                    // Guardamos el ID en una variable de sesión temporal
+                    HttpContext.Session.SetInt32("UsuarioTempId", existingUser.Id);
+
+                    return Json(new
+                    {
+                        existe = true,
+                        tieneRoles = false,
+                        mensaje = "Continuemos con la configuración de tu cuenta.",
+                        datos = new
+                        {
+                            nombre = existingUser.Nombre,
+                            apellido = existingUser.Apellido,
+                            email = existingUser.Email
+                        }
+                    });
+                }
+
+                // Usuario no existe, guardar datos temporalmente en sesión
+                var datosTemp = new DatosBasicosTemp
+                {
+                    Nombre = request.Nombre,
+                    Apellido = request.Apellido,
+                    Email = request.Email,
+                    Contrasena = request.Contrasena
+                };
+
+                HttpContext.Session.SetString("DatosBasicosTemp", System.Text.Json.JsonSerializer.Serialize(datosTemp));
+
+                return Json(new { existe = false, mensaje = "Datos válidos, puedes continuar." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = true, mensaje = "Error al validar los datos: " + ex.Message });
+            }
+        }
+
+        // POST: /Cuenta/AsignarRol
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> AsignarRol([FromBody] AsignarRolRequest request)
+        {
+            try
+            {
+                Usuario usuario = null;
+                bool esUsuarioExistente = false;
+
+                // Verificar si hay un usuario temporal en sesión (existente sin rol)
+                var usuarioTempId = HttpContext.Session.GetInt32("UsuarioTempId");
+
+                if (usuarioTempId.HasValue)
+                {
+                    usuario = await _userManager.FindByIdAsync(usuarioTempId.Value.ToString());
+                    if (usuario != null)
+                    {
+                        esUsuarioExistente = true;
+                    }
+                }
+
+                // Si no hay usuario temporal, crear uno nuevo con los datos guardados
+                if (usuario == null)
+                {
+                    var datosBasicosJson = HttpContext.Session.GetString("DatosBasicosTemp");
+                    if (string.IsNullOrEmpty(datosBasicosJson))
+                    {
+                        return Json(new { success = false, mensaje = "No se encontraron datos básicos. Por favor reinicia el proceso." });
+                    }
+
+                    var datosBasicos = System.Text.Json.JsonSerializer.Deserialize<DatosBasicosTemp>(datosBasicosJson);
+
+                    usuario = new Usuario
+                    {
+                        UserName = datosBasicos.Email,
+                        Email = datosBasicos.Email,
+                        Nombre = datosBasicos.Nombre,
+                        Apellido = datosBasicos.Apellido,
+                        FechaCreacion = DateTime.UtcNow,
+                        UrlImagen = "/FotoPerfil/usuariopredeterminada.jpg"
+                    };
+
+                    var resultado = await _userManager.CreateAsync(usuario, datosBasicos.Contrasena);
+
+                    if (!resultado.Succeeded)
+                    {
+                        return Json(new { success = false, mensaje = "Error al crear el usuario: " + string.Join(", ", resultado.Errors.Select(e => e.Description)) });
+                    }
+                }
+
+                // Asignar rol y datos adicionales según el tipo
+                if (request.TipoCuenta == "Estudiante")
+                {
+                    await _userManager.AddToRoleAsync(usuario, "Estudiante");
+
+                    // Limpiar sesión temporal
+                    HttpContext.Session.Remove("UsuarioTempId");
+                    HttpContext.Session.Remove("DatosBasicosTemp");
+
+                    // Iniciar sesión
+                    await _signInManager.SignInAsync(usuario, isPersistent: false);
+
+                    return Json(new
+                    {
+                        success = true,
+                        mensaje = "Cuenta de estudiante creada exitosamente.",
+                        redirectUrl = Url.Action("Index", "Home")
+                    });
+                }
+                else if (request.TipoCuenta == "Artista")
+                {
+                    // Asignar rol Artista
+                    await _userManager.AddToRoleAsync(usuario, "Artista");
+
+                    // También asignar rol Estudiante para que pueda comprar cursos
+                    await _userManager.AddToRoleAsync(usuario, "Estudiante");
+
+                    // Crear registro en tabla Artistas
+                    var artista = new Artista
+                    {
+                        UsuarioId = usuario.Id,
+                        NombreArtistico = request.NombreArtistico ?? usuario.Nombre,
+                        Biografia = request.Biografia ?? "",
+                        EstiloPrincipal = request.EstiloPrincipal ?? "",
+                        EsAcademia = false,
+                        EstadoAprobacion = "En revisión",
+                        FechaSolicitud = DateTime.UtcNow,
+                        MotivoRechazo = "En revisión"
+                    };
+
+                    _context.Artistas.Add(artista);
+                    await _context.SaveChangesAsync();
+
+                    // Limpiar sesión temporal
+                    HttpContext.Session.Remove("UsuarioTempId");
+                    HttpContext.Session.Remove("DatosBasicosTemp");
+
+                    // IMPORTANTE: Iniciar sesión con un claim personalizado que indique el rol activo
+                    await SignInWithSpecificRole(usuario, "Artista");
+
+                    return Json(new
+                    {
+                        success = true,
+                        mensaje = "Tu cuenta de artista ha sido creada. Está pendiente de aprobación por el administrador.",
+                        redirectUrl = Url.Action("Index", "Home")
+                    });
+                }
+                return Json(new { success = false, mensaje = "Tipo de cuenta no válido." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, mensaje = "Error al procesar la solicitud: " + ex.Message });
+            }
+        }
+        // Método auxiliar para iniciar sesión con un rol específico
+        private async Task SignInWithSpecificRole(Usuario usuario, string rolActivo)
+        {
+            // Obtener todos los roles del usuario
+            var roles = await _userManager.GetRolesAsync(usuario);
+
+            // Crear claims personalizados
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+                new Claim(ClaimTypes.Name, usuario.UserName),
+                new Claim(ClaimTypes.Email, usuario.Email),
+                new Claim("NombreCompleto", $"{usuario.Nombre} {usuario.Apellido}"),
+                new Claim("RolActivo", rolActivo)
+            };
+
+            // Agregar también el claim de rol tradicional (opcional, para compatibilidad)
+            claims.Add(new Claim(ClaimTypes.Role, rolActivo));
+
+            // Crear identidad y principal
+            var identity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            // Iniciar sesión sin usar el SignInManager tradicional
+            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+
+            // Guardar el rol activo en sesión para fácil acceso
+            HttpContext.Session.SetString("RolActivo", rolActivo);
+            HttpContext.Session.SetString("UserRole", rolActivo);
+        }
+        // POST: /Cuenta/ValidarLogin
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ValidarLogin([FromBody] ValidarLoginRequest request)
+        {
+            try
+            {
+                var usuario = await _userManager.FindByEmailAsync(request.Email);
+
+                if (usuario == null)
+                {
+                    return Json(new { success = false, mensaje = "Credenciales inválidas" });
+                }
+
+                var resultado = await _signInManager.CheckPasswordSignInAsync(usuario, request.Contrasena, false);
+
+                if (!resultado.Succeeded)
+                {
+                    return Json(new { success = false, mensaje = "Credenciales inválidas" });
+                }
+
+                var roles = await _userManager.GetRolesAsync(usuario);
+
+                if (roles.Count > 1)
+                {
+                    // Guardar usuario en sesión temporal para login con rol específico
+                    HttpContext.Session.SetInt32("LoginTempUserId", usuario.Id);
+                    HttpContext.Session.SetString("LoginTempPassword", request.Contrasena);
+                    HttpContext.Session.SetString("LoginTempRemember", request.RecordarMe.ToString());
+
+                    return Json(new
+                    {
+                        success = true,
+                        multiplesRoles = true,
+                        roles = roles
+                    });
+                }
+
+                var rolUnico = roles.FirstOrDefault() ?? "Estudiante";
+
+                // Iniciar sesión directamente con el rol único
+                await SignInWithSpecificRole(usuario, rolUnico);
+
+                return Json(new
+                {
+                    success = true,
+                    multiplesRoles = false,
+                    rolUnico = rolUnico,
+                    redirectUrl = Url.Action("Index", "Home")
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, mensaje = "Error al validar: " + ex.Message });
+            }
+        }
+
+        // POST: /Cuenta/Login (modificado para aceptar rol seleccionado)
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] LoginConRolRequest request)
+        {
+            try
+            {
+                var usuarioId = HttpContext.Session.GetInt32("LoginTempUserId");
+
+                if (!usuarioId.HasValue)
+                {
+                    return Json(new { success = false, mensaje = "Sesión expirada. Por favor intenta de nuevo." });
+                }
+
+                var usuario = await _userManager.FindByIdAsync(usuarioId.Value.ToString());
+
+                if (usuario == null)
+                {
+                    return Json(new { success = false, mensaje = "Usuario no encontrado" });
+                }
+
+                // Verificar contraseña
+                var resultado = await _signInManager.CheckPasswordSignInAsync(usuario, request.Contrasena, false);
+
+                if (!resultado.Succeeded)
+                {
+                    return Json(new { success = false, mensaje = "Credenciales inválidas" });
+                }
+
+                // Iniciar sesión con el rol seleccionado
+                await SignInWithSpecificRole(usuario, request.RolSeleccionado);
+
+                // Limpiar sesión temporal
+                HttpContext.Session.Remove("LoginTempUserId");
+                HttpContext.Session.Remove("LoginTempPassword");
+
+                return Json(new
+                {
+                    success = true,
+                    mensaje = $"Bienvenido {usuario.Nombre}",
+                    redirectUrl = request.ReturnUrl ?? Url.Action("Index", "Home")
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, mensaje = "Error al iniciar sesión: " + ex.Message });
+            }
+        }
+        // Clases auxiliares para los requests (pueden ir dentro del controller o en un archivo aparte)
+        public class ValidarDatosBasicosRequest
+        {
+            public string Nombre { get; set; }
+            public string Apellido { get; set; }
+            public string Email { get; set; }
+            public string Contrasena { get; set; }
+            public string ConfirmarContrasena { get; set; }
+            public bool AceptaTerminos { get; set; }
+        }
+
+        public class AsignarRolRequest
+        {
+            public string TipoCuenta { get; set; }
+            public string NombreArtistico { get; set; }
+            public string EstiloPrincipal { get; set; }
+            public string Biografia { get; set; }
+        }
+        public class ValidarLoginRequest
+        {
+            public string Email { get; set; }
+            public string Contrasena { get; set; }
+            public bool RecordarMe { get; set; }
+        }
+
+        public class LoginConRolRequest
+        {
+            public string Email { get; set; }
+            public string Contrasena { get; set; }
+            public bool RecordarMe { get; set; }
+            public string RolSeleccionado { get; set; }
+            public string ReturnUrl { get; set; }
+        }
+        public class DatosBasicosTemp
+        {
+            public string Nombre { get; set; }
+            public string Apellido { get; set; }
+            public string Email { get; set; }
+            public string Contrasena { get; set; }
         }
     }
 }
