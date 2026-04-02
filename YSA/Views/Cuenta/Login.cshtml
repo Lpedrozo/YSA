@@ -722,8 +722,10 @@
                             rolesContainer.classList.add('visible');
                         } else {
                             // Un solo rol, iniciar sesión directamente
-                            await loginWithRole(result.rolUnico);
-                        }
+                            showToast(result.mensaje || 'Inicio de sesión exitoso', 'success');
+                            setTimeout(() => {
+                                window.location.href = result.redirectUrl;
+                            }, 1000);                        }
                     } else {
                         showToast(result.mensaje, 'error');
                         loginButton.disabled = false;

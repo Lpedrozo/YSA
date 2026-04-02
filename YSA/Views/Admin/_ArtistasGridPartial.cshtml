@@ -1,0 +1,72 @@
+﻿@model List<YSA.Web.Models.ViewModels.ArtistaListViewModel>
+
+<div class="artists-grid-container">
+    @if (Model != null && Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var artista in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm hover-shadow transition-all">
+                        <div class="card-img-top position-relative" style="height: 180px; overflow: hidden;">
+                            <img src="@(string.IsNullOrEmpty(artista.UrlImagen) ? "/images/default-avatar.png" : artista.UrlImagen)"
+                                 class="w-100 h-100 object-fit-cover" alt="@artista.NombreArtistico" />
+                            <div class="position-absolute top-0 end-0 m-2">
+                                @if (artista.EstadoAprobacion == "PendienteAprobacion" && !artista.EsAcademia)
+                                {
+                                    <span class="badge bg-warning text-dark">Pendiente</span>
+                                }
+                                else if (artista.EstadoAprobacion == "Aprobado")
+                                {
+                                    <span class="badge bg-success">Aprobado</span>
+                                }
+                                else if (artista.EstadoAprobacion == "Rechazado")
+                                {
+                                    <span class="badge bg-danger">Rechazado</span>
+                                }
+                                @if (artista.EsAcademia)
+                                {
+                                    <span class="badge bg-info ms-1">Academia</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@artista.NombreArtistico</h5>
+                            <p class="card-text text-muted small">@artista.NombreCompleto</p>
+                            <p class="card-text">
+                                <i class="fas fa-palette me-1 text-primary"></i> @artista.EstiloPrincipal
+                            </p>
+                            <p class="card-text small text-truncate">
+                                <i class="fas fa-envelope me-1"></i> @artista.Email
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <button type="button" class="btn btn-sm btn-outline-info w-100" onclick="verArtista(
+                                @artista.Id,
+                                '@Html.Raw(artista.NombreCompleto)',
+                                '@Html.Raw(artista.NombreArtistico)',
+                                '@artista.Email',
+                                '@Html.Raw(artista.EstiloPrincipal)',
+                                '@Html.Raw(artista.Biografia?.Replace("'", "\\'"))',
+                                '@artista.UrlImagen',
+                                '@artista.EstadoAprobacion',
+                                '@artista.FechaSolicitud?.ToString("yyyy-MM-ddTHH:mm:ss")',
+                                '@Html.Raw(artista.MotivoRechazo?.Replace("'", "\\'"))',
+                                @(artista.EsAcademia ? "true" : "false")
+                            )">
+                                <i class="fas fa-eye me-1"></i> Ver detalles
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+            <p class="text-muted">No hay artistas en esta categoría.</p>
+        </div>
+    }
+</div>

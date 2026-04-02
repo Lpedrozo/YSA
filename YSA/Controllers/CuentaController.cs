@@ -734,6 +734,7 @@ namespace YSA.Web.Controllers
 
                 var roles = await _userManager.GetRolesAsync(usuario);
 
+                // CASO 1: Usuario con múltiples roles
                 if (roles.Count > 1)
                 {
                     // Guardar usuario en sesión temporal para login con rol específico
@@ -749,16 +750,33 @@ namespace YSA.Web.Controllers
                     });
                 }
 
-                var rolUnico = roles.FirstOrDefault() ?? "Estudiante";
+                // CASO 2: Usuario con un solo rol
+                if (roles.Count == 1)
+                {
+                    var rolUnico = roles.First();
 
-                // Iniciar sesión directamente con el rol único
-                await SignInWithSpecificRole(usuario, rolUnico);
+                    // Iniciar sesión directamente con el rol único
+                    await SignInWithSpecificRole(usuario, rolUnico);
+
+                    return Json(new
+                    {
+                        success = true,
+                        multiplesRoles = false,
+                        rolUnico = rolUnico,
+                        redirectUrl = Url.Action("Index", "Home")
+                    });
+                }
+
+                // CASO 3: Usuario sin roles (caso borde - debería tener al menos uno)
+                // Asignar rol por defecto "Estudiante"
+                await _userManager.AddToRoleAsync(usuario, "Estudiante");
+                await SignInWithSpecificRole(usuario, "Estudiante");
 
                 return Json(new
                 {
                     success = true,
                     multiplesRoles = false,
-                    rolUnico = rolUnico,
+                    rolUnico = "Estudiante",
                     redirectUrl = Url.Action("Index", "Home")
                 });
             }
@@ -768,7 +786,7 @@ namespace YSA.Web.Controllers
             }
         }
 
-        // POST: /Cuenta/Login (modificado para aceptar rol seleccionado)
+        // POST: /Cuenta/Login
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginConRolRequest request)
@@ -789,12 +807,11 @@ namespace YSA.Web.Controllers
                     return Json(new { success = false, mensaje = "Usuario no encontrado" });
                 }
 
-                // Verificar contraseña
-                var resultado = await _signInManager.CheckPasswordSignInAsync(usuario, request.Contrasena, false);
-
-                if (!resultado.Succeeded)
+                // Verificar que el usuario tenga el rol seleccionado
+                var roles = await _userManager.GetRolesAsync(usuario);
+                if (!roles.Contains(request.RolSeleccionado))
                 {
-                    return Json(new { success = false, mensaje = "Credenciales inválidas" });
+                    return Json(new { success = false, mensaje = "El rol seleccionado no está disponible para este usuario." });
                 }
 
                 // Iniciar sesión con el rol seleccionado
@@ -803,6 +820,7 @@ namespace YSA.Web.Controllers
                 // Limpiar sesión temporal
                 HttpContext.Session.Remove("LoginTempUserId");
                 HttpContext.Session.Remove("LoginTempPassword");
+                HttpContext.Session.Remove("LoginTempRemember");
 
                 return Json(new
                 {
@@ -816,7 +834,6 @@ namespace YSA.Web.Controllers
                 return Json(new { success = false, mensaje = "Error al iniciar sesión: " + ex.Message });
             }
         }
-        // Clases auxiliares para los requests (pueden ir dentro del controller o en un archivo aparte)
         public class ValidarDatosBasicosRequest
         {
             public string Nombre { get; set; }

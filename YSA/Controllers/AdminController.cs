@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using YSA.Core.Entities;
 using YSA.Core.Enums;
@@ -1039,7 +1040,6 @@ namespace YSA.Web.Controllers
         {
             var artistas = await _artistaService.GetAllArtistasAsync();
 
-            // Proyectar la entidad a un ViewModel de lista
             var artistasViewModel = artistas.Select(a => new ArtistaListViewModel
             {
                 Id = a.Id,
@@ -1049,10 +1049,90 @@ namespace YSA.Web.Controllers
                 NombreArtistico = a.NombreArtistico,
                 EstiloPrincipal = a.EstiloPrincipal,
                 UrlImagen = a.Usuario.UrlImagen,
-                Biografia = a.Biografia
-            }).ToList();
+                Biografia = a.Biografia,
+                EsAcademia = a.EsAcademia,
+                EstadoAprobacion = a.EstadoAprobacion,
+                FechaSolicitud = a.FechaSolicitud,
+                MotivoRechazo = a.MotivoRechazo
+            }).OrderByDescending(a => a.FechaSolicitud).ToList(); // Los más recientes primero
 
             return View(artistasViewModel);
+        }
+        // GET: /Admin/AprobarArtista/{id}
+        [HttpGet]
+        public async Task<IActionResult> AprobarArtista(int id)
+        {
+            var artista = await _artistaService.GetByIdAsync(id);
+            if (artista == null)
+            {
+                return Json(new { success = false, message = "Artista no encontrado." });
+            }
+
+            artista.EstadoAprobacion = "Aprobado";
+            artista.FechaAprobacion = DateTime.UtcNow;
+            artista.AprobadoPorId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            artista.MotivoRechazo = "Sin movito de rechazo";
+
+            await _artistaService.UpdateArtistaAsync(artista.Usuario, null, artista, null);
+
+            return Json(new { success = true, message = $"Artista {artista.NombreArtistico} aprobado correctamente." });
+        }
+
+        // POST: /Admin/RechazarArtista
+        [HttpPost]
+        public async Task<IActionResult> RechazarArtista(int id, string motivo)
+        {
+            if (string.IsNullOrWhiteSpace(motivo))
+            {
+                return Json(new { success = false, message = "Debes especificar un motivo para el rechazo." });
+            }
+
+            var artista = await _artistaService.GetByIdAsync(id);
+            if (artista == null)
+            {
+                return Json(new { success = false, message = "Artista no encontrado." });
+            }
+
+            artista.EstadoAprobacion = "Rechazado";
+            artista.FechaAprobacion = DateTime.UtcNow;
+            artista.AprobadoPorId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            artista.MotivoRechazo = motivo;
+
+            await _artistaService.UpdateArtistaAsync(artista.Usuario, null, artista, null);
+
+
+            return Json(new { success = true, message = $"Artista {artista.NombreArtistico} rechazado." });
+        }
+        // POST: /Admin/MarcarAcademia/{id}
+        [HttpPost]
+        public async Task<IActionResult> MarcarAcademia(int id)
+        {
+            var artista = await _artistaService.GetByIdAsync(id);
+            if (artista == null)
+            {
+                return Json(new { success = false, message = "Artista no encontrado." });
+            }
+
+            artista.EsAcademia = true;
+            await _artistaService.UpdateArtistaAsync(artista.Usuario, null, artista, null);
+
+            return Json(new { success = true, message = $"Artista {artista.NombreArtistico} marcado como academia." });
+        }
+
+        // POST: /Admin/QuitarAcademia/{id}
+        [HttpPost]
+        public async Task<IActionResult> QuitarAcademia(int id)
+        {
+            var artista = await _artistaService.GetByIdAsync(id);
+            if (artista == null)
+            {
+                return Json(new { success = false, message = "Artista no encontrado." });
+            }
+
+            artista.EsAcademia = false;
+            await _artistaService.UpdateArtistaAsync(artista.Usuario, null, artista, null);
+
+            return Json(new { success = true, message = $"Artista {artista.NombreArtistico} ya no es academia." });
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

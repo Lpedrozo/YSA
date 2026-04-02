@@ -3,796 +3,328 @@
     ViewData["Title"] = "Gestión de artistas";
 }
 
-<style>
-    /* IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES DEL ESTILO EDITORIAL */
-    :root {
-        --color-primary-action: #ef8830;
-        --color-secondary: #212529;
-        --color-accent: #6c757d;
-        --color-background: #ffffff;
-        --color-card-bg: #ffffff;
-        --color-text-dark: #212529;
-        --color-text-light: #ffffff;
-        --color-border: #E8E8E8;
-        --color-alert: #e5361a;
-        --color-shadow-light: rgba(0, 0, 0, 0.1);
-        --color-section-bg: #f8f9fa;
-        --color-brand-primary: #ef8830;
-        --color-brand-secondary: #e5361a;
-        --color-brand-accent: #f2e514;
-        --color-brand-success: #6db53e;
-        --color-brand-dark: #08080a;
-        --font-heading: 'Georgia', 'Times New Roman', serif;
-        --font-body: 'Arial', 'Helvetica', sans-serif;
-        --font-accent: 'Poppins', sans-serif;
-        --line-height-tight: 1.1;
-        --line-height-normal: 1.4;
-        --line-height-loose: 1.6;
-        --border-radius-sm: 8px;
-        --border-radius-md: 12px;
-        --border-radius-lg: 16px;
-        --border-radius-xl: 20px;
-    }
-
-    body {
-        font-family: var(--font-body);
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-        line-height: var(--line-height-loose);
-    }
-
-    /* PORTADA DE REVISTA PARA EL HEADER */
-    .magazine-admin-header {
-        width: 100%;
-        height: 40vh;
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
-        position: relative;
-        overflow: hidden;
-        margin-bottom: 3rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: var(--color-text-light);
-    }
-
-    .admin-cover-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.3);
-        z-index: 2;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-    }
-
-    .admin-cover-title-block {
-        z-index: 3;
-        max-width: 800px;
-    }
-
-    .admin-cover-title {
-        font-family: var(--font-heading);
-        font-size: 3.5rem;
-        font-weight: 900;
-        line-height: var(--line-height-tight);
-        margin-bottom: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-
-    .admin-cover-subtitle {
-        font-family: var(--font-body);
-        font-size: 1.3rem;
-        font-weight: 300;
-        color: rgba(255, 255, 255, 0.9);
-        line-height: var(--line-height-normal);
-    }
-
-    /* SECCIONES CON FONDO Y BORDES REDONDEADOS */
-    .section-container {
-        background: var(--color-section-bg);
-        border-radius: var(--border-radius-lg);
-        padding: 3rem 2rem;
-        margin: 2rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    /* TÍTULOS DE SECCIÓN ESTILO REVISTA */
-    .section-title {
-        font-family: var(--font-heading);
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--color-secondary);
-        padding-bottom: 0.5rem;
-        margin-bottom: 2.5rem;
-        display: inline-block;
-        border-bottom: 4px solid var(--color-brand-primary);
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        line-height: var(--line-height-tight);
-    }
-
-    .section-subtitle {
-        font-family: var(--font-body);
-        font-size: 1.2rem;
-        font-weight: 400;
-        color: var(--color-accent);
-        margin-top: -2rem;
-        margin-bottom: 3rem;
-        line-height: var(--line-height-normal);
-    }
-
-    /* TARJETAS DE ARTISTAS ESTILO REVISTA */
-    .artist-card-editorial {
-        border-radius: var(--border-radius-md);
-        border: 1px solid var(--color-border);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        background-color: var(--color-card-bg);
-        height: 100%;
-        text-decoration: none;
-        color: inherit;
-        display: block;
-        position: relative;
-        margin-bottom: 2rem;
-    }
-
-        .artist-card-editorial:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            border-color: var(--color-brand-primary);
-        }
-
-    .artist-card-img-container {
-        overflow: hidden;
-        height: 200px;
-        position: relative;
-    }
-
-    .artist-card-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-
-    .artist-card-editorial:hover .artist-card-img {
-        transform: scale(1.05);
-    }
-
-    .artist-card-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 50%);
-        z-index: 2;
-        display: flex;
-        align-items: flex-end;
-        padding: 1.5rem;
-    }
-
-    .artist-card-body {
-        padding: 1.5rem;
-        position: relative;
-    }
-
-    .artist-card-category {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--color-brand-primary);
-        text-transform: uppercase;
-        margin-bottom: 0.5rem;
-        display: block;
-        line-height: var(--line-height-tight);
-        letter-spacing: 0.5px;
-    }
-
-    .artist-card-title {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        font-size: 1.5rem;
-        line-height: var(--line-height-normal);
-        color: var(--color-secondary);
-        margin-bottom: 0.5rem;
-    }
-
-    .artist-card-text {
-        font-family: var(--font-body);
-        font-size: 0.95rem;
-        color: var(--color-accent);
-        line-height: var(--line-height-normal);
-        margin-bottom: 1rem;
-    }
-
-    .artist-card-detail {
-        font-family: var(--font-accent);
-        font-size: 0.85rem;
-        color: var(--color-brand-primary);
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-    /* BOTONES ESTILO REVISTA */
-    .btn-magazine-primary {
-        background-color: var(--color-brand-primary);
-        border-color: var(--color-brand-primary);
-        color: white;
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 1.5rem;
-        transition: all 0.3s ease;
-        font-family: var(--font-accent);
-    }
-
-        .btn-magazine-primary:hover {
-            background-color: var(--color-brand-secondary);
-            border-color: var(--color-brand-secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-    .btn-magazine-secondary {
-        background-color: transparent;
-        border: 2px solid var(--color-brand-primary);
-        color: var(--color-brand-primary);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 1.5rem;
-        transition: all 0.3s ease;
-        font-family: var(--font-accent);
-    }
-
-        .btn-magazine-secondary:hover {
-            background-color: var(--color-brand-primary);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-    .btn-magazine-action {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 0.25rem;
-        transition: all 0.3s ease;
-    }
-
-    .btn-edit {
-        background-color: var(--color-brand-primary);
-        border: none;
-        color: white;
-    }
-
-        .btn-edit:hover {
-            background-color: var(--color-brand-secondary);
-            transform: scale(1.1);
-        }
-
-    /* MODALES ESTILO REVISTA */
-    .modal-magazine .modal-content {
-        border-radius: var(--border-radius-lg);
-        border: none;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    }
-
-    .modal-magazine .modal-header {
-        border-bottom: 3px solid var(--color-brand-primary);
-        background: var(--color-section-bg);
-        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-        padding: 1.5rem 2rem;
-    }
-
-    .modal-magazine .modal-title {
-        font-family: var(--font-heading);
-        font-weight: 800;
-        color: var(--color-secondary);
-        font-size: 1.5rem;
-    }
-
-    .modal-magazine .modal-body {
-        padding: 2rem;
-    }
-
-    .modal-magazine .modal-footer {
-        border-top: 1px solid var(--color-border);
-        padding: 1.5rem 2rem;
-        border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
-    }
-
-    .form-label-magazine {
-        font-family: var(--font-accent);
-        font-weight: 600;
-        color: var(--color-secondary);
-        margin-bottom: 0.5rem;
-    }
-
-    .form-control-magazine {
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 1rem;
-        font-family: var(--font-body);
-        transition: all 0.3s ease;
-    }
-
-        .form-control-magazine:focus {
-            border-color: var(--color-brand-primary);
-            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
-        }
-
-    /* BADGES ESTILO REVISTA */
-    .badge-magazine {
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.5rem 1rem;
-        font-size: 0.8rem;
-    }
-
-    .badge-primary {
-        background-color: var(--color-brand-primary) !important;
-        color: white !important;
-    }
-
-    .badge-count {
-        background-color: var(--color-brand-secondary) !important;
-        color: white !important;
-    }
-
-    /* GRID DE ARTISTAS */
-    .artists-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 2rem;
-    }
-
-    /* HEADER DE ACCIONES */
-    .actions-header {
-        background: var(--color-card-bg);
-        border-radius: var(--border-radius-md);
-        padding: 1.5rem 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        border-left: 4px solid var(--color-brand-primary);
-    }
-
-    /* RESPONSIVE */
-    @@media (max-width: 768px) {
-        .magazine-admin-header {
-            height: 30vh;
-        }
-
-        .admin-cover-title {
-            font-size: 2.5rem;
-        }
-
-        .admin-cover-subtitle {
-            font-size: 1.1rem;
-        }
-
-        .section-container {
-            padding: 2rem 1rem;
-            margin: 1.5rem 0;
-        }
-
-        .artists-grid {
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
-
-        .actions-header {
-            padding: 1rem 1.5rem;
-        }
-
-        .artist-card-img-container {
-            height: 180px;
-        }
-    }
-
-    @@media (max-width: 576px) {
-        .admin-cover-title {
-            font-size: 2rem;
-        }
-
-        .section-title {
-            font-size: 2rem;
-        }
-
-        .artist-card-body {
-            padding: 1rem;
-        }
-    }
-</style>
-
-
-<div class="container px-0 py-4 pb-5 mb-5">
-    <!-- SECCIÓN DE ACCIONES -->
-    <div class="actions-header">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <a asp-action="Panel" asp-controller="Admin" class="btn btn-magazine-secondary">
-                <i class="fas fa-arrow-left me-2"></i> Volver al Panel
-            </a>
-            <div class="d-flex align-items-center gap-3">
-                <span class="badge badge-magazine badge-count">
-                    <i class="fas fa-users me-1"></i> @Model.Count Artistas
-                </span>
-                <button type="button" class="btn btn-magazine-primary" data-bs-toggle="modal" data-bs-target="#crearArtistaModal">
-                    <i class="fas fa-plus-circle me-2"></i> Nuevo Artista
-                </button>
-            </div>
-        </div>
+<div class="container mt-5 pt-5 mb-5 pb-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Gestión de artistas</h2>
     </div>
 
-    <!-- SECCIÓN PRINCIPAL DE ARTISTAS -->
-    <div class="section-container">
-        <h2 class="section-title">Directorio de Artistas</h2>
-        <p class="section-subtitle">Explora y gestiona el talento creativo de la comunidad</p>
+    <!-- TABS para filtrar por estado -->
+    <ul class="nav nav-tabs mb-4" id="artistaTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
+                <i class="fas fa-list me-1"></i> Todos (@Model.Count)
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
+                <i class="fas fa-clock me-1"></i> Pendientes (@Model.Count(a => a.EstadoAprobacion == "PendienteAprobacion" || a.EstadoAprobacion == "En revisión"))
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab">
+                <i class="fas fa-check-circle me-1"></i> Aprobados (@Model.Count(a => a.EstadoAprobacion == "Aprobado"))
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab">
+                <i class="fas fa-times-circle me-1"></i> Rechazados (@Model.Count(a => a.EstadoAprobacion == "Rechazado"))
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="academy-tab" data-bs-toggle="tab" data-bs-target="#academy" type="button" role="tab">
+                <i class="fas fa-building me-1"></i> Academia (@Model.Count(a => a.EsAcademia))
+            </button>
+        </li>
+    </ul>
 
-        <div class="artists-grid" id="contenedorArtistas">
-            @if (Model != null && Model.Any())
-            {
-                @foreach (var artista in Model)
-                {
-                    <div class="artist-card-editorial">
-                        <div class="artist-card-img-container">
-                            <img src="@(string.IsNullOrEmpty(artista.UrlImagen) ? "/images/default-avatar.png" : artista.UrlImagen)"
-                                 class="artist-card-img" alt="Foto de @artista.NombreArtistico" />
-                            <div class="artist-card-overlay">
-                                <span class="badge badge-magazine badge-primary">@artista.EstiloPrincipal</span>
-                            </div>
-                        </div>
+    <div class="tab-content">
+        <!-- Todos los artistas -->
+        <div class="tab-pane fade show active" id="all" role="tabpanel">
+            @await Html.PartialAsync("_ArtistasGridPartial", Model)
+        </div>
 
-                        <div class="artist-card-body">
-                            <h3 class="artist-card-title">@artista.NombreArtistico</h3>
-                            <p class="artist-card-text">@artista.NombreCompleto</p>
+        <!-- Pendientes -->
+        <div class="tab-pane fade" id="pending" role="tabpanel">
+            @await Html.PartialAsync("_ArtistasGridPartial", Model.Where(a => a.EstadoAprobacion == "PendienteAprobacion" || a.EstadoAprobacion == "En revisión").ToList())
+        </div>
 
-                            <div class="artist-card-detail">
-                                <i class="fas fa-envelope"></i>
-                                <span>@artista.Email</span>
-                            </div>
+        <!-- Aprobados -->
+        <div class="tab-pane fade" id="approved" role="tabpanel">
+            @await Html.PartialAsync("_ArtistasGridPartial", Model.Where(a => a.EstadoAprobacion == "Aprobado").ToList())
+        </div>
 
-                            @if (!string.IsNullOrEmpty(artista.Biografia))
-                            {
-                                <div class="artist-card-detail">
-                                    <i class="fas fa-file-alt"></i>
-                                    <span>Biografía disponible</span>
-                                </div>
-                            }
+        <!-- Rechazados -->
+        <div class="tab-pane fade" id="rejected" role="tabpanel">
+            @await Html.PartialAsync("_ArtistasGridPartial", Model.Where(a => a.EstadoAprobacion == "Rechazado").ToList())
+        </div>
 
-                            <div class="d-flex justify-content-end mt-3">
-                                <button type="button" class="btn btn-magazine-action btn-edit editar-btn"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editarArtistaModal"
-                                        data-id="@artista.Id"
-                                        data-usuarioid="@artista.UsuarioId"
-                                        data-nombre="@artista.NombreCompleto.Split(' ')[0]"
-                                        data-apellido="@(artista.NombreCompleto.Split(' ').Length > 1 ? artista.NombreCompleto.Split(' ')[1] : "")"
-                                        data-email="@artista.Email"
-                                        data-nombreartistico="@artista.NombreArtistico"
-                                        data-estiloprincipal="@artista.EstiloPrincipal"
-                                        data-biografia="@Html.Raw(artista.Biografia)"
-                                        data-urlimagen="@artista.UrlImagen"
-                                        title="Editar Artista">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                }
-            }
-            else
-            {
-                <div class="col-12 text-center py-5">
-                    <div class="alert alert-info" role="alert" style="border-radius: var(--border-radius-md);">
-                        <i class="fas fa-info-circle me-2"></i>
-                        No hay artistas registrados en la plataforma.
-                    </div>
-                </div>
-            }
+        <!-- Academia -->
+        <div class="tab-pane fade" id="academy" role="tabpanel">
+            @await Html.PartialAsync("_ArtistasGridPartial", Model.Where(a => a.EsAcademia).ToList())
         </div>
     </div>
 </div>
 
-<!-- MODALES (manteniendo la funcionalidad original) -->
-<div class="modal fade modal-magazine" id="crearArtistaModal" tabindex="-1" aria-labelledby="crearArtistaModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<!-- MODAL VER ARTISTA -->
+<div class="modal fade modal-magazine" id="verArtistaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="crearArtistaModalLabel">
-                    <i class="fas fa-plus-circle me-2"></i>Nuevo Artista
+            <div class="modal-header" style="background: var(--color-brand-primary);">
+                <h5 class="modal-title text-white">
+                    <i class="fas fa-user-circle me-2"></i> <span id="modalTitulo"></span>
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="formCrearArtista" asp-action="CrearArtista" method="post" enctype="multipart/form-data" novalidate>
-                @Html.AntiForgeryToken()
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="Crear_Nombre" class="form-label-magazine">Nombre</label>
-                                <input type="text" id="Crear_Nombre" name="Nombre" class="form-control form-control-magazine" required />
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="Crear_Apellido" class="form-label-magazine">Apellido</label>
-                                <input type="text" id="Crear_Apellido" name="Apellido" class="form-control form-control-magazine" required />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="Crear_Email" class="form-label-magazine">Correo electrónico</label>
-                        <input type="email" id="Crear_Email" name="Email" class="form-control form-control-magazine" required />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="Crear_Password" class="form-label-magazine">Contraseña</label>
-                        <input type="password" id="Crear_Password" name="Password" class="form-control form-control-magazine" required />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="Crear_NombreArtistico" class="form-label-magazine">Nombre artístico</label>
-                        <input type="text" id="Crear_NombreArtistico" name="NombreArtistico" class="form-control form-control-magazine" required />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="Crear_Biografia" class="form-label-magazine">Biografía</label>
-                        <textarea id="Crear_Biografia" name="Biografia" class="form-control form-control-magazine tinymce-biografia" rows="5"></textarea>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="Crear_EstiloPrincipal" class="form-label-magazine">Estilo principal</label>
-                        <input type="text" id="Crear_EstiloPrincipal" name="EstiloPrincipal" class="form-control form-control-magazine" required />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="Crear_ImagenPerfil" class="form-label-magazine">Imagen de perfil</label>
-                        <input type="file" id="Crear_ImagenPerfil" name="ImagenPerfil" class="form-control form-control-magazine" accept=".jpg,.jpeg,.png" />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-magazine-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-magazine-primary">Guardar Artista</button>
-                </div>
-            </form>
+            <div class="modal-body" id="modalContenido" style="max-height: 60vh; overflow-y: auto; padding: 1.5rem;"></div>
+            <div class="modal-footer" id="modalAcciones"></div>
         </div>
     </div>
 </div>
 
-<div class="modal fade modal-magazine" id="editarArtistaModal" tabindex="-1" aria-labelledby="editarArtistaModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<!-- MODAL RECHAZAR -->
+<div class="modal fade modal-magazine" id="rechazarArtistaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editarArtistaModalLabel">
-                    <i class="fas fa-edit me-2"></i>Editar Artista
+            <div class="modal-header" style="background: var(--color-brand-secondary);">
+                <h5 class="modal-title text-white">
+                    <i class="fas fa-times-circle me-2"></i> Rechazar solicitud
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="formEditarArtista" asp-action="UpdateArtista" method="post" enctype="multipart/form-data" novalidate>
-                @Html.AntiForgeryToken()
-                <input type="hidden" id="Editar_Id" name="Id" />
-                <input type="hidden" id="Editar_UsuarioId" name="UsuarioId" />
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="Editar_Nombre" class="form-label-magazine">Nombre</label>
-                                <input type="text" id="Editar_Nombre" name="Nombre" class="form-control form-control-magazine" required />
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="Editar_Apellido" class="form-label-magazine">Apellido</label>
-                                <input type="text" id="Editar_Apellido" name="Apellido" class="form-control form-control-magazine" required />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="Editar_Email" class="form-label-magazine">Correo electrónico</label>
-                        <input type="email" id="Editar_Email" name="Email" class="form-control form-control-magazine" required />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="Editar_Password" class="form-label-magazine">Nueva contraseña</label>
-                        <input type="password" id="Editar_Password" name="Password" class="form-control form-control-magazine" placeholder="Dejar vacío para no cambiar" />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="Editar_NombreArtistico" class="form-label-magazine">Nombre artístico</label>
-                        <input type="text" id="Editar_NombreArtistico" name="NombreArtistico" class="form-control form-control-magazine" required />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="Editar_Biografia" class="form-label-magazine">Biografía</label>
-                        <textarea id="Editar_Biografia" name="Biografia" class="form-control form-control-magazine tinymce-biografia" rows="5"></textarea>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="Editar_EstiloPrincipal" class="form-label-magazine">Estilo principal</label>
-                        <input type="text" id="Editar_EstiloPrincipal" name="EstiloPrincipal" class="form-control form-control-magazine" required />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="Editar_ImagenPerfil" class="form-label-magazine">Imagen de perfil</label>
-                        <input type="file" id="Editar_ImagenPerfil" name="ImagenPerfil" class="form-control form-control-magazine" accept=".jpg,.jpeg,.png" />
-                        <small class="form-text text-muted">Dejar vacío para conservar la imagen actual.</small>
-                        <img id="Editar_PreviewImagen" src="" class="img-thumbnail mt-2" style="max-width: 150px; display: none; border-radius: var(--border-radius-sm);" alt="Imagen actual del artista" />
-                    </div>
+            <div class="modal-body" style="padding: 1.5rem;">
+                <input type="hidden" id="rechazarArtistaId" />
+                <div class="mb-3">
+                    <label class="form-label-magazine">Motivo del rechazo</label>
+                    <textarea id="motivoRechazo" class="form-control form-control-magazine" rows="3" placeholder="Explica al artista por qué no se aprueba su solicitud..."></textarea>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-magazine-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-magazine-primary">Actualizar Artista</button>
-                </div>
-            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-magazine-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-magazine-primary" id="btnConfirmarRechazo">Rechazar</button>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-
     <script>
-        // Manteniendo toda la funcionalidad JavaScript original
-        function tinymceModalSetup(editor) {
-            editor.on('init', function() {
-                $(editor.getContainer()).parents('.modal').on('shown.bs.modal', function () {
-                    editor.focus();
-                });
-            });
-        }
-
-        function initTinyMCE(selector, content = '') {
-            var editorId = selector.replace('#', '');
-
-            if (tinymce.get(editorId)) {
-                tinymce.get(editorId).remove();
-            }
-
-            tinymce.init({
-                selector: selector,
-                plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
-                toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-                height: 250,
-                setup: function (editor) {
-                    tinymceModalSetup(editor);
-                    editor.on('init', function (e) {
-                        if (content) {
-                            editor.setContent(content);
-                        }
-                    });
-                }
-            });
-        }
-
         function getAntiForgeryToken() {
             const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
             return tokenElement ? tokenElement.value : '';
         }
 
-        async function recargarContenedor() {
-            try {
-                const response = await fetch('@Url.Action("GestionarArtistas", "Admin")');
-                if (!response.ok) {
-                    throw new Error('No se pudieron cargar los artistas.');
-                }
-                const html = await response.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-
-                const newContainerContent = doc.getElementById('contenedorArtistas')?.outerHTML || '';
-                const oldContainer = document.getElementById('contenedorArtistas');
-
-                if (oldContainer) {
-                    oldContainer.outerHTML = newContainerContent;
-                } else {
-                    window.location.reload();
-                    return;
-                }
-
-                attachEventListeners();
-            } catch (error) {
-                Swal.fire('Error', error.message, 'error');
+        // Función para ver artista
+        // Función para ver artista - VERSIÓN CORREGIDA
+        function verArtista(id, nombre, nombreArtistico, email, estilo, biografia, urlImagen, estado, fechaSolicitud, motivoRechazo, esAcademia) {
+            // Limpiar y escapar caracteres especiales
+            function escapeHtml(text) {
+                if (!text) return '';
+                return text
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;')
+                    .replace(/\n/g, '<br>');
             }
-        }
 
-        function attachEventListeners() {
-            document.querySelectorAll('.editar-btn').forEach(button => {
-                button.removeEventListener('click', handleEditarClick);
-                button.addEventListener('click', handleEditarClick);
-            });
-        }
+            const titulo = escapeHtml(nombreArtistico);
+            const nombreCompleto = escapeHtml(nombre);
+            const emailEscaped = escapeHtml(email);
+            const estiloEscaped = escapeHtml(estilo);
+            const biografiaEscaped = escapeHtml(biografia);
+            const motivoEscaped = escapeHtml(motivoRechazo);
 
-        function handleEditarClick() {
-            const id = this.getAttribute('data-id');
-            const usuarioId = this.getAttribute('data-usuarioid');
-            const nombre = this.getAttribute('data-nombre');
-            const apellido = this.getAttribute('data-apellido');
-            const email = this.getAttribute('data-email');
-            const nombreArtistico = this.getAttribute('data-nombreartistico');
-            const estiloPrincipal = this.getAttribute('data-estiloprincipal');
-            const urlImagen = this.getAttribute('data-urlimagen');
-            const biografia = this.getAttribute('data-biografia');
+            const estadoBadge = estado === 'Aprobado' ? '<span class="badge bg-success">Aprobado</span>' :
+                                estado === 'Rechazado' ? '<span class="badge bg-danger">Rechazado</span>' :
+                                '<span class="badge bg-warning text-dark">Pendiente</span>';
 
-            document.getElementById('Editar_Id').value = id;
-            document.getElementById('Editar_UsuarioId').value = usuarioId;
-            document.getElementById('Editar_Nombre').value = nombre;
-            document.getElementById('Editar_Apellido').value = apellido;
-            document.getElementById('Editar_Email').value = email;
-            document.getElementById('Editar_NombreArtistico').value = nombreArtistico;
-            document.getElementById('Editar_EstiloPrincipal').value = estiloPrincipal;
-            document.getElementById('Editar_Password').value = '';
+            const academiaBadge = esAcademia ? '<span class="badge bg-info ms-2">Academia</span>' : '';
+            const motivoHtml = motivoRechazo ? `<div class="alert alert-danger mt-2 small"><strong>Motivo:</strong><br>${motivoEscaped}</div>` : '';
+            const fechaFormateada = fechaSolicitud ? new Date(fechaSolicitud).toLocaleDateString('es-VE') : 'No disponible';
 
-            initTinyMCE('#Editar_Biografia', biografia);
+            // URL de imagen con fallback
+            const imagenUrl = urlImagen && urlImagen !== 'null' ? urlImagen : '/images/default-avatar.png';
 
-            const previewImg = document.getElementById('Editar_PreviewImagen');
-            if (urlImagen && urlImagen !== 'null' && urlImagen !== '/images/default-avatar.png') {
-                previewImg.src = urlImagen;
-                previewImg.style.display = 'block';
+            document.getElementById('modalTitulo').innerHTML = titulo;
+            document.getElementById('modalContenido').innerHTML = `
+                <div class="text-center mb-3">
+                    <img src="${imagenUrl}" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                </div>
+                <div class="mb-2 ml-5">
+                    <strong><i class="fas fa-user me-1"></i>Nombre:</strong> ${nombreCompleto}
+                </div>
+                <div class="mb-2 ml-5">
+                    <strong><i class="fas fa-envelope me-1"></i>Email:</strong> ${emailEscaped}
+                </div>
+                <div class="mb-2 ml-5">
+                    <strong><i class="fas fa-palette me-1"></i>Nombre artístico:</strong> ${titulo}
+                </div>
+                <div class="mb-2 ml-5">
+                    <strong><i class="fas fa-brush me-1"></i>Estilo principal:</strong> ${estiloEscaped}
+                </div>
+                <div class="mb-2 ml-5">
+                    <strong><i class="fas fa-calendar me-1"></i>Fecha solicitud:</strong> ${fechaFormateada}
+                </div>
+                <div class="mb-2 ml-5">
+                    <strong><i class="fas fa-tag me-1"></i>Estado:</strong> ${estadoBadge} ${academiaBadge}
+                </div>
+                <div class="mt-2 ml-5">
+                    <strong><i class="fas fa-file-alt me-1"></i>Biografía:</strong>
+                    <p class="border-start ps-2 mt-1 small">${biografiaEscaped || 'No disponible'}</p>
+                </div>
+                ${motivoHtml}
+            `;
+
+            const acciones = document.getElementById('modalAcciones');
+            let botonesHtml = '<button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>';
+
+            if (!esAcademia) {
+                if (estado !== 'Aprobado') {
+                    botonesHtml += `<button type="button" class="btn btn-success btn-sm ms-2" onclick="aprobarArtista(${id})">
+                                        <i class="fas fa-check-circle me-1"></i> Aprobar
+                                    </button>`;
+                }
+                if (estado !== 'Rechazado') {
+                    botonesHtml += `<button type="button" class="btn btn-danger btn-sm ms-2" onclick="abrirRechazarModal(${id})">
+                                        <i class="fas fa-times-circle me-1"></i> Rechazar
+                                    </button>`;
+                }
+                botonesHtml += `<button type="button" class="btn btn-info btn-sm ms-2" onclick="marcarAcademia(${id})">
+                                    <i class="fas fa-building me-1"></i> Marcar como Academia
+                                </button>`;
             } else {
-                previewImg.src = '/images/default-avatar.png';
-                previewImg.style.display = 'block';
+                botonesHtml += `<button type="button" class="btn btn-warning btn-sm ms-2" onclick="quitarAcademia(${id})">
+                                    <i class="fas fa-user me-1"></i> Quitar de Academia
+                                </button>`;
+            }
+
+            acciones.innerHTML = botonesHtml;
+
+            const modal = new bootstrap.Modal(document.getElementById('verArtistaModal'));
+            modal.show();
+        }
+        // Aprobar artista
+        async function aprobarArtista(id) {
+            const result = await Swal.fire({
+                title: '¿Aprobar artista?',
+                text: 'El artista podrá comenzar a publicar contenido.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, aprobar',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/Admin/AprobarArtista/${id}`, {
+                        method: 'GET',
+                        headers: { 'RequestVerificationToken': getAntiForgeryToken() }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        Swal.fire('¡Aprobado!', data.message, 'success').then(() => location.reload());
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                } catch (error) {
+                    Swal.fire('Error', 'Ocurrió un error', 'error');
+                }
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            initTinyMCE('#Crear_Biografia');
-            attachEventListeners();
+        // Abrir modal de rechazo
+        function abrirRechazarModal(id) {
+            document.getElementById('rechazarArtistaId').value = id;
+            document.getElementById('motivoRechazo').value = '';
+            new bootstrap.Modal(document.getElementById('rechazarArtistaModal')).show();
+        }
 
-            document.getElementById('formCrearArtista').addEventListener('submit', async function (e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-                const response = await fetch(this.action, {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await response.json();
-                if (result.success) {
-                    Swal.fire('Éxito', result.message, 'success');
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('crearArtistaModal'));
-                    if(modal) modal.hide();
-                    this.reset();
-                    await recargarContenedor();
-                } else {
-                    const errorMsg = result.message || 'Hubo un error al crear el artista.';
-                    Swal.fire('Error', errorMsg, 'error');
-                }
-            });
+        // Confirmar rechazo
+        document.getElementById('btnConfirmarRechazo')?.addEventListener('click', async function() {
+            const id = document.getElementById('rechazarArtistaId').value;
+            const motivo = document.getElementById('motivoRechazo').value.trim();
 
-            document.getElementById('formEditarArtista').addEventListener('submit', async function (e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-                const response = await fetch(this.action, {
+            if (!motivo) {
+                Swal.fire('Error', 'Debes especificar un motivo', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/Admin/RechazarArtista?id=${id}&motivo=${encodeURIComponent(motivo)}`, {
                     method: 'POST',
-                    body: formData
+                    headers: { 'RequestVerificationToken': getAntiForgeryToken() }
                 });
-                const result = await response.json();
-                if (result.success) {
-                    Swal.fire('Éxito', result.message, 'success');
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('editarArtistaModal'));
-                    if(modal) modal.hide();
-                    await recargarContenedor();
+                const data = await response.json();
+                if (data.success) {
+                    Swal.fire('Rechazado', data.message, 'success').then(() => location.reload());
                 } else {
-                    const errorMsg = result.message || 'Hubo un error al actualizar el artista.';
-                    Swal.fire('Error', errorMsg, 'error');
+                    Swal.fire('Error', data.message, 'error');
                 }
-            });
+            } catch (error) {
+                Swal.fire('Error', 'Ocurrió un error', 'error');
+            }
+            bootstrap.Modal.getInstance(document.getElementById('rechazarArtistaModal')).hide();
         });
+
+        // Marcar como academia
+        async function marcarAcademia(id) {
+            const result = await Swal.fire({
+                title: 'Marcar como artista de academia',
+                text: 'Este artista pasará a ser parte de la academia.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, marcar',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/Admin/MarcarAcademia/${id}`, {
+                        method: 'POST',
+                        headers: { 'RequestVerificationToken': getAntiForgeryToken() }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        Swal.fire('¡Actualizado!', data.message, 'success').then(() => location.reload());
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                } catch (error) {
+                    Swal.fire('Error', 'Ocurrió un error', 'error');
+                }
+            }
+        }
+
+        // Quitar de academia
+        async function quitarAcademia(id) {
+            const result = await Swal.fire({
+                title: 'Quitar de academia',
+                text: 'Este artista dejará de ser parte de la academia.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, quitar',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`/Admin/QuitarAcademia/${id}`, {
+                        method: 'POST',
+                        headers: { 'RequestVerificationToken': getAntiForgeryToken() }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        Swal.fire('¡Actualizado!', data.message, 'success').then(() => location.reload());
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                } catch (error) {
+                    Swal.fire('Error', 'Ocurrió un error', 'error');
+                }
+            }
+        }
     </script>
 }

@@ -112,8 +112,12 @@ namespace YSA.Web.Models.ViewModels
         public string Email { get; set; }
         public string NombreArtistico { get; set; }
         public string EstiloPrincipal { get; set; }
-        public string? UrlImagen { get; set; }
-        public string? Biografia { get; set; }
+        public string UrlImagen { get; set; }
+        public string Biografia { get; set; }
+        public bool EsAcademia { get; set; }
+        public string EstadoAprobacion { get; set; } // NUEVO: PendienteAprobacion, Aprobado, Rechazado
+        public DateTime? FechaSolicitud { get; set; }
+        public string MotivoRechazo { get; set; }
     }
     public class PortafolioViewModel
     {
