@@ -1,0 +1,544 @@
+﻿@{
+    ViewData["Title"] = "Gestión de Planes";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">Gestión de Planes de Suscripción</h2>
+            <p class="text-muted mt-2">Administra los planes disponibles para los artistas</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="btnNuevoPlan">
+            <i class="fas fa-plus-circle me-2"></i>Nuevo Plan
+        </button>
+    </div>
+
+    <!-- Tarjetas de resumen -->
+    <div class="row mb-4" id="resumenCards">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Total Planes</h6>
+                            <h2 class="mb-0" id="totalPlanes">0</h2>
+                        </div>
+                        <i class="fas fa-boxes fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Activos</h6>
+                            <h2 class="mb-0" id="totalActivos">0</h2>
+                        </div>
+                        <i class="fas fa-check-circle fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Inactivos</h6>
+                            <h2 class="mb-0" id="totalInactivos">0</h2>
+                        </div>
+                        <i class="fas fa-ban fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Comisión Promedio</h6>
+                            <h2 class="mb-0" id="comisionPromedio">0%</h2>
+                        </div>
+                        <i class="fas fa-chart-line fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de planes -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Listado de Planes</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="tablaPlanes">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center" style="width: 60px">Orden</th>
+                            <th>Nombre</th>
+                            <th class="text-center">Precio</th>
+                            <th class="text-center">Duración</th>
+                            <th class="text-center">Publicaciones</th>
+                            <th class="text-center">Comisión</th>
+                            <th class="text-center">Visibilidad</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-center" style="width: 120px">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyPlanes">
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                                <p class="mt-2 text-muted">Cargando planes...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Crear/Editar Plan mejorado -->
+<div class="modal fade" id="planModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary text-white" style="background: linear-gradient(135deg, #ef8830 0%, #e07a2a 100%);">
+                <h5 class="modal-title" id="planModalTitle">
+                    <i class="fas fa-plus-circle me-2"></i>Nuevo Plan
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <form id="formPlan">
+                    <input type="hidden" id="planId" name="Id" value="0" />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Nombre del Plan <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-tag"></i></span>
+                                <input type="text" class="form-control" id="nombre" name="Nombre" required maxlength="100" placeholder="Ej: Plan Básico">
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label fw-bold">Precio (USD) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">$</span>
+                                <input type="number" step="0.01" class="form-control" id="precio" name="Precio" required placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label fw-bold">Duración <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-calendar-alt"></i></span>
+                                <select class="form-select" id="duracionDias" name="DuracionDias" required>
+                                    <option value="30">30 días (Mensual)</option>
+                                    <option value="90">90 días (Trimestral)</option>
+                                    <option value="180">180 días (Semestral)</option>
+                                    <option value="365">365 días (Anual)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="Descripcion" rows="2" maxlength="500" placeholder="Describe los beneficios del plan..."></textarea>
+                        <small class="text-muted"><span id="charCount">0</span>/500 caracteres</small>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Límite de publicaciones</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-file-alt"></i></span>
+                                <input type="number" class="form-control" id="limitePublicaciones" name="LimitePublicaciones" value="0">
+                            </div>
+                            <small class="text-muted">0 = Ilimitado</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Comisión (%) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="number" step="0.01" class="form-control" id="comisionPorcentaje" name="ComisionPorcentaje" required placeholder="0">
+                                <span class="input-group-text bg-light">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Orden de visualización</label>
+                            <input type="number" class="form-control" id="orden" name="Orden" value="0" placeholder="0">
+                            <small class="text-muted">Menor número = Mayor prioridad</small>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body py-2">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="visibilidadPrioritaria" name="TieneVisibilidadPrioritaria" style="cursor: pointer;">
+                                        <label class="form-check-label fw-bold" for="visibilidadPrioritaria" style="cursor: pointer;">
+                                            <i class="fas fa-star text-warning me-1"></i>Visibilidad prioritaria
+                                        </label>
+                                    </div>
+                                    <small class="text-muted">Los contenidos aparecen primero</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body py-2">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="permitePromocionesExtras" name="PermitePromocionesExtras" style="cursor: pointer;">
+                                        <label class="form-check-label fw-bold" for="permitePromocionesExtras" style="cursor: pointer;">
+                                            <i class="fas fa-rocket text-info me-1"></i>Promociones extras
+                                        </label>
+                                    </div>
+                                    <small class="text-muted">Permite promociones pagadas</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Máx. promociones simultáneas</label>
+                            <input type="number" class="form-control" id="maxPromocionesSimultaneas" name="MaxPromocionesSimultaneas" value="1" min="1">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Descuento adicional en comisión (%)</label>
+                        <div class="input-group">
+                            <input type="number" step="0.01" class="form-control" id="descuentoComisionAdicional" name="DescuentoComisionAdicional" placeholder="0">
+                            <span class="input-group-text bg-light">%</span>
+                        </div>
+                        <small class="text-muted">Descuento adicional sobre la comisión base</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnGuardarPlan">
+                    <i class="fas fa-save me-1"></i>Guardar Plan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function() {
+            cargarPlanes();
+
+            // Contador de caracteres para descripción
+            $('#descripcion').on('input', function() {
+                const length = $(this).val().length;
+                $('#charCount').text(length);
+            });
+
+            $('#btnNuevoPlan').click(function() {
+                limpiarFormulario();
+                $('#planId').val('0');
+                $('#planModalTitle').html('<i class="fas fa-plus-circle me-2"></i>Nuevo Plan');
+                $('#planModal').modal('show');
+            });
+
+            $('#btnGuardarPlan').click(function() {
+                guardarPlan();
+            });
+
+            function cargarPlanes() {
+                $.ajax({
+                    url: '@Url.Action("Listar", "Planes")',
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            renderizarTabla(response.data);
+                            actualizarResumen(response.data);
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'No se pudieron cargar los planes', 'error');
+                    }
+                });
+            }
+
+            function actualizarResumen(planes) {
+                const total = planes.length;
+                const activos = planes.filter(p => p.activo).length;
+                const inactivos = total - activos;
+                const comisionPromedio = planes.length > 0
+                    ? (planes.reduce((sum, p) => sum + p.comisionPorcentaje, 0) / planes.length).toFixed(1)
+                    : 0;
+
+                $('#totalPlanes').text(total);
+                $('#totalActivos').text(activos);
+                $('#totalInactivos').text(inactivos);
+                $('#comisionPromedio').text(comisionPromedio + '%');
+            }
+
+            function renderizarTabla(planes) {
+                const tbody = $('#tbodyPlanes');
+                if (!planes || planes.length === 0) {
+                    tbody.html('<tr><td colspan="9" class="text-center py-5"><i class="fas fa-box-open fa-3x text-muted mb-3 d-block"></i>No hay planes registrados</td></tr>');
+                    return;
+                }
+
+                let html = '';
+                for (const plan of planes) {
+                    const visibilidadBadge = plan.tieneVisibilidadPrioritaria
+                        ? '<span class="badge bg-warning text-dark"><i class="fas fa-star me-1"></i>Prioritaria</span>'
+                        : '<span class="badge bg-secondary"><i class="fas fa-eye me-1"></i>Normal</span>';
+
+                    const estadoBadge = plan.activo
+                        ? '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Activo</span>'
+                        : '<span class="badge bg-danger"><i class="fas fa-ban me-1"></i>Inactivo</span>';
+
+                    html += `
+                        <tr>
+                            <td class="text-center">${plan.orden || '-'}</td>
+                            <td><strong>${escapeHtml(plan.nombre)}</strong></td>
+                            <td class="text-center"><span class="fw-bold text-primary">$${plan.precio.toFixed(2)}</span> USD</td>
+                            <td class="text-center">${plan.duracionDias} días</td>
+                            <td class="text-center">${plan.limitePublicaciones === 0 ? '<span class="badge bg-info">Ilimitado</span>' : plan.limitePublicaciones}</td>
+                            <td class="text-center">${plan.comisionPorcentaje}%</td>
+                            <td class="text-center">${visibilidadBadge}</td>
+                            <td class="text-center">${estadoBadge}</td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editarPlan(${plan.id})" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning" onclick="cambiarEstado(${plan.id})" title="${plan.activo ? 'Desactivar' : 'Activar'}">
+                                        <i class="fas fa-${plan.activo ? 'ban' : 'check-circle'}"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarPlan(${plan.id})" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+                tbody.html(html);
+            }
+
+            window.editarPlan = function(id) {
+                $.ajax({
+                    url: '@Url.Action("Obtener", "Planes")',
+                    type: 'GET',
+                    data: { id: id },
+                    success: function(response) {
+                        if (response.success) {
+                            const plan = response.data;
+                            $('#planId').val(plan.id);
+                            $('#nombre').val(plan.nombre);
+                            $('#descripcion').val(plan.descripcion || '');
+                            $('#charCount').text(plan.descripcion?.length || 0);
+                            $('#precio').val(plan.precio);
+                            $('#duracionDias').val(plan.duracionDias);
+                            $('#limitePublicaciones').val(plan.limitePublicaciones);
+                            $('#comisionPorcentaje').val(plan.comisionPorcentaje);
+                            $('#orden').val(plan.orden);
+                            $('#visibilidadPrioritaria').prop('checked', plan.tieneVisibilidadPrioritaria);
+                            $('#permitePromocionesExtras').prop('checked', plan.permitePromocionesExtras);
+                            $('#maxPromocionesSimultaneas').val(plan.maxPromocionesSimultaneas);
+                            $('#descuentoComisionAdicional').val(plan.descuentoComisionAdicional || '');
+                            $('#planModalTitle').html('<i class="fas fa-edit me-2"></i>Editar Plan');
+                            $('#planModal').modal('show');
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'No se pudo cargar el plan', 'error');
+                    }
+                });
+            };
+
+                    function guardarPlan() {
+            // Obtener valores con validación
+            const precioInput = $('#precio').val();
+            const comisionInput = $('#comisionPorcentaje').val();
+            const descuentoInput = $('#descuentoComisionAdicional').val();
+
+            const formData = {
+                Id: parseInt($('#planId').val()) || 0,
+                Nombre: $('#nombre').val().trim(),
+                Descripcion: $('#descripcion').val().trim(),
+                Precio: precioInput ? parseFloat(precioInput) : 0,
+                DuracionDias: parseInt($('#duracionDias').val()) || 30,
+                LimitePublicaciones: parseInt($('#limitePublicaciones').val()) || 0,
+                ComisionPorcentaje: comisionInput ? parseFloat(comisionInput) : 0,
+                Orden: parseInt($('#orden').val()) || 0,
+                TieneVisibilidadPrioritaria: $('#visibilidadPrioritaria').is(':checked'),
+                PermitePromocionesExtras: $('#permitePromocionesExtras').is(':checked'),
+                MaxPromocionesSimultaneas: parseInt($('#maxPromocionesSimultaneas').val()) || 1,
+                DescuentoComisionAdicional: descuentoInput && descuentoInput !== '' ? parseFloat(descuentoInput) : null,
+                Activo: true
+            };
+
+            // Validar que los valores sean números válidos
+            if (isNaN(formData.Precio)) formData.Precio = 0;
+            if (isNaN(formData.ComisionPorcentaje)) formData.ComisionPorcentaje = 0;
+            if (isNaN(formData.Orden)) formData.Orden = 0;
+            if (isNaN(formData.MaxPromocionesSimultaneas)) formData.MaxPromocionesSimultaneas = 1;
+
+            // Validaciones
+            if (!formData.Nombre) {
+                Swal.fire('Error', 'El nombre del plan es obligatorio', 'error');
+                return;
+            }
+            if (formData.Precio <= 0) {
+                Swal.fire('Error', 'El precio debe ser mayor a 0', 'error');
+                return;
+            }
+            if (formData.ComisionPorcentaje < 0 || formData.ComisionPorcentaje > 100) {
+                Swal.fire('Error', 'La comisión debe estar entre 0 y 100', 'error');
+                return;
+            }
+            if (formData.DuracionDias < 1) {
+                Swal.fire('Error', 'La duración debe ser mayor a 0', 'error');
+                return;
+            }
+
+            console.log('Enviando datos:', formData);
+
+            const url = formData.Id === 0 ? '@Url.Action("Crear", "Planes")' : '@Url.Action("Editar", "Planes")';
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+                beforeSend: function() {
+                    $('#btnGuardarPlan').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Guardando...');
+                },
+                success: function(response) {
+                    $('#btnGuardarPlan').prop('disabled', false).html('<i class="fas fa-save me-1"></i>Guardar Plan');
+                    if (response.success) {
+                        Swal.fire('Éxito', response.message, 'success');
+                        $('#planModal').modal('hide');
+                        cargarPlanes();
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    $('#btnGuardarPlan').prop('disabled', false).html('<i class="fas fa-save me-1"></i>Guardar Plan');
+                    console.error('Error:', xhr);
+                    let errorMsg = 'Error al guardar el plan';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    } else if (xhr.responseText) {
+                        try {
+                            const error = JSON.parse(xhr.responseText);
+                            errorMsg = error.message || errorMsg;
+                        } catch(e) {
+                            errorMsg = xhr.responseText.substring(0, 200);
+                        }
+                    }
+                    Swal.fire('Error', errorMsg, 'error');
+                }
+            });
+        }
+
+            window.cambiarEstado = function(id) {
+                Swal.fire({
+                    title: '¿Cambiar estado?',
+                    text: '¿Estás seguro de cambiar el estado de este plan?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, cambiar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '@Url.Action("CambiarEstado", "Planes")',
+                            type: 'POST',
+                            data: { id: id },
+                            headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire('Éxito', response.message, 'success');
+                                    cargarPlanes();
+                                } else {
+                                    Swal.fire('Error', response.message, 'error');
+                                }
+                            },
+                            error: function() {
+                                Swal.fire('Error', 'Error al cambiar el estado', 'error');
+                            }
+                        });
+                    }
+                });
+            };
+
+            window.eliminarPlan = function(id) {
+                Swal.fire({
+                    title: '¿Eliminar plan?',
+                    text: 'Esta acción no se puede deshacer',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#d33'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '@Url.Action("Eliminar", "Planes")',
+                            type: 'POST',
+                            data: { id: id },
+                            headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire('Eliminado', response.message, 'success');
+                                    cargarPlanes();
+                                } else {
+                                    Swal.fire('Error', response.message, 'error');
+                                }
+                            },
+                            error: function() {
+                                Swal.fire('Error', 'Error al eliminar el plan', 'error');
+                            }
+                        });
+                    }
+                });
+            };
+
+            function limpiarFormulario() {
+                $('#formPlan')[0].reset();
+                $('#visibilidadPrioritaria').prop('checked', false);
+                $('#permitePromocionesExtras').prop('checked', false);
+                $('#limitePublicaciones').val(0);
+                $('#orden').val(0);
+                $('#maxPromocionesSimultaneas').val(1);
+                $('#descuentoComisionAdicional').val('');
+                $('#charCount').text('0');
+            }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                return text.replace(/[&<>]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
+                });
+            }
+        });
+    </script>
+}

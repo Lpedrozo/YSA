@@ -1,0 +1,400 @@
+﻿@{
+    ViewData["Title"] = "Mis Suscripciones";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Artista" asp-action="Dashboard">Panel de Artista</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Mis Suscripciones</li>
+        </ol>
+    </nav>
+
+    <!-- Encabezado -->
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold" style="font-family: var(--font-heading); color: var(--color-brand-primary);">
+            Mis Suscripciones
+        </h1>
+        <p class="lead text-muted" style="max-width: 700px; margin: 0 auto;">
+            Aquí puedes ver el historial de todas tus suscripciones y su estado actual.
+        </p>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingSuscripciones" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2 text-muted">Cargando tu historial de suscripciones...</p>
+    </div>
+
+    <!-- Tabla de suscripciones -->
+    <div id="suscripcionesContainer" class="card shadow-sm" style="display: none;">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Plan</th>
+                            <th>Monto</th>
+                            <th>Período</th>
+                            <th>Estado</th>
+                            <th>Fecha Solicitud</th>
+                            <th>Notas</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodySuscripciones">
+                        <!-- Las suscripciones se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estado vacío -->
+    <div id="emptySuscripciones" class="text-center py-5" style="display: none;">
+        <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
+        <p class="text-muted">No tienes suscripciones registradas.</p>
+        <a asp-controller="Planes" asp-action="Catalogo" class="btn btn-primary mt-3">
+            <i class="fas fa-shopping-cart me-2"></i>Ver Planes Disponibles
+        </a>
+    </div>
+</div>
+
+<!-- Modal de renovación -->
+<div class="modal fade" id="renovarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #ef8830 0%, #e07a2a 100%);">
+                <h5 class="modal-title text-white">
+                    <i class="fas fa-sync-alt me-2"></i>Renovar Suscripción
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <form id="formRenovar" enctype="multipart/form-data">
+                    <input type="hidden" id="suscripcionAnteriorId" name="SuscripcionAnteriorId" />
+                    <input type="hidden" id="planIdRenovar" name="PlanId" />
+
+                    <div class="mb-4 text-center">
+                        <h4 id="planNombreRenovar" class="mb-2"></h4>
+                        <p id="planPrecioRenovar" class="h3 text-primary mb-0"></p>
+                        <p id="planDuracionRenovar" class="text-muted small"></p>
+                    </div>
+
+                    <div class="alert alert-info small">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Al renovar, se creará una nueva suscripción. La suscripción actual seguirá vigente hasta su fecha de vencimiento.
+                    </div>
+
+                    <!-- Método de pago -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Método de pago <span class="text-danger">*</span></label>
+                        <select class="form-select" id="metodoPagoRenovar" required>
+                            <option value="" disabled selected>Seleccione un método</option>
+                            <option value="transferencia">Transferencia Bancaria</option>
+                            <option value="pagomovil">Pago Móvil</option>
+                            <option value="paypal">PayPal</option>
+                        </select>
+                    </div>
+
+                    <!-- Información de pago dinámica -->
+                    <div id="infoPagoRenovarContainer" class="alert alert-info small" style="display: none;">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <span id="infoPagoRenovarTexto"></span>
+                    </div>
+
+                    <!-- Comprobante -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Comprobante de pago <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="fas fa-upload"></i></span>
+                            <input type="file" class="form-control" id="comprobanteRenovar" name="Comprobante" accept=".jpg,.jpeg,.png,.pdf" required>
+                        </div>
+                        <small class="text-muted">Formatos permitidos: JPG, PNG, PDF (máx. 5MB)</small>
+                    </div>
+
+                    <div class="alert alert-warning small">
+                        <i class="fas fa-clock me-2"></i>
+                        Tu solicitud de renovación será revisada por el administrador. Recibirás una notificación cuando sea aprobada.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnEnviarRenovacion">
+                    <i class="fas fa-paper-plane me-2"></i>Enviar Renovación
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast para notificaciones (asegurar que existe) -->
+<div id="toastMessage" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050; display: none;">
+    <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" id="liveToast">
+        <div class="d-flex">
+            <div class="toast-body" id="toastBody">Mensaje</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Información de pago por método
+        const PAYMENT_INFO = {
+            transferencia: "Banco: Banco Universal Monocromático | Cuenta: 0102-0304-0506-0708-0910 | RUC: V-12.345.678",
+            pagomovil: "Banco: Bancaribe | Teléfono: 04129290589 | C.I.: J-500504314",
+            paypal: "Cuenta PayPal: desiarr@gmail.com | Realiza el pago en USD"
+        };
+
+        $(document).ready(function() {
+            cargarSuscripciones();
+
+            // Evento para el método de pago
+            $('#metodoPagoRenovar').on('change', function() {
+                const metodo = $(this).val();
+                if (metodo && PAYMENT_INFO[metodo]) {
+                    $('#infoPagoRenovarTexto').text(PAYMENT_INFO[metodo]);
+                    $('#infoPagoRenovarContainer').slideDown(200);
+                } else {
+                    $('#infoPagoRenovarContainer').slideUp(200);
+                }
+            });
+
+            // Evento para el botón de renovación
+            $('#btnEnviarRenovacion').on('click', enviarRenovacion);
+        });
+
+        function cargarSuscripciones() {
+            $('#loadingSuscripciones').show();
+            $('#suscripcionesContainer').hide();
+            $('#emptySuscripciones').hide();
+
+            $.ajax({
+                url: '@Url.Action("ObtenerMisSuscripciones", "Suscripciones")',
+                type: 'GET',
+                success: function(response) {
+                    $('#loadingSuscripciones').hide();
+                    if (response.success && response.data && response.data.length > 0) {
+                        renderizarTabla(response.data);
+                        $('#suscripcionesContainer').show();
+                    } else {
+                        $('#emptySuscripciones').show();
+                    }
+                },
+                error: function(xhr) {
+                    $('#loadingSuscripciones').hide();
+                    $('#emptySuscripciones').show();
+                    console.error('Error:', xhr);
+                    mostrarToast('Error al cargar tus suscripciones', 'error');
+                }
+            });
+        }
+
+        function renderizarTabla(suscripciones) {
+            const tbody = $('#tbodySuscripciones');
+            tbody.empty();
+
+            const now = new Date();
+
+            for (const s of suscripciones) {
+                const estadoBadge = s.estado === 'Activa' ? 'bg-success' :
+                                    s.estado === 'PagadoValidacion' ? 'bg-warning text-dark' :
+                                    s.estado === 'PendientePago' ? 'bg-secondary' :
+                                    s.estado === 'Vencida' ? 'bg-danger' : 'bg-info';
+
+                const estadoTexto = s.estado === 'PagadoValidacion' ? 'En validación' :
+                                    s.estado === 'PendientePago' ? 'Pendiente de pago' :
+                                    s.estado === 'Activa' ? 'Activa' :
+                                    s.estado === 'Vencida' ? 'Vencida' : s.estado;
+
+                const fechaInicio = s.fechaInicio && s.fechaInicio !== '0001-01-01T00:00:00' ? new Date(s.fechaInicio).toLocaleDateString('es-VE') : '-';
+                const fechaFin = s.fechaFin && s.fechaFin !== '0001-01-01T00:00:00' ? new Date(s.fechaFin).toLocaleDateString('es-VE') : '-';
+                const fechaCreacion = new Date(s.fechaCreacion).toLocaleDateString('es-VE');
+
+                const limiteTexto = s.snapshotLimitePublicaciones === 0 ? 'Ilimitado' : `${s.snapshotLimitePublicaciones} pubs`;
+                const duracionTexto = s.snapshotDuracionDias === 30 ? 'Mensual' :
+                                      s.snapshotDuracionDias === 90 ? 'Trimestral' :
+                                      s.snapshotDuracionDias === 180 ? 'Semestral' :
+                                      s.snapshotDuracionDias === 365 ? 'Anual' : `${s.snapshotDuracionDias} días`;
+
+                // Calcular días restantes para suscripciones activas
+                let diasRestantes = 0;
+                let estaPorVencer = false;
+                let puedeRenovar = false;
+
+                if (s.estado === 'Activa' && s.fechaFin && s.fechaFin !== '0001-01-01T00:00:00') {
+                    const fechaFinDate = new Date(s.fechaFin);
+                    diasRestantes = Math.max(0, Math.ceil((fechaFinDate - now) / (1000 * 60 * 60 * 24)));
+                    estaPorVencer = diasRestantes > 0 && diasRestantes <= 15;
+                    puedeRenovar = diasRestantes <= 15;
+                } else if (s.estado === 'Vencida') {
+                    puedeRenovar = true;
+                }
+
+                const renovarHtml = puedeRenovar ? `
+                    <button type="button" class="btn btn-sm btn-primary" onclick="abrirModalRenovar(${s.id}, '${escapeHtml(s.snapshotNombre)}', ${s.snapshotPrecio}, ${s.snapshotDuracionDias})">
+                        <i class="fas fa-sync-alt me-1"></i>Renovar
+                    </button>
+                ` : (s.estado === 'Activa' ? '<span class="text-muted small">Activa</span>' :
+                     s.estado === 'PagadoValidacion' ? '<span class="text-muted small">En validación</span>' : '');
+
+                const venceBadge = estaPorVencer ? `<span class="badge bg-warning text-dark ms-2">Vence en ${diasRestantes} días</span>` : '';
+
+                const row = `
+                    <tr>
+                        <td>
+                            <strong>${escapeHtml(s.snapshotNombre)}</strong><br>
+                            <small class="text-muted">${duracionTexto} | ${limiteTexto}</small>
+                        </td>
+                        <td class="text-primary fw-bold">$${s.snapshotPrecio.toFixed(2)} USD</td>
+                        <td class="small">
+                            ${fechaInicio !== '-' ? `${fechaInicio} - ${fechaFin}` : '-'}
+                            ${venceBadge}
+                        </td>
+                        <td><span class="badge ${estadoBadge}">${estadoTexto}</span></td>
+                        <td class="small">${fechaCreacion}</td>
+                        <td class="small text-muted">${s.notasAdmin ? escapeHtml(s.notasAdmin) : '-'}</td>
+                        <td class="text-center">${renovarHtml}</td>
+                    </tr>
+                `;
+                tbody.append(row);
+            }
+        }
+
+        function abrirModalRenovar(id, nombre, precio, duracionDias) {
+            $('#suscripcionAnteriorId').val(id);
+            $('#planIdRenovar').val(id);
+            $('#planNombreRenovar').text(nombre);
+            $('#planPrecioRenovar').text(`$${precio.toFixed(2)} USD`);
+            $('#planDuracionRenovar').text(`Duración: ${duracionDias} días`);
+            $('#comprobanteRenovar').val('');
+            $('#metodoPagoRenovar').val('');
+            $('#infoPagoRenovarContainer').hide();
+            $('#renovarModal').modal('show');
+        }
+
+        function enviarRenovacion() {
+            const metodoPago = $('#metodoPagoRenovar').val();
+            if (!metodoPago) {
+                mostrarToast('Debes seleccionar un método de pago', 'error');
+                return;
+            }
+
+            const fileInput = $('#comprobanteRenovar')[0];
+            if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                mostrarToast('Debes subir el comprobante de pago', 'error');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            if (file.size > 5 * 1024 * 1024) {
+                mostrarToast('El archivo no puede superar los 5MB', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('SuscripcionAnteriorId', $('#suscripcionAnteriorId').val());
+            formData.append('PlanId', $('#planIdRenovar').val());
+            formData.append('Comprobante', file);
+
+            const btn = $('#btnEnviarRenovacion');
+            const originalHtml = btn.html();
+            btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Enviando...');
+
+            $.ajax({
+                url: '@Url.Action("Renovar", "Suscripciones")',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+                success: function(response) {
+                    btn.prop('disabled', false).html(originalHtml);
+                    if (response.success) {
+                        $('#renovarModal').modal('hide');
+                        mostrarToast(response.message, 'success');
+                        setTimeout(function() {
+                            cargarSuscripciones();
+                        }, 2000);
+                    } else {
+                        mostrarToast(response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    btn.prop('disabled', false).html(originalHtml);
+                    let errorMsg = 'Error al enviar la solicitud';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    mostrarToast(errorMsg, 'error');
+                }
+            });
+        }
+
+        function mostrarToast(mensaje, tipo) {
+            const toastElement = document.getElementById('liveToast');
+            if (!toastElement) {
+                // Fallback a SweetAlert si no hay toast
+                Swal.fire({
+                    icon: tipo === 'success' ? 'success' : 'error',
+                    title: tipo === 'success' ? 'Éxito' : 'Error',
+                    text: mensaje,
+                    confirmButtonColor: '#ef8830'
+                });
+                return;
+            }
+
+            const toast = $(toastElement);
+            toast.removeClass('bg-success bg-danger');
+            toast.addClass(tipo === 'success' ? 'bg-success' : 'bg-danger');
+            $('#toastBody').text(mensaje);
+
+            const bsToast = new bootstrap.Toast(toastElement, {
+                autohide: true,
+                delay: 4000
+            });
+            bsToast.show();
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+    </script>
+
+    <style>
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--color-brand-primary);
+            text-decoration: none;
+        }
+
+            .breadcrumb-item a:hover {
+                color: var(--color-brand-secondary);
+            }
+
+        .table th {
+            font-family: var(--font-accent);
+            font-weight: 600;
+            border-bottom-width: 1px;
+        }
+    </style>
+}

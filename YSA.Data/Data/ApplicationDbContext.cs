@@ -41,6 +41,8 @@ namespace YSA.Data.Data
         public DbSet<ArticuloFoto> ArticuloFotos { get; set; }
         public DbSet<Notificacion> Notificaciones { get; set; }
         public DbSet<TipoNotificacion> TipoNotificaciones { get; set; }
+        public DbSet<PlanSuscripcion> PlanesSuscripcion { get; set; }
+        public DbSet<SuscripcionArtista> SuscripcionesArtistas { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -244,6 +246,102 @@ namespace YSA.Data.Data
                       .WithMany(tn => tn.Notificaciones)
                       .HasForeignKey(n => n.TipoNotificacionId)
                       .OnDelete(DeleteBehavior.Restrict);
+            });
+            // ========== CONFIGURACIONES PARA PLANES DE SUSCRIPCIÓN ==========
+
+            // Configuración para PlanSuscripcion
+            modelBuilder.Entity<PlanSuscripcion>(entity =>
+            {
+                entity.HasKey(p => p.Id);
+
+                entity.Property(p => p.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(p => p.Descripcion)
+                    .HasMaxLength(500);
+
+                entity.Property(p => p.Precio)
+                    .IsRequired()
+                    .HasColumnType("decimal(10,2)");
+
+                entity.Property(p => p.ComisionPorcentaje)
+                    .IsRequired()
+                    .HasColumnType("decimal(5,2)");
+
+                entity.Property(p => p.Activo)
+                    .HasDefaultValue(true);
+
+                entity.Property(p => p.FechaCreacion)
+                    .HasDefaultValueSql("GETDATE()");
+
+                entity.Property(p => p.LimitePublicaciones)
+                    .HasDefaultValue(0); // 0 = ilimitado
+
+                entity.Property(p => p.MaxPromocionesSimultaneas)
+                    .HasDefaultValue(1);
+
+                entity.Property(p => p.PermitePromocionesExtras)
+                    .HasDefaultValue(false);
+
+                entity.Property(p => p.Orden)
+                    .HasDefaultValue(0);
+
+                // Relación con usuario que modificó
+                entity.HasOne(p => p.ModificadoPor)
+                    .WithMany()
+                    .HasForeignKey(p => p.ModificadoPorId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configuración para SuscripcionArtista
+            modelBuilder.Entity<SuscripcionArtista>(entity =>
+            {
+                entity.HasKey(s => s.Id);
+
+                entity.Property(s => s.Estado)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(s => s.ComprobanteUrl)
+                    .HasMaxLength(500);
+
+                entity.Property(s => s.NotasAdmin)
+                    .HasMaxLength(500);
+
+                // Snapshot properties
+                entity.Property(s => s.SnapshotNombre)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(s => s.SnapshotPrecio)
+                    .IsRequired()
+                    .HasColumnType("decimal(10,2)");
+
+                entity.Property(s => s.SnapshotComisionPorcentaje)
+                    .IsRequired()
+                    .HasColumnType("decimal(5,2)");
+
+                entity.Property(s => s.FechaCreacion)
+                    .HasDefaultValueSql("GETDATE()");
+
+                // Relación con Artista
+                entity.HasOne(s => s.Artista)
+                    .WithMany()
+                    .HasForeignKey(s => s.ArtistaId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Relación con PlanSuscripcion
+                entity.HasOne(s => s.Plan)
+                    .WithMany(p => p.Suscripciones)
+                    .HasForeignKey(s => s.PlanId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Relación con administrador que validó
+                entity.HasOne(s => s.ValidadoPor)
+                    .WithMany()
+                    .HasForeignKey(s => s.ValidadoPorId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

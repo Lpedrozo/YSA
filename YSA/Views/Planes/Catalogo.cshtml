@@ -1,0 +1,349 @@
+﻿@{
+    ViewData["Title"] = "Planes de Suscripción";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Artista" asp-action="Dashboard">Panel de Artista</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Planes de Suscripción</li>
+        </ol>
+    </nav>
+
+    <!-- Encabezado -->
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold" style="font-family: var(--font-heading); color: var(--color-brand-primary);">
+            Elige tu plan de suscripción
+        </h1>
+        <p class="lead text-muted" style="max-width: 700px; margin: 0 auto;">
+            Selecciona el plan que mejor se adapte a tus necesidades como artista.
+            Todos los planes requieren validación del administrador.
+        </p>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingPlanes" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando planes...</span>
+        </div>
+        <p class="mt-2 text-muted">Cargando planes disponibles...</p>
+    </div>
+
+    <!-- Grid de planes -->
+    <div id="planesContainer" class="row g-4" style="display: none;">
+        <!-- Los planes se cargarán dinámicamente -->
+    </div>
+
+    <!-- Estado vacío -->
+    <div id="emptyPlanes" class="text-center py-5" style="display: none;">
+        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+        <p class="text-muted">No hay planes disponibles en este momento.</p>
+    </div>
+</div>
+
+<!-- Modal de solicitud de suscripción -->
+<div class="modal fade" id="solicitarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #ef8830 0%, #e07a2a 100%);">
+                <h5 class="modal-title text-white">
+                    <i class="fas fa-file-invoice-dollar me-2"></i>Solicitar Suscripción
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <form id="formSolicitar" enctype="multipart/form-data">
+                    <input type="hidden" id="planId" name="PlanId" />
+
+                    <div class="mb-4 text-center">
+                        <h4 id="planNombreModal" class="mb-2"></h4>
+                        <p id="planPrecioModal" class="h3 text-primary mb-0"></p>
+                        <p id="planDuracionModal" class="text-muted small"></p>
+                    </div>
+
+                    <!-- Método de pago -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Método de pago <span class="text-danger">*</span></label>
+                        <select class="form-select" id="metodoPagoSelect" required>
+                            <option value="" disabled selected>Seleccione un método</option>
+                            <option value="transferencia">Transferencia Bancaria</option>
+                            <option value="pagomovil">Pago Móvil</option>
+                            <option value="paypal">PayPal</option>
+                        </select>
+                    </div>
+
+                    <!-- Información de pago dinámica -->
+                    <div id="infoPagoContainer" class="alert alert-info small" style="display: none;">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <span id="infoPagoTexto"></span>
+                    </div>
+
+                    <!-- Comprobante -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Comprobante de pago <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="fas fa-upload"></i></span>
+                            <input type="file" class="form-control" id="comprobante" name="Comprobante" accept=".jpg,.jpeg,.png,.pdf" required>
+                        </div>
+                        <small class="text-muted">Formatos permitidos: JPG, PNG, PDF (máx. 5MB)</small>
+                    </div>
+
+                    <div class="alert alert-warning small">
+                        <i class="fas fa-clock me-2"></i>
+                        Tu solicitud será revisada por el administrador. Recibirás una notificación cuando sea aprobada.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnEnviarSolicitud">
+                    <i class="fas fa-paper-plane me-2"></i>Enviar Solicitud
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast para notificaciones -->
+<div id="toastMessage" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050;">
+    <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" id="liveToast">
+        <div class="d-flex">
+            <div class="toast-body" id="toastBody">
+                Mensaje
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Información de pago por método
+        const PAYMENT_INFO = {
+            transferencia: "Banco: Banco Universal Monocromático | Cuenta: 0102-0304-0506-0708-0910 | RUC: V-12.345.678",
+            pagomovil: "Banco: Bancaribe | Teléfono: 04129290589 | C.I.: J-500504314",
+            paypal: "Cuenta PayPal: desiarr@gmail.com | Realiza el pago en USD"
+        };
+
+        $(document).ready(function() {
+            cargarPlanes();
+
+            $('#metodoPagoSelect').change(function() {
+                const metodo = $(this).val();
+                if (metodo && PAYMENT_INFO[metodo]) {
+                    $('#infoPagoTexto').text(PAYMENT_INFO[metodo]);
+                    $('#infoPagoContainer').slideDown(200);
+                } else {
+                    $('#infoPagoContainer').slideUp(200);
+                }
+            });
+        });
+
+        function cargarPlanes() {
+            $('#loadingPlanes').show();
+            $('#planesContainer').hide();
+            $('#emptyPlanes').hide();
+
+            $.ajax({
+                url: '@Url.Action("ListarActivos", "Planes")',
+                type: 'GET',
+                success: function(response) {
+                    $('#loadingPlanes').hide();
+                    if (response.success && response.data && response.data.length > 0) {
+                        renderizarPlanes(response.data);
+                    } else {
+                        $('#emptyPlanes').show();
+                    }
+                },
+                error: function() {
+                    $('#loadingPlanes').hide();
+                    $('#emptyPlanes').show();
+                    mostrarToast('Error al cargar los planes', 'error');
+                }
+            });
+        }
+
+        function renderizarPlanes(planes) {
+            const container = $('#planesContainer');
+            container.empty();
+            container.show();
+
+            for (const plan of planes) {
+                const limiteTexto = plan.limitePublicaciones === 0 ? 'Ilimitado' : `${plan.limitePublicaciones} publicaciones`;
+                const visibilidadBadge = plan.tieneVisibilidadPrioritaria
+                    ? '<span class="badge bg-warning text-dark"><i class="fas fa-star me-1"></i>Prioridad</span>'
+                    : '';
+
+                const card = `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-0 rounded-4 hover-card">
+                            <div class="card-header bg-white border-0 pt-4 text-center">
+                                <h3 class="card-title h4 mb-2" style="font-family: var(--font-heading);">${escapeHtml(plan.nombre)}</h3>
+                                ${visibilidadBadge}
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <span class="display-4 fw-bold text-primary">$${plan.precio.toFixed(2)}</span>
+                                    <span class="text-muted">USD</span>
+                                </div>
+                                <div class="mb-3">
+                                    <span class="badge bg-light text-dark rounded-pill px-3 py-2">
+                                        <i class="fas fa-calendar-alt me-1"></i> ${plan.duracionDias} días
+                                    </span>
+                                </div>
+                                <ul class="list-unstyled text-start mt-3">
+                                    <li class="mb-2">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <strong>${limiteTexto}</strong>
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-percent me-2"></i>
+                                        Comisión: ${plan.comisionPorcentaje}%
+                                    </li>
+                                    ${plan.permitePromocionesExtras ? `
+                                    <li class="mb-2">
+                                        <i class="fas fa-rocket text-info me-2"></i>
+                                        Promociones extras (${plan.maxPromocionesSimultaneas} simultáneas)
+                                    </li>
+                                    ` : ''}
+                                </ul>
+                                ${plan.descripcion ? `
+                                <p class="text-muted small mt-3">${escapeHtml(plan.descripcion)}</p>
+                                ` : ''}
+                            </div>
+                            <div class="card-footer bg-white border-0 pb-4 text-center">
+                                <button class="btn btn-primary w-100 rounded-pill" onclick="abrirModalSolicitud(${plan.id}, '${escapeHtml(plan.nombre)}', ${plan.precio}, ${plan.duracionDias})">
+                                    <i class="fas fa-file-invoice-dollar me-2"></i>Solicitar Suscripción
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.append(card);
+            }
+        }
+
+        let planSeleccionadoId = null;
+
+        function abrirModalSolicitud(id, nombre, precio, duracionDias) {
+            planSeleccionadoId = id;
+            $('#planId').val(id);
+            $('#planNombreModal').text(nombre);
+            $('#planPrecioModal').text(`$${precio.toFixed(2)} USD`);
+            $('#planDuracionModal').text(`Duración: ${duracionDias} días`);
+            $('#comprobante').val('');
+            $('#metodoPagoSelect').val('');
+            $('#infoPagoContainer').hide();
+            $('#solicitarModal').modal('show');
+        }
+
+        $('#btnEnviarSolicitud').click(function() {
+            const metodoPago = $('#metodoPagoSelect').val();
+            if (!metodoPago) {
+                mostrarToast('Debes seleccionar un método de pago', 'error');
+                return;
+            }
+
+            const file = $('#comprobante')[0].files[0];
+            if (!file) {
+                mostrarToast('Debes subir el comprobante de pago', 'error');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                mostrarToast('El archivo no puede superar los 5MB', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('PlanId', $('#planId').val());
+            formData.append('Comprobante', file);
+            // Si quieres guardar también el método de pago en la suscripción
+            formData.append('MetodoPago', metodoPago);
+
+            const btn = $('#btnEnviarSolicitud');
+            const originalHtml = btn.html();
+            btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Enviando...');
+
+            $.ajax({
+                url: '@Url.Action("Solicitar", "Suscripciones")',
+                type: 'POST',
+                data: formData,
+                contentType: false,  // Importante: no establecer contentType
+                processData: false,  // Importante: no procesar los datos
+                headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+                success: function(response) {
+                    btn.prop('disabled', false).html(originalHtml);
+                    if (response.success) {
+                        $('#solicitarModal').modal('hide');
+                        mostrarToast(response.message, 'success');
+                        setTimeout(() => {
+                            window.location.href = '@Url.Action("MisSuscripciones", "Suscripciones")';
+                        }, 2000);
+                    } else {
+                        mostrarToast(response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    btn.prop('disabled', false).html(originalHtml);
+                    console.error('Error:', xhr);
+                    let errorMsg = 'Error al enviar la solicitud';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    } else if (xhr.status === 415) {
+                        errorMsg = 'Error de formato. Contacta al administrador.';
+                    }
+                    mostrarToast(errorMsg, 'error');
+                }
+            });
+        });
+        function mostrarToast(mensaje, tipo) {
+            const toast = $('#liveToast');
+            toast.removeClass('bg-success bg-danger');
+            toast.addClass(tipo === 'success' ? 'bg-success' : 'bg-danger');
+            $('#toastBody').text(mensaje);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+    </script>
+
+    <style>
+        .hover-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .hover-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+            }
+
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--color-brand-primary);
+            text-decoration: none;
+        }
+
+            .breadcrumb-item a:hover {
+                color: var(--color-brand-secondary);
+            }
+    </style>
+}

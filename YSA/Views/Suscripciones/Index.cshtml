@@ -1,0 +1,495 @@
+﻿@{
+    ViewData["Title"] = "Gestión de Suscripciones";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">Gestión de Suscripciones</h2>
+            <p class="text-muted mt-2">Administra las solicitudes de suscripción de artistas</p>
+        </div>
+    </div>
+
+    <!-- Tarjetas de resumen -->
+    <div class="row mb-4" id="resumenCards">
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Pendientes</h6>
+                            <h2 class="mb-0" id="totalPendientes">0</h2>
+                        </div>
+                        <i class="fas fa-clock fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Activas</h6>
+                            <h2 class="mb-0" id="totalActivas">0</h2>
+                        </div>
+                        <i class="fas fa-check-circle fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-secondary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Vencidas</h6>
+                            <h2 class="mb-0" id="totalVencidas">0</h2>
+                        </div>
+                        <i class="fas fa-calendar-times fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Ingresos</h6>
+                            <h2 class="mb-0" id="ingresosTotales">$0</h2>
+                        </div>
+                        <i class="fas fa-dollar-sign fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-4" id="suscripcionTabs" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" id="pendientes-tab" data-bs-toggle="tab" data-bs-target="#pendientes" type="button" role="tab">
+                <i class="fas fa-clock me-1"></i> Pendientes de Validación
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="activas-tab" data-bs-toggle="tab" data-bs-target="#activas" type="button" role="tab">
+                <i class="fas fa-check-circle me-1"></i> Suscripciones Activas
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="historial-tab" data-bs-toggle="tab" data-bs-target="#historial" type="button" role="tab">
+                <i class="fas fa-history me-1"></i> Historial Completo
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- Pendientes -->
+        <div class="tab-pane fade show active" id="pendientes" role="tabpanel">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Solicitudes Pendientes</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Artista</th>
+                                    <th>Plan</th>
+                                    <th>Monto</th>
+                                    <th>Fecha Solicitud</th>
+                                    <th>Comprobante</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyPendientes">
+                                <tr><td colspan="6" class="text-center py-5">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activas -->
+        <div class="tab-pane fade" id="activas" role="tabpanel">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-check-circle me-2"></i>Suscripciones Activas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Artista</th>
+                                    <th>Plan</th>
+                                    <th>Vigencia</th>
+                                    <th>Publicaciones</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyActivas">
+                                <tr><td colspan="5" class="text-center py-5">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historial -->
+        <div class="tab-pane fade" id="historial" role="tabpanel">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Historial de Suscripciones</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Artista</th>
+                                    <th>Plan</th>
+                                    <th>Monto</th>
+                                    <th>Período</th>
+                                    <th>Estado</th>
+                                    <th>Validado por</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyHistorial">
+                                <tr><td colspan="6" class="text-center py-5">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver comprobante -->
+<div class="modal fade" id="comprobanteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Comprobante de Pago</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="comprobanteImagen" src="" alt="Comprobante" class="img-fluid" style="max-height: 70vh;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para aprobar/rechazar -->
+<div class="modal fade" id="validarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="validarModalHeader">
+                <h5 class="modal-title text-white" id="validarModalTitle">Validar Suscripción</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="suscripcionId">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Notas / Motivo</label>
+                    <textarea id="notasAdmin" class="form-control" rows="3" placeholder="Opcional: agrega una nota para el artista..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnRechazar">Rechazar</button>
+                <button type="button" class="btn btn-success" id="btnAprobar">Aprobar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function() {
+            cargarDashboard();
+
+            function cargarDashboard() {
+                $.ajax({
+                    url: '@Url.Action("GetDashboard", "Suscripciones")',
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            actualizarResumen(response.data);
+                            renderizarPendientes(response.data.pendientesValidacion);
+                            renderizarActivas(response.data.activas);
+                            renderizarHistorial(response.data.historial);
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'No se pudieron cargar los datos', 'error');
+                    }
+                });
+            }
+
+            function actualizarResumen(data) {
+                $('#totalPendientes').text(data.totalPendientes);
+                $('#totalActivas').text(data.totalActivas);
+                $('#totalVencidas').text(data.totalVencidas);
+                $('#ingresosTotales').text('$' + data.ingresosTotales.toFixed(2));
+            }
+
+        function renderizarPendientes(pendientes) {
+            const tbody = $('#tbodyPendientes');
+            if (!pendientes || pendientes.length === 0) {
+                tbody.html('<tr><td colspan="6" class="text-center py-5">No hay solicitudes pendientes</td></tr>');
+                return;
+            }
+
+            let html = '';
+            for (const s of pendientes) {
+                // Asegurar que tenemos el ID correctamente
+                const suscripcionId = s.id || s.Id;
+
+                html += `
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="${s.artistaUrlImagen || '/images/default-avatar.png'}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                <div>
+                                    <strong>${escapeHtml(s.artistaNombreArtistico || '')}</strong><br>
+                                    <small class="text-muted">${escapeHtml(s.artistaNombre || '')}</small>
+                                </div>
+                            </div>
+                         </td>
+                        <td><strong>${escapeHtml(s.snapshotNombre)}</strong><br><small>${s.duracionTexto || ''}</small></td>
+                        <td class="text-primary fw-bold">${s.precioFormateado || `$${s.snapshotPrecio?.toFixed(2)} USD`}</td>
+                        <td>${s.fechaCreacionFormateada || new Date(s.fechaCreacion).toLocaleString()}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-info" onclick="verComprobante('${s.comprobanteUrl || ''}')">
+                                <i class="fas fa-eye me-1"></i> Ver
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-success me-1" onclick="abrirValidarModal(${suscripcionId}, 'aprobar')">
+                                <i class="fas fa-check-circle me-1"></i>Aprobar
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="abrirValidarModal(${suscripcionId}, 'rechazar')">
+                                <i class="fas fa-times-circle me-1"></i>Rechazar
+                            </button>
+                         </td>
+                    </tr>
+                `;
+            }
+            tbody.html(html);
+        }
+            function renderizarActivas(activas) {
+                const tbody = $('#tbodyActivas');
+                if (!activas || activas.length === 0) {
+                    tbody.html('<tr><td colspan="5" class="text-center py-5">No hay suscripciones activas</td></tr>');
+                    return;
+                }
+
+                let html = '';
+                for (const s of activas) {
+                    html += `
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <img src="${s.artistaUrlImagen || '/images/default-avatar.png'}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                    <div>
+                                        <strong>${escapeHtml(s.artistaNombreArtistico)}</strong><br>
+                                        <small class="text-muted">${escapeHtml(s.artistaNombre)}</small>
+                                    </div>
+                                </div>
+                             </td>
+                            <td><strong>${escapeHtml(s.snapshotNombre)}</strong><br><small>${s.duracionTexto}</small></td>
+                            <td>${s.fechaInicioFormateada} - ${s.fechaFinFormateada}</td>
+                            <td>${s.publicacionesUsadas} / ${s.snapshotLimitePublicaciones === 0 ? '∞' : s.snapshotLimitePublicaciones}</td>
+                            <td><span class="badge ${s.estadoBadge}">${s.estadoTexto}</span></td>
+                        </tr>
+                    `;
+                }
+                tbody.html(html);
+            }
+
+            function renderizarHistorial(historial) {
+                const tbody = $('#tbodyHistorial');
+                if (!historial || historial.length === 0) {
+                    tbody.html('<tr><td colspan="6" class="text-center py-5">No hay registros en el historial</td></tr>');
+                    return;
+                }
+
+                let html = '';
+                for (const s of historial) {
+                    html += `
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <img src="${s.artistaUrlImagen || '/images/default-avatar.png'}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                    <div>
+                                        <strong>${escapeHtml(s.artistaNombreArtistico)}</strong><br>
+                                        <small class="text-muted">${escapeHtml(s.artistaNombre)}</small>
+                                    </div>
+                                </div>
+                             </td>
+                            <td><strong>${escapeHtml(s.snapshotNombre)}</strong></td>
+                            <td class="text-primary fw-bold">${s.precioFormateado}</td>
+                            <td>${s.fechaInicioFormateada || '-'} - ${s.fechaFinFormateada || '-'}</td>
+                            <td><span class="badge ${s.estadoBadge}">${s.estadoTexto}</span></td>
+                            <td>${s.validadoPorNombre || '-'}</td>
+                        </tr>
+                    `;
+                }
+                tbody.html(html);
+            }
+
+            window.verComprobante = function(url) {
+                if (url) {
+                    $('#comprobanteImagen').attr('src', url);
+                    $('#comprobanteModal').modal('show');
+                } else {
+                    Swal.fire('Error', 'No hay comprobante disponible', 'error');
+                }
+            };
+
+            let accionActual = null;
+                    window.abrirValidarModal = function(id, accion) {
+            console.log('Abriendo modal con ID:', id, 'Acción:', accion); // Para depuración
+
+            if (!id || id === 0 || id === '0') {
+                Swal.fire('Error', 'ID de suscripción inválido', 'error');
+                return;
+            }
+
+            accionActual = accion;
+            $('#suscripcionId').val(id);
+            $('#notasAdmin').val('');
+
+            if (accion === 'aprobar') {
+                $('#validarModalHeader').css('background', 'linear-gradient(135deg, #28a745 0%, #1e7e34 100%)');
+                $('#validarModalTitle').text('Aprobar Suscripción');
+                $('#notasAdmin').attr('placeholder', 'Opcional: agrega una nota para el artista...');
+            } else {
+                $('#validarModalHeader').css('background', 'linear-gradient(135deg, #dc3545 0%, #b02a37 100%)');
+                $('#validarModalTitle').text('Rechazar Suscripción');
+                $('#notasAdmin').attr('placeholder', 'Obligatorio: explica el motivo del rechazo...');
+            }
+
+            $('#validarModal').modal('show');
+        };
+
+                    $('#btnAprobar').click(function() {
+            const id = parseInt($('#suscripcionId').val());
+            const notas = $('#notasAdmin').val();
+
+            if (!id || id === 0) {
+                Swal.fire('Error', 'ID de suscripción inválido', 'error');
+                return;
+            }
+
+            const requestData = {
+                Id: id,
+                Notas: notas || ''
+            };
+
+            $.ajax({
+                url: '@Url.Action("Aprobar", "Suscripciones")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(requestData),
+                headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+                beforeSend: function() {
+                    $('#btnAprobar').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Procesando...');
+                },
+                success: function(response) {
+                    $('#btnAprobar').prop('disabled', false).html('Aprobar');
+                    if (response.success) {
+                        Swal.fire('Éxito', response.message, 'success');
+                        $('#validarModal').modal('hide');
+                        cargarDashboard();
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    $('#btnAprobar').prop('disabled', false).html('Aprobar');
+                    let errorMsg = 'Error al procesar la solicitud';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    Swal.fire('Error', errorMsg, 'error');
+                }
+            });
+        });
+
+
+                    $('#btnRechazar').click(function() {
+            const id = parseInt($('#suscripcionId').val());
+            const motivo = $('#notasAdmin').val();
+
+            if (!id || id === 0) {
+                Swal.fire('Error', 'ID de suscripción inválido', 'error');
+                return;
+            }
+
+            if (!motivo) {
+                Swal.fire('Error', 'Debes especificar un motivo para el rechazo', 'error');
+                return;
+            }
+
+            const requestData = {
+                Id: id,
+                Notas: motivo
+            };
+
+            $.ajax({
+                url: '@Url.Action("Rechazar", "Suscripciones")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(requestData),
+                headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+                beforeSend: function() {
+                    $('#btnRechazar').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Procesando...');
+                },
+                success: function(response) {
+                    $('#btnRechazar').prop('disabled', false).html('Rechazar');
+                    if (response.success) {
+                        Swal.fire('Éxito', response.message, 'success');
+                        $('#validarModal').modal('hide');
+                        cargarDashboard();
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    $('#btnRechazar').prop('disabled', false).html('Rechazar');
+                    let errorMsg = 'Error al procesar la solicitud';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    Swal.fire('Error', errorMsg, 'error');
+                }
+            });
+        });
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                return String(text).replace(/[&<>]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
+                });
+            }
+        });
+    </script>
+}

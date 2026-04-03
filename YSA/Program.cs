@@ -66,6 +66,8 @@ builder.Services.AddControllersWithViews();
 
 // **Paso clave: Inyección de Dependencias de tus Repositorios y Servicios**
 // (Dejo el resto de tus registros aquí. Asumo que IRecursoActividadService estaba duplicado y lo eliminé.)
+builder.Services.AddScoped<ISuscripcionArtistaRepository, SuscripcionArtistaRepository>();
+builder.Services.AddScoped<ISuscripcionArtistaService, SuscripcionArtistaService>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<ICursoRepository, CursoRepository>();
 builder.Services.AddScoped<IModuloRepository, ModuloRepository>();
@@ -73,7 +75,8 @@ builder.Services.AddScoped<ILeccionRepository, LeccionRepository>();
 builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
 builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
 builder.Services.AddScoped<IVentaItemRepository, VentaItemRepository>();
-
+builder.Services.AddScoped<IPlanSuscripcionRepository, PlanSuscripcionRepository>();
+builder.Services.AddScoped<IPlanSuscripcionService, PlanSuscripcionService>();
 builder.Services.AddScoped<ICursoService, CursoService>();
 builder.Services.AddScoped<IModuloService, ModuloService>();
 builder.Services.AddScoped<ILeccionService, LeccionService>();
