@@ -387,6 +387,51 @@ namespace YSA.Web.Controllers
             // 3. Ejecuta el desafío. Esto redirige al usuario a la página de inicio de sesión de Google.
             return new ChallengeResult(provider, properties);
         }
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CompletarPerfilModal([FromForm] CompletarPerfilViewModel model)
+        {
+            var usuario = await _userManager.GetUserAsync(User);
+            if (usuario == null)
+            {
+                return Json(new { success = false, errors = new[] { "Usuario no encontrado" } });
+            }
+
+            var errors = new List<string>();
+
+            if (string.IsNullOrEmpty(model.Cedula))
+                errors.Add("La cédula es obligatoria");
+
+            if (string.IsNullOrEmpty(model.WhatsApp))
+                errors.Add("El número de WhatsApp es obligatorio");
+
+            if (!model.FechaNacimiento.HasValue)
+                errors.Add("La fecha de nacimiento es obligatoria");
+
+            if (errors.Any())
+            {
+                return Json(new { success = false, errors });
+            }
+
+            usuario.Cedula = model.Cedula;
+            usuario.WhatsApp = model.WhatsApp;
+            usuario.FechaNacimiento = model.FechaNacimiento;
+            usuario.EsMenorEdad = model.EsMenorEdad;
+            usuario.NombreRepresentante = model.NombreRepresentante;
+            usuario.CedulaRepresentante = model.CedulaRepresentante;
+            usuario.ExperienciaTatuaje = model.ExperienciaTatuaje;
+            usuario.AtendidoPor = model.AtendidoPor;
+
+            var result = await _userManager.UpdateAsync(usuario);
+
+            if (result.Succeeded)
+            {
+                return Json(new { success = true });
+            }
+
+            return Json(new { success = false, errors = result.Errors.Select(e => e.Description).ToList() });
+        }
         // GET: /Cuenta/ExternalLoginCallback
         [HttpGet]
         [AllowAnonymous]
@@ -499,6 +544,65 @@ namespace YSA.Web.Controllers
             // Si el flujo no cae en Succeeded ni en las demás condiciones, devuelve un error genérico.
             TempData["Error"] = "Fallo al procesar el inicio de sesión externo (Resultado desconocido).";
             return RedirectToAction(nameof(Registro));
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoginAjax(LoginAjaxViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = "Datos inválidos" });
+            }
+
+            var usuario = await _userManager.FindByEmailAsync(model.Email);
+            if (usuario == null)
+            {
+                return Json(new { success = false, message = "Correo o contraseña incorrectos." });
+            }
+
+            var resultado = await _signInManager.PasswordSignInAsync(usuario, model.Contrasena, model.RecordarMe, lockoutOnFailure: false);
+
+            if (resultado.Succeeded)
+            {
+                return Json(new { success = true });
+            }
+
+            return Json(new { success = false, message = "Correo o contraseña incorrectos." });
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegistroAjax(RegistroAjaxViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { success = false, errors });
+            }
+
+            var usuario = new Usuario
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                Nombre = model.Nombre,
+                Apellido = model.Apellido,
+                FechaCreacion = DateTime.UtcNow,
+                UrlImagen = "/FotoPerfil/usuariopredeterminada.jpg"
+            };
+
+            var resultado = await _userManager.CreateAsync(usuario, model.Contrasena);
+
+            if (resultado.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(usuario, "Estudiante");
+                await _signInManager.SignInAsync(usuario, isPersistent: false);
+                return Json(new { success = true });
+            }
+
+            var errorsList = resultado.Errors.Select(e => e.Description).ToList();
+            return Json(new { success = false, errors = errorsList });
         }
     }
 }

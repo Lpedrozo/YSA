@@ -4,124 +4,131 @@
 }
 
 <style>
-    /* ------------------------------------- */
-    /* 1. IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES EDITORIAL */
-    /* ------------------------------------- */
-    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
-    :root {
-        --color-primary-action: #ef8830; /* Naranja como color principal */
-        --color-secondary: #212529; /* Negro oscuro para títulos */
-        --color-accent: #6c757d; /* Gris para texto de soporte */
-        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
-        --color-card-bg: #ffffff;
-        --color-text-dark: #212529;
-        --color-text-light: #ffffff;
-        --color-border: #E8E8E8;
-        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
-        --color-shadow-light: rgba(0, 0, 0, 0.1);
-        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
-        /* NUEVOS COLORES DE MARCA */
-        --color-brand-primary: #ef8830; /* Naranja - color principal */
-        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
-        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
-        --color-brand-success: #6db53e; /* Verde - color de éxito */
-        --color-brand-dark: #08080a; /* Negro - texto principal */
-        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
-        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
-        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
-        --font-accent: 'Poppins', sans-serif;
-        /* ALTURAS DE LÍNEA */
-        --line-height-tight: 1.1;
-        --line-height-normal: 1.4;
-        --line-height-loose: 1.6;
-        /* BORDES REDONDEADOS */
-        --border-radius-sm: 8px;
-        --border-radius-md: 12px;
-        --border-radius-lg: 16px;
-        --border-radius-xl: 20px;
-    }
+    /* =========================================== */
+    /* ESTILOS COMPLETOS PARA TARJETAS DE CURSOS */
+    /* =========================================== */
 
-    body {
-        font-family: var(--font-body);
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-        line-height: var(--line-height-loose);
-    }
-
-    /* ------------------------------------- */
-    /* 2. CABECERA ESTILO EDITORIAL */
-    /* ------------------------------------- */
     .editorial-header {
-        background-color: var(--color-section-bg);
-        border-radius: var(--border-radius-lg);
-        padding: 2.5rem 2rem;
-        margin: 2rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        background-color: var(--color-section-bg, #f8f9fa);
+        border-radius: 16px;
+        padding: 2rem;
+        margin: 1rem 0 2rem 0;
         text-align: center;
     }
 
     .editorial-title {
-        font-family: var(--font-heading);
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--color-secondary);
+        font-family: var(--font-heading, 'Georgia', serif);
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-secondary, #212529);
+        border-bottom: 3px solid var(--color-brand-primary, #ef8830);
+        display: inline-block;
         padding-bottom: 0.5rem;
         margin-bottom: 0.5rem;
-        display: inline-block;
-        border-bottom: 4px solid var(--color-brand-primary);
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        line-height: var(--line-height-tight);
     }
 
-    /* ------------------------------------- */
-    /* 3. BOTONES ESTILO EDITORIAL */
-    /* ------------------------------------- */
+    .section-divider-editorial {
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border, #ddd), transparent);
+        margin: 1.5rem 0;
+    }
+
+    /* Botones */
     .btn-editorial-secondary {
-        background-color: var(--color-accent) !important;
-        border-color: var(--color-accent) !important;
-        color: white !important;
-        transition: background-color 0.2s;
-        border-radius: var(--border-radius-sm);
-        font-family: var(--font-accent);
-        font-weight: 600;
-        padding: 0.75rem 1.5rem;
+        background-color: var(--color-accent, #6c757d);
+        border-color: var(--color-accent, #6c757d);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
         .btn-editorial-secondary:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
+            background-color: var(--color-secondary, #212529);
+            border-color: var(--color-secondary, #212529);
+            color: white;
         }
 
     .btn-editorial-primary {
-        background-color: var(--color-brand-primary) !important;
-        border-color: var(--color-brand-primary) !important;
-        color: white !important;
-        font-weight: 600;
-        transition: background-color 0.2s;
-        border-radius: var(--border-radius-sm);
-        font-family: var(--font-accent);
-        padding: 0.75rem 1.5rem;
+        background-color: var(--color-brand-primary, #ef8830);
+        border-color: var(--color-brand-primary, #ef8830);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
         .btn-editorial-primary:hover {
-            background-color: var(--color-brand-secondary) !important;
-            border-color: var(--color-brand-secondary) !important;
+            background-color: var(--color-brand-secondary, #e5361a);
+            border-color: var(--color-brand-secondary, #e5361a);
+            color: white;
         }
 
-    /* ------------------------------------- */
-    /* 4. TARJETAS DE CURSO ESTILO EDITORIAL */
-    /* ------------------------------------- */
+    .btn-info-editorial {
+        background-color: var(--color-brand-primary, #ef8830);
+        border-color: var(--color-brand-primary, #ef8830);
+        color: white;
+    }
+
+        .btn-info-editorial:hover {
+            background-color: var(--color-brand-secondary, #e5361a);
+            border-color: var(--color-brand-secondary, #e5361a);
+            color: white;
+        }
+
+    .btn-secondary-editorial {
+        background-color: var(--color-accent, #6c757d);
+        border-color: var(--color-accent, #6c757d);
+        color: white;
+    }
+
+        .btn-secondary-editorial:hover {
+            background-color: var(--color-secondary, #212529);
+            border-color: var(--color-secondary, #212529);
+            color: white;
+        }
+
+    .btn-warning-editorial {
+        background-color: var(--color-brand-accent, #f2e514);
+        border-color: var(--color-brand-accent, #f2e514);
+        color: var(--color-brand-dark, #08080a);
+    }
+
+        .btn-warning-editorial:hover {
+            background-color: #e0d012;
+            border-color: #e0d012;
+            color: var(--color-brand-dark, #08080a);
+        }
+
+    .btn-resources-editorial {
+        background-color: #008CBA;
+        border-color: #008CBA;
+        color: white;
+    }
+
+        .btn-resources-editorial:hover {
+            background-color: #006a8e;
+            border-color: #006a8e;
+            color: white;
+        }
+
+    /* Tarjeta de curso */
     .curso-card-editorial {
-        border-radius: var(--border-radius-md);
-        border: 1px solid var(--color-border);
+        border-radius: 12px;
+        border: 1px solid var(--color-border, #e8e8e8);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         overflow: hidden;
-        background-color: var(--color-card-bg);
+        background-color: white;
         height: 100%;
-        text-decoration: none;
-        color: inherit;
         display: flex;
         flex-direction: column;
         position: relative;
@@ -130,15 +137,15 @@
         .curso-card-editorial:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            border-color: var(--color-brand-primary);
+            border-color: var(--color-brand-primary, #ef8830);
         }
 
     .curso-card-img-editorial {
+        width: 100%;
         height: 200px;
         object-fit: cover;
-        width: 100%;
         transition: transform 0.5s ease;
-        flex-shrink: 0; /* Evita que la imagen se reduzca */
+        flex-shrink: 0;
     }
 
     .curso-card-editorial:hover .curso-card-img-editorial {
@@ -146,81 +153,80 @@
     }
 
     .curso-card-body-editorial {
-        padding: 1.5rem;
+        padding: 1.25rem;
         position: relative;
-        flex: 1; /* Ocupa todo el espacio disponible */
+        flex: 1;
         display: flex;
         flex-direction: column;
     }
 
     .card-title-curso-editorial {
-        font-family: var(--font-heading);
+        font-family: var(--font-heading, 'Georgia', serif);
         font-weight: 700;
-        color: var(--color-secondary);
-        font-size: 1.5rem;
+        color: var(--color-secondary, #212529);
+        font-size: 1.25rem;
         margin: 0 0 0.5rem 0;
-        line-height: var(--line-height-normal);
-        flex-shrink: 0; /* Evita que el título se reduzca */
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .card-instructor-editorial {
-        font-family: var(--font-body);
-        font-size: 0.95rem;
-        color: var(--color-accent);
-        margin-bottom: 1rem;
-        line-height: var(--line-height-normal);
+        font-family: var(--font-body, 'Arial', sans-serif);
+        font-size: 0.85rem;
+        color: var(--color-accent, #6c757d);
+        margin-bottom: 0.75rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        flex-shrink: 0; /* Evita que el instructor se reduzca */
     }
 
     .card-meta-editorial {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
         flex-wrap: wrap;
         gap: 0.5rem;
-        flex-shrink: 0; /* Evita que la meta info se reduzca */
     }
 
     .badge-nivel-editorial {
-        font-family: var(--font-accent);
+        font-family: var(--font-accent, 'Poppins', sans-serif);
         font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.4rem 0.8rem;
-        font-size: 0.8rem;
-        background-color: var(--color-accent) !important;
-        color: white !important;
+        border-radius: 6px;
+        padding: 0.25rem 0.6rem;
+        font-size: 0.7rem;
+        background-color: var(--color-accent, #6c757d);
+        color: white;
     }
 
     .precio-editorial {
-        font-family: var(--font-heading);
+        font-family: var(--font-heading, 'Georgia', serif);
         font-weight: 700;
-        font-size: 1.25rem;
-        color: var(--color-brand-success);
-        line-height: var(--line-height-tight);
+        font-size: 1.1rem;
+        color: var(--color-brand-success, #6db53e);
     }
 
     .card-descripcion-editorial {
-        font-family: var(--font-body);
-        font-size: 0.9rem;
-        color: var(--color-accent);
-        line-height: var(--line-height-normal);
-        margin-bottom: 1.5rem;
+        font-family: var(--font-body, 'Arial', sans-serif);
+        font-size: 0.85rem;
+        color: var(--color-accent, #6c757d);
+        line-height: 1.4;
+        margin-bottom: 1rem;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        flex: 1; /* La descripción ocupa el espacio disponible */
-        min-height: 60px; /* Altura mínima para consistencia */
+        flex: 1;
     }
 
+    /* Badges */
     .card-badges-editorial {
         position: absolute;
-        top: 1rem;
-        left: 1rem;
+        top: 0.75rem;
+        left: 0.75rem;
         z-index: 2;
         display: flex;
         flex-direction: column;
@@ -228,257 +234,192 @@
     }
 
     .badge-destacado-editorial {
-        background-color: var(--color-brand-accent) !important;
-        color: var(--color-brand-dark) !important;
-        font-family: var(--font-accent);
+        background-color: var(--color-brand-accent, #f2e514);
+        color: var(--color-brand-dark, #08080a);
+        font-family: var(--font-accent, 'Poppins', sans-serif);
         font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.4rem 0.8rem;
-        font-size: 0.8rem;
+        border-radius: 6px;
+        padding: 0.25rem 0.6rem;
+        font-size: 0.7rem;
     }
 
     .badge-recomendado-editorial {
-        background-color: var(--color-brand-primary) !important;
-        color: white !important;
-        font-family: var(--font-accent);
+        background-color: var(--color-brand-primary, #ef8830);
+        color: white;
+        font-family: var(--font-accent, 'Poppins', sans-serif);
         font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.4rem 0.8rem;
-        font-size: 0.8rem;
+        border-radius: 6px;
+        padding: 0.25rem 0.6rem;
+        font-size: 0.7rem;
     }
 
+    .badge-presencial {
+        background-color: var(--color-brand-success, #6db53e);
+        color: white;
+        font-family: var(--font-accent, 'Poppins', sans-serif);
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 0.25rem 0.6rem;
+        font-size: 0.7rem;
+    }
+
+    .badge-digital {
+        background-color: var(--color-brand-primary, #ef8830);
+        color: white;
+        font-family: var(--font-accent, 'Poppins', sans-serif);
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 0.25rem 0.6rem;
+        font-size: 0.7rem;
+    }
+
+    /* Acciones */
     .card-actions-editorial {
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
         justify-content: space-between;
         align-items: center;
-        margin-top: auto; /* Empuja los botones hacia abajo */
-        flex-shrink: 0; /* Evita que los botones se reduzcan */
-        padding-top: 1rem; /* Espacio adicional arriba de los botones */
-        border-top: 1px solid var(--color-border); /* Línea separadora opcional */
+        margin-top: auto;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--color-border, #e8e8e8);
     }
 
-    .actions-left-editorial {
+    .actions-left-editorial, .actions-right-editorial {
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
     }
 
-    .actions-right-editorial {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    /* Botones de Acción */
     .btn-action-editorial {
-        width: 40px;
-        height: 40px;
+        width: 34px;
+        height: 34px;
         padding: 0;
         display: inline-flex;
         justify-content: center;
         align-items: center;
-        flex-shrink: 0;
-        border-radius: var(--border-radius-sm);
+        border-radius: 6px;
         transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
     }
 
-    .btn-info-editorial {
-        background-color: var(--color-brand-primary) !important;
-        border-color: var(--color-brand-primary) !important;
-        color: white !important;
-    }
-
-        .btn-info-editorial:hover {
-            background-color: var(--color-brand-secondary) !important;
-            border-color: var(--color-brand-secondary) !important;
-        }
-
-    .btn-secondary-editorial {
-        background-color: var(--color-accent) !important;
-        border-color: var(--color-accent) !important;
-        color: white !important;
-    }
-
-        .btn-secondary-editorial:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
-        }
-
-    .btn-resources-editorial {
-        background-color: #008CBA !important;
-        border-color: #008CBA !important;
-        color: white !important;
-    }
-
-        .btn-resources-editorial:hover {
-            background-color: #006a8e !important;
-            border-color: #006a8e !important;
-        }
-
-    .btn-warning-editorial {
-        background-color: var(--color-brand-accent) !important;
-        border-color: var(--color-brand-accent) !important;
-        color: var(--color-brand-dark) !important;
-    }
-
-        .btn-warning-editorial:hover {
-            background-color: #e0d012 !important;
-            border-color: #e0d012 !important;
-        }
-
-    /* ------------------------------------- */
-    /* 5. MODALES ESTILO EDITORIAL */
-    /* ------------------------------------- */
+    /* Modal */
     .modal-editorial .modal-content {
-        border-radius: var(--border-radius-lg);
+        border-radius: 16px;
         border: none;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
 
     .modal-editorial .modal-header {
-        border-bottom: 2px solid var(--color-border);
-        background-color: var(--color-section-bg);
-        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--color-border, #e8e8e8);
+        background-color: var(--color-section-bg, #f8f9fa);
+        border-radius: 16px 16px 0 0;
+        padding: 1rem 1.5rem;
     }
 
     .modal-editorial .modal-title {
-        font-family: var(--font-heading);
+        font-family: var(--font-heading, 'Georgia', serif);
         font-weight: 700;
-        color: var(--color-secondary);
-        font-size: 1.5rem;
+        color: var(--color-secondary, #212529);
     }
 
     .modal-editorial .modal-body {
-        padding: 2rem;
+        padding: 1.5rem;
     }
 
     .modal-editorial .modal-footer {
-        border-top: 1px solid var(--color-border);
-        padding: 1.5rem 2rem;
+        border-top: 1px solid var(--color-border, #e8e8e8);
+        padding: 1rem 1.5rem;
     }
 
     .modal-editorial .form-label {
-        font-family: var(--font-accent);
         font-weight: 600;
-        color: var(--color-secondary);
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
     }
 
     .modal-editorial .form-control {
-        border-radius: var(--border-radius-sm);
-        border: 1px solid var(--color-border);
-        padding: 0.75rem 1rem;
-        font-family: var(--font-body);
-        transition: border-color 0.3s, box-shadow 0.3s;
+        border-radius: 8px;
+        border: 1px solid var(--color-border, #e8e8e8);
+        padding: 0.5rem 0.75rem;
     }
 
         .modal-editorial .form-control:focus {
-            border-color: var(--color-brand-primary);
+            border-color: var(--color-brand-primary, #ef8830);
             box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
         }
 
-    .modal-editorial .form-check-input:checked {
-        background-color: var(--color-brand-primary);
-        border-color: var(--color-brand-primary);
+    /* Clase item */
+    .clase-item {
+        background-color: var(--color-section-bg, #f8f9fa);
+        border: 1px solid var(--color-border, #e8e8e8);
+        border-radius: 8px;
+        transition: all 0.2s ease;
     }
 
-    /* ------------------------------------- */
-    /* 6. SEPARADORES ESTILO EDITORIAL */
-    /* ------------------------------------- */
-    .section-divider-editorial {
-        border: none;
-        height: 1px;
-        background: linear-gradient(to right, transparent, var(--color-border), transparent);
-        margin: 2rem 0;
-    }
-
-    /* ------------------------------------- */
-    /* 7. RESPONSIVE ADAPTATIONS */
-    /* ------------------------------------- */
-    /* Tablet (max-width: 991.98px) */
-    @@media (max-width: 991.98px) {
-        .editorial-header {
-            padding: 2rem 1.5rem;
-            margin: 1.5rem 0;
+        .clase-item:hover {
+            border-color: var(--color-brand-primary, #ef8830);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        .editorial-title {
-            font-size: 2rem;
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .curso-card-img-editorial {
+            height: 160px;
         }
 
         .card-title-curso-editorial {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
         }
 
-        .curso-card-body-editorial {
-            padding: 1.25rem;
+        .btn-action-editorial {
+            width: 32px;
+            height: 32px;
         }
 
         .card-actions-editorial {
             flex-direction: column;
             align-items: stretch;
-            gap: 0.75rem;
         }
 
-        .actions-left-editorial,
-        .actions-right-editorial {
+        .actions-left-editorial, .actions-right-editorial {
             justify-content: center;
         }
 
-        .modal-editorial .modal-header,
-        .modal-editorial .modal-body,
-        .modal-editorial .modal-footer {
-            padding: 1.25rem;
-        }
-    }
-
-    /* Mobile Pequeño (max-width: 575.98px) */
-    @@media (max-width: 575.98px) {
         .editorial-header {
-            padding: 1.5rem 1rem;
-            margin: 1rem 0;
-            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
         }
 
         .editorial-title {
-            font-size: 1.7rem;
+            font-size: 1.5rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .curso-card-img-editorial {
+            height: 140px;
         }
 
         .curso-card-body-editorial {
             padding: 1rem;
         }
 
-        .card-title-curso-editorial {
-            font-size: 1.2rem;
-        }
-
-        .card-meta-editorial {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
         .btn-action-editorial {
-            width: 36px;
-            height: 36px;
-        }
-
-        .card-badges-editorial {
-            top: 0.5rem;
-            left: 0.5rem;
+            width: 30px;
+            height: 30px;
         }
     }
 </style>
 
 <div class="container mt-4 mb-5 pb-5">
-    <!-- CABECERA ESTILO EDITORIAL -->
+    <!-- CABECERA -->
     <div class="editorial-header">
         <h1 class="editorial-title">Gestión de Cursos</h1>
+        <p class="text-muted mt-2 mb-0">Administra cursos digitales y presenciales de la academia</p>
     </div>
 
-    <!-- BOTONES DE ACCIÓN PRINCIPAL -->
+    <!-- BOTONES DE ACCIÓN -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <a asp-action="Panel" asp-controller="Admin" class="btn btn-editorial-secondary">
             <i class="fas fa-arrow-left me-2"></i> Regresar al Panel
@@ -491,7 +432,7 @@
     <hr class="section-divider-editorial" />
 
     <!-- CONTENEDOR DE CURSOS -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 pb-5 mb-5" id="tablaCursos">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 pb-5 mb-5">
         @foreach (var curso in Model)
         {
             <div class="col">
@@ -504,19 +445,21 @@
                                 <i class="fas fa-star me-1"></i> Destacado
                             </span>
                         }
-                        else if (curso.EsRecomendado)
+                        @if (curso.EsRecomendado)
                         {
                             <span class="badge-recomendado-editorial">
                                 <i class="fas fa-thumbs-up me-1"></i> Recomendado
                             </span>
                         }
+                        <span class="@(curso.TipoCurso == YSA.Core.Enums.TipoCurso.Presencial ? "badge-presencial" : "badge-digital")">
+                            @(curso.TipoCurso == YSA.Core.Enums.TipoCurso.Presencial ? "Presencial" : "Digital")
+                        </span>
                     </div>
 
-                    <!-- Imagen del Curso -->
+                    <!-- Imagen -->
                     <img src="@curso.UrlImagen" class="curso-card-img-editorial" alt="@curso.Titulo">
 
                     <div class="curso-card-body-editorial">
-                        <!-- Información del Curso -->
                         <h5 class="card-title-curso-editorial">@curso.Titulo</h5>
 
                         <div class="card-instructor-editorial">
@@ -531,59 +474,61 @@
                             }
                         </div>
 
-                        <!-- Meta información -->
                         <div class="card-meta-editorial">
                             <span class="badge-nivel-editorial">@curso.Nivel</span>
                             <span class="precio-editorial">@curso.Precio.ToString("C")</span>
                         </div>
 
-                        <!-- Descripción -->
                         <div class="card-descripcion-editorial">
-                            @Html.Raw(curso.DescripcionCorta)
+                            @Html.Raw(curso.DescripcionCorta?.Length > 100 ? curso.DescripcionCorta.Substring(0, 100) + "..." : curso.DescripcionCorta)
                         </div>
 
-                        <!-- Acciones -->
                         <div class="card-actions-editorial">
                             <div class="actions-left-editorial">
                                 <button type="button" class="btn btn-secondary-editorial btn-action-editorial asociar-artista-btn"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#asociarArtistaModal"
-                                        data-cursoid="@curso.Id"
-                                        title="Asociar Artista">
+                                        data-bs-toggle="modal" data-bs-target="#asociarArtistaModal"
+                                        data-cursoid="@curso.Id" title="Asociar Artista">
                                     <i class="fas fa-user-plus"></i>
                                 </button>
 
                                 <a asp-action="GestionarAnuncios" asp-route-cursoId="@curso.Id"
-                                   class="btn btn-secondary-editorial btn-action-editorial"
-                                   title="Anuncios">
+                                   class="btn btn-secondary-editorial btn-action-editorial" title="Anuncios">
                                     <i class="fas fa-bullhorn"></i>
                                 </a>
 
-                                <a asp-action="GestionarModulos" asp-route-cursoId="@curso.Id"
-                                   class="btn btn-info-editorial btn-action-editorial"
-                                   title="Módulos">
-                                    <i class="fas fa-cubes"></i>
-                                </a>
+                                @if (curso.TipoCurso == YSA.Core.Enums.TipoCurso.Digital)
+                                {
+                                    <a asp-action="GestionarModulos" asp-route-cursoId="@curso.Id"
+                                       class="btn btn-info-editorial btn-action-editorial" title="Módulos">
+                                        <i class="fas fa-cubes"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-action="GestionarClasesCurso" asp-route-cursoId="@curso.Id"
+                                       class="btn btn-info-editorial btn-action-editorial" title="Gestionar Clases">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </a>
+                                }
 
                                 <a asp-action="GestionarRecursosActividades"
                                    asp-route-tipoEntidad="Curso"
                                    asp-route-entidadId="@curso.Id"
-                                   class="btn btn-resources-editorial btn-action-editorial"
-                                   title="Recursos/Actividades del Curso">
+                                   class="btn btn-resources-editorial btn-action-editorial" title="Recursos">
                                     <i class="fas fa-paperclip"></i>
                                 </a>
 
                                 <button type="button" class="btn btn-info-editorial btn-action-editorial editar-btn"
                                         data-id="@curso.Id"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editarCursoModal"
+                                        data-bs-toggle="modal" data-bs-target="#editarCursoModal"
                                         data-titulo="@curso.Titulo"
                                         data-descripcioncorta="@curso.DescripcionCorta"
                                         data-descripcionlarga="@curso.DescripcionLarga"
                                         data-precio="@curso.Precio"
                                         data-urlimagen="@curso.UrlImagen"
                                         data-nivel="@((int)curso.Nivel)"
-                                        data-categorias="@string.Join(",", curso.CategoriasSeleccionadas)"
+                                        data-tipocurso="@((int)curso.TipoCurso)"
+                                        data-categorias="@string.Join(",", curso.CategoriasSeleccionadas ?? new int[0])"
                                         title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -623,6 +568,11 @@
                                         </button>
                                     </form>
                                 }
+                                <form asp-action="EliminarCurso" asp-route-id="@curso.Id" method="post" class="d-inline" asp-antiforgery="true">
+                                    <button type="submit" class="btn btn-danger btn-action-editorial" title="Eliminar" onclick="return confirm('¿Estás seguro de eliminar este curso?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -632,164 +582,253 @@
     </div>
 </div>
 
-<!-- MODALES (mantienen la misma estructura pero con clases editorial) -->
+<!-- ==================== MODALES (igual que antes) ==================== -->
+<!-- Modal Asociar Artista -->
 <div class="modal fade modal-editorial" id="asociarArtistaModal" tabindex="-1" aria-labelledby="asociarArtistaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="asociarArtistaModalLabel">Asociar/Desasociar Artista</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Asociar Artista al Curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <!-- Contenido del modal se mantiene igual -->
                 <h6>Artistas Asociados:</h6>
                 <div id="artistas-asociados-lista" class="mb-4">
                     <p class="text-muted">Cargando lista...</p>
                 </div>
                 <hr />
-                <input type="hidden" id="asociar-curso-id" name="CursoId" />
+                <input type="hidden" id="asociar-curso-id" />
                 <div class="form-group mb-3">
-                    <label for="artista-select" class="form-label">Seleccionar Artista para asociar</label>
-                    <select id="artista-select" name="InstructorId" class="form-control">
+                    <label for="artista-select" class="form-label">Seleccionar Artista</label>
+                    <select id="artista-select" class="form-control">
                         <option value="">-- Seleccione un Artista --</option>
                     </select>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-editorial-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-editorial-primary" id="guardarAsociacionBtn">Asociar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="guardarAsociacionBtn">Asociar</button>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Modal Crear Curso -->
 <div class="modal fade modal-editorial" id="crearCursoModal" tabindex="-1" aria-labelledby="crearCursoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="crearCursoModalLabel">Crear Curso</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Crear Curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="formCrearCurso" asp-action="CrearCurso" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
                 <div class="modal-body">
-                    <!-- Contenido del formulario se mantiene igual -->
                     <div id="crear-curso-validation-errors" class="alert alert-danger d-none"></div>
+
                     <div class="form-group mb-3">
-                        <label for="Titulo" class="form-label">Título</label>
+                        <label class="form-label">Título *</label>
                         <input type="text" id="Crear_Titulo" name="Titulo" class="form-control" required />
                     </div>
+
                     <div class="form-group mb-3">
-                        <label for="DescripcionCorta" class="form-label">Descripción Corta</label>
+                        <label class="form-label">Descripción Corta</label>
                         <textarea id="Crear_DescripcionCorta" name="DescripcionCorta" class="form-control" rows="3"></textarea>
                     </div>
+
                     <div class="form-group mb-3">
-                        <label for="DescripcionLarga" class="form-label">Descripción Larga</label>
+                        <label class="form-label">Descripción Larga</label>
                         <textarea id="Crear_DescripcionLarga" name="DescripcionLarga" class="form-control" rows="5"></textarea>
                     </div>
-                    <div class="form-group mb-3">
-                        <label for="Precio" class="form-label">Precio</label>
-                        <input type="number" id="Crear_Precio" name="Precio" class="form-control" step="0.01" required />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Precio *</label>
+                                <input type="number" id="Crear_Precio" name="Precio" class="form-control" step="0.01" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Nivel</label>
+                                <select id="Crear_Nivel" name="Nivel" class="form-control">
+                                    @foreach (var nivel in ViewBag.Niveles)
+                                    {
+                                        <option value="@nivel.Value">@nivel.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="form-group mb-3">
-                        <label for="Nivel" class="form-label">Nivel</label>
-                        <select id="Crear_Nivel" name="Nivel" class="form-control">
-                            @foreach (var nivel in ViewBag.Niveles)
-                            {
-                                <option value="@nivel.Value">@nivel.Text</option>
-                            }
+                        <label class="form-label">Tipo de Curso *</label>
+                        <select id="Crear_TipoCurso" name="TipoCurso" class="form-control" required>
+                            <option value="1">Digital (con módulos y lecciones)</option>
+                            <option value="2">Presencial (con clases en el estudio)</option>
                         </select>
                     </div>
+
                     <div class="form-group mb-3">
-                        <label for="imagenArchivo" class="form-label">Imagen del Curso</label>
+                        <label class="form-label">Imagen del Curso *</label>
                         <input type="file" id="Crear_imagenArchivo" name="imagenArchivo" class="form-control" accept=".jpg,.jpeg,.png" required />
                     </div>
+
                     <div class="form-group mb-3">
                         <label class="form-label">Categorías</label>
-                        <div id="crear-categorias-checkboxes">
+                        <div id="crear-categorias-checkboxes" class="row">
                             @foreach (var categoria in ViewBag.CategoriasCrear)
                             {
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="CategoriasSeleccionadas" value="@categoria.Value" id="crear-categoria-@categoria.Value">
-                                    <label class="form-check-label" for="crear-categoria-@categoria.Value">
-                                        @categoria.Text
-                                    </label>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="CategoriasSeleccionadas" value="@categoria.Value" id="crear-categoria-@categoria.Value">
+                                        <label class="form-check-label" for="crear-categoria-@categoria.Value">@categoria.Text</label>
+                                    </div>
                                 </div>
                             }
                         </div>
                     </div>
+
+                    <!-- Sección para cursos presenciales -->
+                    <div id="seccionClasesPresenciales" style="display: none;">
+                        <hr class="my-3" />
+                        <h6 class="mb-3">Clases del Curso Presencial</h6>
+                        <div id="clasesContainer"></div>
+                        <button type="button" class="btn btn-secondary btn-sm mt-2" id="agregarClaseBtn">
+                            <i class="fas fa-plus"></i> Agregar Clase
+                        </button>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-editorial-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-editorial-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Curso</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<!-- Modal Editar Curso -->
 <div class="modal fade modal-editorial" id="editarCursoModal" tabindex="-1" aria-labelledby="editarCursoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editarCursoModalLabel">Editar Curso</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Editar Curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="formEditarCurso" asp-action="EditarCurso" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
                 <div class="modal-body">
-                    <!-- Contenido del formulario se mantiene igual -->
                     <div id="editar-curso-validation-errors" class="alert alert-danger d-none"></div>
                     <input type="hidden" id="Editar_Id" name="Id" />
+
                     <div class="form-group mb-3">
-                        <label for="Titulo" class="form-label">Título</label>
+                        <label class="form-label">Título *</label>
                         <input type="text" id="Editar_Titulo" name="Titulo" class="form-control" required />
                     </div>
+
                     <div class="form-group mb-3">
-                        <label for="DescripcionCorta" class="form-label">Descripción Corta</label>
+                        <label class="form-label">Descripción Corta</label>
                         <textarea id="Editar_DescripcionCorta" name="DescripcionCorta" class="form-control" rows="3"></textarea>
                     </div>
+
                     <div class="form-group mb-3">
-                        <label for="DescripcionLarga" class="form-label">Descripción Larga</label>
+                        <label class="form-label">Descripción Larga</label>
                         <textarea id="Editar_DescripcionLarga" name="DescripcionLarga" class="form-control" rows="5"></textarea>
                     </div>
-                    <div class="form-group mb-3">
-                        <label for="Precio" class="form-label">Precio</label>
-                        <input type="number" id="Editar_Precio" name="Precio" class="form-control" step="0.01" required />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Precio *</label>
+                                <input type="number" id="Editar_Precio" name="Precio" class="form-control" step="0.01" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Nivel</label>
+                                <select id="Editar_Nivel" name="Nivel" class="form-control">
+                                    @foreach (var nivel in ViewBag.Niveles)
+                                    {
+                                        <option value="@nivel.Value">@nivel.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="form-group mb-3">
-                        <label for="Nivel" class="form-label">Nivel</label>
-                        <select id="Editar_Nivel" name="Nivel" class="form-control">
-                            @foreach (var nivel in ViewBag.Niveles)
-                            {
-                                <option value="@nivel.Value">@nivel.Text</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="imagenArchivo" class="form-label">Imagen del Curso</label>
+                        <label class="form-label">Imagen del Curso</label>
                         <input type="file" id="Editar_imagenArchivo" name="imagenArchivo" class="form-control" accept=".jpg,.jpeg,.png" />
-                        <small class="form-text text-muted">Deja este campo vacío para conservar la imagen actual.</small>
-                        <img id="Editar_PreviewImagen" src="" class="img-thumbnail mt-2" style="max-height: 150px; display: none;" alt="Imagen actual del curso" />
+                        <small class="text-muted">Deja vacío para conservar la imagen actual.</small>
+                        <img id="Editar_PreviewImagen" src="" class="img-thumbnail mt-2" style="max-height: 150px; display: none;" />
                     </div>
+
                     <div class="form-group mb-3">
                         <label class="form-label">Categorías</label>
-                        <div id="editar-categorias-checkboxes">
+                        <div id="editar-categorias-checkboxes" class="row">
                             @foreach (var categoria in ViewBag.CategoriasEditar)
                             {
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="CategoriasSeleccionadas" value="@categoria.Value" id="editar-categoria-@categoria.Value">
-                                    <label class="form-check-label" for="editar-categoria-@categoria.Value">
-                                        @categoria.Text
-                                    </label>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="CategoriasSeleccionadas" value="@categoria.Value" id="editar-categoria-@categoria.Value">
+                                        <label class="form-check-label" for="editar-categoria-@categoria.Value">@categoria.Text</label>
+                                    </div>
                                 </div>
                             }
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-editorial-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-editorial-primary">Actualizar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar Curso</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Gestionar Clases Presenciales -->
+<div class="modal fade modal-editorial" id="gestionarClasesModal" tabindex="-1" aria-labelledby="gestionarClasesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="gestionarClasesModalLabel">Gestionar Clases</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="clases-lista-container">
+                    <p class="text-muted text-center">Cargando clases...</p>
+                </div>
+                <hr />
+                <h6>Agregar Nueva Clase</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" id="nuevaClaseTitulo" class="form-control mb-2" placeholder="Título de la clase" />
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" id="nuevaClaseDescripcion" class="form-control mb-2" placeholder="Descripción" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="small">Fecha y Hora Inicio</label>
+                        <input type="datetime-local" id="nuevaClaseFechaInicio" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="small">Fecha y Hora Fin</label>
+                        <input type="datetime-local" id="nuevaClaseFechaFin" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="small">Capacidad Máx.</label>
+                        <input type="number" id="nuevaClaseCapacidad" class="form-control" value="20" />
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-primary" id="agregarClaseModalBtn">Agregar Clase</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
         </div>
     </div>
 </div>
@@ -798,452 +837,392 @@
     <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // =========================================================================
-        // FUNCIONES GLOBALES AUXILIARES
-        // =========================================================================
+        // Variables globales
+        let cursoIdActual = 0;
 
-        /**
-         * Obtiene el token de Antiforgery (CSRF) del input oculto.
-         * Se define de forma global para que sea accesible por todas las funciones.
-         */
+        // ==================== FUNCIONES AUXILIARES ====================
         function getAntiForgeryToken() {
-            const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
-            return tokenElement ? tokenElement.value : '';
+            return document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
         }
 
-        // Inicializa TinyMCE para los campos de descripción
         function inicializarTinyMCE() {
-            // Destruir instancias existentes antes de reinicializar
-            tinymce.remove('#Crear_DescripcionLarga');
-            tinymce.remove('#Editar_DescripcionLarga');
-            tinymce.remove('#Crear_DescripcionCorta');
-            tinymce.remove('#Editar_DescripcionCorta');
+            if (typeof tinymce !== 'undefined') {
+                tinymce.remove('#Crear_DescripcionLarga');
+                tinymce.remove('#Editar_DescripcionLarga');
+                tinymce.remove('#Crear_DescripcionCorta');
+                tinymce.remove('#Editar_DescripcionCorta');
 
-            tinymce.init({
-                selector: '#Crear_DescripcionLarga, #Editar_DescripcionLarga',
-                plugins: 'anchor autolink charmap codesample emoticons link lists searchreplace table visualblocks wordcount',
-                toolbar: 'undo redo | blocks fontfamily fontsize | forecolor backcolor | bold italic underline strikethrough | link image | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                height: 300,
-                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }'
-            });
+                tinymce.init({
+                    selector: '#Crear_DescripcionLarga, #Editar_DescripcionLarga',
+                    plugins: 'anchor autolink charmap codesample emoticons link lists searchreplace table visualblocks wordcount',
+                    toolbar: 'undo redo | blocks fontfamily fontsize | forecolor backcolor | bold italic underline strikethrough | link image | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                    height: 300,
+                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }'
+                });
 
-            tinymce.init({
-                selector: '#Crear_DescripcionCorta, #Editar_DescripcionCorta',
-                plugins: 'link lists',
-                toolbar: 'bold italic | bullist numlist | link',
-                height: 150
-            });
-        }
-
-        async function cargarArtistasAsociados(cursoId) {
-            const listaDiv = document.getElementById('artistas-asociados-lista');
-            listaDiv.innerHTML = '<p class="text-info"><i class="fas fa-spinner fa-spin me-1"></i> Cargando...</p>';
-
-            try {
-                const response = await fetch(`@Url.Action("ObtenerArtistasAsociados", "Admin")?cursoId=${cursoId}`);
-                if (!response.ok) {
-                    throw new Error('Error al obtener artistas asociados.');
-                }
-                const result = await response.json();
-
-                if (result.success && result.artistas.length > 0) {
-                    let html = '<ul class="list-group">';
-                    result.artistas.forEach(artista => {
-                        html += `
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                ${artista.nombreCompleto}
-                                <button type="button" class="btn btn-sm btn-danger desasociar-btn"
-                                        data-instructorid="${artista.id}"
-                                        data-cursoid="${cursoId}"
-                                        title="Quitar artista">
-                                    <i class="fas fa-user-times"></i> Desasociar
-                                </button>
-                            </li>
-                        `;
-                    });
-                    html += '</ul>';
-                    listaDiv.innerHTML = html;
-
-                    // Re-adjuntar eventos de desasociación a los nuevos botones
-                    document.querySelectorAll('.desasociar-btn').forEach(button => {
-                        button.removeEventListener('click', handleDesasociarArtista);
-                        button.addEventListener('click', handleDesasociarArtista);
-                    });
-
-                } else {
-                    listaDiv.innerHTML = '<p class="text-muted">No hay artistas asociados actualmente a este curso.</p>';
-                }
-
-            } catch (error) {
-                listaDiv.innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
-                Swal.fire('Error', 'No se pudo cargar la lista de artistas asociados.', 'error');
+                tinymce.init({
+                    selector: '#Crear_DescripcionCorta, #Editar_DescripcionCorta',
+                    plugins: 'link lists',
+                    toolbar: 'bold italic | bullist numlist | link',
+                    height: 150
+                });
             }
         }
 
-        /**
-         * Maneja la solicitud de desasociar un artista de un curso y recarga la página.
-         */
+        function formatValidationErrors(errors) {
+            let html = '<ul class="mb-0">';
+            for (const key in errors) {
+                if (errors.hasOwnProperty(key)) {
+                    errors[key].forEach(msg => html += `<li>${msg}</li>`);
+                }
+            }
+            html += '</ul>';
+            return html;
+        }
+
+        // ==================== GESTIÓN DE CLASES ====================
+        async function cargarClases(cursoId, cursoTitulo) {
+            const container = document.getElementById('clases-lista-container');
+            document.getElementById('gestionarClasesModalLabel').innerHTML = `Clases de: ${cursoTitulo}`;
+            container.innerHTML = '<p class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando clases...</p>';
+
+            try {
+                const response = await fetch(`@Url.Action("ObtenerClasesPorCurso", "Admin")?cursoId=${cursoId}`);
+                const result = await response.json();
+
+                if (result.success && result.clases && result.clases.length > 0) {
+                    let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr>';
+                    html += '<th>Título</th><th>Descripción</th><th>Fecha/Hora Inicio</th><th>Fecha/Hora Fin</th><th>Capacidad</th><th>Inscritos</th><th>Estado</th><th>Acciones</th>';
+                    html += '</tr></thead><tbody>';
+
+                    result.clases.forEach(clase => {
+                        html += `<tr>
+                            <td>${escapeHtml(clase.titulo)}</td>
+                            <td>${escapeHtml(clase.descripcion || '')}</td>
+                            <td>${new Date(clase.fechaHoraInicio).toLocaleString()}</td>
+                            <td>${new Date(clase.fechaHoraFin).toLocaleString()}</td>
+                            <td>${clase.capacidadMaxima}</td>
+                            <td>${clase.inscritosCount || 0}</td>
+                            <td><span class="badge ${clase.estado === 'Programada' ? 'bg-primary' : 'bg-secondary'}">${clase.estado}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-danger eliminar-clase-btn" data-id="${clase.id}"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                    });
+
+                    html += '</tbody></table></div>';
+                    container.innerHTML = html;
+
+                    document.querySelectorAll('.eliminar-clase-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            const claseId = btn.getAttribute('data-id');
+                            const result = await Swal.fire({
+                                title: '¿Eliminar clase?',
+                                text: 'Esta acción no se puede deshacer.',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#d33',
+                                confirmButtonText: 'Sí, eliminar'
+                            });
+                            if (result.isConfirmed) {
+                                await eliminarClase(claseId, cursoId);
+                            }
+                        });
+                    });
+                } else {
+                    container.innerHTML = '<p class="text-muted text-center">No hay clases registradas para este curso.</p>';
+                }
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<p class="text-danger text-center">Error al cargar las clases.</p>';
+            }
+        }
+
+        async function agregarClase(cursoId) {
+            const titulo = document.getElementById('nuevaClaseTitulo').value;
+            const descripcion = document.getElementById('nuevaClaseDescripcion').value;
+            const fechaInicio = document.getElementById('nuevaClaseFechaInicio').value;
+            const fechaFin = document.getElementById('nuevaClaseFechaFin').value;
+            const capacidad = document.getElementById('nuevaClaseCapacidad').value;
+
+            if (!titulo || !fechaInicio || !fechaFin) {
+                Swal.fire('Error', 'Título, fecha inicio y fecha fin son obligatorios', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('@Url.Action("CrearClase", "Admin")', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': getAntiForgeryToken() },
+                    body: JSON.stringify({ cursoId, titulo, descripcion, fechaHoraInicio: fechaInicio, fechaHoraFin: fechaFin, capacidadMaxima: capacidad })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire('Éxito', result.message, 'success');
+                    document.getElementById('nuevaClaseTitulo').value = '';
+                    document.getElementById('nuevaClaseDescripcion').value = '';
+                    document.getElementById('nuevaClaseFechaInicio').value = '';
+                    document.getElementById('nuevaClaseFechaFin').value = '';
+                    document.getElementById('nuevaClaseCapacidad').value = '20';
+                    await cargarClases(cursoId, document.getElementById('gestionarClasesModalLabel').innerHTML.replace('Clases de: ', ''));
+                } else {
+                    Swal.fire('Error', result.message, 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Error al crear la clase', 'error');
+            }
+        }
+
+        async function eliminarClase(claseId, cursoId) {
+            try {
+                const response = await fetch(`@Url.Action("EliminarClase", "Admin")?id=${claseId}`, {
+                    method: 'POST',
+                    headers: { 'RequestVerificationToken': getAntiForgeryToken() }
+                });
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire('Éxito', result.message, 'success');
+                    await cargarClases(cursoId, document.getElementById('gestionarClasesModalLabel').innerHTML.replace('Clases de: ', ''));
+                } else {
+                    Swal.fire('Error', result.message, 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Error al eliminar la clase', 'error');
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ==================== GESTIÓN DE CLASES DINÁMICAS EN CREACIÓN ====================
+        function agregarClaseDinamica() {
+            const container = document.getElementById('clasesContainer');
+            const template = `
+                <div class="clase-item card p-3 mb-2">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" name="ClasesTitulo" class="form-control mb-2" placeholder="Título de la clase" required />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" name="ClasesDescripcion" class="form-control mb-2" placeholder="Descripción breve" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="small">Fecha y Hora Inicio</label>
+                            <input type="datetime-local" name="ClasesFechaHoraInicio" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="small">Fecha y Hora Fin</label>
+                            <input type="datetime-local" name="ClasesFechaHoraFin" class="form-control" />
+                        </div>
+                        <div class="col-md-2">
+                            <label class="small">Capacidad Máx.</label>
+                            <input type="number" name="ClasesCapacidadMaxima" class="form-control" value="20" />
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="button" class="btn btn-danger btn-sm eliminar-clase-dinamica">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', template);
+            const newButton = container.lastElementChild.querySelector('.eliminar-clase-dinamica');
+            newButton.addEventListener('click', function() { this.closest('.clase-item').remove(); });
+        }
+
+        // ==================== ASOCIAR ARTISTA ====================
+        async function cargarArtistasAsociados(cursoId) {
+            const listaDiv = document.getElementById('artistas-asociados-lista');
+            listaDiv.innerHTML = '<p class="text-info"><i class="fas fa-spinner fa-spin"></i> Cargando...</p>';
+
+            try {
+                const response = await fetch(`@Url.Action("ObtenerArtistasAsociados", "Admin")?cursoId=${cursoId}`);
+                const result = await response.json();
+                if (result.success && result.artistas && result.artistas.length > 0) {
+                    let html = '<ul class="list-group">';
+                    result.artistas.forEach(artista => {
+                        html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                    ${artista.nombreCompleto}
+                                    <button type="button" class="btn btn-sm btn-danger desasociar-btn" data-instructorid="${artista.id}" data-cursoid="${cursoId}">
+                                        <i class="fas fa-user-times"></i> Desasociar
+                                    </button>
+                                </li>`;
+                    });
+                    html += '</ul>';
+                    listaDiv.innerHTML = html;
+                    document.querySelectorAll('.desasociar-btn').forEach(btn => {
+                        btn.addEventListener('click', handleDesasociarArtista);
+                    });
+                } else {
+                    listaDiv.innerHTML = '<p class="text-muted">No hay artistas asociados.</p>';
+                }
+            } catch (error) {
+                console.error(error);
+                listaDiv.innerHTML = '<p class="text-danger">Error al cargar artistas.</p>';
+            }
+        }
+
         async function handleDesasociarArtista(event) {
             const button = event.currentTarget;
             const cursoId = parseInt(button.getAttribute('data-cursoid'));
             const instructorId = parseInt(button.getAttribute('data-instructorid'));
-            const token = getAntiForgeryToken();
 
-            const resultSwal = await Swal.fire({
+            const result = await Swal.fire({
                 title: '¿Estás seguro?',
                 text: 'El artista será desasociado de este curso.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, Desasociar',
-                cancelButtonText: 'Cancelar'
+                confirmButtonText: 'Sí, Desasociar'
             });
-
-            if (!resultSwal.isConfirmed) {
-                return;
-            }
+            if (!result.isConfirmed) return;
 
             try {
                 const response = await fetch('@Url.Action("DesasociarArtistaACurso", "Admin")', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': token
-                    },
+                    headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': getAntiForgeryToken() },
                     body: JSON.stringify({ cursoId, instructorId })
                 });
-
-                const result = await response.json();
-                if (result.success) {
-                    Swal.fire({
-                        title: 'Éxito',
-                        text: result.message,
-                        icon: 'success'
-                    }).then(() => {
-                        // Recarga completa de la página tras la operación exitosa
-                        window.location.reload();
-                    });
-
+                const res = await response.json();
+                if (res.success) {
+                    Swal.fire('Éxito', res.message, 'success').then(() => window.location.reload());
                 } else {
-                    Swal.fire('Error', result.message, 'error');
+                    Swal.fire('Error', res.message, 'error');
                 }
-
             } catch (error) {
-                Swal.fire('Error', 'Hubo un problema al desasociar el artista.', 'error');
+                Swal.fire('Error', 'Hubo un problema.', 'error');
             }
         }
 
-        // =========================================================================
-        // LÓGICA DE INICIO Y EVENTOS
-        // =========================================================================
-
-        document.addEventListener('DOMContentLoaded', function () {
+        // ==================== EVENT LISTENERS ====================
+        document.addEventListener('DOMContentLoaded', function() {
             inicializarTinyMCE();
-            const crearModalEl = document.getElementById('crearCursoModal');
-            const editarModalEl = document.getElementById('editarCursoModal');
-            const asociarArtistaModalEl = document.getElementById('asociarArtistaModal');
-            const guardarAsociacionBtn = document.getElementById('guardarAsociacionBtn');
-            const crearForm = document.getElementById('formCrearCurso');
-            const editarForm = document.getElementById('formEditarCurso');
 
+            const tipoCursoSelect = document.getElementById('Crear_TipoCurso');
+            const seccionClases = document.getElementById('seccionClasesPresenciales');
+            const agregarClaseBtn = document.getElementById('agregarClaseBtn');
 
-            // Reemplaza los formularios de POST tradicionales con un manejador AJAX
-            async function handleAjaxFormSubmit(event) {
-                event.preventDefault();
-                const form = event.currentTarget;
-                const url = form.action;
-                const urlParams = new URLSearchParams(url.split('?')[1]);
-                const id = urlParams.get('id');
-                const token = getAntiForgeryToken();
-                const actionName = form.getAttribute('asp-action');
-
-                let confirmText = '';
-                let successMessage = '';
-
-                switch (actionName) {
-                    case 'EliminarCurso':
-                        confirmText = '¡No podrás revertir la eliminación de este curso!';
-                        successMessage = 'Curso eliminado con éxito.';
-                        break;
-                    case 'DestacarCurso':
-                        confirmText = '¿Quieres destacar este curso?';
-                        successMessage = 'Curso destacado con éxito.';
-                        break;
-                    case 'RecomendarCurso':
-                        confirmText = '¿Quieres recomendar este curso?';
-                        successMessage = 'Curso recomendado con éxito.';
-                        break;
-                    case 'QuitarDestacado':
-                        confirmText = '¿Quieres quitar el estado de destacado?';
-                        successMessage = 'Estado destacado eliminado.';
-                        break;
-                    case 'QuitarRecomendado':
-                        confirmText = '¿Quieres quitar el estado de recomendado?';
-                        successMessage = 'Estado recomendado eliminado.';
-                        break;
-                    default:
-                        return;
-                }
-
-                if (actionName === 'EliminarCurso') {
-                     // Lógica de SweetAlert para Confirmación de Eliminación
-                    const result = await Swal.fire({
-                        title: '¿Estás seguro?',
-                        text: confirmText,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Sí, ¡adelante!',
-                        cancelButtonText: 'Cancelar'
-                    });
-
-                    if (!result.isConfirmed) {
-                        return;
-                    }
-                }
-
-                // Enviar la solicitud AJAX
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'RequestVerificationToken': token
-                        },
-                        body: `id=${id}&__RequestVerificationToken=${token}` // Enviar el ID y el token
-                    });
-
-                    if (response.ok) {
-                        Swal.fire({
-                            title: 'Éxito',
-                            text: successMessage,
-                            icon: 'success'
-                        }).then(() => {
-                            // Recarga completa de la página tras la operación exitosa
-                            window.location.reload();
-                        });
-                    } else if (response.status === 400) {
-                         const error = await response.text();
-                         Swal.fire('Error', 'Operación fallida. Revisa los detalles.', 'error');
-                    } else {
-                        Swal.fire('Error', 'Hubo un problema al procesar la solicitud.', 'error');
-                    }
-                } catch (error) {
-                    Swal.fire('Error', `Error de conexión: ${error.message}`, 'error');
-                }
-            }
-
-
-            // Función para adjuntar todos los event listeners
-            function attachEventListeners() {
-                // Adjuntar manejador para las acciones de post (Destacar, Recomendar, Eliminar, etc.)
-                document.querySelectorAll('form[asp-action]').forEach(form => {
-                    form.removeEventListener('submit', handleAjaxFormSubmit); // Eliminar si ya existe
-                    form.addEventListener('submit', handleAjaxFormSubmit); // Adjuntar
+            if (tipoCursoSelect) {
+                tipoCursoSelect.addEventListener('change', function() {
+                    seccionClases.style.display = this.value == '2' ? 'block' : 'none';
                 });
             }
 
+            if (agregarClaseBtn) agregarClaseBtn.addEventListener('click', agregarClaseDinamica);
 
-            // --- Lógica del modal de Asociación/Desasociación de Artista ---
-            asociarArtistaModalEl.addEventListener('show.bs.modal', async function (event) {
-                const button = event.relatedTarget;
-                const cursoId = button.getAttribute('data-cursoid');
-                document.getElementById('asociar-curso-id').value = cursoId;
+            // Modal Asociar Artista
+            const asociarModal = document.getElementById('asociarArtistaModal');
+            if (asociarModal) {
+                asociarModal.addEventListener('show.bs.modal', async function(event) {
+                    const button = event.relatedTarget;
+                    const cursoId = button.getAttribute('data-cursoid');
+                    document.getElementById('asociar-curso-id').value = cursoId;
+                    await cargarArtistasAsociados(cursoId);
+                    try {
+                        const response = await fetch('@Url.Action("ObtenerArtistas", "Admin")');
+                        const artistas = await response.json();
+                        const select = document.getElementById('artista-select');
+                        select.innerHTML = '<option value="">-- Seleccione un Artista --</option>';
+                        if (artistas && artistas.length) {
+                            artistas.forEach(a => {
+                                const option = document.createElement('option');
+                                option.value = a.id;
+                                option.textContent = a.nombreCompleto;
+                                select.appendChild(option);
+                            });
+                        }
+                    } catch (error) { console.error(error); }
+                });
+            }
 
-                // 1. Cargar Artistas Asociados (para la lista de desasociación)
-                await cargarArtistasAsociados(cursoId);
-
-                // 2. Cargar Artistas para la selección de ASOCIAR
-                const artistaSelect = document.getElementById('artista-select');
-                artistaSelect.innerHTML = '<option value="">-- Seleccione un Artista --</option>';
-
-                try {
-                    const response = await fetch('@Url.Action("ObtenerArtistas", "Admin")');
-                    if (!response.ok) {
-                        throw new Error('No se pudieron cargar los artistas.');
-                    }
-                    const artistas = await response.json();
-                    artistas.forEach(artista => {
-                        const option = document.createElement('option');
-                        option.value = artista.id;
-                        option.textContent = artista.nombreCompleto;
-                        artistaSelect.appendChild(option);
-                    });
-                } catch (error) {
-                    Swal.fire('Error', 'No se pudo cargar la lista de artistas para asociar.', 'error');
-                }
-            });
-
-            // Manejador del botón GUARDAR ASOCIACIÓN (Asociar)
-            guardarAsociacionBtn.addEventListener('click', async function () {
+            document.getElementById('guardarAsociacionBtn')?.addEventListener('click', async function() {
                 const cursoId = document.getElementById('asociar-curso-id').value;
                 const instructorId = document.getElementById('artista-select').value;
-                const token = getAntiForgeryToken();
-
-                if (!instructorId) {
-                    Swal.fire('Atención', 'Por favor, selecciona un artista.', 'warning');
-                    return;
-                }
-
+                if (!instructorId) { Swal.fire('Atención', 'Selecciona un artista', 'warning'); return; }
                 try {
                     const response = await fetch('@Url.Action("AsociarArtistaACurso", "Admin")', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'RequestVerificationToken': token
-                        },
+                        headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': getAntiForgeryToken() },
                         body: JSON.stringify({ cursoId, instructorId })
                     });
-
                     const result = await response.json();
-                    if (result.success) {
-                        Swal.fire({
-                             title: 'Éxito',
-                             text: result.message,
-                             icon: 'success'
-                        }).then(() => {
-                            // Recarga completa de la página tras la operación exitosa
-                            window.location.reload();
-                        });
-
-                    } else {
-                        Swal.fire('Error', result.message, 'error');
-                    }
-                } catch (error) {
-                    Swal.fire('Error', 'Hubo un problema al asociar el artista.', 'error');
-                }
+                    if (result.success) Swal.fire('Éxito', result.message, 'success').then(() => window.location.reload());
+                    else Swal.fire('Error', result.message, 'error');
+                } catch (error) { Swal.fire('Error', 'Hubo un problema.', 'error'); }
             });
 
-
-            // --- Lógica de Creación y Edición ---
-
-            crearForm.addEventListener('submit', async function (e) {
-                e.preventDefault();
-                tinymce.triggerSave();
-
-                const formData = new FormData(this);
-                formData.append('__RequestVerificationToken', getAntiForgeryToken());
-
-                const categoriasSeleccionadas = Array.from(document.querySelectorAll('#crear-categorias-checkboxes input:checked')).map(cb => cb.value);
-                categoriasSeleccionadas.forEach(val => formData.append('CategoriasSeleccionadas', val));
-
-                const response = await fetch(this.action, {
-                    method: 'POST',
-                    body: formData
+            // Modal Gestionar Clases
+            const gestionarClasesModal = document.getElementById('gestionarClasesModal');
+            if (gestionarClasesModal) {
+                gestionarClasesModal.addEventListener('show.bs.modal', async function(event) {
+                    const button = event.relatedTarget;
+                    cursoIdActual = parseInt(button.getAttribute('data-cursoid'));
+                    const cursoTitulo = button.getAttribute('data-cursotitulo');
+                    await cargarClases(cursoIdActual, cursoTitulo);
                 });
-
-                if (response.ok) {
-                    const modal = bootstrap.Modal.getInstance(crearModalEl);
-                    modal.hide();
-                    Swal.fire({
-                        title: 'Éxito',
-                        text: 'Curso creado con éxito.',
-                        icon: 'success'
-                    }).then(() => {
-                        // Recarga completa de la página tras la operación exitosa
-                        window.location.reload();
-                    });
-                } else if (response.status === 400) {
-                     const result = await response.json();
-                     Swal.fire({
-                         title: 'Error de validación',
-                         html: formatValidationErrors(result.errors),
-                         icon: 'error'
-                     });
-                } else {
-                     Swal.fire('Error', 'Hubo un problema al crear el curso.', 'error');
-                }
-            });
-
-            editarModalEl.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const cursoId = button.getAttribute('data-id');
-                const titulo = button.getAttribute('data-titulo');
-                const descripcionCorta = button.getAttribute('data-descripcioncorta');
-                const descripcionLarga = button.getAttribute('data-descripcionlarga');
-                const precio = button.getAttribute('data-precio');
-                const urlImagen = button.getAttribute('data-urlimagen');
-                const nivel = button.getAttribute('data-nivel');
-                const categoriasSeleccionadas = button.getAttribute('data-categorias') ? button.getAttribute('data-categorias').split(',').map(Number) : [];
-
-                document.getElementById('Editar_Id').value = cursoId;
-                document.getElementById('Editar_Titulo').value = titulo;
-                document.getElementById('Editar_Precio').value = precio;
-                document.getElementById('Editar_Nivel').value = nivel;
-
-                // Cargar contenido en TinyMCE
-                tinymce.get('Editar_DescripcionCorta').setContent(descripcionCorta);
-                tinymce.get('Editar_DescripcionLarga').setContent(descripcionLarga);
-
-                const imagenPreview = document.getElementById('Editar_PreviewImagen');
-                if (urlImagen) {
-                    imagenPreview.src = urlImagen;
-                    imagenPreview.style.display = 'block';
-                } else {
-                    imagenPreview.style.display = 'none';
-                }
-
-                // Cargar categorías
-                const checkboxes = document.querySelectorAll('#editar-categorias-checkboxes input[type="checkbox"]');
-                checkboxes.forEach(checkbox => {
-                    const categoriaId = parseInt(checkbox.value);
-                    checkbox.checked = categoriasSeleccionadas.includes(categoriaId);
-                });
-            });
-
-            editarForm.addEventListener('submit', async function (e) {
-                e.preventDefault();
-                tinymce.triggerSave();
-
-                const formData = new FormData(this);
-                formData.append('__RequestVerificationToken', getAntiForgeryToken());
-
-                const categoriasSeleccionadas = Array.from(document.querySelectorAll('#editar-categorias-checkboxes input:checked')).map(cb => cb.value);
-                categoriasSeleccionadas.forEach(val => formData.append('CategoriasSeleccionadas', val));
-
-                const response = await fetch(this.action, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-                if (result.success) {
-                    const modal = bootstrap.Modal.getInstance(editarModalEl);
-                    modal.hide();
-                    Swal.fire({
-                        title: 'Éxito',
-                        text: result.message,
-                        icon: 'success'
-                    }).then(() => {
-                        // Recarga completa de la página tras la operación exitosa
-                        window.location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error de validación',
-                        html: formatValidationErrors(result.errors),
-                        icon: 'error'
-                    });
-                }
-            });
-
-            function formatValidationErrors(errors) {
-                let html = '<ul>';
-                for (const key in errors) {
-                    if (errors.hasOwnProperty(key)) {
-                        errors[key].forEach(message => {
-                            html += `<li>${message}</li>`;
-                        });
-                    }
-                }
-                html += '</ul>';
-                return html;
             }
 
-            // Inicializa los eventos al cargar la página
-            attachEventListeners();
+            document.getElementById('agregarClaseModalBtn')?.addEventListener('click', () => agregarClase(cursoIdActual));
+
+            // Modal Editar Curso
+            const editarModal = document.getElementById('editarCursoModal');
+            if (editarModal) {
+                editarModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    document.getElementById('Editar_Id').value = button.getAttribute('data-id');
+                    document.getElementById('Editar_Titulo').value = button.getAttribute('data-titulo');
+                    document.getElementById('Editar_Precio').value = button.getAttribute('data-precio');
+                    document.getElementById('Editar_Nivel').value = button.getAttribute('data-nivel');
+                    if (typeof tinymce !== 'undefined') {
+                        tinymce.get('Editar_DescripcionCorta')?.setContent(button.getAttribute('data-descripcioncorta') || '');
+                        tinymce.get('Editar_DescripcionLarga')?.setContent(button.getAttribute('data-descripcionlarga') || '');
+                    }
+                    const urlImagen = button.getAttribute('data-urlimagen');
+                    const preview = document.getElementById('Editar_PreviewImagen');
+                    if (urlImagen && urlImagen !== '') {
+                        preview.src = urlImagen;
+                        preview.style.display = 'block';
+                    } else {
+                        preview.style.display = 'none';
+                    }
+                    const categoriasSeleccionadas = button.getAttribute('data-categorias') ? button.getAttribute('data-categorias').split(',').map(Number) : [];
+                    document.querySelectorAll('#editar-categorias-checkboxes input').forEach(cb => {
+                        cb.checked = categoriasSeleccionadas.includes(parseInt(cb.value));
+                    });
+                });
+            }
+
+            // Formularios AJAX
+            document.getElementById('formCrearCurso')?.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                if (typeof tinymce !== 'undefined') tinymce.triggerSave();
+                const formData = new FormData(this);
+                const response = await fetch(this.action, { method: 'POST', body: formData });
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('crearCursoModal')).hide();
+                    Swal.fire('Éxito', 'Curso creado con éxito.', 'success').then(() => window.location.reload());
+                } else if (response.status === 400) {
+                    const result = await response.json();
+                    Swal.fire('Error de validación', formatValidationErrors(result.errors), 'error');
+                } else Swal.fire('Error', 'Hubo un problema.', 'error');
+            });
+
+            document.getElementById('formEditarCurso')?.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                if (typeof tinymce !== 'undefined') tinymce.triggerSave();
+                const formData = new FormData(this);
+                const response = await fetch(this.action, { method: 'POST', body: formData });
+                const result = await response.json();
+                if (result.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('editarCursoModal')).hide();
+                    Swal.fire('Éxito', result.message, 'success').then(() => window.location.reload());
+                } else {
+                    Swal.fire('Error de validación', formatValidationErrors(result.errors), 'error');
+                }
+            });
         });
     </script>
 }

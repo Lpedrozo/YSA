@@ -15,6 +15,38 @@ namespace YSA.Data.Repositories
         {
             _context = context;
         }
+        public async Task<List<Pedido>> ObtenerPedidosPorUsuarioAsync(int usuarioId)
+        {
+            return await _context.Pedidos
+                .Include(p => p.Pago)
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Curso)
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Producto)
+                .Where(p => p.EstudianteId == usuarioId)
+                .OrderByDescending(p => p.FechaPedido)
+                .ToListAsync();
+        }
+        public async Task<int?> ObtenerPedidoPendienteIdPorCursoAsync(int estudianteId, int cursoId)
+        {
+            // Obtener el VentaItemId del curso
+            var ventaItem = await _context.VentaItems
+                .FirstOrDefaultAsync(vi => vi.CursoId == cursoId);
+
+            if (ventaItem == null)
+                return null;
+
+            // Buscar pedido pendiente o en validación para ese curso
+            var pedido = await _context.Pedidos
+                .Where(p => p.EstudianteId == estudianteId &&
+                           (p.Estado == "Pendiente" || p.Estado == "Validando") &&
+                           p.PedidoItems.Any(pi => pi.VentaItemId == ventaItem.Id))
+                .FirstOrDefaultAsync();
+
+            return pedido?.Id;
+        }
         public async Task<int> GetPedidosPendientesAsync()
         {
             return await _context.Pedidos

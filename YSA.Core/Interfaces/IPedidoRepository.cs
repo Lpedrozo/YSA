@@ -22,5 +22,8 @@ namespace YSA.Core.Interfaces
         Task<int> GetPedidosPendientesAsync();
         Task<Pedido> GetByIdWithDetailsAsync(int id);
         Task<Pedido> ObtenerPedidoActivoPorCursoAsync(int estudianteId, int cursoId, string[] estadosActivos);
+        Task<int?> ObtenerPedidoPendienteIdPorCursoAsync(int estudianteId, int cursoId);
+        Task<List<Pedido>> ObtenerPedidosPorUsuarioAsync(int usuarioId); // ← NUEVO MÉTODO
+
     }
 }

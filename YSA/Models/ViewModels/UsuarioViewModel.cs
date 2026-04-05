@@ -2,6 +2,19 @@
 using YSA.Core.Entities;
 namespace YSA.Web.Models.ViewModels
 {
+    public class EstudianteListaViewModel
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+        public string Email { get; set; }
+        public string Cedula { get; set; }
+        public string WhatsApp { get; set; }
+        public DateTime FechaRegistro { get; set; }
+        public int CursosCompradosCount { get; set; }
+        public List<string> CursosComprados { get; set; } = new List<string>();
+        public bool TienePerfilCompleto { get; set; }
+    }
     public class UserViewModel
     {
         public string? Nombre { get; set; }
@@ -39,6 +52,38 @@ namespace YSA.Web.Models.ViewModels
         [Required(ErrorMessage = "El apellido es obligatorio.")]
         [StringLength(100, ErrorMessage = "El {0} debe tener al menos {2} y un máximo de {1} caracteres de longitud.", MinimumLength = 2)]
         public string Apellido { get; set; }
+    }
+    public class EstudianteDetalleViewModel
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+        public string Email { get; set; }
+        public string Cedula { get; set; }
+        public string WhatsApp { get; set; }
+        public DateTime? FechaNacimiento { get; set; }
+        public bool EsMenorEdad { get; set; }
+        public string NombreRepresentante { get; set; }
+        public string CedulaRepresentante { get; set; }
+        public string ExperienciaTatuaje { get; set; }
+        public string AtendidoPor { get; set; }
+        public DateTime FechaCreacion { get; set; }
+        public string UrlImagen { get; set; }
+
+        public List<string> CursosComprados { get; set; } = new List<string>();
+        public List<string> ClasesInscritas { get; set; } = new List<string>();
+        public List<PedidoResumenViewModel> Pedidos { get; set; } = new List<PedidoResumenViewModel>();
+    }
+
+    public class PedidoResumenViewModel
+    {
+        public int Id { get; set; }
+        public DateTime FechaPedido { get; set; }
+        public decimal Total { get; set; }
+        public string Estado { get; set; }
+        public string MetodoPago { get; set; }
+        public string ReferenciaPago { get; set; }
+        public DateTime? FechaPago { get; set; }
     }
     public class EstudianteConCursosViewModel
     {
@@ -135,5 +180,41 @@ namespace YSA.Web.Models.ViewModels
         [Required(ErrorMessage = "El correo electrónico es obligatorio.")]
         [EmailAddress(ErrorMessage = "El formato del correo electrónico no es válido.")]
         public string Email { get; set; }
+    }
+    public class CompletarPerfilViewModel
+    {
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "La cédula es obligatoria")]
+        [Display(Name = "Cédula de Identidad")]
+        public string Cedula { get; set; }
+
+        [Required(ErrorMessage = "El número de WhatsApp es obligatorio")]
+        [Display(Name = "WhatsApp")]
+        public string WhatsApp { get; set; }
+
+        [Required(ErrorMessage = "La fecha de nacimiento es obligatoria")]
+        [Display(Name = "Fecha de Nacimiento")]
+        [DataType(DataType.Date)]
+        public DateTime? FechaNacimiento { get; set; }
+
+        [Display(Name = "¿Eres menor de edad?")]
+        public bool EsMenorEdad { get; set; }
+
+        [Display(Name = "Nombre del Representante")]
+        public string NombreRepresentante { get; set; }
+
+        [Display(Name = "Cédula del Representante")]
+        public string CedulaRepresentante { get; set; }
+
+        [Display(Name = "¿Tienes experiencia tatuando?")]
+        public string ExperienciaTatuaje { get; set; }
+
+        [Display(Name = "¿Quién te atendió?")]
+        public string AtendidoPor { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using YSA.Core.Enums;
 
 namespace YSA.Data.Repositories
 {
@@ -20,17 +21,36 @@ namespace YSA.Data.Repositories
         {
             return await _context.Cursos.CountAsync();
         }
-        public async Task<List<Curso>> GetAllWithDetailsAsync()
+        public async Task<List<Curso>> GetAllDigitalsAsync()
+        {
+            return await _context.Cursos
+                                 .Where(c => c.TipoCurso == Core.Enums.TipoCurso.Digital)
+                                 .Include(c => c.CursoCategorias)
+                                     .ThenInclude(cc => cc.Categoria)
+                                 .Include(c => c.CursoInstructores) 
+                                     .ThenInclude(ci => ci.Artista)   
+                                         .ThenInclude(a => a.Usuario)
+                                 .ToListAsync();
+        }
+        public async Task<List<Curso>> GetAll()
         {
             return await _context.Cursos
                                  .Include(c => c.CursoCategorias)
                                      .ThenInclude(cc => cc.Categoria)
-
-                                 // *** CAMBIOS PARA LA RELACIÓN MUCHOS A MUCHOS ***
-                                 .Include(c => c.CursoInstructores) // 1. Incluye la colección de enlaces
-                                     .ThenInclude(ci => ci.Artista)    // 2. Incluye el Artista (Instructor) desde el enlace
-                                         .ThenInclude(a => a.Usuario)  // 3. Incluye la entidad Usuario del Artista
-
+                                 .Include(c => c.CursoInstructores)
+                                     .ThenInclude(ci => ci.Artista)
+                                         .ThenInclude(a => a.Usuario)
+                                 .ToListAsync();
+        }
+        public async Task<List<Curso>> GetAllPresencialsAsync()
+        {
+            return await _context.Cursos
+                                 .Where(c => c.TipoCurso == Core.Enums.TipoCurso.Presencial)
+                                 .Include(c => c.CursoCategorias)
+                                     .ThenInclude(cc => cc.Categoria)
+                                 .Include(c => c.CursoInstructores)
+                                     .ThenInclude(ci => ci.Artista)
+                                         .ThenInclude(a => a.Usuario)
                                  .ToListAsync();
         }
 
@@ -295,6 +315,132 @@ namespace YSA.Data.Repositories
                 _context.CursoInstructores.Remove(asociacion);
                 await _context.SaveChangesAsync();
             }
+        }
+        public async Task AddCursoCategoriasAsync(List<CursoCategoria> cursoCategorias)
+        {
+            await _context.CursoCategorias.AddRangeAsync(cursoCategorias);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddClasePresencialAsync(ClasePresencial clase)
+        {
+            await _context.ClasesPresenciales.AddAsync(clase);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<ClasePresencial>> GetClasesByCursoIdAsync(int cursoId)
+        {
+            return await _context.ClasesPresenciales
+                .Where(c => c.CursoId == cursoId)
+                .OrderBy(c => c.FechaHoraInicio)
+                .Include(c => c.Inscripciones)
+                    .ThenInclude(i => i.Estudiante)  // ← Agrega esta línea para incluir los datos del estudiante
+                .ToListAsync();
+        }
+
+        public async Task<ClasePresencial> GetClaseByIdAsync(int id)
+        {
+            return await _context.ClasesPresenciales
+                .Include(c => c.Inscripciones)
+                .ThenInclude(i => i.Estudiante)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task UpdateClasePresencialAsync(ClasePresencial clase)
+        {
+            _context.ClasesPresenciales.Update(clase);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteClasePresencialAsync(int id)
+        {
+            var clase = await GetClaseByIdAsync(id);
+            if (clase != null)
+            {
+                _context.ClasesPresenciales.Remove(clase);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task AddInscripcionClaseAsync(InscripcionClase inscripcion)
+        {
+            await _context.InscripcionesClases.AddAsync(inscripcion);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<InscripcionClase> GetInscripcionByClaseAndEstudianteAsync(int clasePresencialId, int estudianteId)
+        {
+            return await _context.InscripcionesClases
+                .FirstOrDefaultAsync(i => i.ClasePresencialId == clasePresencialId && i.EstudianteId == estudianteId);
+        }
+
+        public async Task<List<InscripcionClase>> GetInscripcionesByClaseIdAsync(int clasePresencialId)
+        {
+            return await _context.InscripcionesClases
+                .Where(i => i.ClasePresencialId == clasePresencialId)
+                .Include(i => i.Estudiante)
+                .OrderBy(i => i.FechaInscripcion)
+                .ToListAsync();
+        }
+
+        public async Task<List<InscripcionClase>> GetInscripcionesByEstudianteIdAsync(int estudianteId)
+        {
+            return await _context.InscripcionesClases
+                .Where(i => i.EstudianteId == estudianteId)
+                .Include(i => i.ClasePresencial)
+                .ThenInclude(c => c.Curso)
+                .OrderByDescending(i => i.FechaInscripcion)
+                .ToListAsync();
+        }
+
+        public async Task<InscripcionClase> GetInscripcionByIdAsync(int id)
+        {
+            return await _context.InscripcionesClases
+                .FirstOrDefaultAsync(i => i.Id == id);
+        }
+
+        public async Task UpdateInscripcionClaseAsync(InscripcionClase inscripcion)
+        {
+            _context.InscripcionesClases.Update(inscripcion);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteInscripcionClaseAsync(int id)
+        {
+            var inscripcion = await GetInscripcionByIdAsync(id);
+            if (inscripcion != null)
+            {
+                _context.InscripcionesClases.Remove(inscripcion);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<List<Curso>> GetCursosByTipoAsync(TipoCurso tipo)
+        {
+            return await _context.Cursos
+                .Where(c => c.TipoCurso == tipo)
+                .Include(c => c.CursoCategorias)
+                    .ThenInclude(cc => cc.Categoria)
+                .Include(c => c.CursoInstructores)
+                    .ThenInclude(ci => ci.Artista)
+                        .ThenInclude(a => a.Usuario)
+                .Include(c => c.ClasesPresenciales)
+                .ToListAsync();
+        }
+
+        public void UpdateClasePresencial(ClasePresencial clase)
+        {
+            _context.ClasesPresenciales.Update(clase);
+        }
+
+        public void UpdateInscripcionClase(InscripcionClase inscripcion)
+        {
+            _context.InscripcionesClases.Update(inscripcion);
+        }
+
+        public async Task AddCursoCategoriaAsync(CursoCategoria cursoCategoria)
+        {
+            await _context.CursoCategorias.AddAsync(cursoCategoria);
         }
     }
 }

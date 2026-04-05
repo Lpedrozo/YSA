@@ -9,17 +9,29 @@ using Microsoft.AspNetCore.Authorization;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using System.Globalization;
+using Microsoft.AspNetCore.Identity;
 public class CursoController : Controller
 {
     private readonly ICursoService _cursoService;
     private readonly IModuloService _moduloService;
     private readonly IEstudianteCursoService _estudianteCursoService;
     private readonly IPedidoService _pedidoService;
-    private readonly IProgresoLeccionService _progresoLeccionService; // Nuevo
+    private readonly IProgresoLeccionService _progresoLeccionService;
     private readonly IRecursoActividadService _recursoActividadService;
-    private readonly IWebHostEnvironment _webHostEnvironment; // ¡NUEVO!
+    private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly UserManager<Usuario> _userManager; // Añadir
+    private readonly IVentaItemService _ventaItemService; // Añadir
 
-    public CursoController(ICursoService cursoService, IModuloService moduloService, IEstudianteCursoService estudianteCursoService, IPedidoService pedidoService, IProgresoLeccionService progresoLeccionService, IRecursoActividadService recursoActividadService, IWebHostEnvironment webHostEnvironment)
+    public CursoController(
+        ICursoService cursoService,
+        IModuloService moduloService,
+        IEstudianteCursoService estudianteCursoService,
+        IPedidoService pedidoService,
+        IProgresoLeccionService progresoLeccionService,
+        IRecursoActividadService recursoActividadService,
+        IWebHostEnvironment webHostEnvironment,
+        UserManager<Usuario> userManager, // Añadir
+        IVentaItemService ventaItemService) // Añadir
     {
         _cursoService = cursoService;
         _moduloService = moduloService;
@@ -28,13 +40,15 @@ public class CursoController : Controller
         _progresoLeccionService = progresoLeccionService;
         _recursoActividadService = recursoActividadService;
         _webHostEnvironment = webHostEnvironment;
+        _userManager = userManager; // Añadir
+        _ventaItemService = ventaItemService; // Añadir
     }
 
     public async Task<IActionResult> Index(string categoria = null, string searchString = null,
         int? nivel = null, string precio = null, string orden = "recientes", int pagina = 1)
     {
         // Obtener todos los cursos y categorías
-        var todosLosCursos = await _cursoService.ObtenerTodosLosCursosAsync();
+        var todosLosCursos = await _cursoService.ObtenerTodosLosCursosDigitalesAsync();
         var todasLasCategorias = await _cursoService.ObtenerTodasLasCategoriasAsync();
 
         // Obtener cursos destacados (siempre los mismos)
@@ -88,7 +102,7 @@ public class CursoController : Controller
             const int pageSize = 9; // 3x3 en desktop
 
             // Obtener todos los cursos
-            var todosLosCursos = await _cursoService.ObtenerTodosLosCursosAsync();
+            var todosLosCursos = await _cursoService.ObtenerTodosLosCursosDigitalesAsync();
             var cursosFiltrados = todosLosCursos.AsQueryable();
 
             // ===== APLICAR FILTROS =====
@@ -663,4 +677,209 @@ public class CursoController : Controller
             // Opcional: Loggear el fallo de eliminación, pero no interrumpimos el flujo
         }
     }
+    // GET: Detalle de Clase Presencial
+    [HttpGet]
+    public async Task<IActionResult> DetalleClasePresencial(int id)
+    {
+        var clase = await _cursoService.ObtenerClasePorIdAsync(id);
+        if (clase == null || clase.Estado != "Programada")
+        {
+            return NotFound();
+        }
+
+        var curso = await _cursoService.ObtenerCursoPorIdAsync(clase.CursoId);
+        if (curso == null)
+        {
+            return NotFound();
+        }
+
+        var vacantesDisponibles = clase.CapacidadMaxima - (clase.Inscripciones?.Count ?? 0);
+
+        var viewModel = new ClasePresencialDetalleViewModel
+        {
+            ClaseId = clase.Id,
+            CursoId = curso.Id,
+            CursoTitulo = curso.Titulo,
+            ClaseTitulo = clase.Titulo,
+            ClaseDescripcion = clase.Descripcion,
+            FechaHoraInicio = clase.FechaHoraInicio,
+            FechaHoraFin = clase.FechaHoraFin,
+            Lugar = clase.Lugar,
+            CapacidadMaxima = clase.CapacidadMaxima,
+            VacantesDisponibles = vacantesDisponibles,
+            UrlImagen = curso.UrlImagen,
+            Precio = curso.Precio,
+            Estado = clase.Estado,
+            UrlMeet = clase.UrlMeet,
+            UsuarioLogueado = User.Identity.IsAuthenticated,
+            PerfilCompleto = false,
+            YaInscrito = false,
+            TienePedidoPendiente = false
+        };
+
+        if (User.Identity.IsAuthenticated)
+        {
+            var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(usuarioId) && int.TryParse(usuarioId, out int idUsuario))
+            {
+                var usuario = await _userManager.FindByIdAsync(usuarioId);
+                viewModel.PerfilCompleto = UsuarioTienePerfilCompleto(usuario);
+                viewModel.YaInscrito = await _cursoService.GetInscripcionByClaseAndEstudianteAsync(clase.Id, idUsuario) != null;
+                viewModel.TienePedidoPendiente = await _pedidoService.TienePedidoPendientePorCursoAsync(idUsuario, curso.Id);
+
+                // Pasar datos del usuario para el modal
+                viewModel.UsuarioNombre = usuario.Nombre;
+                viewModel.UsuarioApellido = usuario.Apellido;
+            }
+        }
+
+        return View(viewModel);
+    }    // Método auxiliar para verificar si el usuario tiene el perfil completo
+    private bool UsuarioTienePerfilCompleto(Usuario usuario)
+    {
+        return !string.IsNullOrEmpty(usuario.Cedula) &&
+               !string.IsNullOrEmpty(usuario.WhatsApp) &&
+               usuario.FechaNacimiento.HasValue;
+    }
+    // POST: Procesar pago de clase presencial (todo en uno)
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> IniciarCompraClasePresencial(int claseId, string metodoPago, string referenciaPago, IFormFile comprobanteArchivo)
+    {
+        var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(usuarioId) || !int.TryParse(usuarioId, out int idUsuario))
+        {
+            return RedirectToAction("Login", "Cuenta");
+        }
+
+        // Verificar si el usuario tiene el perfil completo
+        var usuario = await _userManager.FindByIdAsync(usuarioId);
+        if (!UsuarioTienePerfilCompleto(usuario))
+        {
+            TempData["RedirectToProfile"] = true;
+            TempData["Message"] = "Completa tus datos personales antes de inscribirte a una clase presencial.";
+            return RedirectToAction("DetalleClasePresencial", new { id = claseId });
+        }
+
+        var clase = await _cursoService.ObtenerClasePorIdAsync(claseId);
+        if (clase == null || clase.Estado != "Programada")
+        {
+            return NotFound();
+        }
+
+        var vacantes = clase.CapacidadMaxima - (clase.Inscripciones?.Count ?? 0);
+        if (vacantes <= 0)
+        {
+            TempData["Error"] = "Lo sentimos, esta clase ya no tiene cupos disponibles.";
+            return RedirectToAction("DetalleClasePresencial", new { id = claseId });
+        }
+
+        // Obtener el curso para saber el precio
+        var curso = await _cursoService.ObtenerCursoPorIdAsync(clase.CursoId);
+        bool esGratuito = curso.Precio == 0;
+
+        // ==================== CURSO GRATUITO ====================
+        if (esGratuito)
+        {
+            try
+            {
+                // 1. Obtener o crear VentaItem para el curso
+                var ventaItem = await _ventaItemService.ObtenerVentaItemPorCursoIdAsync(clase.CursoId);
+                if (ventaItem == null)
+                {
+                    await _ventaItemService.CrearVentaItemAsync("Curso", clase.CursoId, null, 0);
+                    ventaItem = await _ventaItemService.ObtenerVentaItemPorCursoIdAsync(clase.CursoId);
+                }
+
+                // 2. Crear pedido
+                var pedido = await _pedidoService.CrearPedidoAsync(idUsuario, new List<int> { ventaItem.Id });
+
+                // 3. Registrar pago gratuito
+                var pago = new Pago
+                {
+                    PedidoId = pedido.Id,
+                    MetodoPago = "Gratuito",
+                    ReferenciaPago = "0000000000",
+                    UrlComprobante = "/comprobantes/gratuito.jpg",
+                    FechaPago = DateTime.UtcNow
+                };
+                await _pedidoService.RegistrarPagoAsync(pago);
+
+                // 4. Aprobar pedido automáticamente
+                await _pedidoService.AprobarPedidoYOtorgarAccesoAsync(pedido.Id);
+
+                // 5. Inscribir al estudiante en la clase
+                await _cursoService.InscribirEstudianteAClaseAsync(claseId, idUsuario);
+
+                TempData["Success"] = "¡Inscripción exitosa! La clase es gratuita, ya tienes tu cupo confirmado.";
+                return RedirectToAction("DetalleClasePresencial", new { id = claseId });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Ocurrió un error al procesar tu inscripción gratuita. Intente de nuevo.";
+                return RedirectToAction("DetalleClasePresencial", new { id = claseId });
+            }
+        }
+
+        // ==================== CURSO DE PAGO ====================
+        // Validar comprobante
+        if (comprobanteArchivo == null || comprobanteArchivo.Length == 0)
+        {
+            TempData["Error"] = "Debe subir un comprobante de pago.";
+            return RedirectToAction("DetalleClasePresencial", new { id = claseId });
+        }
+
+        try
+        {
+            // 1. Guardar comprobante
+            var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(comprobanteArchivo.FileName)}";
+            var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "comprobantes");
+            if (!Directory.Exists(uploads))
+            {
+                Directory.CreateDirectory(uploads);
+            }
+            var filePath = Path.Combine(uploads, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await comprobanteArchivo.CopyToAsync(stream);
+            }
+            var urlComprobante = $"/comprobantes/{fileName}";
+
+            // 2. Obtener o crear VentaItem para el curso
+            var ventaItem = await _ventaItemService.ObtenerVentaItemPorCursoIdAsync(clase.CursoId);
+            if (ventaItem == null)
+            {
+                await _ventaItemService.CrearVentaItemAsync("Curso", clase.CursoId, null, curso.Precio);
+                ventaItem = await _ventaItemService.ObtenerVentaItemPorCursoIdAsync(clase.CursoId);
+            }
+
+            // 3. Crear pedido
+            var pedido = await _pedidoService.CrearPedidoAsync(idUsuario, new List<int> { ventaItem.Id });
+
+            // 4. Registrar pago
+            var pago = new Pago
+            {
+                PedidoId = pedido.Id,
+                MetodoPago = metodoPago,
+                ReferenciaPago = referenciaPago,
+                UrlComprobante = urlComprobante,
+                FechaPago = DateTime.UtcNow
+            };
+            await _pedidoService.RegistrarPagoAsync(pago);
+
+            // 5. Actualizar estado del pedido a "Validando"
+            await _pedidoService.ActualizarEstadoPedidoAsync(pedido.Id, "Validando");
+
+            TempData["Success"] = "¡Pago registrado exitosamente! Tu inscripción está en proceso de validación.";
+            return RedirectToAction("DetalleClasePresencial", new { id = claseId });
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Ocurrió un error al procesar su pago. Intente de nuevo.";
+            return RedirectToAction("DetalleClasePresencial", new { id = claseId });
+        }
+    }
+
 }

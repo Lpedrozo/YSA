@@ -1,377 +1,624 @@
-﻿@using YSA.Web.Models.ViewModels
-@model IEnumerable<EstudianteConCursosViewModel>
-
+﻿@model List<YSA.Web.Models.ViewModels.EstudianteListaViewModel>
 @{
-    ViewData["Title"] = "Gestión de estudiantes";
+    ViewData["Title"] = "Gestión de Estudiantes";
+    var searchTerm = ViewBag.SearchTerm as string ?? "";
+    var orden = ViewBag.Orden as string ?? "recientes";
+    var paginaActual = (int)ViewBag.PaginaActual;
+    var totalPaginas = (int)ViewBag.TotalPaginas;
+    var totalEstudiantes = (int)ViewBag.TotalEstudiantes;
 }
 
 <style>
-    /* ------------------------------------- */
-    /* 1. IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES EDITORIAL */
-    /* ------------------------------------- */
-    /* VARIABLES DE ESTILO EDITORIAL CON NUEVA PALETA DE COLORES */
-    :root {
-        --color-primary-action: #ef8830; /* Naranja como color principal */
-        --color-secondary: #212529; /* Negro oscuro para títulos */
-        --color-accent: #6c757d; /* Gris para texto de soporte */
-        --color-background: #ffffff; /* Fondo blanco (como papel de revista) */
-        --color-card-bg: #ffffff;
-        --color-text-dark: #212529;
-        --color-text-light: #ffffff;
-        --color-border: #E8E8E8;
-        --color-alert: #e5361a; /* Rojo para alertas/énfasis */
-        --color-shadow-light: rgba(0, 0, 0, 0.1);
-        --color-section-bg: #f8f9fa; /* Nuevo: Color de fondo para secciones */
-        /* NUEVOS COLORES DE MARCA */
-        --color-brand-primary: #ef8830; /* Naranja - color principal */
-        --color-brand-secondary: #e5361a; /* Rojo - color secundario */
-        --color-brand-accent: #f2e514; /* Amarillo - color de atención */
-        --color-brand-success: #6db53e; /* Verde - color de éxito */
-        --color-brand-dark: #08080a; /* Negro - texto principal */
-        /* TIPOGRAFÍAS - Usar fuentes similares hasta que se instalen las personalizadas */
-        --font-heading: 'Georgia', 'Times New Roman', serif; /* Similar a Bogart */
-        --font-body: 'Arial', 'Helvetica', sans-serif; /* Similar a Hey August */
-        --font-accent: 'Poppins', sans-serif;
-        /* ALTURAS DE LÍNEA */
-        --line-height-tight: 1.1;
-        --line-height-normal: 1.4;
-        --line-height-loose: 1.6;
-        /* BORDES REDONDEADOS */
-        --border-radius-sm: 8px;
-        --border-radius-md: 12px;
-        --border-radius-lg: 16px;
-        --border-radius-xl: 20px;
-    }
-
-    body {
-        font-family: var(--font-body);
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-        line-height: var(--line-height-loose);
-    }
-
-    /* ------------------------------------- */
-    /* 2. CABECERA ESTILO EDITORIAL */
-    /* ------------------------------------- */
     .editorial-header {
-        background-color: var(--color-section-bg);
-        border-radius: var(--border-radius-lg);
-        padding: 2.5rem 2rem;
-        margin: 2rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        background-color: var(--color-section-bg, #f8f9fa);
+        border-radius: 16px;
+        padding: 2rem;
+        margin: 1rem 0 2rem 0;
         text-align: center;
     }
 
     .editorial-title {
-        font-family: var(--font-heading);
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--color-secondary);
+        font-family: var(--font-heading, 'Georgia', serif);
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-secondary, #212529);
+        border-bottom: 3px solid var(--color-brand-primary, #ef8830);
+        display: inline-block;
         padding-bottom: 0.5rem;
         margin-bottom: 0.5rem;
-        display: inline-block;
-        border-bottom: 4px solid var(--color-brand-primary);
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        line-height: var(--line-height-tight);
     }
 
-    .editorial-subtitle {
-        font-family: var(--font-body);
-        font-size: 1.2rem;
-        font-weight: 400;
-        color: var(--color-accent);
-        line-height: var(--line-height-normal);
-        margin-top: 1rem;
-    }
-
-    /* ------------------------------------- */
-    /* 3. BOTONES ESTILO EDITORIAL */
-    /* ------------------------------------- */
     .btn-editorial-secondary {
-        background-color: var(--color-accent) !important;
-        border-color: var(--color-accent) !important;
-        color: white !important;
-        transition: background-color 0.2s;
-        border-radius: var(--border-radius-sm);
-        font-family: var(--font-accent);
-        font-weight: 600;
-        padding: 0.75rem 1.5rem;
-    }
-
-        .btn-editorial-secondary:hover {
-            background-color: var(--color-secondary) !important;
-            border-color: var(--color-secondary) !important;
-        }
-
-    /* ------------------------------------- */
-    /* 4. TARJETAS DE ESTUDIANTE ESTILO EDITORIAL */
-    /* ------------------------------------- */
-    .estudiante-card-editorial {
-        border-radius: var(--border-radius-md);
-        border: 1px solid var(--color-border);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        background-color: var(--color-card-bg);
-        height: 100%;
+        background-color: var(--color-accent, #6c757d);
+        border-color: var(--color-accent, #6c757d);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.2s;
         text-decoration: none;
-        color: inherit;
-        display: block;
-        position: relative;
-    }
-
-        .estudiante-card-editorial:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            border-color: var(--color-brand-primary);
-        }
-
-    .estudiante-card-body-editorial {
-        padding: 1.5rem;
-        position: relative;
-    }
-
-    .card-title-estudiante-editorial {
-        font-family: var(--font-heading);
-        font-weight: 700;
-        color: var(--color-secondary);
-        font-size: 1.5rem;
-        margin: 0 0 0.5rem 0;
-        line-height: var(--line-height-normal);
-    }
-
-    .card-subtitle-estudiante-editorial {
-        font-family: var(--font-body);
-        font-size: 1rem;
-        color: var(--color-accent);
-        margin-bottom: 1rem;
-        line-height: var(--line-height-normal);
-    }
-
-    .card-divider-editorial {
-        border: none;
-        height: 1px;
-        background: linear-gradient(to right, transparent, var(--color-border), transparent);
-        margin: 1.5rem 0;
-    }
-
-    .card-section-title-editorial {
-        font-family: var(--font-accent);
-        font-weight: 600;
-        color: var(--color-secondary);
-        font-size: 1.1rem;
-        margin-bottom: 1rem;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 0.5rem;
     }
 
-    /* ------------------------------------- */
-    /* 5. LISTAS ESTILO EDITORIAL */
-    /* ------------------------------------- */
-    .list-group-editorial {
-        border: none;
-        margin-bottom: 0;
+    .btn-editorial-secondary:hover {
+        background-color: var(--color-secondary, #212529);
+        border-color: var(--color-secondary, #212529);
+        color: white;
     }
 
-    .list-group-item-editorial {
+    .btn-editorial-primary {
+        background-color: var(--color-brand-primary, #ef8830);
+        border-color: var(--color-brand-primary, #ef8830);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+
+    .table-estudiantes {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table-estudiantes th,
+    .table-estudiantes td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--color-border, #e8e8e8);
+        vertical-align: middle;
+    }
+
+    .table-estudiantes th {
+        background-color: var(--color-section-bg, #f8f9fa);
+        font-family: var(--font-accent, 'Poppins', sans-serif);
+        font-weight: 600;
+        color: var(--color-secondary, #212529);
+    }
+
+    .table-estudiantes tr:hover {
+        background-color: rgba(239, 136, 48, 0.05);
+    }
+
+    .badge-completo {
+        background-color: var(--color-brand-success, #6db53e);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    .badge-incompleto {
+        background-color: var(--color-brand-secondary, #e5361a);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    .btn-ver {
+        background-color: var(--color-brand-primary, #ef8830);
         border: none;
-        border-bottom: 1px solid var(--color-border);
-        padding: 0.75rem 0;
-        font-family: var(--font-body);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+
+    .btn-ver:hover {
+        background-color: var(--color-brand-secondary, #e5361a);
+        color: white;
+    }
+
+    .filtros-container {
+        background: var(--color-section-bg, #f8f9fa);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
         display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-        color: var(--color-text-dark);
-        transition: background-color 0.2s ease;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        justify-content: space-between;
     }
 
-        .list-group-item-editorial:last-child {
-            border-bottom: none;
-        }
+    .search-box {
+        display: flex;
+        gap: 0.5rem;
+        flex: 1;
+        max-width: 400px;
+    }
 
-        .list-group-item-editorial:hover {
-            background-color: rgba(239, 136, 48, 0.05);
-        }
-
-    .list-group-icon-editorial {
-        color: var(--color-brand-primary);
+    .search-box input {
+        flex: 1;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--color-border, #e8e8e8);
+        border-radius: 8px;
         font-size: 0.9rem;
-        margin-top: 0.2rem;
-        flex-shrink: 0;
     }
 
-    .list-group-text-editorial {
-        flex-grow: 1;
-        line-height: var(--line-height-normal);
+    .search-box button {
+        padding: 0.5rem 1rem;
     }
 
-    /* ------------------------------------- */
-    /* 6. ALERTAS ESTILO EDITORIAL */
-    /* ------------------------------------- */
-    .alert-editorial-info {
-        background-color: rgba(109, 181, 62, 0.1);
-        border-color: var(--color-brand-success);
-        color: var(--color-text-dark);
-        border-radius: var(--border-radius-md);
-        padding: 1.5rem;
-        font-family: var(--font-body);
+    .orden-select {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--color-border, #e8e8e8);
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .pagination a, .pagination span {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--color-border, #e8e8e8);
+        border-radius: 6px;
+        text-decoration: none;
+        color: var(--color-brand-primary, #ef8830);
+        transition: all 0.2s;
+    }
+
+    .pagination a:hover {
+        background-color: var(--color-brand-primary, #ef8830);
+        color: white;
+        border-color: var(--color-brand-primary, #ef8830);
+    }
+
+    .pagination .active span {
+        background-color: var(--color-brand-primary, #ef8830);
+        color: white;
+        border-color: var(--color-brand-primary, #ef8830);
+    }
+
+    .total-info {
+        font-size: 0.85rem;
+        color: var(--color-accent, #6c757d);
+        margin-top: 1rem;
         text-align: center;
     }
 
-    .alert-editorial-warning {
-        background-color: rgba(242, 229, 20, 0.1);
-        border-color: var(--color-brand-accent);
-        color: var(--color-text-dark);
-        border-radius: var(--border-radius-md);
-        padding: 1rem;
-        font-family: var(--font-body);
-        text-align: left;
-    }
-
-    /* ------------------------------------- */
-    /* 7. SEPARADORES ESTILO EDITORIAL */
-    /* ------------------------------------- */
-    .section-divider-editorial {
+    /* Modal styles */
+    .modal-detalle .modal-content {
+        border-radius: 16px;
         border: none;
-        height: 1px;
-        background: linear-gradient(to right, transparent, var(--color-border), transparent);
-        margin: 2rem 0;
     }
 
-    /* ------------------------------------- */
-    /* 8. RESPONSIVE ADAPTATIONS */
-    /* ------------------------------------- */
-    /* Tablet (max-width: 991.98px) */
-    @@media (max-width: 991.98px) {
-        .editorial-header {
-            padding: 2rem 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .editorial-title {
-            font-size: 2rem;
-        }
-
-        .editorial-subtitle {
-            font-size: 1.1rem;
-        }
-
-        .card-title-estudiante-editorial {
-            font-size: 1.3rem;
-        }
-
-        .estudiante-card-body-editorial {
-            padding: 1.25rem;
-        }
+    .modal-detalle .modal-header {
+        background: linear-gradient(135deg, var(--color-brand-primary, #ef8830) 0%, var(--color-brand-secondary, #e5361a) 100%);
+        color: white;
+        border-radius: 16px 16px 0 0;
+        padding: 1rem 1.5rem;
     }
 
-    /* Mobile Pequeño (max-width: 575.98px) */
-    @@media (max-width: 575.98px) {
-        .editorial-header {
-            padding: 1.5rem 1rem;
-            margin: 1rem 0;
-            border-radius: var(--border-radius-md);
-        }
+    .modal-detalle .modal-title {
+        font-family: var(--font-heading, 'Georgia', serif);
+        font-weight: 600;
+    }
 
-        .editorial-title {
-            font-size: 1.7rem;
-        }
+    .modal-detalle .btn-close {
+        filter: brightness(0) invert(1);
+    }
 
-        .editorial-subtitle {
-            font-size: 1rem;
-        }
+    .modal-detalle .info-row {
+        display: flex;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid var(--color-border, #e8e8e8);
+    }
 
-        .estudiante-card-body-editorial {
-            padding: 1rem;
-        }
+    .modal-detalle .info-label {
+        width: 130px;
+        font-weight: 600;
+        color: var(--color-secondary, #212529);
+    }
 
-        .card-title-estudiante-editorial {
-            font-size: 1.2rem;
-        }
+    .modal-detalle .info-value {
+        flex: 1;
+        color: var(--color-text-dark, #212529);
+    }
 
-        .list-group-item-editorial {
-            padding: 0.5rem 0;
+    .badge-estado-completado {
+        background-color: var(--color-brand-success, #6db53e);
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+    }
+
+    .badge-estado-validando {
+        background-color: var(--color-brand-accent, #f2e514);
+        color: var(--color-brand-dark, #08080a);
+        padding: 0.2rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+    }
+
+    .badge-estado-pendiente {
+        background-color: var(--color-brand-secondary, #e5361a);
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+    }
+
+    @@media (max-width: 768px) {
+        .table-estudiantes {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .filtros-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .search-box {
+            max-width: 100%;
+        }
+        
+        .modal-detalle .info-row {
+            flex-direction: column;
+        }
+        
+        .modal-detalle .info-label {
+            width: 100%;
+            margin-bottom: 0.25rem;
         }
     }
 </style>
 
 <div class="container mt-4 mb-5 pb-5">
-    <!-- CABECERA ESTILO EDITORIAL -->
     <div class="editorial-header">
         <h1 class="editorial-title">Gestión de Estudiantes</h1>
-        <p class="editorial-subtitle">Lista de todos los estudiantes y los cursos que han adquirido</p>
+        <p class="text-muted mt-2">Administra la información de todos los estudiantes registrados</p>
     </div>
 
-    <!-- BOTÓN DE REGRESO -->
     <div class="d-flex justify-content-start align-items-center mb-4">
         <a asp-action="Panel" asp-controller="Admin" class="btn btn-editorial-secondary">
             <i class="fas fa-arrow-left me-2"></i> Regresar al panel
         </a>
     </div>
 
-    <hr class="section-divider-editorial" />
-
-    <!-- CONTENEDOR DE ESTUDIANTES -->
-    <div class="row mt-4 mb-5">
-        @if (Model != null && Model.Any())
-        {
-            @foreach (var estudiante in Model)
+    <!-- Filtros -->
+    <div class="filtros-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Buscar por nombre, email o cédula..." value="@searchTerm">
+            <button class="btn btn-editorial-primary" id="searchBtn">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+            @if (!string.IsNullOrEmpty(searchTerm))
             {
-                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                    <div class="estudiante-card-editorial h-100">
-                        <div class="estudiante-card-body-editorial">
-                            <!-- Información del Estudiante -->
-                            <h5 class="card-title-estudiante-editorial">@estudiante.Nombre</h5>
-                            <h6 class="card-subtitle-estudiante-editorial">
-                                <i class="fas fa-envelope me-2"></i>@estudiante.Email
-                            </h6>
-
-                            <hr class="card-divider-editorial" />
-
-                            <!-- Cursos Adquiridos -->
-                            <div class="card-section-title-editorial">
-                                <i class="fas fa-book-open"></i>
-                                <span>Cursos adquiridos:</span>
-                            </div>
-
-                            @if (estudiante.CursosComprados != null && estudiante.CursosComprados.Any())
-                            {
-                                <ul class="list-group list-group-editorial">
-                                    @foreach (var curso in estudiante.CursosComprados)
-                                    {
-                                        <li class="list-group-item-editorial">
-                                            <i class="fas fa-book list-group-icon-editorial"></i>
-                                            <span class="list-group-text-editorial">@curso</span>
-                                        </li>
-                                    }
-                                </ul>
-                            }
-                            else
-                            {
-                                <div class="alert-editorial-warning" role="alert">
-                                    <i class="fas fa-exclamation-circle me-2"></i>
-                                    Este estudiante no ha adquirido ningún curso aún.
-                                </div>
-                            }
-                        </div>
-                    </div>
-                </div>
+                <a href="@Url.Action("GestionarEstudiantes")" class="btn btn-secondary-custom">
+                    <i class="fas fa-times"></i> Limpiar
+                </a>
             }
-        }
-        else
-        {
-            <div class="col-12">
-                <div class="alert-editorial-info text-center" role="alert">
-                    <i class="fas fa-info-circle me-2"></i>
-                    No se encontraron estudiantes para mostrar.
+        </div>
+        
+        <div>
+            <select id="ordenSelect" class="orden-select" name="orden">
+                <option value="recientes" selected="@(orden == "recientes")">Más recientes</option>
+                <option value="antiguos" selected="@(orden == "antiguos")">Más antiguos</option>
+                <option value="nombre-asc" selected="@(orden == "nombre-asc")">Nombre (A-Z)</option>
+                <option value="nombre-desc" selected="@(orden == "nombre-desc")">Nombre (Z-A)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Tabla de estudiantes -->
+    <div class="table-responsive">
+        <table class="table-estudiantes">
+            <thead>
+                <tr>
+                    <th>Estudiante</th>
+                    <th>Contacto</th>
+                    <th>Perfil</th>
+                    <th>Cursos comprados</th>
+                    <th>Fecha registro</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var estudiante in Model)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@estudiante.Nombre @estudiante.Apellido</strong><br>
+                                <small class="text-muted">@estudiante.Email</small>
+                            </td>
+                            <td>
+                                <i class="fas fa-id-card me-1"></i> @(string.IsNullOrEmpty(estudiante.Cedula) ? "No registrada" : estudiante.Cedula)<br>
+                                <i class="fab fa-whatsapp me-1"></i> @(string.IsNullOrEmpty(estudiante.WhatsApp) ? "No registrado" : estudiante.WhatsApp)
+                            </td>
+                            <td>
+                                @if (estudiante.TienePerfilCompleto)
+                                {
+                                    <span class="badge-completo"><i class="fas fa-check-circle me-1"></i> Completo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-incompleto"><i class="fas fa-exclamation-circle me-1"></i> Incompleto</span>
+                                }
+                            </td>
+                            <td>
+                                @if (estudiante.CursosCompradosCount > 0)
+                                {
+                                    <span class="fw-bold">@estudiante.CursosCompradosCount cursos</span>
+                                    @if (estudiante.CursosComprados.Any())
+                                    {
+                                        <br>
+                                        <small class="text-muted">@string.Join(", ", estudiante.CursosComprados)</small>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Ningún curso</span>
+                                }
+                            </td>
+                            <td>
+                                @estudiante.FechaRegistro.ToString("dd/MM/yyyy")
+                            </td>
+                            <td>
+                                <button type="button" class="btn-ver" data-id="@estudiante.Id" data-nombre="@estudiante.Nombre @estudiante.Apellido">
+                                    <i class="fas fa-eye"></i> Ver
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <i class="fas fa-user-graduate fa-3x text-muted mb-3"></i>
+                            <h5>No se encontraron estudiantes</h5>
+                            <p class="text-muted">@(string.IsNullOrEmpty(searchTerm) ? "No hay estudiantes registrados." : "No hay resultados para tu búsqueda.")</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    @if (totalPaginas > 1)
+    {
+        <div class="pagination">
+            @if (paginaActual > 1)
+            {
+                <a href="#" data-page="1"><i class="fas fa-angle-double-left"></i></a>
+                <a href="#" data-page="@(paginaActual - 1)"><i class="fas fa-chevron-left"></i></a>
+            }
+            
+            @for (int i = Math.Max(1, paginaActual - 2); i <= Math.Min(totalPaginas, paginaActual + 2); i++)
+            {
+                if (i == paginaActual)
+                {
+                    <span class="active"><span>@i</span></span>
+                }
+                else
+                {
+                    <a href="#" data-page="@i">@i</a>
+                }
+            }
+            
+            @if (paginaActual < totalPaginas)
+            {
+                <a href="#" data-page="@(paginaActual + 1)"><i class="fas fa-chevron-right"></i></a>
+                <a href="#" data-page="@totalPaginas"><i class="fas fa-angle-double-right"></i></a>
+            }
+        </div>
+    }
+    
+    <div class="total-info">
+        Mostrando <strong>@Model.Count</strong> de <strong>@totalEstudiantes</strong> estudiantes
+    </div>
+</div>
+
+<!-- Modal de Detalle del Estudiante -->
+<div class="modal fade modal-detalle" id="estudianteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitulo">Detalle del Estudiante</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <div class="text-center py-4">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p class="mt-2">Cargando información...</p>
                 </div>
             </div>
-        }
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        function aplicarFiltros() {
+            const searchTerm = document.getElementById('searchInput').value;
+            const orden = document.getElementById('ordenSelect').value;
+            let url = '@Url.Action("GestionarEstudiantes", "Admin")?';
+            if (searchTerm) url += `searchTerm=${encodeURIComponent(searchTerm)}&`;
+            if (orden) url += `orden=${orden}&`;
+            window.location.href = url;
+        }
+
+        document.getElementById('searchBtn')?.addEventListener('click', aplicarFiltros);
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') aplicarFiltros();
+        });
+        document.getElementById('ordenSelect')?.addEventListener('change', aplicarFiltros);
+        
+        document.querySelectorAll('.pagination a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = this.getAttribute('data-page');
+                if (page) {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('page', page);
+                    window.location.href = url.toString();
+                }
+            });
+        });
+
+        // Modal de detalle del estudiante
+        const modal = document.getElementById('estudianteModal');
+        const modalContent = document.getElementById('modalContent');
+        const modalTitulo = document.getElementById('modalTitulo');
+        
+        async function cargarDetalleEstudiante(estudianteId, estudianteNombre) {
+            modalTitulo.innerText = `Detalle: ${estudianteNombre}`;
+            modalContent.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p class="mt-2">Cargando información...</p>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch(`@Url.Action("ObtenerDetalleEstudiante", "Admin")?id=${estudianteId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const e = data.estudiante;
+                    
+                    let cursosHtml = '';
+                    if (e.cursosComprados && e.cursosComprados.length > 0) {
+                        cursosHtml = '<ul class="list-unstyled mb-0">';
+                        e.cursosComprados.forEach(curso => {
+                            cursosHtml += `<li class="py-1"><i class="fas fa-book me-2" style="color: var(--color-brand-primary);"></i> ${curso}</li>`;
+                        });
+                        cursosHtml += '</ul>';
+                    } else {
+                        cursosHtml = '<p class="text-muted">No ha adquirido ningún curso</p>';
+                    }
+                    
+                    let clasesHtml = '';
+                    if (e.clasesInscritas && e.clasesInscritas.length > 0) {
+                        clasesHtml = `
+                            <div class="info-card mt-3">
+                                <h4 class="mb-3" style="font-size: 1.1rem; border-bottom: 2px solid var(--color-brand-success); display: inline-block;">Clases inscritas</h4>
+                                <ul class="list-unstyled mb-0">
+                        `;
+                        e.clasesInscritas.forEach(clase => {
+                            clasesHtml += `<li class="py-1"><i class="fas fa-calendar-alt me-2" style="color: var(--color-brand-success);"></i> ${clase}</li>`;
+                        });
+                        clasesHtml += '</ul></div>';
+                    }
+                    
+                    let pedidosHtml = '';
+                    if (e.pedidos && e.pedidos.length > 0) {
+                        pedidosHtml = `
+                            <div class="table-responsive mt-3">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Pedido #</th>
+                                            <th>Fecha</th>
+                                            <th>Total</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                        `;
+                        e.pedidos.forEach(pedido => {
+                            let badgeClass = '';
+                            if (pedido.estado === 'Completado') badgeClass = 'badge-estado-completado';
+                            else if (pedido.estado === 'Validando') badgeClass = 'badge-estado-validando';
+                            else badgeClass = 'badge-estado-pendiente';
+                            
+                            pedidosHtml += `
+                                <tr>
+                                    <td>${pedido.id}</td>
+                                    <td>${new Date(pedido.fechaPedido).toLocaleDateString()}</td>
+                                    <td>$${pedido.total.toFixed(2)}</td>
+                                    <td><span class="${badgeClass}">${pedido.estado}</span></td>
+                                </tr>
+                            `;
+                        });
+                        pedidosHtml += '</tbody></table></div>';
+                    } else {
+                        pedidosHtml = '<p class="text-muted mt-3">No tiene pedidos registrados</p>';
+                    }
+                    
+                    modalContent.innerHTML = `
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <h4 class="mb-3" style="font-size: 1.1rem; border-bottom: 2px solid var(--color-brand-primary); display: inline-block;">Información personal</h4>
+                                    <div class="info-row"><div class="info-label">Nombre completo:</div><div class="info-value">${e.nombre} ${e.apellido}</div></div>
+                                    <div class="info-row"><div class="info-label">Email:</div><div class="info-value">${e.email}</div></div>
+                                    <div class="info-row"><div class="info-label">Cédula:</div><div class="info-value">${e.cedula || 'No registrada'}</div></div>
+                                    <div class="info-row"><div class="info-label">WhatsApp:</div><div class="info-value">${e.whatsApp || 'No registrado'}</div></div>
+                                    <div class="info-row"><div class="info-label">Fecha nacimiento:</div><div class="info-value">${e.fechaNacimiento ? new Date(e.fechaNacimiento).toLocaleDateString() : 'No registrada'}</div></div>
+                                    <div class="info-row"><div class="info-label">Menor de edad:</div><div class="info-value">${e.esMenorEdad ? 'Sí' : 'No'}</div></div>
+                                    ${e.esMenorEdad ? `
+                                        <div class="info-row"><div class="info-label">Representante:</div><div class="info-value">${e.nombreRepresentante || 'No registrado'}</div></div>
+                                        <div class="info-row"><div class="info-label">Cédula representante:</div><div class="info-value">${e.cedulaRepresentante || 'No registrada'}</div></div>
+                                    ` : ''}
+                                    <div class="info-row"><div class="info-label">Atendido por:</div><div class="info-value">${e.atendidoPor || 'No registrado'}</div></div>
+                                    ${e.experienciaTatuaje ? `<div class="info-row"><div class="info-label">Experiencia tatuaje:</div><div class="info-value">${e.experienciaTatuaje}</div></div>` : ''}
+                                    <div class="info-row"><div class="info-label">Fecha registro:</div><div class="info-value">${new Date(e.fechaCreacion).toLocaleDateString()}</div></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <h4 class="mb-3" style="font-size: 1.1rem; border-bottom: 2px solid var(--color-brand-primary); display: inline-block;">Cursos adquiridos</h4>
+                                    ${cursosHtml}
+                                </div>
+                                ${clasesHtml}
+                            </div>
+                        </div>
+                        <div class="info-card mt-3">
+                            <h4 class="mb-3" style="font-size: 1.1rem; border-bottom: 2px solid var(--color-brand-primary); display: inline-block;">Historial de pedidos</h4>
+                            ${pedidosHtml}
+                        </div>
+                    `;
+                } else {
+                    modalContent.innerHTML = `
+                        <div class="alert alert-danger text-center">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            ${data.message || 'Error al cargar los datos del estudiante'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                modalContent.innerHTML = `
+                    <div class="alert alert-danger text-center">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Error de conexión al cargar los datos
+                    </div>
+                `;
+            }
+        }
+        
+        // Evento para abrir el modal al hacer clic en "Ver"
+        document.querySelectorAll('.btn-ver').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const estudianteId = this.getAttribute('data-id');
+                const estudianteNombre = this.getAttribute('data-nombre');
+                cargarDetalleEstudiante(estudianteId, estudianteNombre);
+                new bootstrap.Modal(modal).show();
+            });
+        });
+    </script>
 }

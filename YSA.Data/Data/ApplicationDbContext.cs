@@ -2,6 +2,7 @@
 using YSA.Core.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Linq;
+using YSA.Core.Enums;
 
 namespace YSA.Data.Data
 {
@@ -41,6 +42,11 @@ namespace YSA.Data.Data
         public DbSet<ArticuloFoto> ArticuloFotos { get; set; }
         public DbSet<Notificacion> Notificaciones { get; set; }
         public DbSet<TipoNotificacion> TipoNotificaciones { get; set; }
+
+        // NUEVOS DbSets para cursos presenciales
+        public DbSet<ClasePresencial> ClasesPresenciales { get; set; }
+        public DbSet<InscripcionClase> InscripcionesClases { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -49,6 +55,8 @@ namespace YSA.Data.Data
             {
                 relationship.DeleteBehavior = DeleteBehavior.NoAction;
             }
+
+            // ==================== CONFIGURACIONES EXISTENTES ====================
 
             modelBuilder.Entity<ProductoCategoria>()
                 .HasKey(pc => new { pc.ProductoId, pc.CategoriaId });
@@ -91,7 +99,6 @@ namespace YSA.Data.Data
                 .WithMany(p => p.PedidoItems)
                 .HasForeignKey(pi => pi.PedidoId);
 
-            // Se ha cambiado la relación para que PedidoItem apunte a VentaItem
             modelBuilder.Entity<PedidoItem>()
                 .HasOne(pi => pi.VentaItem)
                 .WithMany()
@@ -107,7 +114,6 @@ namespace YSA.Data.Data
                 .WithMany()
                 .HasForeignKey(pa => pa.ValidadorId);
 
-            // Nuevas configuraciones para la entidad VentaItem
             modelBuilder.Entity<VentaItem>()
                 .HasOne(vi => vi.Curso)
                 .WithMany()
@@ -118,16 +124,14 @@ namespace YSA.Data.Data
                 .WithMany()
                 .HasForeignKey(vi => vi.ProductoId);
 
-            // Configuración para la clave compuesta de Resena
             modelBuilder.Entity<Resena>()
                 .HasKey(r => new { r.EstudianteId, r.CursoId });
-            
-            // Nueva configuración para PreguntaRespuesta
+
             modelBuilder.Entity<PreguntaRespuesta>()
                 .HasOne(pr => pr.Curso)
                 .WithMany(c => c.PreguntasRespuestas)
                 .HasForeignKey(pr => pr.CursoId);
-            
+
             modelBuilder.Entity<PreguntaRespuesta>()
                 .HasOne(pr => pr.Estudiante)
                 .WithMany()
@@ -137,14 +141,12 @@ namespace YSA.Data.Data
                 .HasOne(pr => pr.Instructor)
                 .WithMany(i => i.PreguntasRespuestas)
                 .HasForeignKey(pr => pr.InstructorId);
-            
-            // Nueva configuración para Anuncio
+
             modelBuilder.Entity<Anuncio>()
                 .HasOne(a => a.Curso)
                 .WithMany(c => c.Anuncios)
                 .HasForeignKey(a => a.CursoId);
 
-            // Nueva configuración para Resena
             modelBuilder.Entity<Resena>()
                 .HasOne(r => r.Estudiante)
                 .WithMany()
@@ -155,15 +157,16 @@ namespace YSA.Data.Data
                 .WithMany(c => c.Resenas)
                 .HasForeignKey(r => r.CursoId);
 
-            // Nueva configuración para MetodoPago
             modelBuilder.Entity<MetodoPago>()
                 .HasOne(mp => mp.Estudiante)
                 .WithMany()
                 .HasForeignKey(mp => mp.EstudianteId);
+
             modelBuilder.Entity<VentaItem>()
-                .HasMany(vi => vi.PedidoItems) 
-                .WithOne(pi => pi.VentaItem)  
+                .HasMany(vi => vi.PedidoItems)
+                .WithOne(pi => pi.VentaItem)
                 .HasForeignKey(pi => pi.VentaItemId);
+
             modelBuilder.Entity<ProgresoLeccion>()
                 .HasOne(pl => pl.Estudiante)
                 .WithMany()
@@ -173,10 +176,12 @@ namespace YSA.Data.Data
                 .HasOne(pl => pl.Leccion)
                 .WithMany()
                 .HasForeignKey(pl => pl.LeccionId);
+
             modelBuilder.Entity<ArtistaFoto>()
                 .HasOne(af => af.Artista)
                 .WithMany(a => a.Portafolio)
                 .HasForeignKey(af => af.ArtistaId);
+
             modelBuilder.Entity<Evento>()
                 .HasOne(e => e.TipoEvento)
                 .WithMany(te => te.Eventos)
@@ -188,10 +193,11 @@ namespace YSA.Data.Data
                 .WithMany(e => e.Fotos)
                 .HasForeignKey(ef => ef.EventoId)
                 .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<RecursoActividad>()
                 .HasMany(ra => ra.Entregas)
                 .WithOne(ea => ea.RecursoActividad)
-                .HasForeignKey(ea => ea.RecursoActividadId); 
+                .HasForeignKey(ea => ea.RecursoActividadId);
 
             modelBuilder.Entity<EntregaActividad>()
                 .HasOne(ea => ea.Estudiante)
@@ -202,8 +208,9 @@ namespace YSA.Data.Data
                 .HasOne(ea => ea.Instructor)
                 .WithMany()
                 .HasForeignKey(ea => ea.InstructorId);
+
             modelBuilder.Entity<CursoInstructor>()
-                .HasKey(ci => new { ci.CursoId, ci.ArtistaId }); 
+                .HasKey(ci => new { ci.CursoId, ci.ArtistaId });
 
             modelBuilder.Entity<CursoInstructor>()
                 .HasOne(ci => ci.Curso)
@@ -214,11 +221,13 @@ namespace YSA.Data.Data
                 .HasOne(ci => ci.Artista)
                 .WithMany(a => a.CursosInstructores)
                 .HasForeignKey(ci => ci.ArtistaId);
+
             modelBuilder.Entity<ArticuloFoto>()
                 .HasOne(af => af.Articulo)
                 .WithMany(a => a.Fotos)
                 .HasForeignKey(af => af.ArticuloId)
                 .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<Notificacion>(entity =>
             {
                 entity.HasOne(n => n.Usuario)
@@ -230,6 +239,146 @@ namespace YSA.Data.Data
                       .WithMany(tn => tn.Notificaciones)
                       .HasForeignKey(n => n.TipoNotificacionId)
                       .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // ==================== NUEVAS CONFIGURACIONES PARA CURSOS PRESENCIALES ====================
+
+            // Configuración para Curso - añadir discriminador TipoCurso
+            modelBuilder.Entity<Curso>(entity =>
+            {
+                // Convertir el enum a int para la base de datos, pero sin default value de esta forma
+                entity.Property(e => e.TipoCurso)
+                    .HasConversion<int>();
+
+                // Opción 1: Usando el valor del enum directamente (recomendado)
+                entity.Property(e => e.TipoCurso)
+                    .HasDefaultValue(TipoCurso.Digital);
+
+                // Opción 2: Si la opción 1 no funciona, usa el valor numérico casteado
+                // entity.Property(e => e.TipoCurso)
+                //     .HasDefaultValue((int)TipoCurso.Digital);
+
+                // Configurar la relación con ClasesPresenciales
+                entity.HasMany(c => c.ClasesPresenciales)
+                    .WithOne(cp => cp.Curso)
+                    .HasForeignKey(cp => cp.CursoId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Configuración para ClasePresencial
+            modelBuilder.Entity<ClasePresencial>(entity =>
+            {
+                entity.ToTable("ClasesPresenciales");
+
+                entity.HasKey(cp => cp.Id);
+
+                entity.Property(cp => cp.Titulo)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(cp => cp.Descripcion)
+                    .HasMaxLength(1000);
+
+                entity.Property(cp => cp.Lugar)
+                    .HasMaxLength(255)
+                    .HasDefaultValue("Estudio de la Academia");
+
+                entity.Property(cp => cp.Estado)
+                    .HasMaxLength(50)
+                    .HasDefaultValue("Programada");
+
+                entity.Property(cp => cp.UrlMeet)
+                    .HasMaxLength(500);
+
+                // Relación con Curso
+                entity.HasOne(cp => cp.Curso)
+                    .WithMany(c => c.ClasesPresenciales)
+                    .HasForeignKey(cp => cp.CursoId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Relación con Inscripciones
+                entity.HasMany(cp => cp.Inscripciones)
+                    .WithOne(i => i.ClasePresencial)
+                    .HasForeignKey(i => i.ClasePresencialId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Índices para búsquedas frecuentes
+                entity.HasIndex(cp => cp.CursoId);
+                entity.HasIndex(cp => cp.FechaHoraInicio);
+                entity.HasIndex(cp => cp.Estado);
+            });
+
+            // Configuración para InscripcionClase
+            modelBuilder.Entity<InscripcionClase>(entity =>
+            {
+                entity.ToTable("InscripcionesClases");
+
+                entity.HasKey(i => i.Id);
+
+                entity.Property(i => i.EstadoAsistencia)
+                    .HasMaxLength(50)
+                    .HasDefaultValue("Pendiente");
+
+                entity.Property(i => i.Comentario)
+                    .HasMaxLength(500);
+
+                // Relación con ClasePresencial
+                entity.HasOne(i => i.ClasePresencial)
+                    .WithMany(cp => cp.Inscripciones)
+                    .HasForeignKey(i => i.ClasePresencialId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Relación con Usuario (Estudiante)
+                entity.HasOne(i => i.Estudiante)
+                    .WithMany(u => u.InscripcionesClases)
+                    .HasForeignKey(i => i.EstudianteId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Índices para búsquedas frecuentes
+                entity.HasIndex(i => i.ClasePresencialId);
+                entity.HasIndex(i => i.EstudianteId);
+                entity.HasIndex(i => new { i.ClasePresencialId, i.EstudianteId }).IsUnique(); // Evita doble inscripción
+                entity.HasIndex(i => i.EstadoAsistencia);
+            });
+
+            // Configuración para Usuario - nuevos campos
+            modelBuilder.Entity<Usuario>(entity =>
+            {
+                entity.Property(u => u.Cedula)
+                    .HasMaxLength(20);
+
+                entity.Property(u => u.WhatsApp)
+                    .HasMaxLength(20);
+
+                entity.Property(u => u.ExperienciaTatuaje)
+                    .HasMaxLength(500);
+
+                entity.Property(u => u.NombreRepresentante)
+                    .HasMaxLength(255);
+
+                entity.Property(u => u.CedulaRepresentante)
+                    .HasMaxLength(20);
+
+                entity.Property(u => u.AtendidoPor)
+                    .HasMaxLength(100);
+
+                // Índice para búsqueda por cédula (útil para encontrar estudiantes)
+                entity.HasIndex(u => u.Cedula);
+
+                // Índice para búsqueda por WhatsApp
+                entity.HasIndex(u => u.WhatsApp);
+
+                // Relación con InscripcionesClases
+                entity.HasMany(u => u.InscripcionesClases)
+                    .WithOne(i => i.Estudiante)
+                    .HasForeignKey(i => i.EstudianteId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configuración adicional para RecursoActividad - asegurar que puede usarse con ClasePresencial
+            modelBuilder.Entity<RecursoActividad>(entity =>
+            {
+                entity.HasIndex(r => new { r.TipoEntidad, r.EntidadId });
             });
         }
     }

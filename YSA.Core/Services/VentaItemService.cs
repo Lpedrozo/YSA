@@ -69,13 +69,16 @@ namespace YSA.Core.Services
         public async Task<VentaItem> CrearVentaItemAsync(string tipo, int? cursoId = null, int? productoId = null, decimal? precio = null)
         {
             // Lógica para crear un VentaItem de forma manual si se necesita, aunque los métodos de arriba ya lo hacen
-            return new VentaItem
+            var ventaItem = new VentaItem
             {
                 Tipo = tipo,
                 CursoId = cursoId,
                 ProductoId = productoId,
                 Precio = precio ?? 0
             };
+            await _ventaItemRepository.AddAsync(ventaItem);
+            return ventaItem;
+
         }
         public async Task ActualizarVentaItemAsync(VentaItem ventaItem)
         {

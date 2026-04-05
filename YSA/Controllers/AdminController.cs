@@ -175,7 +175,99 @@ namespace YSA.Web.Controllers
         }
 
         // ----------------- Course Management Actions (CRUD) -----------------
+        // GET: Gestionar Clases de un Curso Presencial
+        [HttpGet]
+        public async Task<IActionResult> GestionarClasesCurso(int cursoId)
+        {
+            var curso = await _cursoService.ObtenerCursoPorIdAsync(cursoId);
+            if (curso == null)
+            {
+                return NotFound();
+            }
 
+            var clases = await _cursoService.ObtenerClasesPorCursoIdAsync(cursoId);
+
+            var viewModel = new GestionClasesCursoViewModel
+            {
+                CursoId = cursoId,
+                CursoTitulo = curso.Titulo,
+                Clases = clases.Select(c => new ClaseConInscripcionesViewModel
+                {
+                    Id = c.Id,
+                    Titulo = c.Titulo,
+                    Descripcion = c.Descripcion,
+                    FechaHoraInicio = c.FechaHoraInicio,
+                    FechaHoraFin = c.FechaHoraFin,
+                    CapacidadMaxima = c.CapacidadMaxima,
+                    Lugar = c.Lugar,
+                    Estado = c.Estado,
+                    UrlMeet = c.UrlMeet,
+                    InscritosCount = c.Inscripciones?.Count ?? 0,
+                    Inscripciones = c.Inscripciones?.Select(i => new InscripcionClaseViewModel
+                    {
+                        Id = i.Id,
+                        EstudianteId = i.EstudianteId,
+                        EstudianteNombre = $"{i.Estudiante?.Nombre} {i.Estudiante?.Apellido}",
+                        EstudianteEmail = i.Estudiante?.Email,
+                        EstadoAsistencia = i.EstadoAsistencia,
+                        FechaInscripcion = i.FechaInscripcion
+                    }).ToList() ?? new List<InscripcionClaseViewModel>()
+                }).ToList()
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: Actualizar Asistencia
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ActualizarAsistencia([FromBody] ActualizarAsistenciaDto dto)
+        {
+            try
+            {
+                var result = await _cursoService.ActualizarAsistenciaAsync(dto.InscripcionId, dto.EstadoAsistencia);
+                if (result)
+                {
+                    return Json(new { success = true, message = "Asistencia actualizada" });
+                }
+                return Json(new { success = false, message = "No se pudo actualizar la asistencia" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // POST: Editar Clase
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarClase([FromBody] EditarClaseDto dto)
+        {
+            try
+            {
+                var clase = await _cursoService.ObtenerClasePorIdAsync(dto.Id);
+                if (clase == null)
+                {
+                    return Json(new { success = false, message = "Clase no encontrada" });
+                }
+
+                clase.Titulo = dto.Titulo;
+                clase.Descripcion = dto.Descripcion;
+                clase.FechaHoraInicio = dto.FechaHoraInicio;
+                clase.FechaHoraFin = dto.FechaHoraFin;
+                clase.CapacidadMaxima = dto.CapacidadMaxima;
+                clase.Lugar = dto.Lugar;
+                clase.Estado = dto.Estado;
+                clase.UrlMeet = dto.UrlMeet;
+
+                await _cursoService.ActualizarClaseAsync(clase);
+                return Json(new { success = true, message = "Clase actualizada con éxito" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
         public async Task<IActionResult> GestionarCursos()
         {
             var cursos = await _cursoService.ObtenerTodosLosCursosAsync();
@@ -190,6 +282,7 @@ namespace YSA.Web.Controllers
                 Precio = c.Precio,
                 UrlImagen = c.UrlImagen,
                 Nivel = c.Nivel,
+                TipoCurso = c.TipoCurso,
                 CategoriasSeleccionadas = c.CursoCategorias.Select(cc => cc.CategoriaId).ToArray(),
                 InstructoresNombres = c.CursoInstructores
         .Select(ci => $"{ci.Artista.Usuario.Nombre} {ci.Artista.Usuario.Apellido}")
@@ -319,17 +412,81 @@ namespace YSA.Web.Controllers
                 return Json(new { success = false, message = "Ocurrió un error al desasociar el artista." });
             }
         }
+
+        // Endpoints para gestionar clases presenciales
+        [HttpGet]
+        public async Task<IActionResult> ObtenerClasesPorCurso(int cursoId)
+        {
+            var clases = await _cursoService.ObtenerClasesPorCursoIdAsync(cursoId);
+            var result = clases.Select(c => new {
+                id = c.Id,
+                titulo = c.Titulo,
+                descripcion = c.Descripcion,
+                fechaHoraInicio = c.FechaHoraInicio,
+                fechaHoraFin = c.FechaHoraFin,
+                capacidadMaxima = c.CapacidadMaxima,
+                estado = c.Estado,
+                inscritosCount = c.Inscripciones?.Count ?? 0
+            });
+            return Json(new { success = true, clases = result });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CrearClase([FromBody] CrearClaseDto dto)
+        {
+            try
+            {
+                if (dto == null)
+                {
+                    return Json(new { success = false, message = "Datos inválidos" });
+                }
+
+                var clase = new ClasePresencial
+                {
+                    CursoId = dto.CursoId,
+                    Titulo = dto.Titulo,
+                    Descripcion = dto.Descripcion,
+                    FechaHoraInicio = dto.FechaHoraInicio,
+                    FechaHoraFin = dto.FechaHoraFin,
+                    CapacidadMaxima = dto.CapacidadMaxima,
+                    Lugar = dto.Lugar ?? "Estudio de la Academia",
+                    Estado = "Programada",
+                    UrlMeet = dto.UrlMeet,
+                    NotasInstructor = "Te esperamos!"
+                };
+
+                await _cursoService.CrearClaseAsync(clase);
+                return Json(new { success = true, message = "Clase creada con éxito." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarClase(int id)
+        {
+            try
+            {
+                await _cursoService.EliminarClaseAsync(id);
+                return Json(new { success = true, message = "Clase eliminada con éxito." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
         [HttpPost]
         public async Task<IActionResult> CrearCurso([FromForm] CursoViewModel model)
         {
-            // El model binding ahora extrae los campos de texto del formulario.
-            // IFormFile debe ser un parámetro separado.
             IFormFile imagenArchivo = Request.Form.Files["imagenArchivo"];
             var categoriasSeleccionadas = Request.Form["CategoriasSeleccionadas"].Select(int.Parse).ToArray();
 
-            // La validación del modelo ahora debe hacerse manualmente para la imagen y las categorías.
+            // Validación básica
             if (string.IsNullOrEmpty(model.Titulo)) ModelState.AddModelError("Titulo", "El título es obligatorio.");
-            if (model.Precio <= 0) ModelState.AddModelError("Precio", "El precio debe ser mayor a cero.");
             if (imagenArchivo == null || imagenArchivo.Length == 0) ModelState.AddModelError("imagenArchivo", "La imagen es obligatoria.");
 
             if (!ModelState.IsValid)
@@ -354,12 +511,47 @@ namespace YSA.Web.Controllers
                 Precio = model.Precio,
                 UrlImagen = string.Empty,
                 Nivel = model.Nivel,
+                TipoCurso = model.TipoCurso  // NUEVO: asignar el tipo
             };
 
-            // El model.CategoriasSeleccionadas del viewmodel ya no se usa, ya que la lista se extrae manualmente
-            // y se le pasa directamente a la capa de servicio
-            await _cursoService.CrearCursoAsync(curso, categoriasSeleccionadas);
+            // Lógica según el tipo de curso
+            if (model.TipoCurso == TipoCurso.Digital)
+            {
+                await _cursoService.CrearCursoAsync(curso, categoriasSeleccionadas);
+            }
+            else
+            {
+                // NUEVO: Para cursos presenciales, las clases vienen del formulario
+                var clases = new List<ClasePresencial>();
 
+                // Procesar las clases del formulario (si vienen)
+                var clasesTitulos = Request.Form["ClasesTitulo"].ToList();
+                var clasesDescripciones = Request.Form["ClasesDescripcion"].ToList();
+                var clasesFechasInicio = Request.Form["ClasesFechaHoraInicio"].ToList();
+                var clasesFechasFin = Request.Form["ClasesFechaHoraFin"].ToList();
+                var clasesCapacidades = Request.Form["ClasesCapacidadMaxima"].ToList();
+
+                for (int i = 0; i < clasesTitulos.Count; i++)
+                {
+                    if (!string.IsNullOrEmpty(clasesTitulos[i]))
+                    {
+                        clases.Add(new ClasePresencial
+                        {
+                            Titulo = clasesTitulos[i],
+                            Descripcion = clasesDescripciones.Count > i ? clasesDescripciones[i] : null,
+                            FechaHoraInicio = DateTime.Parse(clasesFechasInicio[i]),
+                            FechaHoraFin = DateTime.Parse(clasesFechasFin[i]),
+                            CapacidadMaxima = clasesCapacidades.Count > i && int.TryParse(clasesCapacidades[i], out int cap) ? cap : 20,
+                            Lugar = "Estudio de la Academia",
+                            Estado = "Programada"
+                        });
+                    }
+                }
+
+                await _cursoService.CrearCursoPresencialAsync(curso, categoriasSeleccionadas, clases);
+            }
+
+            // Guardar imagen (mismo código que tenías)
             if (imagenArchivo != null && imagenArchivo.Length > 0)
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "cursos", curso.Id.ToString());
@@ -367,16 +559,13 @@ namespace YSA.Web.Controllers
                 {
                     Directory.CreateDirectory(uploadsFolder);
                 }
-
                 var extension = Path.GetExtension(imagenArchivo.FileName);
                 var fileName = $"imagen{extension}";
                 var filePath = Path.Combine(uploadsFolder, fileName);
-
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await imagenArchivo.CopyToAsync(stream);
                 }
-
                 curso.UrlImagen = $"/cursos/{curso.Id}/{fileName}";
                 await _cursoService.ActualizarCursoAsync(curso, categoriasSeleccionadas);
             }
@@ -385,7 +574,6 @@ namespace YSA.Web.Controllers
 
             return Json(new { success = true, message = "Curso creado con éxito." });
         }
-
         [HttpPost]
         public async Task<IActionResult> EditarCurso(CursoViewModel model, IFormFile? imagenArchivo)
         {
@@ -869,17 +1057,45 @@ namespace YSA.Web.Controllers
             var pedido = await _pedidoService.ObtenerPedidoConItemsYVentaItemsAsync(pedidoId);
             if (pedido != null)
             {
-                // Determinar si es curso o producto
                 var primerItem = pedido.PedidoItems.FirstOrDefault();
                 if (primerItem != null)
                 {
                     string tipoCompra = "";
                     string itemTitulo = "";
+                    int cursoId = 0;
 
                     if (primerItem.VentaItem.Curso != null)
                     {
                         tipoCompra = "curso";
                         itemTitulo = primerItem.VentaItem.Curso.Titulo;
+                        cursoId = primerItem.VentaItem.Curso.Id;
+
+                        // Verificar si es un curso presencial y tiene clases pendientes
+                        var curso = await _cursoService.ObtenerCursoPorIdAsync(cursoId);
+                        if (curso != null && curso.TipoCurso == Core.Enums.TipoCurso.Presencial)
+                        {
+                            // Obtener la clase más próxima para este curso (la que el usuario compró)
+                            // Nota: Debes determinar qué clase específica compró. 
+                            // Por ahora asumimos la primera clase programada del curso
+                            var clases = await _cursoService.ObtenerClasesPorCursoIdAsync(cursoId);
+                            var claseProxima = clases
+                                .Where(c => c.Estado == "Programada" && c.FechaHoraInicio > DateTime.Now)
+                                .OrderBy(c => c.FechaHoraInicio)
+                                .FirstOrDefault();
+
+                            if (claseProxima != null)
+                            {
+                                // Inscribir al estudiante en la clase
+                                var yaInscrito = await _cursoService.GetInscripcionByClaseAndEstudianteAsync(
+                                    claseProxima.Id,
+                                    pedido.EstudianteId);
+
+                                if (yaInscrito == null)
+                                {
+                                    await _cursoService.InscribirEstudianteAClaseAsync(claseProxima.Id, pedido.EstudianteId);
+                                }
+                            }
+                        }
                     }
                     else if (primerItem.VentaItem.Producto != null)
                     {
@@ -995,22 +1211,64 @@ namespace YSA.Web.Controllers
             await _cursoService.EliminarAnuncioAsync(id);
             return RedirectToAction("GestionarAnuncios", new { cursoId = cursoId });
         }
-        public async Task<IActionResult> GestionarEstudiantes()
+        public async Task<IActionResult> GestionarEstudiantes(string searchTerm = "", string orden = "recientes", int page = 1)
         {
-            var estudiantes = await _userManager.GetUsersInRoleAsync("Estudiante");
+            const int pageSize = 15;
 
-            var viewModel = new List<EstudianteConCursosViewModel>();
+            var todosLosEstudiantes = await _userManager.GetUsersInRoleAsync("Estudiante");
 
-            foreach (var estudiante in estudiantes)
+            // Aplicar filtro de búsqueda
+            var estudiantesFiltrados = todosLosEstudiantes.AsQueryable();
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                estudiantesFiltrados = estudiantesFiltrados.Where(e =>
+                    (e.Nombre != null && e.Nombre.ToLower().Contains(searchTerm)) ||
+                    (e.Apellido != null && e.Apellido.ToLower().Contains(searchTerm)) ||
+                    (e.Email != null && e.Email.ToLower().Contains(searchTerm)) ||
+                    (e.Cedula != null && e.Cedula.Contains(searchTerm)));
+            }
+
+            // Aplicar orden
+            switch (orden)
+            {
+                case "nombre-asc":
+                    estudiantesFiltrados = estudiantesFiltrados.OrderBy(e => e.Nombre).ThenBy(e => e.Apellido);
+                    break;
+                case "nombre-desc":
+                    estudiantesFiltrados = estudiantesFiltrados.OrderByDescending(e => e.Nombre).ThenByDescending(e => e.Apellido);
+                    break;
+                case "antiguos":
+                    estudiantesFiltrados = estudiantesFiltrados.OrderBy(e => e.FechaCreacion);
+                    break;
+                case "recientes":
+                default:
+                    estudiantesFiltrados = estudiantesFiltrados.OrderByDescending(e => e.FechaCreacion);
+                    break;
+            }
+
+            // Paginación
+            var totalEstudiantes = estudiantesFiltrados.Count();
+            var totalPaginas = (int)Math.Ceiling(totalEstudiantes / (double)pageSize);
+            if (page < 1) page = 1;
+            if (page > totalPaginas && totalPaginas > 0) page = totalPaginas;
+
+            var estudiantesPaginados = estudiantesFiltrados
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Obtener cursos comprados para cada estudiante (solo para mostrar en la tabla)
+            var viewModel = new List<EstudianteListaViewModel>();
+
+            foreach (var estudiante in estudiantesPaginados)
             {
                 var pedidosAprobados = await _pedidoService.ObtenerPedidosAprobadosPorUsuarioAsync(estudiante.Id);
-
                 var cursosComprados = new List<string>();
 
                 foreach (var pedido in pedidosAprobados)
                 {
                     var ventaItems = await _ventaItemService.ObtenerItemsPorPedidoIdAsync(pedido.Id);
-
                     foreach (var item in ventaItems)
                     {
                         if (item.Tipo == "Curso")
@@ -1024,14 +1282,28 @@ namespace YSA.Web.Controllers
                     }
                 }
 
-                viewModel.Add(new EstudianteConCursosViewModel
+                viewModel.Add(new EstudianteListaViewModel
                 {
                     Id = estudiante.Id,
                     Nombre = estudiante.Nombre,
+                    Apellido = estudiante.Apellido,
                     Email = estudiante.Email,
-                    CursosComprados = cursosComprados.Distinct().ToList() 
+                    Cedula = estudiante.Cedula,
+                    WhatsApp = estudiante.WhatsApp,
+                    FechaRegistro = estudiante.FechaCreacion,
+                    CursosCompradosCount = cursosComprados.Distinct().Count(),
+                    CursosComprados = cursosComprados.Distinct().Take(3).ToList(),
+                    TienePerfilCompleto = !string.IsNullOrEmpty(estudiante.Cedula) &&
+                                          !string.IsNullOrEmpty(estudiante.WhatsApp) &&
+                                          estudiante.FechaNacimiento.HasValue
                 });
             }
+
+            ViewBag.SearchTerm = searchTerm;
+            ViewBag.Orden = orden;
+            ViewBag.PaginaActual = page;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.TotalEstudiantes = totalEstudiantes;
 
             return View(viewModel);
         }
@@ -2240,7 +2512,55 @@ namespace YSA.Web.Controllers
             TempData["SuccessMessage"] = "Artículo eliminado exitosamente.";
             return RedirectToAction(nameof(Articulos));
         }
+        [HttpGet]
+        public async Task<IActionResult> ObtenerDetalleEstudiante(int id)
+        {
+            try
+            {
+                var estudianteDto = await _usuarioService.ObtenerEstudianteDetalleAsync(id);
+                if (estudianteDto == null)
+                {
+                    return Json(new { success = false, message = "Estudiante no encontrado" });
+                }
 
+                return Json(new
+                {
+                    success = true,
+                    estudiante = new
+                    {
+                        id = estudianteDto.Id,
+                        nombre = estudianteDto.Nombre,
+                        apellido = estudianteDto.Apellido,
+                        email = estudianteDto.Email,
+                        cedula = estudianteDto.Cedula,
+                        whatsApp = estudianteDto.WhatsApp,
+                        fechaNacimiento = estudianteDto.FechaNacimiento,
+                        esMenorEdad = estudianteDto.EsMenorEdad,
+                        nombreRepresentante = estudianteDto.NombreRepresentante,
+                        cedulaRepresentante = estudianteDto.CedulaRepresentante,
+                        experienciaTatuaje = estudianteDto.ExperienciaTatuaje,
+                        atendidoPor = estudianteDto.AtendidoPor,
+                        fechaCreacion = estudianteDto.FechaCreacion,
+                        urlImagen = estudianteDto.UrlImagen,
+                        cursosComprados = estudianteDto.CursosComprados,
+                        clasesInscritas = estudianteDto.ClasesInscritas,
+                        pedidos = estudianteDto.Pedidos.Select(p => new
+                        {
+                            id = p.Id,
+                            fechaPedido = p.FechaPedido,
+                            total = p.Total,
+                            estado = p.Estado,
+                            metodoPago = p.MetodoPago,
+                            referenciaPago = p.ReferenciaPago
+                        })
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
         [HttpPost]
         public async Task<IActionResult> EliminarFotoContenido(int fotoId, int articuloId)
         {

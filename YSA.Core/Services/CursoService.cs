@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using YSA.Core.DTOs;
 using YSA.Core.Entities;
+using YSA.Core.Enums;
 using YSA.Core.Interfaces;
 
 namespace YSA.Core.Services
@@ -17,11 +18,16 @@ namespace YSA.Core.Services
             _cursoRepository = cursoRepository;
             _categoriaRepository = categoriaRepository;
         }
+        public async Task<InscripcionClase> GetInscripcionByClaseAndEstudianteAsync(int clasePresencialId, int estudianteId)
+        {
+            return await _cursoRepository.GetInscripcionByClaseAndEstudianteAsync(clasePresencialId, estudianteId);
+        }
         public async Task<int> GetTotalCursosAsync()
         {
             return await _cursoRepository.GetTotalCursosAsync();
         }
-        // Métodos para Categorías (sin cambios)
+
+        // Métodos para Categorías
         public async Task<List<Categoria>> ObtenerTodasLasCategoriasAsync()
         {
             return await _categoriaRepository.GetAllAsync();
@@ -47,11 +53,21 @@ namespace YSA.Core.Services
             await _categoriaRepository.DeleteAsync(id);
         }
 
-        // Implementación de métodos para Cursos
+        // Métodos para Cursos
         public async Task<List<Curso>> ObtenerTodosLosCursosAsync()
         {
-            return await _cursoRepository.GetAllWithDetailsAsync();
+            return await _cursoRepository.GetAll();
         }
+        public async Task<List<Curso>> ObtenerTodosLosCursosDigitalesAsync()
+        {
+            return await _cursoRepository.GetAllDigitalsAsync();
+        }
+        public async Task<List<Curso>> ObtenerTodosLosCursosPresencialesAsync()
+        {
+            return await _cursoRepository.GetAllPresencialsAsync();
+        }
+
+
 
         public async Task<Curso> ObtenerCursoPorIdAsync(int id)
         {
@@ -60,20 +76,17 @@ namespace YSA.Core.Services
 
         public async Task CrearCursoAsync(Curso curso, int[] categoriasSeleccionadas)
         {
-            // El repositorio se encarga de la lógica de guardado, incluyendo las relaciones
             await _cursoRepository.AddAsync(curso);
 
             if (categoriasSeleccionadas != null && categoriasSeleccionadas.Any())
             {
                 var cursoCategorias = categoriasSeleccionadas.Select(catId => new CursoCategoria { CursoId = curso.Id, CategoriaId = catId }).ToList();
-                // Aquí podrías agregar un método en el repositorio para añadir las relaciones
-                // Por simplicidad, se puede asumir que el AddAsync del curso con las propiedades de navegación ya las maneja
+                await _cursoRepository.AddCursoCategoriasAsync(cursoCategorias);
             }
         }
 
         public async Task ActualizarCursoAsync(Curso curso, int[] categoriasSeleccionadas)
         {
-            // La lógica compleja de transacciones y relaciones ahora se maneja en el repositorio
             await _cursoRepository.UpdateWithCategoriesAsync(curso, categoriasSeleccionadas);
         }
 
@@ -81,6 +94,7 @@ namespace YSA.Core.Services
         {
             await _cursoRepository.DeleteAsync(id);
         }
+
         public async Task<ResultDto> DestacarCursoAsync(int cursoId)
         {
             var curso = await _cursoRepository.GetByIdAsync(cursoId);
@@ -142,6 +156,7 @@ namespace YSA.Core.Services
             await _cursoRepository.ActualizarCursoAsync(curso);
             return new ResultDto { Success = true, Message = "Se ha quitado el estado de recomendado al curso." };
         }
+
         public async Task CrearResenaAsync(Resena resena)
         {
             await _cursoRepository.CrearResenaAsync(resena);
@@ -149,9 +164,9 @@ namespace YSA.Core.Services
 
         public async Task<List<Resena>> ObtenerResenasPorCursoAsync(int cursoId)
         {
-            var resenas = await _cursoRepository.GetResenasPorCursoAsync(cursoId);
-            return resenas;
+            return await _cursoRepository.GetResenasPorCursoAsync(cursoId);
         }
+
         public async Task CrearPreguntaAsync(int cursoId, int estudianteId, string pregunta)
         {
             var nuevaPregunta = new PreguntaRespuesta
@@ -168,14 +183,12 @@ namespace YSA.Core.Services
 
         public async Task<List<PreguntaRespuesta>> ObtenerPreguntasPorCursoAsync(int cursoId)
         {
-            var preguntas = await _cursoRepository.GetPreguntasPorCursoAsync(cursoId);
-
-            return preguntas;
+            return await _cursoRepository.GetPreguntasPorCursoAsync(cursoId);
         }
+
         public async Task<List<Anuncio>> ObtenerAnunciosPorCursoAsync(int cursoId)
         {
-            var anuncios = await _cursoRepository.GetAnunciosPorCursoAsync(cursoId);
-            return anuncios;
+            return await _cursoRepository.GetAnunciosPorCursoAsync(cursoId);
         }
 
         public async Task CrearAnuncioAsync(Anuncio model)
@@ -205,10 +218,12 @@ namespace YSA.Core.Services
         {
             await _cursoRepository.DeleteAnuncioAsync(id);
         }
+
         public async Task<List<Curso>> ObtenerCursosDelEstudianteAsync(int estudianteId)
         {
             return await _cursoRepository.GetCursosByEstudianteIdAsync(estudianteId);
         }
+
         public async Task AsociarArtistaACursoAsync(int cursoId, int instructorId)
         {
             var curso = await _cursoRepository.GetByIdAsync(cursoId);
@@ -216,18 +231,15 @@ namespace YSA.Core.Services
             {
                 throw new InvalidOperationException("Curso no encontrado.");
             }
-
             await _cursoRepository.CrearAsociacionInstructor(cursoId, instructorId);
-
         }
+
         public async Task<bool> ResponderPreguntaAsync(int preguntaId, string respuesta, int instructorId)
         {
-            // Puedes agregar aquí validaciones de negocio adicionales si fueran necesarias
             if (string.IsNullOrWhiteSpace(respuesta))
             {
-                return false; // No se puede enviar una respuesta vacía
+                return false;
             }
-
             return await _cursoRepository.ResponderPreguntaAsync(preguntaId, respuesta, instructorId);
         }
 
@@ -235,13 +247,134 @@ namespace YSA.Core.Services
         {
             return await _cursoRepository.ObtenerPreguntasPendientesPorInstructorAsync(instructorId);
         }
+
         public async Task<List<Artista>> ObtenerArtistasAsociadosACursoAsync(int cursoId)
         {
             return await _cursoRepository.ObtenerArtistasAsociadosACursoAsync(cursoId);
         }
+
         public Task DesasociarArtistaACursoAsync(int cursoId, int instructorId)
         {
             return _cursoRepository.DesasociarArtistaACursoAsync(cursoId, instructorId);
+        }
+
+        // ==================== NUEVOS MÉTODOS PARA CURSOS PRESENCIALES ====================
+
+        public async Task<Curso> CrearCursoPresencialAsync(Curso curso, int[] categoriasSeleccionadas, List<ClasePresencial> clases)
+        {
+            curso.TipoCurso = TipoCurso.Presencial;
+            curso.FechaPublicacion = DateTime.UtcNow;
+
+            // Guardar curso
+            await _cursoRepository.AddAsync(curso);
+
+            // Asociar categorías
+            if (categoriasSeleccionadas != null && categoriasSeleccionadas.Any())
+            {
+                var cursoCategorias = categoriasSeleccionadas.Select(catId => new CursoCategoria
+                {
+                    CursoId = curso.Id,
+                    CategoriaId = catId
+                }).ToList();
+                await _cursoRepository.AddCursoCategoriasAsync(cursoCategorias);
+            }
+
+            // Crear las clases presenciales
+            if (clases != null && clases.Any())
+            {
+                foreach (var clase in clases)
+                {
+                    clase.CursoId = curso.Id;
+                    await _cursoRepository.AddClasePresencialAsync(clase);
+                }
+            }
+
+            return curso;
+        }
+
+        public async Task<List<ClasePresencial>> ObtenerClasesPorCursoIdAsync(int cursoId)
+        {
+            return await _cursoRepository.GetClasesByCursoIdAsync(cursoId);
+        }
+
+        public async Task<ClasePresencial> ObtenerClasePorIdAsync(int id)
+        {
+            return await _cursoRepository.GetClaseByIdAsync(id);
+        }
+
+        public async Task<bool> CrearClaseAsync(ClasePresencial clase)
+        {
+            await _cursoRepository.AddClasePresencialAsync(clase);
+            return true;
+        }
+
+        public async Task<bool> ActualizarClaseAsync(ClasePresencial clase)
+        {
+            await _cursoRepository.UpdateClasePresencialAsync(clase);
+            return true;
+        }
+
+        public async Task<bool> EliminarClaseAsync(int id)
+        {
+            await _cursoRepository.DeleteClasePresencialAsync(id);
+            return true;
+        }
+
+        public async Task<bool> InscribirEstudianteAClaseAsync(int clasePresencialId, int estudianteId)
+        {
+            // Verificar si ya está inscrito
+            var existe = await _cursoRepository.GetInscripcionByClaseAndEstudianteAsync(clasePresencialId, estudianteId);
+            if (existe != null)
+                return false;
+
+            var inscripcion = new InscripcionClase
+            {
+                ClasePresencialId = clasePresencialId,
+                EstudianteId = estudianteId,
+                FechaInscripcion = DateTime.UtcNow,
+                EstadoAsistencia = "Pendiente"
+            };
+
+            await _cursoRepository.AddInscripcionClaseAsync(inscripcion);
+            return true;
+        }
+
+        public async Task<bool> CancelarInscripcionClaseAsync(int clasePresencialId, int estudianteId)
+        {
+            var inscripcion = await _cursoRepository.GetInscripcionByClaseAndEstudianteAsync(clasePresencialId, estudianteId);
+            if (inscripcion == null)
+                return false;
+
+            await _cursoRepository.DeleteInscripcionClaseAsync(inscripcion.Id);
+            return true;
+        }
+
+        public async Task<List<InscripcionClase>> ObtenerInscripcionesPorClaseIdAsync(int clasePresencialId)
+        {
+            return await _cursoRepository.GetInscripcionesByClaseIdAsync(clasePresencialId);
+        }
+
+        public async Task<List<InscripcionClase>> ObtenerInscripcionesPorEstudianteIdAsync(int estudianteId)
+        {
+            return await _cursoRepository.GetInscripcionesByEstudianteIdAsync(estudianteId);
+        }
+
+        public async Task<bool> ActualizarAsistenciaAsync(int inscripcionId, string estadoAsistencia)
+        {
+            var inscripcion = await _cursoRepository.GetInscripcionByIdAsync(inscripcionId);
+            if (inscripcion == null)
+                return false;
+
+            inscripcion.EstadoAsistencia = estadoAsistencia;
+            inscripcion.FechaConfirmacion = estadoAsistencia == "Asistio" ? DateTime.UtcNow : inscripcion.FechaConfirmacion;
+
+            await _cursoRepository.UpdateInscripcionClaseAsync(inscripcion);
+            return true;
+        }
+
+        public async Task<List<Curso>> ObtenerCursosPresencialesAsync()
+        {
+            return await _cursoRepository.GetCursosByTipoAsync(TipoCurso.Presencial);
         }
     }
 }

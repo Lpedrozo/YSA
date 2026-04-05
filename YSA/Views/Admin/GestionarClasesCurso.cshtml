@@ -1,0 +1,599 @@
+﻿@model YSA.Web.Models.ViewModels.GestionClasesCursoViewModel
+@{
+    ViewData["Title"] = $"Clases del Curso: {Model.CursoTitulo}";
+}
+
+<style>
+    /* Estilos para la gestión de clases */
+    .clase-card {
+        border-radius: 12px;
+        border: 1px solid var(--color-border, #e8e8e8);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        background-color: white;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .clase-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        border-color: var(--color-brand-primary, #ef8830);
+    }
+
+    .clase-header {
+        background: linear-gradient(135deg, var(--color-brand-primary, #ef8830) 0%, var(--color-brand-secondary, #e5361a) 100%);
+        padding: 1rem;
+        color: white;
+    }
+
+    .clase-titulo {
+        font-family: var(--font-heading, 'Georgia', serif);
+        font-size: 1.2rem;
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .clase-fecha {
+        font-size: 0.8rem;
+        opacity: 0.9;
+        margin-top: 0.25rem;
+    }
+
+    .clase-body {
+        padding: 1rem;
+        flex: 1;
+    }
+
+    .clase-descripcion {
+        font-size: 0.9rem;
+        color: var(--color-accent, #6c757d);
+        margin-bottom: 1rem;
+        line-height: 1.4;
+    }
+
+    .clase-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+    }
+
+    .clase-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-accent, #6c757d);
+    }
+
+    .badge-estado {
+        padding: 0.25rem 0.6rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    .badge-estado-programada {
+        background-color: var(--color-brand-primary, #ef8830);
+        color: white;
+    }
+
+    .badge-estado-completada {
+        background-color: var(--color-brand-success, #6db53e);
+        color: white;
+    }
+
+    .badge-estado-cancelada {
+        background-color: var(--color-brand-secondary, #e5361a);
+        color: white;
+    }
+
+    .badge-estado-curso {
+        background-color: var(--color-brand-accent, #f2e514);
+        color: var(--color-brand-dark, #08080a);
+    }
+
+    .estudiantes-lista {
+        max-height: 200px;
+        overflow-y: auto;
+        border-top: 1px solid var(--color-border, #e8e8e8);
+        padding-top: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .estudiante-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        font-size: 0.85rem;
+    }
+
+    .estudiante-item:last-child {
+        border-bottom: none;
+    }
+
+    .estudiante-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .estudiante-nombre {
+        font-weight: 600;
+        color: var(--color-secondary, #212529);
+    }
+
+    .estudiante-email {
+        font-size: 0.7rem;
+        color: var(--color-accent, #6c757d);
+    }
+
+    .asistencia-select {
+        width: 100px;
+        font-size: 0.75rem;
+        padding: 0.2rem 0.4rem;
+    }
+
+    .clase-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--color-border, #e8e8e8);
+    }
+
+    .modal-body .form-control:focus {
+        border-color: var(--color-brand-primary, #ef8830);
+        box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+    }
+</style>
+
+<div class="container mt-4 mb-5 pb-5">
+    <!-- CABECERA -->
+    <div class="editorial-header">
+        <h1 class="editorial-title">Clases del Curso: @Model.CursoTitulo</h1>
+        <p class="text-muted mt-2 mb-0">Gestiona las clases presenciales, horarios y estudiantes inscritos</p>
+    </div>
+
+    <!-- BOTONES DE ACCIÓN -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <a asp-action="GestionarCursos" class="btn btn-editorial-secondary">
+            <i class="fas fa-arrow-left me-2"></i> Volver a Cursos
+        </a>
+        <button type="button" class="btn btn-editorial-primary" data-bs-toggle="modal" data-bs-target="#crearClaseModal">
+            <i class="fas fa-plus-circle me-2"></i> Nueva Clase
+        </button>
+    </div>
+
+    <hr class="section-divider-editorial" />
+
+    <!-- LISTA DE CLASES -->
+    <div class="row g-4" id="clasesContainer">
+        @foreach (var clase in Model.Clases)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="clase-card" data-clase-id="@clase.Id">
+                    <div class="clase-header">
+                        <h5 class="clase-titulo">@clase.Titulo</h5>
+                        <div class="clase-fecha">
+                            <i class="far fa-calendar-alt me-1"></i>
+                            @clase.FechaHoraInicio.ToString("dddd, dd MMMM yyyy")<br />
+                            <i class="far fa-clock me-1"></i>
+                            @clase.FechaHoraInicio.ToString("hh:mm tt") - @clase.FechaHoraFin.ToString("hh:mm tt")
+                        </div>
+                    </div>
+                    <div class="clase-body">
+                        <div class="clase-descripcion">
+                            @(string.IsNullOrEmpty(clase.Descripcion) ? "Sin descripción" : clase.Descripcion)
+                        </div>
+
+                        <div class="clase-meta">
+                            <div class="clase-meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>@clase.InscritosCount / @clase.CapacidadMaxima</span>
+                            </div>
+                            <div class="clase-meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>@clase.Lugar</span>
+                            </div>
+                            <div class="clase-meta-item">
+                                <span class="badge-estado @(clase.Estado == "Programada" ? "badge-estado-programada" : (clase.Estado == "Completada" ? "badge-estado-completada" : "badge-estado-cancelada"))">
+                                    @clase.Estado
+                                </span>
+                            </div>
+                        </div>
+
+                        @if (clase.Inscripciones != null && clase.Inscripciones.Any())
+                        {
+                            <div class="estudiantes-lista">
+                                <strong class="small">Estudiantes inscritos (@clase.Inscripciones.Count):</strong>
+                                @foreach (var inscripcion in clase.Inscripciones)
+                                {
+                                    <div class="estudiante-item">
+                                        <div class="estudiante-info">
+                                            <span class="estudiante-nombre">@inscripcion.EstudianteNombre</span>
+                                            <span class="estudiante-email">@inscripcion.EstudianteEmail</span>
+                                        </div>
+                                        <select class="form-select form-select-sm asistencia-select"
+                                                data-inscripcion-id="@inscripcion.Id"
+                                                data-estudiante-id="@inscripcion.EstudianteId"
+                                                style="width: auto; min-width: 90px;">
+                                            @if (inscripcion.EstadoAsistencia == "Pendiente")
+                                            {
+                                                <option value="Pendiente" selected>Pendiente</option>
+                                                <option value="Confirmada">Confirmada</option>
+                                                <option value="Asistio">Asistió</option>
+                                                <option value="Ausente">Ausente</option>
+                                            }
+                                            else if (inscripcion.EstadoAsistencia == "Confirmada")
+                                            {
+                                                <option value="Pendiente">Pendiente</option>
+                                                <option value="Confirmada" selected>Confirmada</option>
+                                                <option value="Asistio">Asistió</option>
+                                                <option value="Ausente">Ausente</option>
+                                            }
+                                            else if (inscripcion.EstadoAsistencia == "Asistio")
+                                            {
+                                                <option value="Pendiente">Pendiente</option>
+                                                <option value="Confirmada">Confirmada</option>
+                                                <option value="Asistio" selected>Asistió</option>
+                                                <option value="Ausente">Ausente</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="Pendiente">Pendiente</option>
+                                                <option value="Confirmada">Confirmada</option>
+                                                <option value="Asistio">Asistió</option>
+                                                <option value="Ausente" selected>Ausente</option>
+                                            }
+                                        </select>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-muted text-center py-2 small">
+                                <i class="fas fa-user-friends"></i> No hay estudiantes inscritos
+                            </div>
+                        }
+
+                        <div class="clase-actions">
+                            <button type="button" class="btn btn-sm btn-info editar-clase-btn"
+                                    data-id="@clase.Id"
+                                    data-titulo="@clase.Titulo"
+                                    data-descripcion="@clase.Descripcion"
+                                    data-fechainicio="@clase.FechaHoraInicio.ToString("yyyy-MM-ddTHH:mm")"
+                                    data-fechafin="@clase.FechaHoraFin.ToString("yyyy-MM-ddTHH:mm")"
+                                    data-capacidad="@clase.CapacidadMaxima"
+                                    data-lugar="@clase.Lugar"
+                                    data-estado="@clase.Estado"
+                                    data-urlmeet="@clase.UrlMeet"
+                                    title="Editar clase">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger eliminar-clase-btn"
+                                    data-id="@clase.Id"
+                                    data-titulo="@clase.Titulo"
+                                    title="Eliminar clase">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                            @if (clase.UrlMeet != null)
+                            {
+                                <a href="@clase.UrlMeet" target="_blank" class="btn btn-sm btn-success" title="Enlace Meet">
+                                    <i class="fab fa-google"></i> Meet
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Clases.Any())
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-calendar-alt fa-3x text-muted mb-3"></i>
+            <h5>No hay clases registradas</h5>
+            <p class="text-muted">Haz clic en "Nueva Clase" para agregar la primera clase de este curso.</p>
+        </div>
+    }
+</div>
+
+<!-- Modal Crear Clase -->
+<div class="modal fade modal-editorial" id="crearClaseModal" tabindex="-1" aria-labelledby="crearClaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nueva Clase Presencial</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formCrearClase">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Título *</label>
+                                <input type="text" id="crear_Titulo" name="Titulo" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Descripción</label>
+                                <textarea id="crear_Descripcion" name="Descripcion" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Fecha y Hora Inicio *</label>
+                                <input type="datetime-local" id="crear_FechaHoraInicio" name="FechaHoraInicio" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Fecha y Hora Fin *</label>
+                                <input type="datetime-local" id="crear_FechaHoraFin" name="FechaHoraFin" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Capacidad Máxima</label>
+                                <input type="number" id="crear_CapacidadMaxima" name="CapacidadMaxima" class="form-control" value="20" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Lugar</label>
+                                <input type="text" id="crear_Lugar" name="Lugar" class="form-control" value="Estudio de la Academia" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group mb-3">
+                                <label class="form-label">URL Meet (opcional)</label>
+                                <input type="url" id="crear_UrlMeet" name="UrlMeet" class="form-control" placeholder="https://meet.google.com/..." />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear Clase</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Clase -->
+<div class="modal fade modal-editorial" id="editarClaseModal" tabindex="-1" aria-labelledby="editarClaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Clase</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formEditarClase">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="editar_Id" name="Id" />
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Título *</label>
+                                <input type="text" id="editar_Titulo" name="Titulo" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Descripción</label>
+                                <textarea id="editar_Descripcion" name="Descripcion" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Fecha y Hora Inicio *</label>
+                                <input type="datetime-local" id="editar_FechaHoraInicio" name="FechaHoraInicio" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Fecha y Hora Fin *</label>
+                                <input type="datetime-local" id="editar_FechaHoraFin" name="FechaHoraFin" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Capacidad Máxima</label>
+                                <input type="number" id="editar_CapacidadMaxima" name="CapacidadMaxima" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Lugar</label>
+                                <input type="text" id="editar_Lugar" name="Lugar" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Estado</label>
+                                <select id="editar_Estado" name="Estado" class="form-control">
+                                    <option value="Programada">Programada</option>
+                                    <option value="Completada">Completada</option>
+                                    <option value="Cancelada">Cancelada</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group mb-3">
+                                <label class="form-label">URL Meet</label>
+                                <input type="url" id="editar_UrlMeet" name="UrlMeet" class="form-control" placeholder="https://meet.google.com/..." />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar Clase</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const cursoId = @Model.CursoId;
+
+        function getAntiForgeryToken() {
+            return document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+        }
+
+        // Actualizar asistencia
+        async function actualizarAsistencia(inscripcionId, estado) {
+            try {
+                const response = await fetch('@Url.Action("ActualizarAsistencia", "Admin")', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': getAntiForgeryToken() },
+                    body: JSON.stringify({ inscripcionId, estadoAsistencia: estado })
+                });
+                const result = await response.json();
+                if (!result.success) {
+                    Swal.fire('Error', result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error al actualizar asistencia:', error);
+            }
+        }
+
+        // Crear clase
+        document.getElementById('formCrearClase')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const data = {
+                cursoId: cursoId,
+                titulo: document.getElementById('crear_Titulo').value,
+                descripcion: document.getElementById('crear_Descripcion').value,
+                fechaHoraInicio: document.getElementById('crear_FechaHoraInicio').value,
+                fechaHoraFin: document.getElementById('crear_FechaHoraFin').value,
+                capacidadMaxima: parseInt(document.getElementById('crear_CapacidadMaxima').value),
+                lugar: document.getElementById('crear_Lugar').value,
+                urlMeet: document.getElementById('crear_UrlMeet').value
+            };
+
+            try {
+                const response = await fetch('@Url.Action("CrearClase", "Admin")', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': getAntiForgeryToken() },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('crearClaseModal')).hide();
+                    Swal.fire('Éxito', result.message, 'success').then(() => window.location.reload());
+                } else {
+                    Swal.fire('Error', result.message, 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Error al crear la clase', 'error');
+            }
+        });
+
+        // Editar clase
+        document.querySelectorAll('.editar-clase-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('editar_Id').value = this.getAttribute('data-id');
+                document.getElementById('editar_Titulo').value = this.getAttribute('data-titulo');
+                document.getElementById('editar_Descripcion').value = this.getAttribute('data-descripcion') || '';
+                document.getElementById('editar_FechaHoraInicio').value = this.getAttribute('data-fechainicio');
+                document.getElementById('editar_FechaHoraFin').value = this.getAttribute('data-fechafin');
+                document.getElementById('editar_CapacidadMaxima').value = this.getAttribute('data-capacidad');
+                document.getElementById('editar_Lugar').value = this.getAttribute('data-lugar');
+                document.getElementById('editar_Estado').value = this.getAttribute('data-estado');
+                document.getElementById('editar_UrlMeet').value = this.getAttribute('data-urlmeet') || '';
+                
+                new bootstrap.Modal(document.getElementById('editarClaseModal')).show();
+            });
+        });
+
+        document.getElementById('formEditarClase')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const data = {
+                id: parseInt(document.getElementById('editar_Id').value),
+                titulo: document.getElementById('editar_Titulo').value,
+                descripcion: document.getElementById('editar_Descripcion').value,
+                fechaHoraInicio: document.getElementById('editar_FechaHoraInicio').value,
+                fechaHoraFin: document.getElementById('editar_FechaHoraFin').value,
+                capacidadMaxima: parseInt(document.getElementById('editar_CapacidadMaxima').value),
+                lugar: document.getElementById('editar_Lugar').value,
+                estado: document.getElementById('editar_Estado').value,
+                urlMeet: document.getElementById('editar_UrlMeet').value
+            };
+
+            try {
+                const response = await fetch('@Url.Action("EditarClase", "Admin")', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': getAntiForgeryToken() },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('editarClaseModal')).hide();
+                    Swal.fire('Éxito', result.message, 'success').then(() => window.location.reload());
+                } else {
+                    Swal.fire('Error', result.message, 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Error al actualizar la clase', 'error');
+            }
+        });
+
+        // Eliminar clase
+        document.querySelectorAll('.eliminar-clase-btn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const claseId = this.getAttribute('data-id');
+                const claseTitulo = this.getAttribute('data-titulo');
+                
+                const result = await Swal.fire({
+                    title: '¿Eliminar clase?',
+                    text: `¿Estás seguro de eliminar la clase "${claseTitulo}"?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar'
+                });
+                
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`@Url.Action("EliminarClase", "Admin")?id=${claseId}`, {
+                            method: 'POST',
+                            headers: { 'RequestVerificationToken': getAntiForgeryToken() }
+                        });
+                        const res = await response.json();
+                        if (res.success) {
+                            Swal.fire('Éxito', res.message, 'success').then(() => window.location.reload());
+                        } else {
+                            Swal.fire('Error', res.message, 'error');
+                        }
+                    } catch (error) {
+                        Swal.fire('Error', 'Error al eliminar la clase', 'error');
+                    }
+                }
+            });
+        });
+
+        // Actualizar asistencia al cambiar select
+        document.querySelectorAll('.asistencia-select').forEach(select => {
+            select.addEventListener('change', function() {
+                const inscripcionId = this.getAttribute('data-inscripcion-id');
+                const nuevoEstado = this.value;
+                actualizarAsistencia(inscripcionId, nuevoEstado);
+            });
+        });
+    </script>
+}
