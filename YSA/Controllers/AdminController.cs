@@ -583,10 +583,6 @@ namespace YSA.Web.Controllers
             {
                 ModelState.AddModelError("Titulo", "El título es obligatorio.");
             }
-            if (model.Precio <= 0)
-            {
-                ModelState.AddModelError("Precio", "El precio debe ser mayor a cero.");
-            }
 
             var sanitizer = new HtmlSanitizer();
             model.DescripcionCorta = sanitizer.Sanitize(model.DescripcionCorta);
