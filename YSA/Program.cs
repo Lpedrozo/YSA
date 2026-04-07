@@ -10,8 +10,15 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using Microsoft.AspNetCore.Authentication; // <-- Esta es la clave
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 var configuration = builder.Configuration;
 
 // =======================================================
@@ -116,7 +123,7 @@ builder.Services.AddHttpClient<IExchangeRateService, ExchangeRateService>(client
 builder.Services.AddHostedService<BcvRateWorker>();
 
 var app = builder.Build();
-
+app.UseForwardedHeaders();
 // =====================================================================
 // INICIO DE LA CORRECCIÓN DEL ERROR: InvalidOperationException
 // =====================================================================
