@@ -604,5 +604,93 @@ namespace YSA.Web.Controllers
             var errorsList = resultado.Errors.Select(e => e.Description).ToList();
             return Json(new { success = false, errors = errorsList });
         }
+        // Agrega estos métodos a tu CuentaController.cs
+
+        // GET: /Cuenta/ExternalLoginModal
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ExternalLoginModal(string provider, string returnUrl = null)
+        {
+            var redirectUrl = Url.Action(nameof(ExternalLoginModalCallback), "Cuenta", new { returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return new ChallengeResult(provider, properties);
+        }
+
+        // GET: /Cuenta/ExternalLoginModalCallback
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginModalCallback(string returnUrl = null, string remoteError = null)
+        {
+            if (remoteError != null)
+            {
+                TempData["Error"] = $"Error del proveedor: {remoteError}";
+                return RedirectToAction(nameof(Login));
+            }
+
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                TempData["Error"] = "Error cargando la información de inicio de sesión externa.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            // Intentar iniciar sesión con el proveedor externo
+            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+            if (result.Succeeded)
+            {
+                // Usuario existente - redirigir con parámetro de éxito
+                return RedirectToLocalWithModalSuccess(returnUrl);
+            }
+
+            // Si el usuario no existe, crear uno nuevo
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            var nombre = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+            var apellido = info.Principal.FindFirstValue(ClaimTypes.Surname);
+            var pictureUrl = info.Principal.FindFirstValue("picture");
+
+            var usuario = new Usuario
+            {
+                UserName = email,
+                Email = email,
+                Nombre = nombre ?? "",
+                Apellido = apellido ?? "",
+                FechaCreacion = DateTime.UtcNow,
+                EmailConfirmed = true,
+                UrlImagen = pictureUrl ?? "/FotoPerfil/usuariopredeterminada.jpg"
+            };
+
+            var createResult = await _userManager.CreateAsync(usuario);
+            if (!createResult.Succeeded)
+            {
+                TempData["Error"] = "Error al crear la cuenta. Intente de nuevo.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            var addLoginResult = await _userManager.AddLoginAsync(usuario, info);
+            if (!addLoginResult.Succeeded)
+            {
+                await _userManager.DeleteAsync(usuario);
+                TempData["Error"] = "Error al vincular la cuenta de Google.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            await _userManager.AddToRoleAsync(usuario, "Estudiante");
+            await _signInManager.SignInAsync(usuario, isPersistent: false);
+
+            return RedirectToLocalWithModalSuccess(returnUrl);
+        }
+
+        private IActionResult RedirectToLocalWithModalSuccess(string returnUrl)
+        {
+            // Agregar parámetro a la URL para indicar éxito en el login modal
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                var separator = returnUrl.Contains("?") ? "&" : "?";
+                return Redirect($"{returnUrl}{separator}login=google_success");
+            }
+            return RedirectToAction("Index", "Home");
+        }
     }
+
 }

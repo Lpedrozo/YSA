@@ -10,6 +10,7 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using System.Globalization;
 using Microsoft.AspNetCore.Identity;
+using YSA.Core.Interfaces;
 public class CursoController : Controller
 {
     private readonly ICursoService _cursoService;
@@ -19,8 +20,9 @@ public class CursoController : Controller
     private readonly IProgresoLeccionService _progresoLeccionService;
     private readonly IRecursoActividadService _recursoActividadService;
     private readonly IWebHostEnvironment _webHostEnvironment;
-    private readonly UserManager<Usuario> _userManager; // Añadir
-    private readonly IVentaItemService _ventaItemService; // Añadir
+    private readonly UserManager<Usuario> _userManager;
+    private readonly IVentaItemService _ventaItemService;
+    private readonly IEmailService _emailService; // NUEVO
 
     public CursoController(
         ICursoService cursoService,
@@ -30,8 +32,9 @@ public class CursoController : Controller
         IProgresoLeccionService progresoLeccionService,
         IRecursoActividadService recursoActividadService,
         IWebHostEnvironment webHostEnvironment,
-        UserManager<Usuario> userManager, // Añadir
-        IVentaItemService ventaItemService) // Añadir
+        UserManager<Usuario> userManager,
+        IVentaItemService ventaItemService,
+        IEmailService emailService) // NUEVO PARÁMETRO
     {
         _cursoService = cursoService;
         _moduloService = moduloService;
@@ -40,8 +43,9 @@ public class CursoController : Controller
         _progresoLeccionService = progresoLeccionService;
         _recursoActividadService = recursoActividadService;
         _webHostEnvironment = webHostEnvironment;
-        _userManager = userManager; // Añadir
-        _ventaItemService = ventaItemService; // Añadir
+        _userManager = userManager;
+        _ventaItemService = ventaItemService;
+        _emailService = emailService; // NUEVO
     }
 
     public async Task<IActionResult> Index(string categoria = null, string searchString = null,
@@ -741,7 +745,6 @@ public class CursoController : Controller
                !string.IsNullOrEmpty(usuario.WhatsApp) &&
                usuario.FechaNacimiento.HasValue;
     }
-    // POST: Procesar pago de clase presencial (todo en uno)
     [HttpPost]
     [Authorize]
     [ValidateAntiForgeryToken]
@@ -779,6 +782,9 @@ public class CursoController : Controller
         var curso = await _cursoService.ObtenerCursoPorIdAsync(clase.CursoId);
         bool esGratuito = curso.Precio == 0;
 
+        // Lista de items comprados (para el correo del usuario)
+        var itemsComprados = new List<string> { $"{clase.Titulo} - Clase presencial" };
+
         // ==================== CURSO GRATUITO ====================
         if (esGratuito)
         {
@@ -812,7 +818,26 @@ public class CursoController : Controller
                 // 5. Inscribir al estudiante en la clase
                 await _cursoService.InscribirEstudianteAClaseAsync(claseId, idUsuario);
 
-                TempData["Success"] = "¡Inscripción exitosa! La clase es gratuita, ya tienes tu cupo confirmado.";
+                // 6. ENVIAR CORREO AL USUARIO (compra aprobada)
+                await _emailService.EnviarCorreoCompraAprobadaAsync(
+                    usuario.Email,
+                    $"{usuario.Nombre} {usuario.Apellido}",
+                    pedido.Id,
+                    "clase presencial",
+                    $"{clase.Titulo} - {curso.Titulo}"
+                );
+
+                // 7. ENVIAR NOTIFICACIÓN AL ADMINISTRADOR (inscripción gratuita)
+                await _emailService.EnviarNotificacionAdminInscripcionGratuitaAsync(
+                    $"{usuario.Nombre} {usuario.Apellido}",
+                    usuario.Email,
+                    clase.Titulo,
+                    curso.Titulo,
+                    clase.FechaHoraInicio,
+                    clase.Lugar
+                );
+
+                TempData["Success"] = "¡Inscripción exitosa! La clase es gratuita, ya tienes tu cupo confirmado. Te hemos enviado un correo con los detalles.";
                 return RedirectToAction("DetalleClasePresencial", new { id = claseId });
             }
             catch (Exception ex)
@@ -872,7 +897,27 @@ public class CursoController : Controller
             // 5. Actualizar estado del pedido a "Validando"
             await _pedidoService.ActualizarEstadoPedidoAsync(pedido.Id, "Validando");
 
-            TempData["Success"] = "¡Pago registrado exitosamente! Tu inscripción está en proceso de validación.";
+            // 6. ENVIAR CORREO AL USUARIO (compra pendiente)
+            await _emailService.EnviarCorreoCompraPendienteAsync(
+                usuario.Email,
+                $"{usuario.Nombre} {usuario.Apellido}",
+                pedido.Id,
+                pedido.Total,
+                itemsComprados
+            );
+
+            // 7. ENVIAR NOTIFICACIÓN AL ADMINISTRADOR (pago pendiente)
+            await _emailService.EnviarNotificacionAdminPagoPendienteAsync(
+                $"{usuario.Nombre} {usuario.Apellido}",
+                usuario.Email,
+                clase.Titulo,
+                curso.Titulo,
+                curso.Precio,
+                pedido.Id,
+                urlComprobante
+            );
+
+            TempData["Success"] = "¡Pago registrado exitosamente! Tu inscripción está en proceso de validación. Te hemos enviado un correo con los detalles.";
             return RedirectToAction("DetalleClasePresencial", new { id = claseId });
         }
         catch (Exception ex)
@@ -881,5 +926,4 @@ public class CursoController : Controller
             return RedirectToAction("DetalleClasePresencial", new { id = claseId });
         }
     }
-
 }

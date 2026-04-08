@@ -218,74 +218,66 @@
             border-color: var(--color-brand-primary);
             box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
         }
+
     /* Estilos específicos para el modal responsive */
     .modal-dialog {
         margin: 0.5rem;
     }
 
     @@media (min-width: 576px) {
-        .modal-dialog
-
-    {
-        max-width: 450px;
-        margin: 1.75rem auto;
-    }
-
+        .modal-dialog {
+            max-width: 450px;
+            margin: 1.75rem auto;
+        }
     }
 
     @@media (max-width: 575.98px) {
-        .modal-dialog
+        .modal-dialog {
+            margin: 0.5rem;
+            max-width: calc(100% - 1rem);
+        }
 
-    {
-        margin: 0.5rem;
-        max-width: calc(100% - 1rem);
-    }
-
-    .modal-body {
-        padding: 1rem !important;
-    }
-
+        .modal-body {
+            padding: 1rem !important;
+        }
     }
 
     @@media (max-width: 380px) {
-        .modal-body
-
-    {
-        padding: 0.875rem !important;
-    }
-
-    .btn-link {
-        font-size: 0.8rem !important;
-        padding: 0.6rem 0.25rem !important;
-    }
-
-    .form-label {
-        font-size: 0.7rem !important;
-    }
-
-    .form-control {
-        padding: 0.4rem 0.6rem !important;
-        font-size: 0.75rem !important;
-    }
-
-    .btn-primary {
-        padding: 0.5rem 0.75rem !important;
-        font-size: 0.8rem !important;
-    }
-
-    .alert {
-        font-size: 0.7rem !important;
-        padding: 0.4rem !important;
-    }
-
-    .row.g-2 {
-        margin: 0 -0.25rem;
-    }
-
-        .row.g-2 > [class*="col-"] {
-            padding: 0 0.25rem;
+        .modal-body {
+            padding: 0.875rem !important;
         }
 
+        .btn-link {
+            font-size: 0.8rem !important;
+            padding: 0.6rem 0.25rem !important;
+        }
+
+        .form-label {
+            font-size: 0.7rem !important;
+        }
+
+        .form-control {
+            padding: 0.4rem 0.6rem !important;
+            font-size: 0.75rem !important;
+        }
+
+        .btn-primary {
+            padding: 0.5rem 0.75rem !important;
+            font-size: 0.8rem !important;
+        }
+
+        .alert {
+            font-size: 0.7rem !important;
+            padding: 0.4rem !important;
+        }
+
+        .row.g-2 {
+            margin: 0 -0.25rem;
+        }
+
+            .row.g-2 > [class*="col-"] {
+                padding: 0 0.25rem;
+            }
     }
 
     /* Estilos para los tabs activos */
@@ -305,7 +297,7 @@
         }
 </style>
 
-<!-- Modal de Login/Registro con tabs - RESPONSIVE MEJORADO -->
+<!-- Modal de Login/Registro con tabs y Google -->
 <div class="modal fade" id="loginRegisterModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm modal-md">
         <div class="modal-content" style="border-radius: var(--border-radius-lg);">
@@ -313,16 +305,16 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body" style="padding: 1.5rem 1.5rem 2rem 1.5rem;">
-                <!-- Tabs mejorados para responsive -->
+                <!-- Tabs -->
                 <div class="d-flex mb-4" style="border-bottom: 2px solid var(--color-border);">
                     <button class="btn btn-link w-50 text-center py-2 px-1 rounded-0 active-tab"
                             id="loginTabBtn"
-                            style="font-family: var(--font-accent); font-weight: 600; font-size: 0.9rem; text-decoration: none; border: none; background: transparent; transition: all 0.3s ease;">
+                            style="font-family: var(--font-accent); font-weight: 600; font-size: 0.9rem; text-decoration: none; border: none; background: transparent;">
                         Iniciar Sesión
                     </button>
                     <button class="btn btn-link w-50 text-center py-2 px-1 rounded-0"
                             id="registerTabBtn"
-                            style="font-family: var(--font-accent); font-weight: 600; font-size: 0.9rem; text-decoration: none; border: none; background: transparent; transition: all 0.3s ease;">
+                            style="font-family: var(--font-accent); font-weight: 600; font-size: 0.9rem; text-decoration: none; border: none; background: transparent;">
                         Crear Cuenta
                     </button>
                 </div>
@@ -353,6 +345,16 @@
                         <button type="submit" class="btn btn-primary w-100 py-2" style="font-size: 0.85rem; font-weight: 600;">
                             <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
                         </button>
+
+                        <!-- Botón Google Login (modal) -->
+                        <div class="text-center mt-3">
+                            <hr class="my-3">
+                            <p class="text-muted small mb-2">O continúa con</p>
+                            <button type="button" id="googleLoginBtn" class="btn btn-outline-secondary w-100" style="border-radius: 8px; padding: 0.6rem;">
+                                <i class="fab fa-google me-2" style="color: #DB4437;"></i>
+                                Continuar con Google
+                            </button>
+                        </div>
                     </form>
                 </div>
 
@@ -396,12 +398,23 @@
                         <button type="submit" class="btn btn-primary w-100 py-2" style="font-size: 0.85rem; font-weight: 600;">
                             <i class="fas fa-user-plus me-2"></i>Crear Cuenta
                         </button>
+
+                        <!-- Botón Google Registro (modal) -->
+                        <div class="text-center mt-3">
+                            <hr class="my-3">
+                            <p class="text-muted small mb-2">O regístrate con</p>
+                            <button type="button" id="googleRegisterBtn" class="btn btn-outline-secondary w-100" style="border-radius: 8px; padding: 0.6rem;">
+                                <i class="fab fa-google me-2" style="color: #DB4437;"></i>
+                                Continuar con Google
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <!-- Modal Completar Perfil -->
 <div class="modal fade modal-perfil" id="completarPerfilModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -588,7 +601,6 @@
             }
         </div>
 
-        <!-- Columna derecha - Inscripción / Pago -->
         <!-- Columna derecha - Inscripción / Pago -->
         <div class="col-lg-6">
             @if (Model.VacantesDisponibles <= 0)
@@ -799,7 +811,7 @@
         // ==================== LOGIN/REGISTRO AJAX ====================
 
         // Cambio entre tabs de login/registro
-                const loginTabBtn = document.getElementById('loginTabBtn');
+        const loginTabBtn = document.getElementById('loginTabBtn');
         const registerTabBtn = document.getElementById('registerTabBtn');
         const loginPanelModal = document.getElementById('loginPanel');
         const registerPanelModal = document.getElementById('registerPanel');
@@ -821,6 +833,53 @@
                 registerPanelModal.style.display = 'block';
             });
         }
+
+        // ==================== LOGIN CON GOOGLE (MODAL) ====================
+        // Función para iniciar login con Google desde el modal (usa endpoint separado)
+        function iniciarLoginGoogleModal() {
+            const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+            // Usar el endpoint específico para el modal
+            window.location.href = '@Url.Action("ExternalLoginModal", "Cuenta")?provider=Google&returnUrl=' + returnUrl;
+        }
+
+        // Botón de Google Login
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        if (googleLoginBtn) {
+            googleLoginBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                iniciarLoginGoogleModal();
+            });
+        }
+
+        // Botón de Google Registro
+        const googleRegisterBtn = document.getElementById('googleRegisterBtn');
+        if (googleRegisterBtn) {
+            googleRegisterBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                iniciarLoginGoogleModal();
+            });
+        }
+
+        // Verificar si venimos de un login con Google exitoso (desde el modal)
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('login') === 'google_success') {
+                // Limpiar el parámetro de la URL sin recargar
+                const newUrl = window.location.pathname + window.location.hash;
+                window.history.replaceState({}, document.title, newUrl);
+                // Mostrar mensaje de éxito
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Bienvenido!',
+                    text: 'Has iniciado sesión correctamente con Google.',
+                    confirmButtonColor: '#ef8830',
+                    timer: 2000,
+                    timerProgressBar: true
+                }).then(() => {
+                    location.reload();
+                });
+            }
+        });
 
         // Login AJAX
         const loginForm = document.getElementById('loginFormAjax');
@@ -917,8 +976,8 @@
         @if (Model.UsuarioLogueado && !Model.PerfilCompleto && TempData["ShowPerfilModal"] != null)
         {
             <text>
-                    var perfilModal = new bootstrap.Modal(document.getElementById('completarPerfilModal'));
-                    perfilModal.show();
+                            var perfilModal = new bootstrap.Modal(document.getElementById('completarPerfilModal'));
+                            perfilModal.show();
             </text>
         }
 

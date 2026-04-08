@@ -73,6 +73,7 @@ builder.Services.AddControllersWithViews();
 
 // **Paso clave: Inyección de Dependencias de tus Repositorios y Servicios**
 // (Dejo el resto de tus registros aquí. Asumo que IRecursoActividadService estaba duplicado y lo eliminé.)
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<ICursoRepository, CursoRepository>();
 builder.Services.AddScoped<IModuloRepository, ModuloRepository>();

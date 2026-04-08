@@ -14,6 +14,7 @@ using YSA.Core.Entities;
 public class PedidoController : Controller
 {
     private readonly IPedidoService _pedidoService;
+    private readonly IEmailService _emailService;
     private readonly IVentaItemService _ventaItemService;
     private readonly IExchangeRateService _exchangeRateService;
     private readonly INotificacionService _notificacionService;
@@ -21,12 +22,14 @@ public class PedidoController : Controller
 
     public PedidoController(
         IPedidoService pedidoService,
+        IEmailService emailService,
         IVentaItemService ventaItemService,
         IExchangeRateService exchangeRateService,
         INotificacionService notificacionService,
         UserManager<Usuario> userManager)
     {
         _pedidoService = pedidoService;
+        _emailService = emailService;
         _ventaItemService = ventaItemService;
         _exchangeRateService = exchangeRateService;
         _notificacionService = notificacionService;
@@ -158,8 +161,43 @@ public class PedidoController : Controller
 
             await _pedidoService.ActualizarEstadoPedidoAsync(pedido.Id, "Validando");
 
-            // *** NUEVO: ENVIAR NOTIFICACIONES ***
+            // *** ENVIAR NOTIFICACIONES Y CORREOS ***
             await EnviarNotificacionesCompraCurso(pedido);
+
+            // Obtener usuario
+            var usuario = await _userManager.FindByIdAsync(estudianteId);
+            if (usuario != null)
+            {
+                var itemsComprados = pedido.PedidoItems
+                    .Select(item => item.VentaItem.Curso?.Titulo ?? item.VentaItem.Producto?.Titulo)
+                    .Where(t => t != null)
+                    .ToList();
+
+                // 1. ENVIAR CORREO AL USUARIO (pendiente de validación)
+                await _emailService.EnviarCorreoCompraPendienteAsync(
+                    usuario.Email,
+                    $"{usuario.Nombre} {usuario.Apellido}",
+                    pedido.Id,
+                    pedido.Total,
+                    itemsComprados
+                );
+
+                // 2. ENVIAR NOTIFICACIÓN AL ADMINISTRADOR (pago pendiente)
+                // Obtener información del primer item para el correo del admin
+                var primerItem = pedido.PedidoItems.FirstOrDefault();
+                string tipoItem = primerItem?.VentaItem.Curso != null ? "curso" : "producto";
+                string nombreItem = primerItem?.VentaItem.Curso?.Titulo ?? primerItem?.VentaItem.Producto?.Titulo ?? "Producto";
+
+                await _emailService.EnviarNotificacionAdminPagoPendienteAsync(
+                    $"{usuario.Nombre} {usuario.Apellido}",
+                    usuario.Email,
+                    nombreItem,
+                    tipoItem,
+                    pedido.Total,
+                    pedido.Id,
+                    urlComprobante
+                );
+            }
 
             TempData["PagoRegistrado"] = true;
             return RedirectToAction("Index", "Curso");
@@ -170,7 +208,6 @@ public class PedidoController : Controller
             return RedirectToAction("Confirmar", new { pedidoId });
         }
     }
-
     private async Task EnviarNotificacionesCompraCurso(Pedido pedido)
     {
         var usuarioId = pedido.EstudianteId;
