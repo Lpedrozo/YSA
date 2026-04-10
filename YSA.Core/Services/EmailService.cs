@@ -137,7 +137,7 @@ namespace YSA.Core.Services
                             </div>
                             <p>Ya puedes acceder a tu contenido desde tu perfil.</p>
                             <br>
-                            <a href='https://yosoyarte.com/MiPerfil' class='button'>Ver mi contenido</a>
+                            <a href='https://academiayosoyarte.com/' class='button'>Ver mi contenido</a>
                         </div>
                         <div class='footer'>
                             <p>© 2024 Yo Soy Arte - Todos los derechos reservados</p>
@@ -214,7 +214,7 @@ namespace YSA.Core.Services
                             <p>Nos alegra tenerte en nuestra comunidad artística.</p>
                             <p>Explora nuestros cursos, eventos y productos exclusivos para artistas.</p>
                             <br>
-                            <a href='https://yosoyarte.com/Cursos' class='button'>Explorar cursos</a>
+                            <a href='https://academiayosoyarte.com/' class='button'>Explorar cursos</a>
                         </div>
                         <div class='footer'>
                             <p>© 2024 Yo Soy Arte - Todos los derechos reservados</p>
@@ -255,7 +255,7 @@ namespace YSA.Core.Services
                             </div>
                             <p>Ya puedes comenzar a publicar tu contenido y disfrutar de los beneficios de tu plan.</p>
                             <br>
-                            <a href='https://yosoyarte.com/Artista/Dashboard' class='button'>Ir a mi panel</a>
+                            <a href='https://academiayosoyarte.com/' class='button'>Ir a mi panel</a>
                         </div>
                         <div class='footer'>
                             <p>© 2024 Yo Soy Arte - Todos los derechos reservados</p>
@@ -270,7 +270,7 @@ namespace YSA.Core.Services
 
         public async Task<bool> EnviarNotificacionAdminInscripcionGratuitaAsync(string nombreUsuario, string emailUsuario, string claseTitulo, string cursoTitulo, DateTime fechaClase, string lugar)
         {
-            var adminEmail = "lpedrozohernandez@gmail.com";
+            var adminEmail = "yosoyarte.contacto@gmail.com";
             var fechaFormateada = fechaClase.ToString("dddd, dd 'de' MMMM 'de' yyyy 'a las' hh:mm tt");
 
             var cuerpo = $@"
@@ -323,7 +323,7 @@ namespace YSA.Core.Services
 
         public async Task<bool> EnviarNotificacionAdminPagoPendienteAsync(string nombreUsuario, string emailUsuario, string claseTitulo, string cursoTitulo, decimal monto, int pedidoId, string comprobanteUrl)
         {
-            var adminEmail = "lpedrozohernandez@gmail.com";
+            var adminEmail = "yosoyarte.contacto@gmail.com";
             var comprobanteLink = !string.IsNullOrEmpty(comprobanteUrl) ? $"{comprobanteUrl}" : "No disponible";
 
             var cuerpo = $@"
@@ -369,7 +369,7 @@ namespace YSA.Core.Services
                     
                     <p>Por favor, revisa el comprobante y valida o rechaza el pago en el panel de administración.</p>
                     <br>
-                    <a href='https://yosoyarte.com/Admin/Pedidos' class='button'>Ir a validar pagos</a>
+                    <a href='https://academiayosoyarte.com/' class='button'>Ir a validar pagos</a>
                 </div>
                 <div class='footer'>
                     <p>© 2024 Yo Soy Arte - Sistema de gestión</p>
