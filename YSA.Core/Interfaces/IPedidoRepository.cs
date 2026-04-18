@@ -8,12 +8,14 @@ namespace YSA.Core.Interfaces
     {
         Task<Pedido> GetByIdAsync(int id);
         Task<IEnumerable<Pedido>> GetAllAsync();
+        Task<Pedido> ObtenerPedidoPendientePorPaqueteAsync(int usuarioId, int paqueteId);
         Task<Pedido> AddAsync(Pedido pedido);
         Task<bool> UpdateAsync(Pedido pedido);
         Task<bool> DeleteAsync(int id);
         Task<Pedido> GetPedidoWithItemsAndVentaItemsAsync(int id);
         Task<PedidoItem> AddPedidoItemAsync(PedidoItem item);
         Task<Pago> AddPagoAsync(Pago pago);
+        Task<Paquete> GetPaqueteWithCursosAsync(int paqueteId);
         Task<IEnumerable<Pedido>> GetPedidosByEstadoAsync(string estado);
         Task<bool> ExistePedidoEnEstadoParaCursoAsync(int estudianteId, int cursoId, string estado); // Nuevo método
         Task<IEnumerable<Pedido>> GetPedidosByUsuarioAndEstadoAsync(int estudianteId, string estado);
@@ -24,6 +26,7 @@ namespace YSA.Core.Interfaces
         Task<Pedido> ObtenerPedidoActivoPorCursoAsync(int estudianteId, int cursoId, string[] estadosActivos);
         Task<int?> ObtenerPedidoPendienteIdPorCursoAsync(int estudianteId, int cursoId);
         Task<List<Pedido>> ObtenerPedidosPorUsuarioAsync(int usuarioId); // ← NUEVO MÉTODO
-
+        Task<bool> TienePedidoPendientePorPaqueteAsync(int usuarioId, int paqueteId);
+        Task<List<Pedido>> ObtenerPedidosPorEstadoYUsuarioAsync(string estado, int usuarioId);
     }
 }

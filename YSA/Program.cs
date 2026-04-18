@@ -99,6 +99,9 @@ builder.Services.AddScoped<IArtistaFotoRepository, ArtistaFotoRepository>();
 builder.Services.AddScoped<IEventoRepository, EventoRepository>();
 builder.Services.AddScoped<IEventoService, EventoService>();
 // El ProductoRepository ya estaba arriba
+// Agrega estas líneas en tu Program.cs
+builder.Services.AddScoped<IPaqueteRepository, PaqueteRepository>();
+builder.Services.AddScoped<IPaqueteService, PaqueteService>();
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<ICompraService, CompraService>();
 builder.Services.AddScoped<IRecursoActividadRepository, RecursoActividadRepository>();

@@ -1,0 +1,296 @@
+﻿@model YSA.Web.Models.ViewModels.PaquetesIndexViewModel
+@{
+    ViewData["Title"] = "Paquetes | Yo Soy Arte";
+}
+
+<div class="container-sin-gutter paquetes-index-container">
+    
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="h3" style="font-family: var(--font-heading);">
+                            <span class="text-brand-primary">Todos los paquetes</span>
+                        </h2>
+                        <p class="text-muted small mb-0">
+                            Mostrando @Model.Paquetes.Count de @Model.TotalPaginas páginas
+                        </p>
+                    </div>
+                </div>
+
+                <!-- GRID DE PAQUETES -->
+                <div class="row g-4" id="paquetesContainer">
+                    @foreach (var paquete in Model.Paquetes)
+                    {
+                        var estaComprado = Model.PaquetesCompradosIds.Contains(paquete.Id);
+                        var estaEnValidacion = Model.PaquetesEnValidacionIds.Contains(paquete.Id);
+                        var precioTotalItems = (paquete.PaqueteCursos?.Sum(pc => pc.Curso?.Precio ?? 0) ?? 0) +
+                        (paquete.PaqueteProductos?.Sum(pp => pp.Producto?.Precio ?? 0) ?? 0);
+                        var ahorro = precioTotalItems - paquete.Precio;
+
+                        <div class="col-lg-4 col-md-6">
+                            <a href="@Url.Action("Detalle", "Paquete", new { id = paquete.Id })" class="paquete-card">
+                                <div class="paquete-card-header position-relative">
+                                    <img src="@Url.Content(paquete.UrlImagen ?? "/diseño/default-paquete.jpg")"
+                                         class="paquete-image"
+                                         alt="@paquete.Titulo"
+                                         loading="lazy"
+                                         onerror="this.src='/diseño/default-paquete.jpg'">
+
+                                    @if (paquete.Precio > 0)
+                                    {
+                                        <span class="badge-price">@paquete.Precio.ToString("C")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-free">GRATIS</span>
+                                    }
+
+                                    @if (ahorro > 0)
+                                    {
+                                        <span class="badge-ahorro">Ahorra @ahorro.ToString("C")</span>
+                                    }
+
+                                    @if (estaComprado)
+                                    {
+                                        <span class="badge-comprado">
+                                            <i class="fas fa-check-circle"></i> Adquirido
+                                        </span>
+                                    }
+                                    else if (estaEnValidacion)
+                                    {
+                                        <span class="badge-validacion">
+                                            <i class="fas fa-hourglass-half"></i> En validación
+                                        </span>
+                                    }
+
+                                    <div class="badge-items">
+                                        <i class="fas fa-cubes"></i>
+                                        <span>@((paquete.PaqueteCursos?.Count ?? 0) + (paquete.PaqueteProductos?.Count ?? 0)) items</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+
+                @if (!Model.Paquetes.Any())
+                {
+                    <div class="text-center py-5">
+                        <i class="fas fa-cubes fa-4x text-muted mb-4"></i>
+                        <h4 class="mb-3">No se encontraron paquetes</h4>
+                        <p class="text-muted">Intenta con otros criterios de búsqueda.</p>
+                    </div>
+                }
+
+                <!-- PAGINACIÓN -->
+                @if (Model.TotalPaginas > 1)
+                {
+                    <nav aria-label="Paginación de paquetes" class="mt-5">
+                        <ul class="pagination justify-content-center">
+                            @if (Model.PaginaActual > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = Model.PaginaActual - 1, searchString = Model.SearchString })">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            }
+
+                            @for (int i = 1; i <= Model.TotalPaginas; i++)
+                            {
+                                <li class="page-item @(i == Model.PaginaActual ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = i, searchString = Model.SearchString })">@i</a>
+                                </li>
+                            }
+
+                            @if (Model.PaginaActual < Model.TotalPaginas)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = Model.PaginaActual + 1, searchString = Model.SearchString })">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .paquetes-hero-section {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        padding: 4rem 0;
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .text-brand-primary {
+        color: var(--color-brand-primary, #ef8830) !important;
+    }
+
+    .search-section {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+    }
+
+    .paquete-card {
+        border: 1px solid var(--color-border, #e8e8e8);
+        border-radius: 12px;
+        overflow: hidden;
+        background-color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        display: block;
+        text-decoration: none;
+        cursor: pointer;
+        aspect-ratio: 1080 / 1350;
+    }
+
+        .paquete-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary, #ef8830);
+        }
+
+    .paquete-card-header {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: #f8f9fa;
+        overflow: hidden;
+    }
+
+    .paquete-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .paquete-card:hover .paquete-image {
+        transform: scale(1.05);
+    }
+
+    .badge-price, .badge-free {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 6px;
+        font-family: var(--font-accent, 'Poppins', sans-serif);
+        font-weight: 600;
+        font-size: 0.75rem;
+        z-index: 2;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .badge-price {
+        background-color: var(--color-brand-primary, #ef8830);
+        color: white;
+    }
+
+    .badge-free {
+        background-color: var(--color-brand-success, #6db53e);
+        color: white;
+    }
+
+    .badge-ahorro {
+        position: absolute;
+        top: 0.75rem;
+        left: 0.75rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+        font-family: var(--font-accent, 'Poppins', sans-serif);
+        font-weight: 600;
+        font-size: 0.7rem;
+        z-index: 2;
+        background-color: var(--color-brand-accent, #f2e514);
+        color: var(--color-brand-dark, #08080a);
+    }
+
+    .badge-comprado {
+        position: absolute;
+        bottom: 0.75rem;
+        right: 0.75rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 6px;
+        font-family: var(--font-accent, 'Poppins', sans-serif);
+        font-weight: 600;
+        font-size: 0.75rem;
+        z-index: 2;
+        background-color: var(--color-brand-success, #6db53e);
+        color: white;
+    }
+
+    .badge-validacion {
+        position: absolute;
+        bottom: 0.75rem;
+        right: 0.75rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 6px;
+        font-family: var(--font-accent, 'Poppins', sans-serif);
+        font-weight: 600;
+        font-size: 0.75rem;
+        z-index: 2;
+        background-color: var(--color-brand-accent, #f2e514);
+        color: var(--color-brand-dark, #08080a);
+    }
+
+    .badge-items {
+        position: absolute;
+        bottom: 0.75rem;
+        left: 0.75rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+        font-family: var(--font-accent, 'Poppins', sans-serif);
+        font-weight: 600;
+        font-size: 0.7rem;
+        z-index: 2;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .pagination .page-link {
+        color: var(--color-brand-primary, #ef8830);
+        border: 1px solid var(--color-border, #e8e8e8);
+        margin: 0 0.25rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .pagination .active .page-link {
+        background-color: var(--color-brand-primary, #ef8830);
+        border-color: var(--color-brand-primary, #ef8830);
+        color: white;
+    }
+
+    @@media (max-width: 768px) {
+        .paquete-card {
+            aspect-ratio: 1080 / 1350;
+        }
+
+        .badge-price, .badge-free {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.65rem;
+        }
+
+        .badge-ahorro, .badge-items {
+            padding: 0.2rem 0.5rem;
+            font-size: 0.6rem;
+        }
+    }
+</style>

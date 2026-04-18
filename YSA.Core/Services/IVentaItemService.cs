@@ -12,6 +12,7 @@ namespace YSA.Core.Services
         Task<VentaItem> CrearVentaItemAsync(string tipo, int? cursoId = null, int? productoId = null, decimal? precio = null);
         Task ActualizarVentaItemAsync(VentaItem ventaItem);
         Task<IEnumerable<VentaItem>> ObtenerItemsPorPedidoIdAsync(int pedidoId);
-
+        Task<VentaItem> ObtenerVentaItemPorPaqueteIdAsync(int paqueteId);
+        Task CrearVentaItemAsync(string tipo, int? cursoId, int? productoId, decimal precio, int? paqueteId = null);
     }
 }

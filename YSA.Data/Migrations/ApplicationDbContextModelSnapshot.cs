@@ -877,6 +877,88 @@ namespace YSA.Data.Migrations
                     b.ToTable("Pagos");
                 });
 
+            modelBuilder.Entity("YSA.Core.Entities.Paquete", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DescripcionCorta")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("DescripcionLarga")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EsDestacado")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EsRecomendado")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaPublicacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Precio")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("UrlImagen")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EsDestacado");
+
+                    b.HasIndex("FechaPublicacion");
+
+                    b.ToTable("Paquetes", (string)null);
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.PaqueteCurso", b =>
+                {
+                    b.Property<int>("PaqueteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CursoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PaqueteId", "CursoId");
+
+                    b.HasIndex("CursoId");
+
+                    b.HasIndex("PaqueteId");
+
+                    b.ToTable("PaqueteCursos", (string)null);
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.PaqueteProducto", b =>
+                {
+                    b.Property<int>("PaqueteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PaqueteId", "ProductoId");
+
+                    b.HasIndex("PaqueteId");
+
+                    b.HasIndex("ProductoId");
+
+                    b.ToTable("PaqueteProductos", (string)null);
+                });
+
             modelBuilder.Entity("YSA.Core.Entities.Pedido", b =>
                 {
                     b.Property<int>("Id")
@@ -1388,6 +1470,9 @@ namespace YSA.Data.Migrations
                     b.Property<int?>("CursoId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PaqueteId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Precio")
                         .HasColumnType("decimal(10, 2)");
 
@@ -1403,7 +1488,11 @@ namespace YSA.Data.Migrations
 
                     b.HasIndex("CursoId");
 
+                    b.HasIndex("PaqueteId");
+
                     b.HasIndex("ProductoId");
+
+                    b.HasIndex("Tipo");
 
                     b.ToTable("VentaItems");
                 });
@@ -1729,6 +1818,44 @@ namespace YSA.Data.Migrations
                     b.Navigation("Validador");
                 });
 
+            modelBuilder.Entity("YSA.Core.Entities.PaqueteCurso", b =>
+                {
+                    b.HasOne("YSA.Core.Entities.Curso", "Curso")
+                        .WithMany()
+                        .HasForeignKey("CursoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("YSA.Core.Entities.Paquete", "Paquete")
+                        .WithMany("PaqueteCursos")
+                        .HasForeignKey("PaqueteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Curso");
+
+                    b.Navigation("Paquete");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.PaqueteProducto", b =>
+                {
+                    b.HasOne("YSA.Core.Entities.Paquete", "Paquete")
+                        .WithMany("PaqueteProductos")
+                        .HasForeignKey("PaqueteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("YSA.Core.Entities.Producto", "Producto")
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Paquete");
+
+                    b.Navigation("Producto");
+                });
+
             modelBuilder.Entity("YSA.Core.Entities.Pedido", b =>
                 {
                     b.HasOne("YSA.Core.Entities.Usuario", "Estudiante")
@@ -1867,12 +1994,19 @@ namespace YSA.Data.Migrations
                         .HasForeignKey("CursoId")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("YSA.Core.Entities.Paquete", "Paquete")
+                        .WithMany()
+                        .HasForeignKey("PaqueteId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("YSA.Core.Entities.Producto", "Producto")
                         .WithMany()
                         .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Curso");
+
+                    b.Navigation("Paquete");
 
                     b.Navigation("Producto");
                 });
@@ -1949,6 +2083,13 @@ namespace YSA.Data.Migrations
             modelBuilder.Entity("YSA.Core.Entities.Modulo", b =>
                 {
                     b.Navigation("Lecciones");
+                });
+
+            modelBuilder.Entity("YSA.Core.Entities.Paquete", b =>
+                {
+                    b.Navigation("PaqueteCursos");
+
+                    b.Navigation("PaqueteProductos");
                 });
 
             modelBuilder.Entity("YSA.Core.Entities.Pedido", b =>

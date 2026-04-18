@@ -46,7 +46,9 @@ namespace YSA.Data.Data
         // NUEVOS DbSets para cursos presenciales
         public DbSet<ClasePresencial> ClasesPresenciales { get; set; }
         public DbSet<InscripcionClase> InscripcionesClases { get; set; }
-
+        public DbSet<Paquete> Paquetes { get; set; }
+        public DbSet<PaqueteCurso> PaqueteCursos { get; set; }
+        public DbSet<PaqueteProducto> PaqueteProductos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -379,6 +381,101 @@ namespace YSA.Data.Data
             modelBuilder.Entity<RecursoActividad>(entity =>
             {
                 entity.HasIndex(r => new { r.TipoEntidad, r.EntidadId });
+            });
+            // ==================== CONFIGURACIONES PARA PAQUETES ====================
+
+            // Configuración para Paquete
+            modelBuilder.Entity<Paquete>(entity =>
+            {
+                entity.ToTable("Paquetes");
+
+                entity.HasKey(p => p.Id);
+
+                entity.Property(p => p.Titulo)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(p => p.DescripcionCorta)
+                    .HasMaxLength(255);
+
+                entity.Property(p => p.Precio)
+                    .HasColumnType("decimal(10,2)");
+
+                entity.Property(p => p.UrlImagen)
+                    .HasMaxLength(255);
+
+                // Índices
+                entity.HasIndex(p => p.EsDestacado);
+                entity.HasIndex(p => p.FechaPublicacion);
+            });
+
+            // Configuración para PaqueteCurso (tabla intermedia)
+            modelBuilder.Entity<PaqueteCurso>(entity =>
+            {
+                entity.ToTable("PaqueteCursos");
+
+                entity.HasKey(pc => new { pc.PaqueteId, pc.CursoId });
+
+                entity.HasOne(pc => pc.Paquete)
+                    .WithMany(p => p.PaqueteCursos)
+                    .HasForeignKey(pc => pc.PaqueteId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(pc => pc.Curso)
+                    .WithMany()
+                    .HasForeignKey(pc => pc.CursoId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Índices
+                entity.HasIndex(pc => pc.PaqueteId);
+                entity.HasIndex(pc => pc.CursoId);
+            });
+
+            // Configuración para PaqueteProducto (tabla intermedia)
+            modelBuilder.Entity<PaqueteProducto>(entity =>
+            {
+                entity.ToTable("PaqueteProductos");
+
+                entity.HasKey(pp => new { pp.PaqueteId, pp.ProductoId });
+
+                entity.HasOne(pp => pp.Paquete)
+                    .WithMany(p => p.PaqueteProductos)
+                    .HasForeignKey(pp => pp.PaqueteId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(pp => pp.Producto)
+                    .WithMany()
+                    .HasForeignKey(pp => pp.ProductoId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Índices
+                entity.HasIndex(pp => pp.PaqueteId);
+                entity.HasIndex(pp => pp.ProductoId);
+            });
+
+            // Modificar VentaItem para incluir PaqueteId
+            modelBuilder.Entity<VentaItem>(entity =>
+            {
+                entity.HasOne(vi => vi.Curso)
+                    .WithMany()
+                    .HasForeignKey(vi => vi.CursoId);
+
+                entity.HasOne(vi => vi.Producto)
+                    .WithMany()
+                    .HasForeignKey(vi => vi.ProductoId);
+
+                // NUEVA relación con Paquete
+                entity.HasOne(vi => vi.Paquete)
+                    .WithMany()
+                    .HasForeignKey(vi => vi.PaqueteId);
+
+                // Índice para búsqueda por tipo
+                entity.HasIndex(vi => vi.Tipo);
+
+                // Índices para las claves foráneas
+                entity.HasIndex(vi => vi.CursoId);
+                entity.HasIndex(vi => vi.ProductoId);
+                entity.HasIndex(vi => vi.PaqueteId);
             });
         }
     }

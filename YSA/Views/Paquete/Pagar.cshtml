@@ -1,0 +1,243 @@
+﻿@model YSA.Web.Models.ViewModels.PagoPaqueteViewModel
+@{
+    ViewData["Title"] = "Pagar Paquete";
+}
+
+<style>
+    .pago-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .pago-card {
+        border-radius: 16px;
+        border: 1px solid var(--color-border, #e8e8e8);
+        background-color: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .pago-header {
+        background: linear-gradient(135deg, var(--color-section-bg, #f8f9fa) 0%, #f8f9fa 100%);
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--color-border, #e8e8e8);
+        text-align: center;
+    }
+
+        .pago-header h3 {
+            font-family: var(--font-heading, 'Georgia', serif);
+            margin: 0;
+        }
+
+    .pago-body {
+        padding: 1.5rem;
+    }
+
+    .paquete-resumen {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background-color: var(--color-section-bg, #f8f9fa);
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+
+    .paquete-resumen-imagen {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .paquete-resumen-info {
+        flex: 1;
+    }
+
+    .paquete-resumen-titulo {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .total-box {
+        background-color: var(--color-section-bg, #f8f9fa);
+        border-radius: 12px;
+        padding: 1rem;
+        margin: 1rem 0;
+        text-align: center;
+    }
+
+    .total-usd {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--color-brand-primary, #ef8830);
+    }
+
+    .total-ves {
+        font-size: 1.2rem;
+        color: var(--color-brand-success, #6db53e);
+    }
+
+    .btn-pagar {
+        background: var(--color-brand-primary, #ef8830);
+        border: none;
+        color: white;
+        padding: 0.75rem 1rem;
+        font-family: var(--font-accent, 'Poppins', sans-serif);
+        font-weight: 600;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        width: 100%;
+        cursor: pointer;
+    }
+
+        .btn-pagar:hover {
+            background: var(--color-brand-secondary, #e5361a);
+            transform: translateY(-2px);
+        }
+
+    .info-pago-caja {
+        background-color: rgba(239, 136, 48, 0.05);
+        border: 1px solid rgba(239, 136, 48, 0.2);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid var(--color-border, #e8e8e8);
+        padding: 0.5rem 0.75rem;
+        width: 100%;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--color-brand-primary, #ef8830);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+            outline: none;
+        }
+</style>
+
+<div class="pago-container">
+    <div class="pago-card">
+        <div class="pago-header">
+            <h3>Completar pago</h3>
+            <p class="text-muted mb-0">Paquete: @Model.PaqueteTitulo</p>
+        </div>
+        <div class="pago-body">
+            <!-- Resumen del paquete -->
+            <div class="paquete-resumen">
+                @if (!string.IsNullOrEmpty(Model.PaqueteImagen))
+                {
+                    <img src="@Url.Content(Model.PaqueteImagen)" class="paquete-resumen-imagen" alt="@Model.PaqueteTitulo">
+                }
+                <div class="paquete-resumen-info">
+                    <div class="paquete-resumen-titulo">@Model.PaqueteTitulo</div>
+                    <div class="text-muted small">@Model.CantidadItems productos incluidos</div>
+                </div>
+            </div>
+
+            <form asp-action="ProcesarPago" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="PedidoId" />
+
+                <div class="mb-3">
+                    <label asp-for="MetodoPago" class="form-label">Método de pago</label>
+                    <select asp-for="MetodoPago" class="form-select" required>
+                        <option value="" disabled selected>Seleccione un método</option>
+                        <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+                        <option value="Pago Móvil">Pago Móvil</option>
+                        <option value="PayPal">PayPal</option>
+                    </select>
+                </div>
+
+                <div id="infoPagoCaja" class="info-pago-caja" style="display: none;">
+                    <h4 class="h6 mb-2"><i class="fas fa-info-circle"></i> Datos para realizar el pago</h4>
+                    <div id="infoPagoDetalle"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ReferenciaPago" class="form-label">Referencia del pago</label>
+                    <input asp-for="ReferenciaPago" class="form-control" placeholder="Ingrese N° de referencia" required />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ComprobanteArchivo" class="form-label">Subir comprobante</label>
+                    <input asp-for="ComprobanteArchivo" type="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required />
+                    <div class="form-text">Formatos aceptados: PDF, JPG, PNG (Máx. 5MB)</div>
+                </div>
+
+                <div class="total-box">
+                    <div class="total-usd">Total: @Model.Total.ToString("N2") USD</div>
+                    <div class="total-ves">Equivalente: @((Model.Total * Model.TasaBCV).ToString("N2")) VES</div>
+                    <div class="small text-muted">Tasa BCV: @Model.TasaBCV.ToString("N4") VES/USD</div>
+                </div>
+
+                <button type="submit" class="btn-pagar">
+                    <i class="fas fa-paper-plane me-2"></i>Enviar comprobante
+                </button>
+            </form>
+
+            <hr class="my-4">
+
+            <div class="text-center">
+                <i class="fab fa-whatsapp me-1" style="color: #25d366;"></i>
+                <small class="text-muted">¿Dudas? Contáctanos por <a href="#" id="whatsappLink">WhatsApp</a></small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const PAYMENT_DETAILS = {
+            "Transferencia Bancaria": `
+                <div class="mb-1"><strong>Banco:</strong> Bancaribe</div>
+                <div class="mb-1"><strong>RIC/C.I.:</strong> J500504314</div>
+                <div class="mb-1"><strong>N° Cuenta:</strong> 0114-0150-33-15005050991</div>
+                <div class="mb-1"><strong>T. Producto:</strong> Corriente</div>
+            `,
+            "Pago Móvil": `
+                <div class="mb-1"><strong>Banco:</strong> Bancaribe</div>
+                <div class="mb-1"><strong>C.I.:</strong> J-500504314</div>
+                <div class="mb-1"><strong>Teléfono:</strong> 04129290589</div>
+            `,
+            "PayPal": `
+                <div class="mb-1"><strong>Cuenta PayPal:</strong> desiarr@gmail.com</div>
+                <div class="mb-1"><strong>Instrucciones:</strong> Realice el pago directamente en PayPal y adjunte el comprobante.</div>
+            `
+        };
+
+        const metodoPagoSelect = document.getElementById('MetodoPago');
+        const infoPagoCaja = document.getElementById('infoPagoCaja');
+        const infoPagoDetalle = document.getElementById('infoPagoDetalle');
+
+        if (metodoPagoSelect) {
+            metodoPagoSelect.addEventListener('change', function() {
+                const selectedMethod = this.value;
+                if (selectedMethod && PAYMENT_DETAILS[selectedMethod]) {
+                    infoPagoDetalle.innerHTML = PAYMENT_DETAILS[selectedMethod];
+                    infoPagoCaja.style.display = 'block';
+                } else {
+                    infoPagoCaja.style.display = 'none';
+                }
+            });
+        }
+
+        const whatsappNumber = "584121463374";
+        const whatsappMessage = encodeURIComponent("Hola, necesito información sobre el pago de mi paquete. ¿Me pueden ayudar?");
+        const whatsappLink = document.getElementById('whatsappLink');
+        if (whatsappLink) {
+            whatsappLink.href = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+            whatsappLink.target = "_blank";
+        }
+    </script>
+}

@@ -15,6 +15,22 @@ namespace YSA.Data.Repositories
         {
             _context = context;
         }
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+        public async Task<List<int>> GetEstudianteCursoIdsAsync(int estudianteId)
+        {
+            return await _context.EstudianteCursos
+                .Where(ec => ec.EstudianteId == estudianteId)
+                .Select(ec => ec.CursoId)
+                .ToListAsync();
+        }
+        public async Task<bool> TieneAccesoAlCursoAsync(int estudianteId, int cursoId)
+        {
+            return await _context.EstudianteCursos
+                .AnyAsync(ec => ec.EstudianteId == estudianteId && ec.CursoId == cursoId);
+        }
 
         public async Task<EstudianteCurso> AddAsync(EstudianteCurso estudianteCurso)
         {

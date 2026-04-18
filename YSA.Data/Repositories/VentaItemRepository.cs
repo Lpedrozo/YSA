@@ -23,7 +23,10 @@ namespace YSA.Data.Repositories
                                  .Include(vi => vi.Producto)
                                  .FirstOrDefaultAsync(vi => vi.Id == id);
         }
-
+        public async Task<VentaItem> ObtenerPorPaqueteIdAsync(int paqueteId)
+        {
+            return await _context.VentaItems.FirstOrDefaultAsync(vi => vi.PaqueteId == paqueteId);
+        }
         public async Task<VentaItem> GetByCursoIdAsync(int cursoId)
         {
             return await _context.VentaItems.FirstOrDefaultAsync(vi => vi.CursoId == cursoId);

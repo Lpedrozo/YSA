@@ -1,0 +1,586 @@
+﻿@model YSA.Web.Models.ViewModels.PaqueteDetalleViewModel
+@{
+    ViewData["Title"] = Model.Titulo;
+    var cultureUS = new System.Globalization.CultureInfo("en-US");
+}
+
+<style>
+    .paquete-detalle-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .paquete-imagen-container {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto 2rem auto;
+    }
+
+    .paquete-imagen-wrapper {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1080 / 1350;
+        background-color: #f8f9fa;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--color-border, #e8e8e8);
+    }
+
+    .paquete-imagen {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .badge-precio-detalle {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-family: var(--font-accent, 'Poppins', sans-serif);
+        font-weight: 600;
+        font-size: 0.9rem;
+        z-index: 2;
+        background-color: var(--color-brand-primary, #ef8830);
+        color: white;
+    }
+
+    .badge-ahorro-detalle {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-family: var(--font-accent, 'Poppins', sans-serif);
+        font-weight: 600;
+        font-size: 0.8rem;
+        z-index: 2;
+        background-color: var(--color-brand-accent, #f2e514);
+        color: var(--color-brand-dark, #08080a);
+    }
+
+    .info-card {
+        background-color: var(--color-section-bg, #f8f9fa);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid var(--color-border, #e8e8e8);
+    }
+
+    .precio-original {
+        text-decoration: line-through;
+        color: var(--color-accent, #6c757d);
+        font-size: 0.9rem;
+    }
+
+    .precio-oferta {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-brand-success, #6db53e);
+    }
+
+    .btn-comprar {
+        background: var(--color-brand-primary, #ef8830);
+        border: none;
+        color: white;
+        padding: 1rem;
+        font-family: var(--font-accent, 'Poppins', sans-serif);
+        font-weight: 600;
+        font-size: 1rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        width: 100%;
+        cursor: pointer;
+    }
+
+        .btn-comprar:hover {
+            background: var(--color-brand-secondary, #e5361a);
+            transform: translateY(-2px);
+        }
+
+        .btn-comprar:disabled {
+            background: var(--color-accent);
+            cursor: not-allowed;
+        }
+
+    .items-lista {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .item-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--color-border, #e8e8e8);
+        transition: background-color 0.2s;
+    }
+
+        .item-card:hover {
+            background-color: rgba(239, 136, 48, 0.05);
+        }
+
+    .item-imagen {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .item-info {
+        flex: 1;
+    }
+
+    .item-titulo {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .item-precio {
+        font-size: 0.85rem;
+        color: var(--color-brand-primary, #ef8830);
+    }
+
+    .item-tipo {
+        font-size: 0.7rem;
+        color: var(--color-accent, #6c757d);
+    }
+
+    /* Modal Completar Perfil */
+    .modal-perfil .modal-content {
+        border-radius: 16px;
+        border: none;
+    }
+
+    .modal-perfil .modal-header {
+        background-color: var(--color-section-bg);
+        border-bottom: 1px solid var(--color-border);
+        border-radius: 16px 16px 0 0;
+    }
+
+    .modal-perfil .modal-title {
+        font-family: var(--font-heading);
+        color: var(--color-brand-primary);
+    }
+
+    .modal-perfil .form-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .modal-perfil .form-control {
+        border-radius: 8px;
+        border: 1px solid var(--color-border);
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+        .modal-perfil .form-control:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
+        }
+
+    .btn-secondary-custom {
+        background-color: var(--color-accent);
+        border: none;
+        color: white;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+        .btn-secondary-custom:hover {
+            background-color: var(--color-secondary);
+        }
+
+    .btn-inscribir {
+        background: var(--color-brand-primary);
+        border: none;
+        color: white;
+        padding: 0.75rem 1rem;
+        font-family: var(--font-accent);
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+        .btn-inscribir:hover {
+            background: var(--color-brand-secondary);
+            transform: translateY(-2px);
+        }
+
+    @@media (max-width: 768px) {
+        .paquete-detalle-container {
+            padding: 1rem;
+        }
+
+        .precio-oferta {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<!-- Modal de Login/Registro -->
+<div class="modal fade" id="loginRegisterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 16px;">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <i class="fas fa-lock fa-3x mb-3" style="color: var(--color-brand-primary);"></i>
+                <h3 class="mb-3">¿Listo para comprar?</h3>
+                <p class="text-muted mb-4">Para continuar con tu compra, necesitas una cuenta en Yo Soy Arte.</p>
+                <div class="d-flex flex-column gap-3">
+                    <a href="@Url.Action("Login", "Cuenta", new { returnUrl = Context.Request.Path })" class="btn btn-primary py-2">
+                        <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                    </a>
+                    <a href="@Url.Action("Registro", "Cuenta", new { returnUrl = Context.Request.Path })" class="btn btn-outline-primary py-2">
+                        <i class="fas fa-user-plus me-2"></i>Crear Cuenta
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Completar Perfil -->
+<div class="modal fade modal-perfil" id="completarPerfilModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Completa tus datos personales</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form id="formCompletarPerfil" method="post" action="@Url.Action("CompletarPerfilModal", "Cuenta")">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                <div class="modal-body">
+                    <div id="perfil-validation-errors" class="alert alert-danger d-none"></div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Nombre *</label>
+                                <input type="text" name="Nombre" class="form-control" value="@Model.UsuarioNombre" readonly />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Apellido *</label>
+                                <input type="text" name="Apellido" class="form-control" value="@Model.UsuarioApellido" readonly />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Cédula de Identidad *</label>
+                                <input type="text" name="Cedula" class="form-control" required placeholder="V-12345678" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">WhatsApp *</label>
+                                <input type="tel" name="WhatsApp" class="form-control" required placeholder="0412-1234567" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Fecha de Nacimiento *</label>
+                                <input type="date" name="FechaNacimiento" class="form-control" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">¿Eres menor de edad?</label>
+                                <select name="EsMenorEdad" class="form-control" id="EsMenorEdad">
+                                    <option value="false">No</option>
+                                    <option value="true">Sí</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="representanteFields" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre del Representante</label>
+                                    <input type="text" name="NombreRepresentante" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Cédula del Representante</label>
+                                    <input type="text" name="CedulaRepresentante" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">¿Tienes experiencia tatuando? (para curso de tatuaje)</label>
+                        <textarea name="ExperienciaTatuaje" class="form-control" rows="2" placeholder="Describe tu experiencia previa..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">¿Quién te atendió?</label>
+                        <select name="AtendidoPor" class="form-control">
+                            <option value="">Seleccione una opción</option>
+                            <option value="Aryelin">Aryelin</option>
+                            <option value="Oriana">Oriana</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary-custom" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-inscribir" style="width: auto;">Guardar y continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="paquete-detalle-container">
+    <div class="row g-4">
+        <!-- Columna izquierda - Imagen -->
+        <div class="col-lg-5">
+            <div class="paquete-imagen-container">
+                <div class="paquete-imagen-wrapper">
+                    <img src="@Url.Content(Model.UrlImagen ?? "/diseño/default-paquete.jpg")"
+                         class="paquete-imagen"
+                         alt="@Model.Titulo"
+                         onerror="this.src='/diseño/default-paquete.jpg'">
+                    <span class="badge-precio-detalle">@Model.Precio.ToString("C", cultureUS)</span>
+                    @if (Model.Ahorro > 0)
+                    {
+                        <span class="badge-ahorro-detalle">¡Ahorra @Model.Ahorro.ToString("C")!</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna derecha - Información -->
+        <div class="col-lg-7">
+            <h1 class="display-5 fw-bold mb-3" style="font-family: var(--font-heading); color: var(--color-brand-primary);">
+                @Model.Titulo
+            </h1>
+
+            <div class="info-card">
+                <p class="mb-0">@Html.Raw(Model.DescripcionLarga)</p>
+            </div>
+
+            <div class="info-card">
+                <h3 class="h5 mb-3">¿Qué incluye este paquete?</h3>
+                <div class="items-lista">
+                    @foreach (var curso in Model.Cursos)
+                    {
+                        <div class="item-card">
+                            <img src="@Url.Content(curso.UrlImagen ?? "/diseño/default-curso.jpg")" class="item-imagen" alt="@curso.Titulo">
+                            <div class="item-info">
+                                <div class="item-titulo">@curso.Titulo</div>
+                                <div class="item-tipo">Curso online</div>
+                            </div>
+                            <div class="item-precio">@curso.Precio.ToString("C", cultureUS)</div>
+                        </div>
+                    }
+                    @foreach (var producto in Model.Productos)
+                    {
+                        <div class="item-card">
+                            <img src="@Url.Content(producto.UrlImagen ?? "/diseño/default-producto.jpg")" class="item-imagen" alt="@producto.Titulo">
+                            <div class="item-info">
+                                <div class="item-titulo">@producto.Titulo</div>
+                                <div class="item-tipo">@(producto.TipoProducto == "pdf" ? "PDF Digital" : "Revista Digital")</div>
+                            </div>
+                            <div class="item-precio">@producto.Precio.ToString("C", cultureUS)</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de compra -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="info-card text-center">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <span class="precio-original">Valor original: @Model.PrecioTotalItems.ToString("C", cultureUS)</span>
+                            <div class="precio-oferta">Precio del paquete: @Model.Precio.ToString("C", cultureUS)</div>
+                            @if (Model.Ahorro > 0)
+                            {
+                                <span class="text-success mb-4">¡Ahorras @Model.Ahorro.ToString("C")!</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        @if (Model.TieneAcceso)
+                        {
+                            <a href="@Url.Action("VerPaquete", "Paquete", new { id = Model.Id })" class="btn-comprar" style="background-color: var(--color-brand-success);">
+                                <i class="fas fa-eye me-2"></i>Ver mi paquete
+                            </a>
+                        }
+                        else if (Model.EstaEnValidacion)
+                        {
+                            <button class="btn-comprar" disabled style="background-color: var(--color-accent); cursor: not-allowed;">
+                                <i class="fas fa-hourglass-half me-2"></i>Pendiente de validación
+                            </button>
+                        }
+                        else if (Model.TienePedidoPendiente && Model.PedidoPendienteId.HasValue)
+                        {
+                            <a href="@Url.Action("Pagar", "Paquete", new { pedidoId = Model.PedidoPendienteId.Value })" class="btn-comprar">
+                                <i class="fas fa-credit-card me-2"></i>Continuar con el pago
+                            </a>
+                            <p class="text-muted small mt-2">Tienes un pedido pendiente. Completa el pago para adquirir el paquete.</p>
+                        }
+                        else if (!Model.UsuarioLogueado)
+                        {
+                            <button class="btn-comprar" data-bs-toggle="modal" data-bs-target="#loginRegisterModal">
+                                <i class="fas fa-shopping-cart me-2"></i>Comprar ahora
+                            </button>
+                            <p class="text-muted small mt-2">Inicia sesión para completar tu compra</p>
+                        }
+                        else if (!Model.PerfilCompleto)
+                        {
+                            <button class="btn-comprar" data-bs-toggle="modal" data-bs-target="#completarPerfilModal">
+                                <i class="fas fa-address-card me-2"></i>Completar perfil para comprar
+                            </button>
+                            <p class="text-muted small mt-2">Completa tus datos personales antes de comprar</p>
+                        }
+                        else
+                        {
+                            <form asp-action="Comprar" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="paqueteId" value="@Model.Id" />
+                                <button type="submit" class="btn-comprar">
+                                    <i class="fas fa-shopping-cart me-2"></i>Comprar ahora
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Mostrar/ocultar campos de representante
+        const esMenorEdadSelect = document.getElementById('EsMenorEdad');
+        const representanteFields = document.getElementById('representanteFields');
+
+        if (esMenorEdadSelect) {
+            esMenorEdadSelect.addEventListener('change', function() {
+                representanteFields.style.display = this.value === 'true' ? 'block' : 'none';
+            });
+        }
+
+        // Mostrar modal de completar perfil si es necesario
+        @if (Model.UsuarioLogueado && !Model.PerfilCompleto && TempData["ShowPerfilModal"] != null)
+        {
+            <text>
+                    var perfilModal = new bootstrap.Modal(document.getElementById('completarPerfilModal'));
+                    perfilModal.show();
+            </text>
+        }
+
+        // Validación del formulario de perfil
+        document.getElementById('formCompletarPerfil')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Datos guardados!',
+                        text: 'Tu perfil ha sido completado exitosamente.',
+                        confirmButtonColor: '#ef8830'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    const errorsDiv = document.getElementById('perfil-validation-errors');
+                    let errorHtml = '<ul>';
+                    if (result.errors && Array.isArray(result.errors)) {
+                        result.errors.forEach(e => errorHtml += `<li>${e}</li>`);
+                    } else if (result.message) {
+                        errorHtml += `<li>${result.message}</li>`;
+                    } else {
+                        errorHtml += '<li>Error al guardar los datos</li>';
+                    }
+                    errorHtml += '</ul>';
+                    errorsDiv.innerHTML = errorHtml;
+                    errorsDiv.classList.remove('d-none');
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un problema al guardar los datos.'
+                });
+            }
+        });
+
+        @if (TempData["RedirectToProfile"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Perfil incompleto',
+                        text: '@TempData["Message"]',
+                        confirmButtonColor: '#ef8830'
+                    });
+            </text>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: '@TempData["ErrorMessage"]',
+                        confirmButtonColor: '#ef8830'
+                    });
+            </text>
+        }
+
+        @if (TempData["InfoMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Información',
+                        text: '@TempData["InfoMessage"]',
+                        confirmButtonColor: '#ef8830'
+                    });
+            </text>
+        }
+    </script>
+}

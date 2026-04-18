@@ -1,15 +1,225 @@
-﻿// YSA.Core.Interfaces/IEmailService.cs
-namespace YSA.Core.Interfaces
+﻿
+
+using YSA.Core.Entities;
+using YSA.Core.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.AspNetCore.Identity;
+
+namespace YSA.Core.Services
 {
-    public interface IEmailService
+    public class PedidoService : IPedidoService
     {
-        Task<bool> EnviarNotificacionAdminInscripcionGratuitaAsync(string nombreUsuario, string emailUsuario, string claseTitulo, string cursoTitulo, DateTime fechaClase, string lugar);
-        Task<bool> EnviarNotificacionAdminPagoPendienteAsync(string nombreUsuario, string emailUsuario, string claseTitulo, string cursoTitulo, decimal monto, int pedidoId, string comprobanteUrl);
-        Task<bool> EnviarCorreoAsync(string destinatario, string asunto, string cuerpoHtml, string? copia = null);
-        Task<bool> EnviarCorreoCompraPendienteAsync(string destinatario, string nombreUsuario, int pedidoId, decimal total, List<string> items);
-        Task<bool> EnviarCorreoCompraAprobadaAsync(string destinatario, string nombreUsuario, int pedidoId, string tipoItem, string nombreItem);
-        Task<bool> EnviarCorreoCompraRechazadaAsync(string destinatario, string nombreUsuario, int pedidoId, string motivo);
-        Task<bool> EnviarCorreoBienvenidaAsync(string destinatario, string nombreUsuario);
-        Task<bool> EnviarCorreoSuscripcionActivadaAsync(string destinatario, string nombreUsuario, string planNombre, DateTime fechaInicio, DateTime fechaFin);
+        private readonly IPedidoRepository _pedidoRepository;
+        private readonly IVentaItemService _ventaItemService;
+        private readonly UserManager<Usuario> _userManager;
+        private readonly IEstudianteCursoRepository _estudianteCursoRepository;
+
+
+        public PedidoService(IPedidoRepository pedidoRepository, IVentaItemService ventaItemService, UserManager<Usuario> userManager, IEstudianteCursoRepository estudianteCursoRepository)
+        {
+            _pedidoRepository = pedidoRepository;
+            _ventaItemService = ventaItemService;
+            _userManager = userManager;
+            _estudianteCursoRepository = estudianteCursoRepository;
+        }
+        public async Task<List<Pedido>> ObtenerPedidosPorUsuarioAsync(int usuarioId)
+        {
+            return await _pedidoRepository.ObtenerPedidosPorUsuarioAsync(usuarioId);
+        }
+        public async Task<int?> ObtenerPedidoPendienteIdPorCursoAsync(int estudianteId, int cursoId)
+        {
+            return await _pedidoRepository.ObtenerPedidoPendienteIdPorCursoAsync(estudianteId, cursoId);
+        }
+        public async Task<Pedido> ObtenerPedidoConDetallesCompletosAsync(int id)
+        {
+            return await _pedidoRepository.GetByIdWithDetailsAsync(id);
+        }
+        public async Task<int> GetPedidosPendientesAsync()
+        {
+            return await _pedidoRepository.GetPedidosPendientesAsync();
+        }
+        public async Task<Pedido> CrearPedidoAsync(int estudianteId, List<int> ventaItemIds)
+        {
+            // Ahora usamos UserManager para obtener el usuario directamente
+            var estudiante = await _userManager.FindByIdAsync(estudianteId.ToString());
+            if (estudiante == null)
+            {
+                throw new ArgumentException("Estudiante no encontrado.");
+            }
+
+            var ventaItems = await _ventaItemService.ObtenerVentaItemsPorIdsAsync(ventaItemIds);
+            if (ventaItems == null || !ventaItems.Any())
+            {
+                throw new ArgumentException("No se encontraron items de venta válidos.");
+            }
+
+            var nuevoPedido = new Pedido
+            {
+                EstudianteId = estudianteId,
+                FechaPedido = DateTime.UtcNow,
+                Estado = "Pendiente",
+                Total = ventaItems.Sum(v => v.Precio),
+                PedidoItems = ventaItems.Select(v => new PedidoItem
+                {
+                    VentaItemId = v.Id,
+                    PrecioUnidad = v.Precio,
+                    Cantidad = 1
+                }).ToList()
+            };
+
+            return await _pedidoRepository.AddAsync(nuevoPedido);
+        }
+        public async Task<Pedido> ObtenerPedidoPendientePorPaqueteAsync(int usuarioId, int paqueteId)
+        {
+            return await _pedidoRepository.ObtenerPedidoPendientePorPaqueteAsync(usuarioId, paqueteId);
+        }
+
+        public async Task<Pedido> ObtenerPedidoPorIdAsync(int pedidoId)
+        {
+            return await _pedidoRepository.GetByIdAsync(pedidoId);
+        }
+
+        public async Task<Pedido> ObtenerPedidoConItemsYVentaItemsAsync(int pedidoId)
+        {
+            return await _pedidoRepository.GetPedidoWithItemsAndVentaItemsAsync(pedidoId);
+        }
+
+        public async Task<bool> ActualizarEstadoPedidoAsync(int pedidoId, string nuevoEstado)
+        {
+            var pedido = await _pedidoRepository.GetByIdAsync(pedidoId);
+            if (pedido == null)
+            {
+                return false;
+            }
+
+            pedido.Estado = nuevoEstado;
+            return await _pedidoRepository.UpdateAsync(pedido);
+        }
+
+        public async Task<Pago> RegistrarPagoAsync(Pago pago)
+        {
+            return await _pedidoRepository.AddPagoAsync(pago);
+        }
+        public async Task<Pago> GetPagoWithPedido(int id)
+        {
+            return await _pedidoRepository.GetPagoWithPedido(id);
+        }
+        public async Task<IEnumerable<Pedido>> ObtenerPedidosPorEstadoAsync(string estado)
+        {
+            return await _pedidoRepository.GetPedidosByEstadoAsync(estado);
+        }
+        public async Task AprobarPedidoYOtorgarAccesoAsync(int pedidoId)
+        {
+            var pedido = await _pedidoRepository.GetPedidoWithItemsAndVentaItemsAsync(pedidoId);
+
+            if (pedido != null)
+            {
+                // 1. Cambia el estado del pedido a "Completado"
+                pedido.Estado = "Completado";
+                await _pedidoRepository.UpdateAsync(pedido);
+
+                // 2. Otorga acceso a los cursos y productos
+                foreach (var pedidoItem in pedido.PedidoItems)
+                {
+                    // Caso: Curso individual
+                    if (pedidoItem.VentaItem.CursoId.HasValue)
+                    {
+                        var yaTieneAcceso = await _estudianteCursoRepository.TieneAccesoAlCursoAsync(
+                            pedido.EstudianteId,
+                            pedidoItem.VentaItem.CursoId.Value);
+
+                        if (!yaTieneAcceso)
+                        {
+                            var estudianteCurso = new EstudianteCurso
+                            {
+                                EstudianteId = pedido.EstudianteId,
+                                CursoId = pedidoItem.VentaItem.CursoId.Value,
+                                FechaAccesoOtorgado = DateTime.UtcNow
+                            };
+                            await _estudianteCursoRepository.AddAsync(estudianteCurso);
+                        }
+                    }
+                    // Caso: Paquete (contiene múltiples cursos)
+                    else if (pedidoItem.VentaItem.PaqueteId.HasValue)
+                    {
+                        var paquete = pedidoItem.VentaItem.Paquete;
+
+                        // Cargar los cursos del paquete si no están cargados
+                        if (paquete?.PaqueteCursos == null || !paquete.PaqueteCursos.Any())
+                        {
+                            paquete = await _pedidoRepository.GetPaqueteWithCursosAsync(pedidoItem.VentaItem.PaqueteId.Value);
+                        }
+
+                        if (paquete?.PaqueteCursos != null)
+                        {
+                            foreach (var pc in paquete.PaqueteCursos)
+                            {
+                                var yaTieneAcceso = await _estudianteCursoRepository.TieneAccesoAlCursoAsync(
+                                    pedido.EstudianteId,
+                                    pc.CursoId);
+
+                                if (!yaTieneAcceso)
+                                {
+                                    var estudianteCurso = new EstudianteCurso
+                                    {
+                                        EstudianteId = pedido.EstudianteId,
+                                        CursoId = pc.CursoId,
+                                        FechaAccesoOtorgado = DateTime.UtcNow
+                                    };
+                                    await _estudianteCursoRepository.AddAsync(estudianteCurso);
+                                }
+                            }
+                        }
+                    }
+                    // Los productos digitales no requieren acceso especial, solo la descarga
+                }
+
+                await _estudianteCursoRepository.SaveChangesAsync();
+            }
+        }
+        public async Task<bool> TienePedidoPendientePorCursoAsync(int estudianteId, int cursoId)
+        {
+            return await _pedidoRepository.ExistePedidoEnEstadoParaCursoAsync(estudianteId, cursoId, "Validando");
+        }
+        public async Task<IEnumerable<Pedido>> ObtenerPedidosAprobadosPorUsuarioAsync(int estudianteId)
+        {
+            return await _pedidoRepository.GetPedidosByUsuarioAndEstadoAsync(estudianteId, "Completado");
+        }
+        public async Task AnularPedidoAsync(int pedidoId)
+        {
+            bool exito = await ActualizarEstadoPedidoAsync(pedidoId, "Cancelado");
+
+            if (!exito)
+            {
+                throw new KeyNotFoundException($"No se pudo anular el pedido. Pedido ID: {pedidoId} no encontrado.");
+            }
+        }
+        public async Task<Pedido> ObtenerPedidoActivoPorCursoAsync(int estudianteId, int cursoId)
+        {
+            // Estados que consideramos como "activos" (no finalizados)
+            var estadosActivos = new[] { "Pendiente", "Validando" };
+
+            return await _pedidoRepository.ObtenerPedidoActivoPorCursoAsync(estudianteId, cursoId, estadosActivos);
+        }
+        public async Task<IEnumerable<Pedido>> ObtenerPedidosPorUsuarioYEstadoAsync(int estudianteId, string estado)
+        {
+            return await _pedidoRepository.GetPedidosByUsuarioAndEstadoAsync(estudianteId, estado);
+        }
+        public async Task<bool> TienePedidoPendientePorPaqueteAsync(int usuarioId, int paqueteId)
+        {
+            return await _pedidoRepository.TienePedidoPendientePorPaqueteAsync(usuarioId, paqueteId);
+        }
+
+        public async Task<List<Pedido>> ObtenerPedidosCompletadosPorUsuarioAsync(int usuarioId)
+        {
+            return await _pedidoRepository.ObtenerPedidosPorEstadoYUsuarioAsync("Completado", usuarioId);
+        }
+
+        public async Task<List<Pedido>> ObtenerPedidosPorEstadoYUsuarioAsync(string estado, int usuarioId)
+        {
+            return await _pedidoRepository.ObtenerPedidosPorEstadoYUsuarioAsync(estado, usuarioId);
+        }
     }
 }

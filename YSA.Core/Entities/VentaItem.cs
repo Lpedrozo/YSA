@@ -19,6 +19,8 @@ namespace YSA.Core.Entities
 
         public int? ProductoId { get; set; }
         public Producto Producto { get; set; }
+        public int? PaqueteId { get; set; } // NUEVO
+        public virtual Paquete Paquete { get; set; } // NUEVO
 
         [Column(TypeName = "decimal(10, 2)")]
         public decimal Precio { get; set; }

@@ -1,0 +1,261 @@
+﻿@model YSA.Web.Models.ViewModels.PaqueteVerViewModel
+@{
+    ViewData["Title"] = $"Mi paquete: {Model.Titulo}";
+}
+
+<style>
+    .paquete-comprado-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .paquete-header {
+        background: linear-gradient(135deg, var(--color-section-bg, #f8f9fa) 0%, var(--color-background, #fff) 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .paquete-titulo {
+        font-family: var(--font-heading, 'Georgia', serif);
+        font-size: 2rem;
+        color: var(--color-brand-primary, #ef8830);
+        margin-bottom: 0.5rem;
+    }
+
+    .seccion-titulo {
+        font-family: var(--font-heading, 'Georgia', serif);
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--color-brand-primary, #ef8830);
+        display: inline-block;
+    }
+
+    /* Tarjetas con altura uniforme */
+    .item-acceso-card {
+        border: 1px solid var(--color-border, #e8e8e8);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background-color: white;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .item-acceso-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--color-brand-primary, #ef8830);
+        }
+
+    .item-acceso-imagen {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .item-acceso-body {
+        padding: 1rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .item-acceso-titulo {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+
+    /* Descripción con altura fija y scroll si es necesario */
+    .item-acceso-descripcion {
+        font-size: 0.85rem;
+        color: var(--color-accent, #6c757d);
+        line-height: 1.4;
+        margin-bottom: 1rem;
+        flex: 1;
+        overflow-y: auto;
+        max-height: 80px;
+    }
+
+        /* Estilo para HTML dentro de la descripción */
+        .item-acceso-descripcion p {
+            margin-bottom: 0.5rem;
+        }
+
+        .item-acceso-descripcion ul,
+        .item-acceso-descripcion ol {
+            padding-left: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-acceso-descripcion li {
+            margin-bottom: 0.25rem;
+        }
+
+    /* Botón siempre al fondo */
+    .item-acceso-acciones {
+        margin-top: auto;
+        padding-top: 0.5rem;
+    }
+
+    .btn-acceso {
+        background-color: var(--color-brand-primary, #ef8830);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+        width: 100%;
+        justify-content: center;
+    }
+
+        .btn-acceso:hover {
+            background-color: var(--color-brand-secondary, #e5361a);
+            color: white;
+        }
+
+    .btn-acceso-completado {
+        background-color: var(--color-brand-success, #6db53e);
+        cursor: default;
+    }
+
+        .btn-acceso-completado:hover {
+            background-color: var(--color-brand-success, #6db53e);
+            transform: none;
+        }
+
+    .badge-tipo {
+        display: inline-block;
+        padding: 0.2rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .badge-curso {
+        background-color: rgba(239, 136, 48, 0.1);
+        color: var(--color-brand-primary, #ef8830);
+    }
+
+    .badge-producto {
+        background-color: rgba(109, 181, 62, 0.1);
+        color: var(--color-brand-success, #6db53e);
+    }
+
+    /* Para pantallas pequeñas */
+    @@media (max-width: 768px) {
+        .paquete-header {
+            padding: 1.5rem;
+        }
+
+        .paquete-titulo {
+            font-size: 1.5rem;
+        }
+
+        .item-acceso-descripcion {
+            max-height: 100px;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .item-acceso-descripcion {
+            font-size: 0.8rem;
+            max-height: 120px;
+        }
+    }
+</style>
+
+<div class="paquete-comprado-container">
+    <div class="paquete-header">
+        <h1 class="paquete-titulo">@Model.Titulo</h1>
+        <p class="text-muted">¡Gracias por tu compra! Aquí tienes todo lo que incluye tu paquete.</p>
+    </div>
+
+    <!-- Cursos del paquete -->
+    @if (Model.Cursos.Any())
+    {
+        <div class="mb-5">
+            <h2 class="seccion-titulo">
+                <i class="fas fa-graduation-cap me-2"></i>Cursos incluidos
+            </h2>
+            <div class="row g-4 mt-2">
+                @foreach (var curso in Model.Cursos)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="item-acceso-card">
+                            <img src="@Url.Content(curso.UrlImagen ?? "/diseño/default-curso.jpg")" class="item-acceso-imagen" alt="@curso.Titulo">
+                            <div class="item-acceso-body">
+                                <span class="badge-tipo badge-curso">Curso online</span>
+                                <h5 class="item-acceso-titulo">@curso.Titulo</h5>
+                                <div class="item-acceso-descripcion">
+                                    @Html.Raw(curso.DescripcionCorta)
+                                </div>
+                                <div class="item-acceso-acciones">
+                                    @if (curso.TieneAcceso)
+                                    {
+                                        <a href="@curso.UrlAcceso" class="btn-acceso btn-acceso-completado">
+                                            <i class="fas fa-check-circle me-1"></i>Continuar curso
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@curso.UrlAcceso" class="btn-acceso">
+                                            <i class="fas fa-play-circle me-1"></i>Acceder al curso
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Productos del paquete -->
+    @if (Model.Productos.Any())
+    {
+        <div class="mb-5">
+            <h2 class="seccion-titulo">
+                <i class="fas fa-file-pdf me-2"></i>Productos digitales
+            </h2>
+            <div class="row g-4 mt-2">
+                @foreach (var producto in Model.Productos)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="item-acceso-card">
+                            <img src="@Url.Content(producto.UrlImagen ?? "/diseño/default-producto.jpg")" class="item-acceso-imagen" alt="@producto.Titulo">
+                            <div class="item-acceso-body">
+                                <span class="badge-tipo badge-producto">
+                                    @(producto.TipoProducto == "pdf" ? "PDF Digital" : "Revista Digital")
+                                </span>
+                                <h5 class="item-acceso-titulo">@producto.Titulo</h5>
+                                <div class="item-acceso-descripcion">
+                                    @Html.Raw(producto.DescripcionCorta)
+                                </div>
+                                <div class="item-acceso-acciones">
+                                    <a href="@producto.UrlDescarga" class="btn-acceso" target="_blank">
+                                        <i class="fas fa-download me-1"></i>Descargar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

@@ -1,185 +1,262 @@
-﻿using YSA.Core.Entities;
-using YSA.Core.Interfaces;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
+using YSA.Core.Entities;
+using YSA.Core.Interfaces;
 
 namespace YSA.Core.Services
 {
     public class CompraService : ICompraService
     {
-        private readonly IProductoRepository _productoRepository;
-        private readonly IPedidoRepository _pedidoRepository;
-        private readonly IVentaItemRepository _ventaItemRepository;
-        private readonly IEstudianteCursoRepository _estudianteCursoRepository;
+        private readonly IVentaItemService _ventaItemService;
+        private readonly IPedidoService _pedidoService;
+        private readonly IProductoService _productoService;
+        private readonly IPaqueteService _paqueteService;
+        private readonly ICursoService _cursoService;
+        private readonly IEstudianteCursoService _estudianteCursoService;
 
-        // Inyectamos todos los repositorios que necesitamos
-        public CompraService(IProductoRepository productoRepository,
-                             IPedidoRepository pedidoRepository,
-                             IVentaItemRepository ventaItemRepository,
-                             IEstudianteCursoRepository estudianteCursoRepository)
+        public CompraService(
+            IVentaItemService ventaItemService,
+            IPedidoService pedidoService,
+            IProductoService productoService,
+            IPaqueteService paqueteService,
+            ICursoService cursoService,
+            IEstudianteCursoService estudianteCursoService)
         {
-            _productoRepository = productoRepository;
-            _pedidoRepository = pedidoRepository;
-            _ventaItemRepository = ventaItemRepository;
-            _estudianteCursoRepository = estudianteCursoRepository;
+            _ventaItemService = ventaItemService;
+            _pedidoService = pedidoService;
+            _productoService = productoService;
+            _paqueteService = paqueteService;
+            _cursoService = cursoService;
+            _estudianteCursoService = estudianteCursoService;
+        }
+
+        // ==================== PRODUCTOS ====================
+
+        public async Task<Pedido> IniciarCompraProductoAsync(int productoId, int userId)
+        {
+            var producto = await _productoService.GetByIdAsync(productoId);
+            if (producto == null) return null;
+
+            var ventaItem = await _ventaItemService.ObtenerVentaItemPorProductoIdAsync(productoId);
+            if (ventaItem == null)
+            {
+                await _ventaItemService.CrearVentaItemAsync("Producto", null, productoId, producto.Precio);
+                ventaItem = await _ventaItemService.ObtenerVentaItemPorProductoIdAsync(productoId);
+            }
+
+            var pedido = await _pedidoService.CrearPedidoAsync(userId, new List<int> { ventaItem.Id });
+            return pedido;
+        }
+
+        public async Task<Pago> RegistrarPagoAsync(int pedidoId, Pago pago)
+        {
+            await _pedidoService.RegistrarPagoAsync(pago);
+            await _pedidoService.ActualizarEstadoPedidoAsync(pedidoId, "Validando");
+            return pago;
         }
 
         public async Task<bool> ProcesarCompraProductoAsync(int productoId, int userId)
         {
-            var producto = await _productoRepository.GetByIdAsync(productoId);
-            if (producto == null)
-            {
-                return false;
-            }
-
-            // Crear el VentaItem (si no existe)
-            var ventaItem = await _ventaItemRepository.GetByProductoIdAsync(productoId);
-            if (ventaItem == null)
-            {
-                ventaItem = new VentaItem
-                {
-                    Tipo = producto.TipoProducto,
-                    ProductoId = producto.Id,
-                    Precio = producto.Precio
-                };
-                await _ventaItemRepository.AddAsync(ventaItem);
-            }
-
-            // Crear el Pedido
-            var nuevoPedido = new Pedido
-            {
-                EstudianteId = userId,
-                FechaPedido = DateTime.UtcNow,
-                Estado = "Completado", // O "Pendiente" si manejas un flujo de pago
-                Total = ventaItem.Precio,
-                PedidoItems = new List<PedidoItem>
-                {
-                    new PedidoItem
-                    {
-                        VentaItemId = ventaItem.Id,
-                        PrecioUnidad = ventaItem.Precio,
-                        Cantidad = 1
-                    }
-                }
-            };
-
-            await _pedidoRepository.AddAsync(nuevoPedido);
-            return true;
-        }
-
-        public async Task<bool> HasUserPurchasedProductAsync(int userId, int productoId)
-        {
-            var pedidosCompletados = await _pedidoRepository.GetPedidosByUsuarioAndEstadoAsync(userId, "Completado");
-
-            foreach (var pedido in pedidosCompletados)
-            {
-                var ventaItems = await _ventaItemRepository.GetItemsByPedidoIdAsync(pedido.Id);
-                if (ventaItems.Any(vi => vi.ProductoId == productoId))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            var pedido = await IniciarCompraProductoAsync(productoId, userId);
+            return pedido != null;
         }
 
         public async Task<IEnumerable<int>> GetPurchasedProductIdsAsync(int userId)
         {
-            var pedidosCompletados = await _pedidoRepository.GetPedidosByUsuarioAndEstadoAsync(userId, "Completado");
-            var purchasedProductIds = new HashSet<int>();
+            // 1. Productos comprados individualmente
+            var pedidosCompletados = await _pedidoService.ObtenerPedidosCompletadosPorUsuarioAsync(userId);
+            var productosIds = new List<int>();
 
             foreach (var pedido in pedidosCompletados)
             {
-                var ventaItems = await _ventaItemRepository.GetItemsByPedidoIdAsync(pedido.Id);
-                foreach (var ventaItem in ventaItems)
+                foreach (var item in pedido.PedidoItems)
                 {
-                    if (ventaItem.ProductoId.HasValue)
+                    // Productos individuales
+                    if (item.VentaItem.ProductoId.HasValue)
                     {
-                        purchasedProductIds.Add(ventaItem.ProductoId.Value);
+                        productosIds.Add(item.VentaItem.ProductoId.Value);
+                    }
+
+                    // Productos dentro de paquetes
+                    if (item.VentaItem.PaqueteId.HasValue)
+                    {
+                        var paquete = await _paqueteService.ObtenerPorIdConDetallesAsync(item.VentaItem.PaqueteId.Value);
+                        if (paquete?.PaqueteProductos != null)
+                        {
+                            foreach (var pp in paquete.PaqueteProductos)
+                            {
+                                if (pp.ProductoId > 0)
+                                {
+                                    productosIds.Add(pp.ProductoId);
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-            return purchasedProductIds;
+            return productosIds.Distinct();
         }
-        public async Task<Pedido> IniciarCompraProductoAsync(int productoId, int userId)
+
+        public async Task<bool> HasUserPurchasedProductAsync(int userId, int productoId)
         {
-            var producto = await _productoRepository.GetByIdAsync(productoId);
-            if (producto == null)
-            {
-                return null;
-            }
-
-            var ventaItem = await _ventaItemRepository.GetByProductoIdAsync(productoId);
-            if (ventaItem == null)
-            {
-                ventaItem = new VentaItem
-                {
-                    Tipo = producto.TipoProducto,
-                    ProductoId = producto.Id,
-                    Precio = producto.Precio
-                };
-                await _ventaItemRepository.AddAsync(ventaItem);
-            }
-
-            var nuevoPedido = new Pedido
-            {
-                EstudianteId = userId,
-                FechaPedido = DateTime.UtcNow,
-                Estado = "Pendiente", // Estado inicial
-                Total = ventaItem.Precio,
-                PedidoItems = new List<PedidoItem>
-                {
-                    new PedidoItem
-                    {
-                        VentaItemId = ventaItem.Id,
-                        PrecioUnidad = ventaItem.Precio,
-                        Cantidad = 1
-                    }
-                }
-            };
-
-            return await _pedidoRepository.AddAsync(nuevoPedido);
+            var productosComprados = await GetPurchasedProductIdsAsync(userId);
+            return productosComprados.Contains(productoId);
         }
 
-        // Nuevo método para registrar el pago
-        public async Task<Pago> RegistrarPagoAsync(int pedidoId, Pago pago)
-        {
-            var pedido = await _pedidoRepository.GetByIdAsync(pedidoId);
-            if (pedido == null)
-            {
-                throw new ArgumentException("El pedido no existe.");
-            }
-
-            pago.PedidoId = pedidoId;
-            pago.FechaPago = DateTime.UtcNow;
-
-            pedido.Estado = "Validando";
-            await _pedidoRepository.UpdateAsync(pedido);
-
-            return await _pedidoRepository.AddPagoAsync(pago);
-        }
         public async Task<IEnumerable<int>> GetProductsInValidationIdsAsync(int userId)
         {
-            // Obtiene todos los pedidos del usuario que están en estado "Validando"
-            var pedidosEnValidacion = await _pedidoRepository.GetPedidosByUsuarioAndEstadoAsync(userId, "Validando");
-            var productosEnValidacionIds = new HashSet<int>();
+            var pedidosValidando = await _pedidoService.ObtenerPedidosPorEstadoYUsuarioAsync("Validando", userId);
+            var productosIds = new List<int>();
 
-            foreach (var pedido in pedidosEnValidacion)
+            foreach (var pedido in pedidosValidando)
             {
-                var ventaItems = await _ventaItemRepository.GetItemsByPedidoIdAsync(pedido.Id);
-                foreach (var ventaItem in ventaItems)
+                foreach (var item in pedido.PedidoItems)
                 {
-                    if (ventaItem.ProductoId.HasValue)
+                    // Productos individuales
+                    if (item.VentaItem.ProductoId.HasValue)
                     {
-                        productosEnValidacionIds.Add(ventaItem.ProductoId.Value);
+                        productosIds.Add(item.VentaItem.ProductoId.Value);
+                    }
+
+                    // Productos dentro de paquetes
+                    if (item.VentaItem.PaqueteId.HasValue)
+                    {
+                        var paquete = await _paqueteService.ObtenerPorIdConDetallesAsync(item.VentaItem.PaqueteId.Value);
+                        if (paquete?.PaqueteProductos != null)
+                        {
+                            foreach (var pp in paquete.PaqueteProductos)
+                            {
+                                if (pp.ProductoId > 0)
+                                {
+                                    productosIds.Add(pp.ProductoId);
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-            return productosEnValidacionIds;
+            return productosIds.Distinct();
+        }
+
+        // ==================== PAQUETES ====================
+
+        public async Task<Pedido> IniciarCompraPaqueteAsync(int paqueteId, int userId)
+        {
+            var paquete = await _paqueteService.ObtenerPorIdAsync(paqueteId);
+            if (paquete == null) return null;
+
+            var ventaItem = await _ventaItemService.ObtenerVentaItemPorPaqueteIdAsync(paqueteId);
+            if (ventaItem == null)
+            {
+                await _ventaItemService.CrearVentaItemAsync("Paquete", null, null, paquete.Precio, paqueteId);
+                ventaItem = await _ventaItemService.ObtenerVentaItemPorPaqueteIdAsync(paqueteId);
+            }
+
+            var pedido = await _pedidoService.CrearPedidoAsync(userId, new List<int> { ventaItem.Id });
+            return pedido;
+        }
+
+        public async Task<bool> HasUserPurchasedPackageAsync(int userId, int paqueteId)
+        {
+            var paquetesComprados = await GetPurchasedPackageIdsAsync(userId);
+            return paquetesComprados.Contains(paqueteId);
+        }
+
+        public async Task<IEnumerable<int>> GetPurchasedPackageIdsAsync(int userId)
+        {
+            var pedidosCompletados = await _pedidoService.ObtenerPedidosCompletadosPorUsuarioAsync(userId);
+            var paquetesIds = new List<int>();
+
+            foreach (var pedido in pedidosCompletados)
+            {
+                foreach (var item in pedido.PedidoItems)
+                {
+                    if (item.VentaItem.PaqueteId.HasValue)
+                    {
+                        paquetesIds.Add(item.VentaItem.PaqueteId.Value);
+                    }
+                }
+            }
+
+            return paquetesIds.Distinct();
+        }
+
+        public async Task<IEnumerable<int>> GetPackagesInValidationIdsAsync(int userId)
+        {
+            var pedidosValidando = await _pedidoService.ObtenerPedidosPorEstadoYUsuarioAsync("Validando", userId);
+            var paquetesIds = new List<int>();
+
+            foreach (var pedido in pedidosValidando)
+            {
+                foreach (var item in pedido.PedidoItems)
+                {
+                    if (item.VentaItem.PaqueteId.HasValue)
+                    {
+                        paquetesIds.Add(item.VentaItem.PaqueteId.Value);
+                    }
+                }
+            }
+
+            return paquetesIds.Distinct();
+        }
+
+        public async Task RegistrarPagoPaqueteAsync(int pedidoId, Pago pago)
+        {
+            await _pedidoService.RegistrarPagoAsync(pago);
+            await _pedidoService.ActualizarEstadoPedidoAsync(pedidoId, "Validando");
+        }
+
+        public async Task<List<Paquete>> GetPurchasedPackagesWithDetailsAsync(int userId)
+        {
+            var paquetesIds = await GetPurchasedPackageIdsAsync(userId);
+            var paquetes = new List<Paquete>();
+
+            foreach (var id in paquetesIds)
+            {
+                var paquete = await _paqueteService.ObtenerPorIdConDetallesAsync(id);
+                if (paquete != null)
+                {
+                    paquetes.Add(paquete);
+                }
+            }
+
+            return paquetes;
+        }
+
+        public async Task OtorgarAccesoPaqueteAsync(int pedidoId)
+        {
+            var pedido = await _pedidoService.ObtenerPedidoConItemsYVentaItemsAsync(pedidoId);
+            if (pedido == null) return;
+
+            foreach (var item in pedido.PedidoItems)
+            {
+                if (item.VentaItem.PaqueteId.HasValue)
+                {
+                    var paquete = await _paqueteService.ObtenerPorIdConDetallesAsync(item.VentaItem.PaqueteId.Value);
+                    if (paquete != null)
+                    {
+                        // Otorgar acceso a cada curso del paquete
+                        if (paquete.PaqueteCursos != null)
+                        {
+                            foreach (var pc in paquete.PaqueteCursos)
+                            {
+                                var yaTieneAcceso = await _estudianteCursoService.TieneAccesoAlCursoAsync(pedido.EstudianteId, pc.CursoId);
+                                if (!yaTieneAcceso)
+                                {
+                                    await _estudianteCursoService.OtorgarAccesoAsync(pedido.EstudianteId, pc.CursoId);
+                                }
+                            }
+                        }
+
+                        // Los productos digitales no requieren acceso, solo la descarga
+                        // Los productos ya están disponibles para descarga a través del enlace
+                    }
+                }
+            }
         }
     }
 }

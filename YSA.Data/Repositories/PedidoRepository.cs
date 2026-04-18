@@ -15,6 +15,16 @@ namespace YSA.Data.Repositories
         {
             _context = context;
         }
+        public async Task<Paquete> GetPaqueteWithCursosAsync(int paqueteId)
+        {
+            return await _context.Paquetes
+                .Include(p => p.PaqueteCursos)
+                    .ThenInclude(pc => pc.Curso)
+                .Include(p => p.PaqueteProductos)
+                    .ThenInclude(pp => pp.Producto)
+                .FirstOrDefaultAsync(p => p.Id == paqueteId);
+        }
+
         public async Task<List<Pedido>> ObtenerPedidosPorUsuarioAsync(int usuarioId)
         {
             return await _context.Pedidos
@@ -26,6 +36,44 @@ namespace YSA.Data.Repositories
                     .ThenInclude(pi => pi.VentaItem)
                         .ThenInclude(vi => vi.Producto)
                 .Where(p => p.EstudianteId == usuarioId)
+                .OrderByDescending(p => p.FechaPedido)
+                .ToListAsync();
+        }
+        public async Task<bool> TienePedidoPendientePorPaqueteAsync(int usuarioId, int paqueteId)
+        {
+            // Obtener el VentaItemId del paquete
+            var ventaItem = await _context.VentaItems
+                .FirstOrDefaultAsync(vi => vi.PaqueteId == paqueteId);
+
+            if (ventaItem == null)
+                return false;
+
+            return await _context.Pedidos
+                .AnyAsync(p => p.EstudianteId == usuarioId &&
+                              (p.Estado == "Pendiente" || p.Estado == "Validando") &&
+                              p.PedidoItems.Any(pi => pi.VentaItemId == ventaItem.Id));
+        }
+
+        public async Task<List<Pedido>> ObtenerPedidosPorEstadoYUsuarioAsync(string estado, int usuarioId)
+        {
+            return await _context.Pedidos
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Curso)
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Producto)
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Paquete)
+                            .ThenInclude(pa => pa.PaqueteCursos)
+                                .ThenInclude(pc => pc.Curso)
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Paquete)
+                            .ThenInclude(pa => pa.PaqueteProductos)
+                                .ThenInclude(pp => pp.Producto)
+                .Where(p => p.Estado == estado && p.EstudianteId == usuarioId)
                 .OrderByDescending(p => p.FechaPedido)
                 .ToListAsync();
         }
@@ -52,6 +100,27 @@ namespace YSA.Data.Repositories
             return await _context.Pedidos
                 .Where(p => p.Estado == "Validando")
                 .CountAsync();
+        }
+        public async Task<Pedido> GetPedidoWithItemsAndVentaItemsAsync(int pedidoId)
+        {
+            return await _context.Pedidos
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Curso)
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Producto)
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Paquete)
+                            .ThenInclude(pa => pa.PaqueteCursos)
+                                .ThenInclude(pc => pc.Curso)
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                        .ThenInclude(vi => vi.Paquete)
+                            .ThenInclude(pa => pa.PaqueteProductos)
+                                .ThenInclude(pp => pp.Producto)
+                .FirstOrDefaultAsync(p => p.Id == pedidoId);
         }
         public async Task<Pedido> GetByIdAsync(int id)
         {
@@ -105,23 +174,28 @@ namespace YSA.Data.Repositories
             return true;
         }
 
-        // El nombre del método y la lógica de inclusión ahora coinciden
-        public async Task<Pedido> GetPedidoWithItemsAndVentaItemsAsync(int id)
-        {
-            return await _context.Pedidos
-                                 .Include(p => p.PedidoItems)
-                                     .ThenInclude(pi => pi.VentaItem)
-                                         .ThenInclude(vi => vi.Curso) // Inclusión del curso
-                                 .Include(p => p.PedidoItems)
-                                     .ThenInclude(pi => pi.VentaItem)
-                                         .ThenInclude(vi => vi.Producto) // Inclusión del producto
-                                 .FirstOrDefaultAsync(p => p.Id == id);
-        }
         public async Task<Pago> GetPagoWithPedido(int id)
         {
             return await _context.Pagos
                                  .Where(p => p.PedidoId == id)
                                  .FirstOrDefaultAsync();
+        }
+        public async Task<Pedido> ObtenerPedidoPendientePorPaqueteAsync(int usuarioId, int paqueteId)
+        {
+            // Obtener el VentaItemId del paquete
+            var ventaItem = await _context.VentaItems
+                .FirstOrDefaultAsync(vi => vi.PaqueteId == paqueteId);
+
+            if (ventaItem == null)
+                return null;
+
+            // Buscar pedido pendiente o en validación para ese paquete
+            return await _context.Pedidos
+                .Include(p => p.PedidoItems)
+                    .ThenInclude(pi => pi.VentaItem)
+                .FirstOrDefaultAsync(p => p.EstudianteId == usuarioId &&
+                                         (p.Estado == "Pendiente" || p.Estado == "Validando") &&
+                                         p.PedidoItems.Any(pi => pi.VentaItemId == ventaItem.Id));
         }
         public async Task<PedidoItem> AddPedidoItemAsync(PedidoItem item)
         {

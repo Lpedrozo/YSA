@@ -275,7 +275,7 @@ else
                             <div class="card-info-item mt-3" style="border-top: 2px solid var(--color-brand-primary); border-bottom: none; padding-top: 10px;">
                                 <span class="card-info-label" style="font-size: 1.1rem; color: var(--color-secondary);">Total a pagar:</span>
                                 <span class="card-info-value" style="color: var(--color-brand-success); font-size: 1.3rem; font-weight: 700;">
-                                    @pedido.Total.ToString("C", new System.Globalization.CultureInfo("es-VE"))
+                                    $@pedido.Total.ToString("N2", new System.Globalization.CultureInfo("es-VE")) USD
                                 </span>
                             </div>
                         </div>

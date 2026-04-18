@@ -474,7 +474,25 @@
                     </div>
                 </a>
             </div>
-
+            <div class="col">
+                <a href="@Url.Action("GestionarPaquetes", "Admin")" class="action-card" style="border: 2px solid var(--color-brand-primary); background: linear-gradient(135deg, rgba(239,136,48,0.05) 0%, rgba(255,255,255,1) 100%);">
+                    <div class="card-body">
+                        <div style="position: relative;">
+                            <span style="position: absolute; top: -10px; right: -10px; background: var(--color-brand-primary); color: white; font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 20px; font-weight: 600;">
+                                <i class="fas fa-star me-1"></i>NUEVO
+                            </span>
+                            <i class="fas fa-cubes action-card-icon" style="color: var(--color-brand-primary);"></i>
+                        </div>
+                        <div class="action-card-title" style="color: var(--color-brand-primary);">Paquetes digitales</div>
+                        <p class="card-text small mt-2">Combina cursos y productos en paquetes con descuento.</p>
+                        <div class="mt-2">
+                            <span class="badge" style="background-color: var(--color-brand-success); color: white; font-size: 0.7rem;">
+                                <i class="fas fa-tag me-1"></i>Ahorro garantizado
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </div>
             <!-- Gestión de Eventos -->
             <div class="col">
                 <a href="@Url.Action("GestionarEventos", "Admin")" class="action-card">

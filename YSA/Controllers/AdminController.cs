@@ -20,6 +20,8 @@ namespace YSA.Web.Controllers
     public class AdminController : Controller
     {
         private readonly ICursoService _cursoService;
+        private readonly IEmailService _emailService;
+        private readonly IPaqueteService _paqueteService;
         private readonly IModuloService _moduloService;
         private readonly ILeccionService _leccionService;
         private readonly IPedidoService _pedidoService;
@@ -36,7 +38,9 @@ namespace YSA.Web.Controllers
         private readonly INotificacionService _notificacionService; 
 
         public AdminController(ICursoService cursoService, 
-            IModuloService moduloService, 
+            IModuloService moduloService,
+            IEmailService emailService,
+            IPaqueteService paqueteService, 
             ILeccionService leccionService, 
             IPedidoService pedidoService,
             UserManager<Usuario> userManager, 
@@ -52,6 +56,8 @@ namespace YSA.Web.Controllers
             INotificacionService notificacionService)
         {
             _cursoService = cursoService;
+            _emailService = emailService;
+            _paqueteService = paqueteService;
             _moduloService = moduloService;
             _leccionService = leccionService;
             _pedidoService = pedidoService;
@@ -1046,6 +1052,7 @@ namespace YSA.Web.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> AprobarPedido(int pedidoId)
         {
             await _pedidoService.AprobarPedidoYOtorgarAccesoAsync(pedidoId);
@@ -1053,7 +1060,9 @@ namespace YSA.Web.Controllers
             var pedido = await _pedidoService.ObtenerPedidoConItemsYVentaItemsAsync(pedidoId);
             if (pedido != null)
             {
+                var usuario = await _userManager.FindByIdAsync(pedido.EstudianteId.ToString());
                 var primerItem = pedido.PedidoItems.FirstOrDefault();
+
                 if (primerItem != null)
                 {
                     string tipoCompra = "";
@@ -1066,13 +1075,10 @@ namespace YSA.Web.Controllers
                         itemTitulo = primerItem.VentaItem.Curso.Titulo;
                         cursoId = primerItem.VentaItem.Curso.Id;
 
-                        // Verificar si es un curso presencial y tiene clases pendientes
+                        // Verificar si es un curso presencial
                         var curso = await _cursoService.ObtenerCursoPorIdAsync(cursoId);
                         if (curso != null && curso.TipoCurso == Core.Enums.TipoCurso.Presencial)
                         {
-                            // Obtener la clase más próxima para este curso (la que el usuario compró)
-                            // Nota: Debes determinar qué clase específica compró. 
-                            // Por ahora asumimos la primera clase programada del curso
                             var clases = await _cursoService.ObtenerClasesPorCursoIdAsync(cursoId);
                             var claseProxima = clases
                                 .Where(c => c.Estado == "Programada" && c.FechaHoraInicio > DateTime.Now)
@@ -1081,7 +1087,6 @@ namespace YSA.Web.Controllers
 
                             if (claseProxima != null)
                             {
-                                // Inscribir al estudiante en la clase
                                 var yaInscrito = await _cursoService.GetInscripcionByClaseAndEstudianteAsync(
                                     claseProxima.Id,
                                     pedido.EstudianteId);
@@ -1098,9 +1103,33 @@ namespace YSA.Web.Controllers
                         tipoCompra = "producto";
                         itemTitulo = primerItem.VentaItem.Producto.Titulo;
                     }
+                    else if (primerItem.VentaItem.Paquete != null)
+                    {
+                        tipoCompra = "paquete";
+                        itemTitulo = primerItem.VentaItem.Paquete.Titulo;
+                    }
 
                     if (!string.IsNullOrEmpty(itemTitulo))
                     {
+                        // ==================== ENVIAR CORREO AL ESTUDIANTE ====================
+                        if (usuario != null)
+                        {
+                            try
+                            {
+                                await _emailService.EnviarCorreoCompraAprobadaAsync(
+                                    usuario.Email,
+                                    $"{usuario.Nombre} {usuario.Apellido}",
+                                    pedidoId,
+                                    tipoCompra,
+                                    itemTitulo
+                                );
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error al enviar correo de aprobación: {ex.Message}");
+                            }
+                        }
+
                         // Enviar notificación al usuario
                         await _notificacionService.CrearNotificacionPedidoAprobadoAsync(
                             pedido.EstudianteId,
@@ -2587,5 +2616,265 @@ namespace YSA.Web.Controllers
             TempData["SuccessMessage"] = "El artículo ha vuelto a **Borrador** y está listo para editar.";
             return RedirectToAction(nameof(Articulos));
         }
+        // ==================== GESTIÓN DE PAQUETES ====================
+
+        [HttpGet]
+        public async Task<IActionResult> GestionarPaquetes()
+        {
+            var paquetes = await _paqueteService.ObtenerTodosConDetallesAsync();
+
+            var viewModel = paquetes.Select(p => new PaqueteListaViewModel
+            {
+                Id = p.Id,
+                Titulo = p.Titulo,
+                DescripcionCorta = p.DescripcionCorta,
+                UrlImagen = p.UrlImagen,
+                Precio = p.Precio,
+                EsDestacado = p.EsDestacado,
+                FechaPublicacion = p.FechaPublicacion,
+                CantidadItems = (p.PaqueteCursos?.Count ?? 0) + (p.PaqueteProductos?.Count ?? 0),
+                PrecioTotalItems = (p.PaqueteCursos?.Sum(pc => pc.Curso?.Precio ?? 0) ?? 0) +
+                                  (p.PaqueteProductos?.Sum(pp => pp.Producto?.Precio ?? 0) ?? 0),
+                Ahorro = ((p.PaqueteCursos?.Sum(pc => pc.Curso?.Precio ?? 0) ?? 0) +
+                          (p.PaqueteProductos?.Sum(pp => pp.Producto?.Precio ?? 0) ?? 0)) - p.Precio
+            }).ToList();
+
+            return View(viewModel);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ObtenerPaquetePorId(int id)
+        {
+            var paquete = await _paqueteService.ObtenerPorIdConDetallesAsync(id);
+            if (paquete == null)
+                return Json(new { success = false, message = "Paquete no encontrado" });
+
+            return Json(new
+            {
+                success = true,
+                data = new
+                {
+                    id = paquete.Id,
+                    titulo = paquete.Titulo,
+                    descripcionCorta = paquete.DescripcionCorta ?? "",
+                    descripcionLarga = paquete.DescripcionLarga ?? "",
+                    precio = paquete.Precio,
+                    urlImagen = paquete.UrlImagen ?? "",
+                    esDestacado = paquete.EsDestacado,
+                    esRecomendado = paquete.EsRecomendado,
+                    cursosIds = paquete.PaqueteCursos?.Select(pc => pc.CursoId).ToList() ?? new List<int>(),
+                    productosIds = paquete.PaqueteProductos?.Select(pp => pp.ProductoId).ToList() ?? new List<int>()
+                }
+            });
+        }
+        [HttpPost]
+        public async Task<IActionResult> CrearPaquete()
+        {
+            var titulo = Request.Form["Titulo"].ToString();
+            var descripcionCorta = Request.Form["DescripcionCorta"].ToString();
+            var descripcionLarga = Request.Form["DescripcionLarga"].ToString();
+            var precio = decimal.Parse(Request.Form["Precio"].ToString());
+            var esDestacado = Request.Form["EsDestacado"].ToString() == "true";
+            var esRecomendado = Request.Form["EsRecomendado"].ToString() == "true";
+            var imagenArchivo = Request.Form.Files["imagenArchivo"];
+
+            // Validación básica
+            if (string.IsNullOrEmpty(titulo))
+                ModelState.AddModelError("Titulo", "El título es obligatorio");
+
+            if (precio < 0)
+                ModelState.AddModelError("Precio", "El precio debe ser mayor o igual a cero");
+
+            if (imagenArchivo == null || imagenArchivo.Length == 0)
+                ModelState.AddModelError("imagenArchivo", "La imagen es obligatoria");
+
+            // Obtener los IDs de cursos y productos como arrays de strings
+            var cursosIdsStrings = Request.Form["CursosSeleccionados"].ToList();
+            var productosIdsStrings = Request.Form["ProductosSeleccionados"].ToList();
+
+            List<int> cursosIds = new List<int>();
+            List<int> productosIds = new List<int>();
+
+            foreach (var idStr in cursosIdsStrings)
+            {
+                if (int.TryParse(idStr, out int id))
+                    cursosIds.Add(id);
+            }
+
+            foreach (var idStr in productosIdsStrings)
+            {
+                if (int.TryParse(idStr, out int id))
+                    productosIds.Add(id);
+            }
+
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Where(x => x.Value.Errors.Any())
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToList());
+                return Json(new { success = false, errors });
+            }
+
+            var sanitizer = new HtmlSanitizer();
+            descripcionCorta = sanitizer.Sanitize(descripcionCorta ?? string.Empty);
+            descripcionLarga = sanitizer.Sanitize(descripcionLarga ?? string.Empty);
+
+            var paquete = new Paquete
+            {
+                Titulo = titulo,
+                DescripcionCorta = descripcionCorta,
+                DescripcionLarga = descripcionLarga,
+                Precio = precio,
+                UrlImagen = string.Empty,
+                EsDestacado = esDestacado,
+                EsRecomendado = esRecomendado
+            };
+
+            await _paqueteService.CrearAsync(paquete, cursosIds, productosIds);
+
+            // Guardar imagen
+            if (imagenArchivo != null && imagenArchivo.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "paquetes", paquete.Id.ToString());
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var extension = Path.GetExtension(imagenArchivo.FileName);
+                var fileName = $"imagen{extension}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imagenArchivo.CopyToAsync(stream);
+                }
+
+                paquete.UrlImagen = $"/paquetes/{paquete.Id}/{fileName}";
+                await _paqueteService.ActualizarSoloImagenAsync(paquete);
+            }
+
+            // Crear VentaItem para el paquete
+            await _ventaItemService.CrearVentaItemAsync("Paquete", null, null, paquete.Precio, paquete.Id);
+
+            return Json(new { success = true, message = "Paquete creado con éxito" });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditarPaquete()
+        {
+            var id = int.Parse(Request.Form["Id"].ToString());
+            var titulo = Request.Form["Titulo"].ToString();
+            var descripcionCorta = Request.Form["DescripcionCorta"].ToString();
+            var descripcionLarga = Request.Form["DescripcionLarga"].ToString();
+            var precio = decimal.Parse(Request.Form["Precio"].ToString());
+            var esDestacado = Request.Form["EsDestacado"].ToString() == "true";
+            var esRecomendado = Request.Form["EsRecomendado"].ToString() == "true";
+            var imagenArchivo = Request.Form.Files["imagenArchivo"];
+
+            var sanitizer = new HtmlSanitizer();
+            descripcionCorta = sanitizer.Sanitize(descripcionCorta ?? string.Empty);
+            descripcionLarga = sanitizer.Sanitize(descripcionLarga ?? string.Empty);
+
+            var paqueteExistente = await _paqueteService.ObtenerPorIdAsync(id);
+            if (paqueteExistente == null)
+                return Json(new { success = false, message = "Paquete no encontrado" });
+
+            paqueteExistente.Titulo = titulo;
+            paqueteExistente.DescripcionCorta = descripcionCorta;
+            paqueteExistente.DescripcionLarga = descripcionLarga;
+            paqueteExistente.Precio = precio;
+            paqueteExistente.EsDestacado = esDestacado;
+            paqueteExistente.EsRecomendado = esRecomendado;
+
+            // Parsear los IDs de cursos y productos
+            var cursosIdsStrings = Request.Form["CursosSeleccionados"].ToList();
+            var productosIdsStrings = Request.Form["ProductosSeleccionados"].ToList();
+
+            List<int> cursosIds = new List<int>();
+            List<int> productosIds = new List<int>();
+
+            foreach (var idStr in cursosIdsStrings)
+            {
+                if (int.TryParse(idStr, out int cursoId))
+                    cursosIds.Add(cursoId);
+            }
+
+            foreach (var idStr in productosIdsStrings)
+            {
+                if (int.TryParse(idStr, out int productoId))
+                    productosIds.Add(productoId);
+            }
+
+            if (imagenArchivo != null && imagenArchivo.Length > 0)
+            {
+                if (!string.IsNullOrEmpty(paqueteExistente.UrlImagen))
+                {
+                    var oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", paqueteExistente.UrlImagen.TrimStart('/'));
+                    if (System.IO.File.Exists(oldPath))
+                        System.IO.File.Delete(oldPath);
+                }
+
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "paquetes", paqueteExistente.Id.ToString());
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var extension = Path.GetExtension(imagenArchivo.FileName);
+                var fileName = $"imagen{extension}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imagenArchivo.CopyToAsync(stream);
+                }
+
+                paqueteExistente.UrlImagen = $"/paquetes/{paqueteExistente.Id}/{fileName}";
+            }
+
+            await _paqueteService.ActualizarAsync(paqueteExistente, cursosIds, productosIds);
+
+            // Actualizar VentaItem
+            var ventaItem = await _ventaItemService.ObtenerVentaItemPorPaqueteIdAsync(paqueteExistente.Id);
+            if (ventaItem != null)
+            {
+                ventaItem.Precio = paqueteExistente.Precio;
+                await _ventaItemService.ActualizarVentaItemAsync(ventaItem);
+            }
+
+            return Json(new { success = true, message = "Paquete actualizado con éxito" });
+        }
+        public async Task<IActionResult> EliminarPaquete(int id)
+        {
+            await _paqueteService.EliminarAsync(id);
+            return Json(new { success = true, message = "Paquete eliminado con éxito" });
+        }
+        [HttpGet]
+        public async Task<IActionResult> ObtenerCursosProductosParaPaquete(int? paqueteId = null)
+        {
+            var cursos = await _cursoService.ObtenerTodosLosCursosAsync();
+            var productos = await _productoService.GetAllAsync();
+
+            return Json(new
+            {
+                success = true,
+                cursos = cursos.Select(c => new { id = c.Id, titulo = c.Titulo, precio = c.Precio }),
+                productos = productos.Select(p => new { id = p.Id, titulo = p.Titulo, precio = p.Precio })
+            });
+        }
+        [HttpPost]
+        public async Task<IActionResult> DestacarPaquete(int id)
+        {
+            var result = await _paqueteService.DestacarAsync(id);
+            if (result)
+                return Json(new { success = true, message = "Paquete destacado con éxito" });
+            return Json(new { success = false, message = "Error al destacar el paquete" });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> QuitarDestacadoPaquete(int id)
+        {
+            var result = await _paqueteService.QuitarDestacadoAsync(id);
+            if (result)
+                return Json(new { success = true, message = "Paquete ya no está destacado" });
+            return Json(new { success = false, message = "Error al quitar destacado" });
+        }
+
     }
 }

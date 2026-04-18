@@ -18,7 +18,23 @@ namespace YSA.Core.Services
             _cursoRepository = cursoRepository;
             _productoRepository = productoRepository;
         }
+        public async Task<VentaItem> ObtenerVentaItemPorPaqueteIdAsync(int paqueteId)
+        {
+            return await _ventaItemRepository.ObtenerPorPaqueteIdAsync(paqueteId);
+        }
 
+        public async Task CrearVentaItemAsync(string tipo, int? cursoId, int? productoId, decimal precio, int? paqueteId = null)
+        {
+            var ventaItem = new VentaItem
+            {
+                Tipo = tipo,
+                CursoId = cursoId,
+                ProductoId = productoId,
+                PaqueteId = paqueteId,
+                Precio = precio
+            };
+            await _ventaItemRepository.AddAsync(ventaItem);
+        }
         public async Task<VentaItem> ObtenerVentaItemPorCursoIdAsync(int cursoId)
         {
             var ventaItem = await _ventaItemRepository.GetByCursoIdAsync(cursoId);

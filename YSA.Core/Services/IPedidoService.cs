@@ -10,8 +10,9 @@ namespace YSA.Core.Services
     {
         Task<Pedido> CrearPedidoAsync(int estudianteId, List<int> ventaItemIds); // Cambia de productoIds a ventaItemIds
         Task<Pedido> ObtenerPedidoPorIdAsync(int pedidoId);
-        Task<Pedido> ObtenerPedidoConItemsYVentaItemsAsync(int pedidoId); // Nuevo método
+        Task<Pedido> ObtenerPedidoConItemsYVentaItemsAsync(int pedidoId);
         Task<bool> ActualizarEstadoPedidoAsync(int pedidoId, string nuevoEstado);
+        Task<Pedido> ObtenerPedidoPendientePorPaqueteAsync(int usuarioId, int paqueteId);
         Task<Pago> RegistrarPagoAsync(Pago pago);
         Task<IEnumerable<Pedido>> ObtenerPedidosPorEstadoAsync(string estado);
         Task AprobarPedidoYOtorgarAccesoAsync(int pedidoId);
@@ -25,6 +26,8 @@ namespace YSA.Core.Services
         Task<IEnumerable<Pedido>> ObtenerPedidosPorUsuarioYEstadoAsync(int estudianteId, string estado);
         Task<int?> ObtenerPedidoPendienteIdPorCursoAsync(int estudianteId, int cursoId);
         Task<List<Pedido>> ObtenerPedidosPorUsuarioAsync(int usuarioId); // ← NUEVO MÉTODO
-
+        Task<List<Pedido>> ObtenerPedidosCompletadosPorUsuarioAsync(int usuarioId);
+        Task<List<Pedido>> ObtenerPedidosPorEstadoYUsuarioAsync(string estado, int usuarioId);
+        Task<bool> TienePedidoPendientePorPaqueteAsync(int usuarioId, int paqueteId);
     }
 }

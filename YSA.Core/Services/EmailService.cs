@@ -324,6 +324,7 @@ namespace YSA.Core.Services
         public async Task<bool> EnviarNotificacionAdminPagoPendienteAsync(string nombreUsuario, string emailUsuario, string claseTitulo, string cursoTitulo, decimal monto, int pedidoId, string comprobanteUrl)
         {
             var adminEmail = "yosoyarte.contacto@gmail.com";
+            //var adminEmail = "lpedrozohernandez@gmail.com";
             var comprobanteLink = !string.IsNullOrEmpty(comprobanteUrl) ? $"{comprobanteUrl}" : "No disponible";
 
             var cuerpo = $@"
@@ -358,7 +359,6 @@ namespace YSA.Core.Services
                         <h3>Información de la clase</h3>
                         <p><strong>Clase:</strong> {claseTitulo}</p>
                         <p><strong>Curso:</strong> {cursoTitulo}</p>
-                        <p><strong>Monto pagado:</strong> ${monto:F2} USD</p>
                     </div>
                     
                     <div class='info-box'>
