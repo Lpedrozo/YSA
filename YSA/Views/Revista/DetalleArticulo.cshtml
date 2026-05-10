@@ -3,78 +3,207 @@
     ViewData["Title"] = Model.Titulo;
 }
 
-<div class="container px-0 py-5 mb-5 pb-5">
-    <div class="section-container">
-        <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb">
-            <ol class="articulo-breadcrumb breadcrumb">
-                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Revista")">Revista</a></li>
-                <li class="breadcrumb-item active" aria-current="page">@Model.Titulo</li>
-            </ol>
-        </nav>
+<!-- Fuentes y Frameworks -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 
-        <!-- Encabezado del Artículo -->
-        <div class="articulo-header">
-            <span class="badge bg-primary me-2">@Model.Categoria</span>
-            <h1 class="articulo-title">@Model.Titulo</h1>
-            <p class="articulo-subtitle">@Model.Resumen</p>
-            <div class="articulo-meta">
-                <i class="far fa-calendar me-1"></i>
-                Publicado el @Model.FechaPublicacion.ToString("dd MMMM yyyy")
-            </div>
-        </div>
+<style>
+    :root {
+        --color-background: #111111; /* Cambiado a oscuro para el tema inmersivo */
+    }
 
-        <!-- Imagen Principal -->
-        @if (!string.IsNullOrEmpty(Model.UrlImagenPrincipal))
-        {
-            <div class="text-center mb-5">
-                <img src="@Url.Content(Model.UrlImagenPrincipal)" class="articulo-imagen" alt="@Model.Titulo">
-            </div>
+    body {
+        background-color: var(--color-background);
+        margin: 0;
+        overflow: hidden;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .font-serif {
+        font-family: 'Playfair Display', serif;
+    }
+
+    /* Contenedor del Libro */
+    .magazine-wrapper {
+        perspective: 2000px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .page {
+        background-color: white;
+        overflow: hidden;
+        /* Textura de papel sutil */
+        background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
+    }
+
+    .page-content {
+        height: 100%;
+        width: 100%;
+        position: relative;
+    }
+
+    /* Sombras del lomo eliminadas del contenedor general */
+    .st-page-flip {
+        /* Mantiene la sombra externa pero quitamos las internas si la librería las pone por defecto */
+        box-shadow: 0 50px 100px -20px rgba(0,0,0,0.8);
+    }
+
+    /* Estilos de los números de página */
+    .page-footer {
+        position: absolute;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        font-family: monospace;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        color: #9ca3af;
+        opacity: 0.5;
+    }
+
+    /* Responsive: Ajustes para móvil */
+    @@media (max-width: 768px) {
+        .magazine-wrapper {
+            padding: 0;
         }
 
-        <!-- Contenido Principal -->
-        <div class="articulo-contenido">
-            @Html.Raw(Model.ContenidoTexto)
+        .page-footer {
+            bottom: 1rem;
+            right: 1rem;
+        }
+    }
+</style>
+
+<div class="relative flex flex-col items-center justify-center min-h-screen p-4 overflow-hidden">
+    <!-- Atmósfera de Fondo -->
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,#222,transparent_70%)] pointer-events-none"></div>
+
+    <!-- Encabezado de la Revista -->
+    <div class="z-20 w-full max-w-5xl flex justify-between items-center mb-6 md:mb-8 px-4">
+        
+        <div class="flex items-center space-x-4 md:space-x-6 text-[10px] uppercase tracking-widest text-zinc-400">
+            <a href="@Url.Action("Index", "Revista")" class="hover:text-white transition-colors hidden md:inline">Volver</a>
+            <span class="text-white border-b border-white pb-1">@Model.FechaPublicacion.ToString("MMMM yyyy")</span>
         </div>
+    </div>
 
-        <hr class="section-divider" />
+    <!-- EL CATÁLOGO (BOOK) -->
+    <div class="relative z-10 w-full max-w-5xl flex justify-center magazine-wrapper" id="book-viewport">
+        <!-- SOMBRA DEL MEDIO ELIMINADA (Se borró el div con degradado) -->
 
-        <!-- Bloque de Persona Destacada -->
-        @if (!string.IsNullOrEmpty(Model.NombrePersonaDestacada))
-        {
-            <div class="persona-destacada">
-                <div class="row align-items-center">
-                    <div class="col-md-auto text-center mb-3 mb-md-0">
-                        <img src="@(string.IsNullOrEmpty(Model.UrlFotoDestacado) ? "https://via.placeholder.com/120x120.png?text=Foto" : Url.Content(Model.UrlFotoDestacado))"
-                             alt="@Model.NombrePersonaDestacada" class="persona-imagen">
+        <div id="magazine-book" class="st-page-flip">
+
+            <!-- PAGINA 1: PORTADA -->
+            <div class="page" data-density="hard">
+                <div class="page-content">
+                    <img src="@Url.Content(Model.UrlImagenPrincipal)" class="w-full h-full object-cover filter grayscale-[15%]">
+                    <div class="absolute inset-0 bg-black/40"></div>
+                    <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-12 text-white bg-gradient-to-t from-black/80 to-transparent">
+                        <div class="w-12 md:w-16 h-[2px] bg-white/40 mb-6"></div>
                     </div>
-                    <div class="col-md">
-                        <h3 class="persona-nombre">Acerca de @Model.NombrePersonaDestacada</h3>
-                        <div class="persona-bio">
-                            @Html.Raw(Model.BiografiaCortaDestacado)
-                        </div>
+                    <div class="page-footer">001</div>
+                </div>
+            </div>
+
+            <!-- GALERÍA DE FOTOS -->
+            @foreach (var (foto, index) in Model.FotosContenido.Select((f, i) => (f, i)))
+            {
+                <div class="page">
+                    <div class="page-content">
+                        <img src="@Url.Content(foto.UrlFoto)" class="w-full h-full object-cover">
+                        <div class="page-footer">@(index + 3)</div>
+                    </div>
+                </div>
+            }
+
+            <!-- CONTRAPORTADA -->
+            <div class="page" data-density="hard">
+                <div class="page-content bg-zinc-900 flex flex-col items-center justify-center text-white">
+                    <div class="border border-white/20 p-8 md:p-12 text-center">
+                        <p class="text-[8px] md:text-[9px] tracking-[0.6em] font-bold">FIN DE LA EDICIÓN</p>
                     </div>
                 </div>
             </div>
-        }
 
-        <!-- Galería de Fotos -->
-        @if (Model.FotosContenido.Any())
-        {
-            <div class="galeria-articulo">
-                <h3 class="galeria-titulo text-center">Galería de Imágenes</h3>
-                <div class="row g-4">
-                    @foreach (var foto in Model.FotosContenido)
-                    {
-                        <div class="col-lg-4 col-md-6 col-12">
-                            <a href="@Url.Content(foto.UrlFoto)" target="_blank" class="d-block text-decoration-none">
-                                <img src="@Url.Content(foto.UrlFoto)" class="galeria-imagen" alt="@foto.Descripcion">
-                                <p class="leyenda-imagen">@foto.Descripcion</p>
-                            </a>
-                        </div>
-                    }
-                </div>
-            </div>
-        }
+        </div>
+    </div>
+
+    <!-- Controles de Navegación -->
+    <div class="z-20 mt-8 md:mt-12 flex items-center justify-between w-full max-w-xl">
+        <button onclick="book.flipPrev()" class="group flex items-center space-x-4 md:space-x-6 opacity-60 hover:opacity-100 transition-all">
+            <span class="text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold text-zinc-100">Anterior</span>
+            <div class="w-8 md:w-10 h-[1px] bg-white group-hover:w-16 transition-all duration-500"></div>
+        </button>
+
+        <div id="page-indicator" class="text-[9px] md:text-[10px] font-mono text-zinc-500 tracking-widest">
+            1 / --
+        </div>
+
+        <button onclick="book.flipNext()" class="group flex items-center space-x-4 md:space-x-6 opacity-60 hover:opacity-100 transition-all">
+            <div class="w-8 md:w-10 h-[1px] bg-white group-hover:w-16 transition-all duration-500"></div>
+            <span class="text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold text-zinc-100">Siguiente</span>
+        </button>
+    </div>
+
+    <div class="absolute bottom-4 md:bottom-8 text-[8px] uppercase tracking-[0.4em] text-zinc-700 font-bold">
+        Interactivo — Deslice para pasar página
     </div>
 </div>
+
+<script>
+    let book;
+
+    const initBook = () => {
+        const isMobile = window.innerWidth < 768; // Detectar si es móvil
+        const container = document.getElementById('magazine-book');
+
+        // Si ya existía un objeto book, destruirlo para re-inicializar (opcional)
+        // if(book) book.destroy();
+
+        book = new St.PageFlip(container, {
+            width: 500,
+            height: 700,
+            size: "stretch",
+            minWidth: 300,
+            maxWidth: 1000,
+            minHeight: 400,
+            maxHeight: 1400,
+            maxShadowOpacity: 0,      // Eliminamos sombras generadas por la librería en el lomo
+            showCover: true,
+            mobileScrollSupport: true,
+            drawShadow: false,        // Desactivamos la sombra interna que dibuja la librería
+            flippingTime: 800,
+            usePortrait: isMobile,    // <--- CLAVE PARA RESPONSIVE: Carga una sola página en móviles
+            startPage: 0,
+            showPageCorners: true,
+            useMouseEvents: true,
+            clickEventForward: true
+        });
+
+        book.loadFromHTML(document.querySelectorAll(".page"));
+
+        book.on('flip', (e) => {
+            const current = e.data + 1;
+            const total = book.getPageCount();
+            document.getElementById('page-indicator').innerText = `${current} / ${total}`;
+        });
+
+        // Actualizar total de páginas
+        setTimeout(() => {
+            document.getElementById('page-indicator').innerText = `1 / ${book.getPageCount()}`;
+        }, 500);
+    };
+
+    document.addEventListener('DOMContentLoaded', initBook);
+
+    // Reiniciar si cambia el tamaño de pantalla drásticamente (opcional)
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            // Podrías recargar la lógica de usePortrait aquí si el usuario gira el móvil
+        }, 250);
+    });
+</script>

@@ -80,9 +80,7 @@ namespace YSA.Web.Controllers
                 ContenidoTexto = contenidoSanitizado,
                 Categoria = articulo.Categoria ?? "General",
                 FechaPublicacion = articulo.FechaPublicacion,
-                UrlImagenPrincipal = articulo.UrlImagenPrincipal ?? string.Empty,
-                NombrePersonaDestacada = articulo.NombrePersonaDestacada,
-                BiografiaCortaDestacado = articulo.BiografiaCortaDestacado,
+                UrlImagenPrincipal = articulo.UrlImagenPortada ?? string.Empty,
                 UrlFotoDestacado = articulo.UrlFotoDestacado,
                 FotosContenido = articulo.Fotos?.OrderBy(f => f.Orden).ToList() ?? new List<ArticuloFoto>()
             };

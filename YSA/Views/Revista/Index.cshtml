@@ -408,13 +408,9 @@
                     @if (articuloDestacado != null)
                     {
                         <a href="@(detalleUrl)/@articuloDestacado.Id" class="text-decoration-none">
-                            <img src="@Url.Content(articuloDestacado.UrlImagenPrincipal ?? "/images/default-article.jpg")"
+                            <img src="@Url.Content(articuloDestacado.UrlImagenPortada ?? "/images/default-article.jpg")"
                                  alt="@articuloDestacado.Titulo"
                                  class="hero-image">
-                            <div class="image-badge">
-                                <h5 class="image-badge-title">"@articuloDestacado.Titulo"</h5>
-                                <p class="image-badge-author">- Artículo destacado</p>
-                            </div>
                         </a>
                     }
                     else
@@ -505,7 +501,7 @@
                                 <div class="carousel-item @(i == 0 ? "active" : "")" data-bs-interval="5000">
                                     <a href="@(detalleUrl)/@articulo.Id" class="text-decoration-none">
                                         <div class="carousel-articulo">
-                                            <img src="@Url.Content(articulo.UrlImagenPrincipal ?? "/images/default-article.jpg")"
+                                            <img src="@Url.Content(articulo.UrlImagenPortada ?? "/images/default-article.jpg")"
                                                  class="carousel-articulo-img"
                                                  alt="@articulo.Titulo">
                                             <div class="carousel-overlay">
@@ -567,7 +563,7 @@
                                 <div class="carousel-item @(i == 0 ? "active" : "")" data-bs-interval="6000">
                                     <a href="@(detalleUrl)/@articulo.Id" class="text-decoration-none">
                                         <div class="carousel-articulo">
-                                            <img src="@Url.Content(articulo.UrlImagenPrincipal ?? "/images/default-article.jpg")"
+                                            <img src="@Url.Content(articulo.UrlImagenPortada ?? "/images/default-article.jpg")"
                                                  class="carousel-articulo-img"
                                                  alt="@articulo.Titulo">
                                             <div class="carousel-overlay">
@@ -650,7 +646,7 @@
                     <div class="col-lg-4 col-md-6 col-12">
                         <a href="@(detalleUrl)/@articulo.Id" class="magazine-card text-dark h-100">
                             <div class="magazine-card-img-container">
-                                <img src="@Url.Content(articulo.UrlImagenPrincipal ?? "/images/default-article.jpg")"
+                                <img src="@Url.Content(articulo.UrlImagenPortada ?? "/images/default-article.jpg")"
                                      class="magazine-card-img"
                                      alt="@articulo.Titulo">
                             </div>

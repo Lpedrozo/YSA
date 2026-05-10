@@ -3,569 +3,330 @@
 @model ArticuloViewModel
 
 @{
-    // Títulos dinámicos
     ViewData["Title"] = Model.Id == 0 ? "Crear Artículo" : "Editar Artículo";
-    var formTitle = Model.Id == 0 ? "Crear Nuevo Artículo" : $"Editar Artículo: {Model.Titulo}";
+    var formTitle = Model.Id == 0 ? "Nuevo Artículo" : $"Editar: {Model.Titulo}";
     var submitButtonText = Model.Id == 0 ? "Crear Artículo" : "Guardar Cambios";
 }
 
 <style>
-    /* IMPORTACIÓN DE TIPOGRAFÍAS Y VARIABLES DEL ESTILO EDITORIAL */
+    /* =========================================== */
+    /* ESTILOS EDITORIALES SIMPLIFICADOS */
+    /* =========================================== */
+
     :root {
-        --color-primary-action: #ef8830;
-        --color-secondary: #212529;
-        --color-accent: #6c757d;
-        --color-background: #ffffff;
-        --color-card-bg: #ffffff;
-        --color-text-dark: #212529;
-        --color-text-light: #ffffff;
-        --color-border: #E8E8E8;
-        --color-alert: #e5361a;
-        --color-shadow-light: rgba(0, 0, 0, 0.1);
-        --color-section-bg: #f8f9fa;
         --color-brand-primary: #ef8830;
         --color-brand-secondary: #e5361a;
-        --color-brand-accent: #f2e514;
         --color-brand-success: #6db53e;
-        --color-brand-dark: #08080a;
+        --color-border: #E8E8E8;
+        --color-section-bg: #f8f9fa;
+        --color-text-dark: #212529;
+        --color-accent: #6c757d;
         --font-heading: 'Georgia', 'Times New Roman', serif;
         --font-body: 'Arial', 'Helvetica', sans-serif;
         --font-accent: 'Poppins', sans-serif;
-        --line-height-tight: 1.1;
-        --line-height-normal: 1.4;
-        --line-height-loose: 1.6;
-        --border-radius-sm: 8px;
-        --border-radius-md: 12px;
         --border-radius-lg: 16px;
-        --border-radius-xl: 20px;
+        --border-radius-md: 12px;
+        --border-radius-sm: 8px;
     }
 
-    body {
-        font-family: var(--font-body);
-        background-color: var(--color-background);
-        color: var(--color-text-dark);
-        line-height: var(--line-height-loose);
-    }
-
-    /* PORTADA DE REVISTA PARA EL HEADER */
-    .magazine-admin-header {
-        width: 100%;
-        height: 30vh;
-        background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
-        position: relative;
-        overflow: hidden;
-        margin-bottom: 3rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: var(--color-text-light);
-    }
-
-    .admin-cover-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.3);
-        z-index: 2;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-    }
-
-    .admin-cover-title-block {
-        z-index: 3;
-        max-width: 800px;
-    }
-
-    .admin-cover-title {
-        font-family: var(--font-heading);
-        font-size: 2.5rem;
-        font-weight: 900;
-        line-height: var(--line-height-tight);
-        margin-bottom: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-
-    .admin-cover-subtitle {
-        font-family: var(--font-body);
-        font-size: 1.1rem;
-        font-weight: 300;
-        color: rgba(255, 255, 255, 0.9);
-        line-height: var(--line-height-normal);
-    }
-
-    /* CONTENEDOR PRINCIPAL ESTILO REVISTA */
-    .form-container-editorial {
+    .form-container {
         max-width: 1000px;
         margin: 0 auto;
         padding: 2rem;
-        background-color: var(--color-card-bg);
+        background: white;
         border-radius: var(--border-radius-lg);
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         border: 1px solid var(--color-border);
     }
 
-    /* TÍTULOS PRINCIPALES */
-    .main-title-editorial {
-        font-family: var(--font-heading);
-        font-size: 2.5rem;
-        font-weight: 900;
-        color: var(--color-secondary);
+    .form-header {
         text-align: center;
-        margin-bottom: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--color-brand-primary);
     }
 
-    .main-subtitle-editorial {
-        font-family: var(--font-body);
-        font-size: 1.2rem;
+    .form-title {
+        font-family: var(--font-heading);
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-brand-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
         color: var(--color-accent);
-        text-align: center;
-        margin-bottom: 3rem;
+        font-size: 0.9rem;
     }
 
-    /* SECCIONES DE FORMULARIO */
-    .section-title-editorial {
+    .section-title {
         font-family: var(--font-heading);
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: var(--color-secondary);
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--color-text-dark);
         margin-bottom: 1.5rem;
         padding-bottom: 0.5rem;
-        border-bottom: 3px solid var(--color-brand-primary);
+        border-bottom: 2px solid var(--color-brand-primary);
         display: inline-block;
     }
 
-    .section-divider {
-        border: none;
-        height: 1px;
-        background: linear-gradient(to right, transparent, var(--color-border), transparent);
-        margin: 2rem 0;
-    }
-
-    /* FORMULARIOS ESTILO REVISTA */
-    .form-label-editorial {
-        font-family: var(--font-accent);
+    .form-label {
         font-weight: 600;
-        color: var(--color-secondary);
-        margin-bottom: 0.5rem;
-        font-size: 0.95rem;
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+        color: var(--color-text-dark);
     }
 
-    .form-control-editorial {
+    .form-control {
         border: 1px solid var(--color-border);
         border-radius: var(--border-radius-sm);
-        padding: 0.75rem 1rem;
-        font-family: var(--font-body);
-        transition: all 0.3s ease;
-        background-color: var(--color-card-bg);
-    }
-
-        .form-control-editorial:focus {
-            border-color: var(--color-brand-primary);
-            box-shadow: 0 0 0 0.2rem rgba(239, 136, 48, 0.25);
-            background-color: var(--color-card-bg);
-        }
-
-    /* BOTONES ESTILO REVISTA */
-    .btn-magazine-primary {
-        background-color: var(--color-brand-primary);
-        border-color: var(--color-brand-primary);
-        color: white;
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 2rem;
-        transition: all 0.3s ease;
-        font-family: var(--font-accent);
-    }
-
-        .btn-magazine-primary:hover {
-            background-color: var(--color-brand-secondary);
-            border-color: var(--color-brand-secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-    .btn-magazine-secondary {
-        background-color: transparent;
-        border: 2px solid var(--color-brand-primary);
-        color: var(--color-brand-primary);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.75rem 2rem;
-        transition: all 0.3s ease;
-        font-family: var(--font-accent);
-    }
-
-        .btn-magazine-secondary:hover {
-            background-color: var(--color-brand-primary);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-    /* BADGES ESTILO REVISTA */
-    .badge-magazine {
-        font-family: var(--font-accent);
-        font-weight: 600;
-        border-radius: var(--border-radius-sm);
-        padding: 0.5rem 1rem;
-        font-size: 0.8rem;
-    }
-
-    .badge-primary {
-        background-color: var(--color-brand-primary) !important;
-        color: white !important;
-    }
-
-    /* PREVIEW DE IMAGENES */
-    .image-preview {
-        border: 2px solid var(--color-border);
-        border-radius: var(--border-radius-sm);
-        padding: 1rem;
-        background-color: var(--color-section-bg);
-        margin-bottom: 1rem;
-    }
-
-    .image-preview-main {
-        max-height: 300px;
+        padding: 0.6rem 0.75rem;
+        font-size: 0.9rem;
         width: 100%;
-        object-fit: cover;
-        border-radius: var(--border-radius-sm);
     }
 
-    .image-preview-destacado {
-        width: 100px;
-        height: 100px;
+        .form-control:focus {
+            border-color: var(--color-brand-primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(239, 136, 48, 0.1);
+        }
+
+    /* Preview de imágenes */
+    .portada-preview {
+        width: 100%;
+        max-height: 300px;
         object-fit: cover;
-        border-radius: 50%;
-        border: 3px solid var(--color-brand-primary);
+        border-radius: var(--border-radius-md);
+        border: 1px solid var(--color-border);
     }
 
-    .image-preview-gallery {
-        width: 120px;
-        height: 120px;
-        object-fit: cover;
-        border-radius: var(--border-radius-sm);
-        border: 2px solid var(--color-border);
-    }
-
-    /* GALERÍA DE FOTOS */
-    .gallery-container {
+    .galeria-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
         gap: 1rem;
-        margin-bottom: 1.5rem;
+        margin-top: 1rem;
     }
 
-    .gallery-item {
+    .galeria-item {
         position: relative;
-        transition: transform 0.3s ease;
+        border-radius: var(--border-radius-sm);
+        overflow: hidden;
+        border: 1px solid var(--color-border);
+        transition: transform 0.2s;
     }
 
-        .gallery-item:hover {
+        .galeria-item:hover {
             transform: scale(1.05);
         }
 
-    .delete-btn {
+        .galeria-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+    .btn-eliminar-foto {
         position: absolute;
-        top: -8px;
-        right: -8px;
-        width: 24px;
-        height: 24px;
+        top: 5px;
+        right: 5px;
+        width: 25px;
+        height: 25px;
         border-radius: 50%;
         background-color: var(--color-brand-secondary);
         color: white;
         border: none;
+        font-size: 0.8rem;
+        cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.8rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.2s;
     }
 
-        .delete-btn:hover {
-            background-color: var(--color-alert);
+        .btn-eliminar-foto:hover {
+            background-color: #b02a37;
             transform: scale(1.1);
         }
 
-    /* ALERTAS Y MENSAJES */
-    .alert-editorial {
-        border-radius: var(--border-radius-md);
-        border: 1px solid var(--color-border);
-        padding: 1.5rem;
+    .btn-primary {
+        background-color: var(--color-brand-primary);
+        border: none;
+        color: white;
+        padding: 0.7rem 1.5rem;
+        border-radius: var(--border-radius-sm);
+        font-weight: 600;
+        transition: all 0.2s;
+        cursor: pointer;
     }
+
+        .btn-primary:hover {
+            background-color: var(--color-brand-secondary);
+            transform: translateY(-2px);
+        }
+
+    .btn-secondary {
+        background-color: var(--color-accent);
+        border: none;
+        color: white;
+        padding: 0.7rem 1.5rem;
+        border-radius: var(--border-radius-sm);
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-secondary:hover {
+            background-color: var(--color-text-dark);
+            transform: translateY(-2px);
+            color: white;
+        }
 
     .alert-info {
         background-color: rgba(109, 181, 62, 0.1);
-        border-color: var(--color-brand-success);
+        border: 1px solid var(--color-brand-success);
+        border-radius: var(--border-radius-sm);
+        padding: 1rem;
         color: var(--color-text-dark);
     }
 
-    .alert-danger {
-        background-color: rgba(229, 54, 26, 0.1);
-        border-color: var(--color-brand-secondary);
-        color: var(--color-text-dark);
+    hr {
+        margin: 2rem 0;
+        border: none;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--color-border), transparent);
     }
 
-    /* RESPONSIVE */
     @@media (max-width: 768px) {
-        .magazine-admin-header {
-            height: 25vh;
-        }
-
-        .admin-cover-title {
-            font-size: 2rem;
-        }
-
-        .admin-cover-subtitle {
-            font-size: 1rem;
-        }
-
-        .form-container-editorial {
+        .form-container {
             padding: 1.5rem;
             margin: 1rem;
         }
 
-        .main-title-editorial {
-            font-size: 2rem;
+        .form-title {
+            font-size: 1.5rem;
         }
 
-        .main-subtitle-editorial {
-            font-size: 1rem;
-        }
-
-        .gallery-container {
+        .galeria-grid {
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 0.75rem;
-        }
-    }
-
-    @@media (max-width: 576px) {
-        .admin-cover-title {
-            font-size: 1.6rem;
-        }
-
-        .form-container-editorial {
-            padding: 1rem;
-            margin: 0.5rem;
-        }
-
-        .main-title-editorial {
-            font-size: 1.8rem;
-        }
-
-        .btn-magazine-primary,
-        .btn-magazine-secondary {
-            width: 100%;
-            margin-bottom: 1rem;
-            margin-right: 0 !important;
-        }
-
-        .d-flex.justify-content-between {
-            flex-direction: column;
-            gap: 1rem;
         }
     }
 </style>
 
-
-<div class="container px-0 py-4 pb-5 mb-5">
-    <!-- CONTENIDO PRINCIPAL -->
-    <div class="form-container-editorial mb-5">
-        <h1 class="main-title-editorial">
-            <i class="fas fa-edit me-2"></i> @formTitle
-        </h1>
-        <p class="main-subtitle-editorial">@(Model.Id == 0 ? "Completa los detalles para crear un nuevo artículo" : "Modifica el contenido de tu artículo")</p>
-
-        <hr class="section-divider" />
+<div class="container py-4">
+    <div class="form-container">
+        <div class="form-header">
+            <h1 class="form-title">
+                <i class="fas fa-image me-2"></i> @formTitle
+            </h1>
+            <p class="form-subtitle">Sube una portada y una galería de imágenes para tu artículo</p>
+        </div>
 
         <form asp-action="@(Model.Id == 0 ? "CrearArticulo" : "EditarArticulo")"
               method="post"
               enctype="multipart/form-data">
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Estado" />
 
-            <!-- SECCIÓN 1: CONTENIDO PRINCIPAL -->
-            <div class="mb-5">
-                <h2 class="section-title-editorial">
-                    <i class="fas fa-pencil-alt me-2"></i> Contenido Principal
-                </h2>
-
-                <div class="row g-3">
-                    <!-- Título -->
-                    <div class="col-md-6">
-                        <label asp-for="Titulo" class="form-label-editorial">Título del Artículo</label>
-                        <input asp-for="Titulo" class="form-control-editorial" placeholder="Título principal del artículo" />
-                        <span asp-validation-for="Titulo" class="text-danger small"></span>
-                    </div>
-
-                    <!-- Categoría -->
-                    <div class="col-md-6">
-                        <label asp-for="Categoria" class="form-label-editorial">Categoría</label>
-                        <input asp-for="Categoria" class="form-control-editorial" placeholder="Ej: Tecnología, Estilo de Vida, Arte Digital" />
-                        <span asp-validation-for="Categoria" class="text-danger small"></span>
-                    </div>
-                </div>
-
-                <!-- Resumen -->
-                <div class="mt-4">
-                    <label asp-for="Resumen" class="form-label-editorial">Resumen</label>
-                    <textarea asp-for="Resumen" rows="3" class="form-control-editorial" placeholder="Un resumen corto para la vista previa del artículo..."></textarea>
-                    <span asp-validation-for="Resumen" class="text-danger small"></span>
-                </div>
-
-                <!-- Contenido Texto (TinyMCE) -->
-                <div class="mt-4">
-                    <label asp-for="ContenidoTexto" class="form-label-editorial">Contenido del Artículo</label>
-                    <textarea asp-for="ContenidoTexto" class="tinymce-editor-long"></textarea>
-                    <span asp-validation-for="ContenidoTexto" class="text-danger small"></span>
-                </div>
+            <!-- Título del Artículo -->
+            <div class="mb-4">
+                <label asp-for="Titulo" class="form-label">Título del Artículo</label>
+                <input asp-for="Titulo" class="form-control" placeholder="Título principal" />
+                <span asp-validation-for="Titulo" class="text-danger small"></span>
             </div>
 
-            <hr class="section-divider" />
+            <!-- Categoría -->
+            <div class="mb-4">
+                <label asp-for="Categoria" class="form-label">Categoría</label>
+                <input asp-for="Categoria" class="form-control" placeholder="Ej: Arte, Cultura, Exposiciones" />
+                <span asp-validation-for="Categoria" class="text-danger small"></span>
+            </div>
 
-            <!-- SECCIÓN 2: IMAGEN PRINCIPAL -->
-            <div class="mb-5">
-                <h2 class="section-title-editorial">
-                    <i class="fas fa-image me-2"></i> Imagen Principal
+            <!-- Resumen (opcional) -->
+            <div class="mb-4">
+                <label asp-for="Resumen" class="form-label">Resumen</label>
+                <textarea asp-for="Resumen" class="form-control" rows="2" placeholder="Descripción breve del artículo..."></textarea>
+                <span asp-validation-for="Resumen" class="text-danger small"></span>
+            </div>
+
+            <hr />
+
+            <!-- SECCIÓN: IMAGEN DE PORTADA -->
+            <div class="mb-4">
+                <h2 class="section-title">
+                    <i class="fas fa-camera me-2"></i> Imagen de Portada
                 </h2>
 
-                @if (!string.IsNullOrEmpty(Model.UrlImagenPrincipal))
+                @if (!string.IsNullOrEmpty(Model.UrlImagenPortada))
                 {
-                    <div class="image-preview mb-4">
-                        <p class="form-label-editorial mb-2">Imagen actual:</p>
-                        <img src="@Model.UrlImagenPrincipal" alt="Imagen Principal Actual" class="image-preview-main" />
-                        <input type="hidden" asp-for="UrlImagenPrincipal" />
-                        <small class="form-text text-muted mt-2">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Sube una nueva imagen para reemplazar la actual.
-                        </small>
+                    <div class="mb-3">
+                        <p class="form-label">Portada actual:</p>
+                        <img src="@Model.UrlImagenPortada" alt="Portada actual" class="portada-preview" />
                     </div>
                 }
 
-                <div class="mb-4">
-                    <label asp-for="ImagenPrincipalFile" class="form-label-editorial">Nueva Imagen Principal</label>
-                    <input asp-for="ImagenPrincipalFile" type="file" class="form-control-editorial" />
-                    <small class="form-text text-muted">
-                        <i class="fas fa-lightbulb me-1"></i>
-                        Recomendado: Imagen en formato JPG o PNG, relación 16:9 para mejor visualización.
-                    </small>
+                <div>
+                    <label asp-for="ImagenPortadaFile" class="form-label">
+                        @(string.IsNullOrEmpty(Model.UrlImagenPortada) ? "Subir portada" : "Cambiar portada")
+                    </label>
+                    <input asp-for="ImagenPortadaFile" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
+                    <small class="text-muted">Recomendado: formato JPG o PNG, calidad alta.</small>
                 </div>
             </div>
 
-            <hr class="section-divider" />
+            <hr />
 
-            <!-- SECCIÓN 3: PERSONA DESTACADA -->
-            <div class="mb-5">
-                <h2 class="section-title-editorial">
-                    <i class="fas fa-user-tie me-2"></i> Persona Destacada
+            <!-- SECCIÓN: GALERÍA DE FOTOS -->
+            <div class="mb-4">
+                <h2 class="section-title">
+                    <i class="fas fa-images me-2"></i> Galería de Fotos
                 </h2>
 
-                <div class="row g-3">
-                    <!-- Nombre Persona Destacada -->
-                    <div class="col-md-6">
-                        <label asp-for="NombrePersonaDestacada" class="form-label-editorial">Nombre</label>
-                        <input asp-for="NombrePersonaDestacada" class="form-control-editorial" placeholder="Nombre de la persona destacada o entrevistada" />
-                        <span asp-validation-for="NombrePersonaDestacada" class="text-danger small"></span>
-                    </div>
-
-                    <!-- Biografía Corta Destacado -->
-                    <div class="col-md-6">
-                        <label asp-for="BiografiaCortaDestacado" class="form-label-editorial">Biografía Corta</label>
-                        <textarea asp-for="BiografiaCortaDestacado" class="tinymce-editor-short" placeholder="Breve descripción o cargo con formato enriquecido"></textarea>
-                        <span asp-validation-for="BiografiaCortaDestacado" class="text-danger small"></span>
-                    </div>
-                </div>
-
-                <!-- Foto del Destacado -->
-                <div class="mt-4">
-                    <h3 class="h5 text-secondary mb-3">Foto del Destacado</h3>
-
-                    @if (!string.IsNullOrEmpty(Model.UrlFotoDestacado))
-                    {
-                        <div class="image-preview mb-4">
-                            <p class="form-label-editorial mb-2">Foto actual:</p>
-                            <div class="d-flex align-items-center gap-3">
-                                <img src="@Model.UrlFotoDestacado" alt="Foto Destacado Actual" class="image-preview-destacado" />
-                                <div>
-                                    <p class="small text-muted mb-1">Foto de perfil actual</p>
-                                    <small class="text-muted">Sube una nueva foto para reemplazarla.</small>
-                                </div>
+                <!-- Fotos existentes -->
+                @if (Model.FotosExistentes != null && Model.FotosExistentes.Any())
+                {
+                    <p class="form-label mb-2">Fotos en la galería (@Model.FotosExistentes.Count):</p>
+                    <div class="galeria-grid">
+                        @foreach (var foto in Model.FotosExistentes)
+                        {
+                            <div class="galeria-item">
+                                <img src="@foto.UrlFoto" alt="Foto galería" />
+                                <form asp-action="EliminarFotoGaleria" method="post" style="margin:0;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="fotoId" value="@foto.Id" />
+                                    <input type="hidden" name="articuloId" value="@Model.Id" />
+                                    <button type="submit" class="btn-eliminar-foto" title="Eliminar foto">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
                             </div>
-                            <input type="hidden" asp-for="UrlFotoDestacado" />
-                        </div>
-                    }
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert-info mb-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        No hay fotos en la galería. Sube las primeras imágenes.
+                    </div>
+                }
 
-                    <label asp-for="FotoDestacadoFile" class="form-label-editorial">Nueva Foto del Destacado</label>
-                    <input asp-for="FotoDestacadoFile" type="file" class="form-control-editorial" />
+                <!-- Subir nuevas fotos -->
+                <div class="mt-3">
+                    <label asp-for="FotosGaleriaFiles" class="form-label">Agregar fotos a la galería</label>
+                    <input asp-for="FotosGaleriaFiles" type="file" class="form-control" multiple accept=".jpg,.jpeg,.png" />
+                    <small class="text-muted">Puedes seleccionar múltiples imágenes a la vez.</small>
                 </div>
             </div>
 
-            <!-- SECCIÓN 4: FOTOS DE CONTENIDO ADICIONALES (Solo para Editar) -->
-            @if (Model.Id > 0)
-            {
-                <hr class="section-divider" />
-
-                <div class="mb-5">
-                    <h2 class="section-title-editorial">
-                        <i class="fas fa-images me-2"></i> Galería de Fotos
-                    </h2>
-
-                    <!-- Fotos Existentes -->
-                    @if (Model.FotosExistentes != null && Model.FotosExistentes.Any())
-                    {
-                        <p class="form-label-editorial mb-3">Fotos existentes (@Model.FotosExistentes.Count):</p>
-                        <div class="gallery-container">
-                            @foreach (var foto in Model.FotosExistentes)
-                            {
-                                <div class="gallery-item">
-                                    <img src="@foto.UrlFoto" alt="Foto Contenido" class="image-preview-gallery" />
-                                    <form asp-action="EliminarFotoContenido" method="post">
-                                        <input type="hidden" name="fotoId" value="@foto.Id" />
-                                        <input type="hidden" name="articuloId" value="@Model.Id" />
-                                        <button type="submit" class="delete-btn" title="Eliminar Foto">
-                                            &times;
-                                        </button>
-                                    </form>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-info alert-editorial" role="alert">
-                            <i class="fas fa-info-circle me-2"></i>
-                            No hay fotos de contenido adicionales para este artículo.
-                        </div>
-                    }
-
-                    <!-- Subida de Nuevas Fotos -->
-                    <div class="mt-4">
-                        <label asp-for="FotosContenidoFiles" class="form-label-editorial">Agregar Nuevas Fotos</label>
-                        <input asp-for="FotosContenidoFiles" type="file" multiple class="form-control-editorial" />
-                        <small class="form-text text-muted">
-                            <i class="fas fa-lightbulb me-1"></i>
-                            Puedes seleccionar múltiples archivos para crear una galería.
-                        </small>
-                    </div>
-                </div>
-            }
+            <hr />
 
             <!-- BOTONES DE ACCIÓN -->
-            <div class="d-flex justify-content-between align-items-center border-top pt-4 mt-5">
-                <!-- Botón Volver -->
-                <a asp-action="Articulos" class="btn btn-magazine-secondary btn-lg">
-                    <i class="fas fa-arrow-left me-2"></i> Volver al Listado
+            <div class="d-flex justify-content-between align-items-center mt-4 pt-2">
+                <a asp-action="Articulos" class="btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i> Volver
                 </a>
-
-                <!-- Botón Guardar/Crear -->
-                <button type="submit" class="btn btn-magazine-primary btn-lg">
+                <button type="submit" class="btn-primary">
                     <i class="fas fa-save me-2"></i> @submitButtonText
                 </button>
             </div>
@@ -577,49 +338,14 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.tiny.cloud/1/72k2eqfy02quriyevi4t2ctxtg50ucyx8gngemudhw0tyn9w/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
     <script>
-        // Configuración para Biografía Corta (Editor simple)
-        tinymce.init({
-            selector: 'textarea.tinymce-editor-short',
-            plugins: 'advlist autolink lists link code',
-            toolbar: 'bold italic bullist numlist link',
-            menubar: false,
-            height: 150,
-            content_style: `
-                body {
-                    font-family: 'Arial', 'Helvetica', sans-serif;
-                    font-size: 14px;
-                    line-height: 1.6;
-                    color: #212529;
-                }
-            `
-        });
-
-        // Configuración para Contenido Texto (Editor completo)
-        tinymce.init({
-            selector: 'textarea.tinymce-editor-long',
-            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
-            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-            height: 500,
-            content_style: `
-                body {
-                    font-family: 'Arial', 'Helvetica', sans-serif;
-                    font-size: 14px;
-                    line-height: 1.6;
-                    color: #212529;
-                }
-            `
-        });
-
         // Confirmación para eliminar fotos
         document.addEventListener('DOMContentLoaded', function() {
-            const deleteButtons = document.querySelectorAll('.delete-btn');
+            const deleteButtons = document.querySelectorAll('.btn-eliminar-foto');
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function(e) {
-                    if (!confirm('¿Estás seguro de que quieres eliminar esta foto? Esta acción no se puede deshacer.')) {
+                    if (!confirm('¿Eliminar esta foto de la galería? Esta acción no se puede deshacer.')) {
                         e.preventDefault();
                     }
                 });

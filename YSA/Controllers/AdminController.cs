@@ -2414,8 +2414,8 @@ namespace YSA.Web.Controllers
                 Titulo = a.Titulo,
                 Categoria = a.Categoria,
                 Estado = a.Estado,
-                NombrePersonaDestacada = a.NombrePersonaDestacada
-                // Solo mapeamos las propiedades necesarias para la tabla
+                UrlImagenPortada = a.UrlImagenPortada,
+                CantidadFotos = a.Fotos?.Count ?? 0
             }).ToList();
             return View(viewModels);
         }
@@ -2440,8 +2440,9 @@ namespace YSA.Web.Controllers
             }
 
             var sanitizer = new HtmlSanitizer();
-            model.ContenidoTexto = sanitizer.Sanitize(model.ContenidoTexto);
-            model.BiografiaCortaDestacado = sanitizer.Sanitize(model.BiografiaCortaDestacado);
+            model.ContenidoTexto = sanitizer.Sanitize(model.ContenidoTexto ?? string.Empty);
+            model.BiografiaCortaDestacado = sanitizer.Sanitize(model.BiografiaCortaDestacado ?? string.Empty);
+            model.Resumen = sanitizer.Sanitize(model.Resumen ?? string.Empty);
 
             var articulo = new Articulo
             {
@@ -2450,19 +2451,18 @@ namespace YSA.Web.Controllers
                 ContenidoTexto = model.ContenidoTexto,
                 Categoria = model.Categoria,
                 Estado = model.Estado,
-                NombrePersonaDestacada = model.NombrePersonaDestacada,
-                BiografiaCortaDestacado = model.BiografiaCortaDestacado,
+                UrlImagenPortada = null 
             };
 
             await _articuloService.CreateArticuloAsync(
                 articulo,
-                model.FotoDestacadoFile,
-                model.ImagenPrincipalFile,
-                model.FotosContenidoFiles?.ToList());
+                model.ImagenPortadaFile,
+                model.FotosGaleriaFiles?.ToList());
 
             TempData["SuccessMessage"] = "Artículo creado exitosamente.";
             return RedirectToAction(nameof(Articulos));
         }
+
 
         [HttpGet]
         public async Task<IActionResult> EditarArticulo(int id)
@@ -2481,11 +2481,8 @@ namespace YSA.Web.Controllers
                 ContenidoTexto = articulo.ContenidoTexto,
                 Categoria = articulo.Categoria,
                 Estado = articulo.Estado,
-                NombrePersonaDestacada = articulo.NombrePersonaDestacada,
-                BiografiaCortaDestacado = articulo.BiografiaCortaDestacado,
-                UrlFotoDestacado = articulo.UrlFotoDestacado,
-                UrlImagenPrincipal = articulo.UrlImagenPrincipal,
-                FotosExistentes = articulo.Fotos?.OrderBy(f => f.Orden).ToList()
+                UrlImagenPortada = articulo.UrlImagenPortada,
+                FotosExistentes = articulo.Fotos?.OrderBy(f => f.Orden).ToList() ?? new List<ArticuloFoto>()
             };
 
             return View("CrearEditarArticulo", viewModel);
@@ -2497,15 +2494,15 @@ namespace YSA.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // Si falla la validación, recarga las fotos existentes para no perderlas en la vista
                 var articuloOriginal = await _articuloService.GetArticuloByIdAsync(model.Id);
                 model.FotosExistentes = articuloOriginal?.Fotos?.OrderBy(f => f.Orden).ToList() ?? new List<ArticuloFoto>();
                 return View("CrearEditarArticulo", model);
             }
 
             var sanitizer = new HtmlSanitizer();
-            model.ContenidoTexto = sanitizer.Sanitize(model.ContenidoTexto);
-            model.BiografiaCortaDestacado = sanitizer.Sanitize(model.BiografiaCortaDestacado);
+            model.ContenidoTexto = sanitizer.Sanitize(model.ContenidoTexto ?? string.Empty);
+            model.BiografiaCortaDestacado = sanitizer.Sanitize(model.BiografiaCortaDestacado ?? string.Empty);
+            model.Resumen = sanitizer.Sanitize(model.Resumen ?? string.Empty);
 
             var articulo = new Articulo
             {
@@ -2515,16 +2512,12 @@ namespace YSA.Web.Controllers
                 ContenidoTexto = model.ContenidoTexto,
                 Categoria = model.Categoria,
                 Estado = model.Estado,
-                NombrePersonaDestacada = model.NombrePersonaDestacada,
-                BiografiaCortaDestacado = model.BiografiaCortaDestacado,
-                // Las URLs existentes se mantienen si no hay nuevo archivo subido (lógica en el servicio)
             };
 
             await _articuloService.UpdateArticuloAsync(
                 articulo,
-                model.FotoDestacadoFile,
-                model.ImagenPrincipalFile,
-                model.FotosContenidoFiles?.ToList());
+                model.ImagenPortadaFile,
+                model.FotosGaleriaFiles?.ToList());
 
             TempData["SuccessMessage"] = "Artículo actualizado exitosamente.";
             return RedirectToAction(nameof(Articulos));
@@ -2587,12 +2580,13 @@ namespace YSA.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> EliminarFotoContenido(int fotoId, int articuloId)
+        public async Task<IActionResult> EliminarFotoGaleria(int fotoId, int articuloId)
         {
-            await _articuloService.DeleteFotoContenidoAsync(fotoId);
-            TempData["SuccessMessage"] = "Foto de contenido eliminada.";
+            await _articuloService.DeleteFotoGaleriaAsync(fotoId);
+            TempData["SuccessMessage"] = "Foto de galería eliminada.";
             return RedirectToAction(nameof(EditarArticulo), new { id = articuloId });
         }
+
         [HttpPost]
         public async Task<IActionResult> GuardarArticulo(int id)
         {

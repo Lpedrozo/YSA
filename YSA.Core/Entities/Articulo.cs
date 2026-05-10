@@ -8,38 +8,29 @@ namespace YSA.Core.Entities
         [Key]
         public int Id { get; set; }
 
-        [Required]
         [StringLength(255)]
-        public string Titulo { get; set; }
+        public string? Titulo { get; set; }
 
-        public string Resumen { get; set; }
+        public string? Resumen { get; set; }
 
-        [Required]
-        public string ContenidoTexto { get; set; }
+        public string? ContenidoTexto { get; set; }
 
         public DateTime FechaPublicacion { get; set; } = DateTime.UtcNow;
 
         [StringLength(50)]
-        public string Categoria { get; set; }
+        public string? Categoria { get; set; }
 
         [StringLength(20)]
         public string Estado { get; set; } = "Borrador";
 
-        // --- Detalles de la Persona Destacada/Entrevistada (Autocontenidos) ---
-        [Required]
-        [StringLength(100)]
-        public string NombrePersonaDestacada { get; set; }
-
-        public string BiografiaCortaDestacado { get; set; }
+        // --- Campos simplificados (opcionales, solo si se necesitan) ---
+        [StringLength(255)]
+        public string? UrlImagenPortada { get; set; }  // Portada del artículo
 
         [StringLength(255)]
-        public string UrlFotoDestacado { get; set; }
+        public string? UrlFotoDestacado { get; set; }  // Opcional
 
-        // --- Imagen Principal del Artículo ---
-        [StringLength(255)]
-        public string UrlImagenPrincipal { get; set; }
-
-        // --- Relación de navegación: Fotos de contenido del artículo ---
+        // --- Relación de navegación: Fotos de galería del artículo ---
         public virtual ICollection<ArticuloFoto> Fotos { get; set; } = new List<ArticuloFoto>();
     }
 }

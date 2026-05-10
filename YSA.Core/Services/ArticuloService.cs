@@ -23,6 +23,7 @@ namespace YSA.Core.Services
             _articuloRepository = articuloRepository;
             _hostingEnvironment = hostingEnvironment;
         }
+
         private async Task<string?> GuardarArchivo(IFormFile? file, string subPath)
         {
             if (file == null || file.Length == 0)
@@ -30,7 +31,6 @@ namespace YSA.Core.Services
                 return null;
             }
 
-            // --- Cambio aquí: usar RootFolderName en lugar de "uploads" ---
             var uploadPath = Path.Combine(_hostingEnvironment.WebRootPath, RootFolderName, subPath);
             Directory.CreateDirectory(uploadPath);
 
@@ -40,36 +40,18 @@ namespace YSA.Core.Services
 
             var filePath = Path.Combine(uploadPath, fileName);
 
-            try
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Manejo de errores en caso de fallo al escribir el archivo
-                Console.WriteLine($"Error al guardar el archivo en {filePath}: {ex.Message}");
-                return null;
+                await file.CopyToAsync(stream);
             }
 
-
-            // --- Cambio aquí: URL relativa para la BD ---
-            // Retorna la URL relativa para guardar en la BD (ej: /Articulos/destacados/nombre.jpg)
             return $"/{RootFolderName}/{subPath}/{fileName}".Replace('\\', '/');
         }
 
-        /// <summary>
-        /// Elimina un archivo del sistema de archivos usando su URL relativa.
-        /// </summary>
-        /// <param name="url">La URL relativa del archivo (ej: /Articulos/destacados/archivo.jpg).</param>
         private void EliminarArchivo(string? url)
         {
             if (string.IsNullOrEmpty(url)) return;
 
-            // La URL ahora comienza con /Articulos/
-            // Combina wwwroot con la URL eliminando el '/' inicial
             var filePath = Path.Combine(_hostingEnvironment.WebRootPath, url.TrimStart('/'));
 
             if (File.Exists(filePath))
@@ -80,13 +62,12 @@ namespace YSA.Core.Services
                 }
                 catch (IOException ex)
                 {
-                    // Manejar excepción si el archivo está en uso
                     Console.WriteLine($"Error al intentar eliminar el archivo {filePath}: {ex.Message}");
                 }
             }
         }
 
-        // --- Implementación IArticuloService ---
+        // ==================== IMPLEMENTACIÓN DE IArticuloService ====================
 
         public async Task<IEnumerable<Articulo>> GetAllArticulosAsync()
         {
@@ -95,55 +76,61 @@ namespace YSA.Core.Services
 
         public async Task<Articulo> GetArticuloByIdAsync(int id)
         {
-            // Usamos Articulo? en el retorno para manejar posibles nulos
             return await _articuloRepository.GetByIdAsync(id);
         }
 
-        public async Task<Articulo> CreateArticuloAsync(Articulo articulo, IFormFile? fotoDestacadoFile, IFormFile? imagenPrincipalFile, List<IFormFile>? fotosContenidoFiles)
+        public async Task<Articulo> CreateArticuloAsync(
+            Articulo articulo,
+            IFormFile? imagenPortadaFile,
+            List<IFormFile>? fotosGaleriaFiles)
         {
-            // 1. Inicialización de la colección de fotos si es nula
+            // Inicializar colección de fotos
             articulo.Fotos ??= new List<ArticuloFoto>();
-
-            // 2. Guardar y asignar archivos principales
-            // SubPath: "destacados" -> wwwroot/Articulos/destacados/
-            articulo.UrlFotoDestacado = await GuardarArchivo(fotoDestacadoFile, "destacados");
-
-            // SubPath: "principales" -> wwwroot/Articulos/principales/
-            articulo.UrlImagenPrincipal = await GuardarArchivo(imagenPrincipalFile, "principales");
-
             articulo.FechaPublicacion = DateTime.UtcNow;
 
-            // 3. Guardar el artículo (necesario para obtener el ID)
+            // Guardar imagen de portada (si se proporciona)
+            if (imagenPortadaFile != null)
+            {
+                articulo.UrlImagenPortada = await GuardarArchivo(imagenPortadaFile, "portadas");
+            }
+
+            // Guardar el artículo para obtener el ID
             await _articuloRepository.AddAsync(articulo);
 
-            // 4. Guardar y asociar fotos de contenido
-            if (fotosContenidoFiles != null && fotosContenidoFiles.Count > 0)
+            // Guardar fotos de galería
+            if (fotosGaleriaFiles != null && fotosGaleriaFiles.Any())
             {
-                int initialCount = articulo.Fotos.Count;
-                // SubPath: "contenido/{articuloId}" -> wwwroot/Articulos/contenido/{articuloId}/
-                var contenidoSubPath = $"contenido/{articulo.Id}";
+                int orden = 0;
+                var galeriaSubPath = $"galeria/{articulo.Id}";
 
-                foreach (var file in fotosContenidoFiles.Where(f => f != null && f.Length > 0))
+                foreach (var file in fotosGaleriaFiles.Where(f => f != null && f.Length > 0))
                 {
-                    var url = await GuardarArchivo(file, contenidoSubPath);
+                    var url = await GuardarArchivo(file, galeriaSubPath);
                     if (!string.IsNullOrEmpty(url))
                     {
                         articulo.Fotos.Add(new ArticuloFoto
                         {
                             ArticuloId = articulo.Id,
                             UrlFoto = url,
-                            Orden = ++initialCount // Incrementar y asignar el orden
+                            Orden = orden++,
+                            Descripcion = null
                         });
                     }
                 }
-                // Actualizar para guardar las fotos si el AddAsync inicial no lo hizo con las colecciones
-                await _articuloRepository.UpdateAsync(articulo);
+
+                if (articulo.Fotos.Any())
+                {
+                    await _articuloRepository.UpdateAsync(articulo);
+                }
             }
 
             return articulo;
         }
 
-        public async Task UpdateArticuloAsync(Articulo articulo, IFormFile? fotoDestacadoFile, IFormFile? imagenPrincipalFile, List<IFormFile>? nuevasFotosContenidoFiles)
+        public async Task UpdateArticuloAsync(
+            Articulo articulo,
+            IFormFile? imagenPortadaFile,
+            List<IFormFile>? nuevasFotosGaleriaFiles)
         {
             var articuloExistente = await _articuloRepository.GetByIdAsync(articulo.Id);
 
@@ -152,61 +139,39 @@ namespace YSA.Core.Services
                 throw new KeyNotFoundException($"Artículo con ID {articulo.Id} no encontrado.");
             }
 
-            // Asegurar que la lista de fotos no es nula antes de añadir
             articuloExistente.Fotos ??= new List<ArticuloFoto>();
 
-            // 1. Manejo de Foto Destacado
-            if (fotoDestacadoFile != null)
+            // 1. Manejo de Imagen de Portada
+            if (imagenPortadaFile != null)
             {
-                EliminarArchivo(articuloExistente.UrlFotoDestacado);
-                articulo.UrlFotoDestacado = await GuardarArchivo(fotoDestacadoFile, "destacados");
-            }
-            else
-            {
-                articulo.UrlFotoDestacado = articuloExistente.UrlFotoDestacado;
+                EliminarArchivo(articuloExistente.UrlImagenPortada);
+                articuloExistente.UrlImagenPortada = await GuardarArchivo(imagenPortadaFile, "portadas");
             }
 
-            // 2. Manejo de Imagen Principal
-            if (imagenPrincipalFile != null)
-            {
-                EliminarArchivo(articuloExistente.UrlImagenPrincipal);
-                articulo.UrlImagenPrincipal = await GuardarArchivo(imagenPrincipalFile, "principales");
-            }
-            else
-            {
-                articulo.UrlImagenPrincipal = articuloExistente.UrlImagenPrincipal;
-            }
-
-            // Mapear propiedades sanitizadas (asumimos que el controlador ya las sanitizó)
+            // 2. Actualizar campos básicos (opcionales)
             articuloExistente.Titulo = articulo.Titulo;
             articuloExistente.Resumen = articulo.Resumen;
             articuloExistente.ContenidoTexto = articulo.ContenidoTexto;
             articuloExistente.Categoria = articulo.Categoria;
             articuloExistente.Estado = articulo.Estado;
-            articuloExistente.NombrePersonaDestacada = articulo.NombrePersonaDestacada;
-            articuloExistente.BiografiaCortaDestacado = articulo.BiografiaCortaDestacado;
 
-            // Actualizar URLs de archivos principales
-            articuloExistente.UrlFotoDestacado = articulo.UrlFotoDestacado;
-            articuloExistente.UrlImagenPrincipal = articulo.UrlImagenPrincipal;
-
-            // 3. Guardar y asociar NUEVAS fotos de contenido
-            if (nuevasFotosContenidoFiles != null && nuevasFotosContenidoFiles.Count > 0)
+            // 3. Agregar nuevas fotos de galería
+            if (nuevasFotosGaleriaFiles != null && nuevasFotosGaleriaFiles.Any())
             {
-                int initialCount = articuloExistente.Fotos.Count;
-                var contenidoSubPath = $"contenido/{articulo.Id}";
+                int orden = articuloExistente.Fotos.Count;
+                var galeriaSubPath = $"galeria/{articulo.Id}";
 
-                foreach (var file in nuevasFotosContenidoFiles.Where(f => f != null && f.Length > 0))
+                foreach (var file in nuevasFotosGaleriaFiles.Where(f => f != null && f.Length > 0))
                 {
-                    var url = await GuardarArchivo(file, contenidoSubPath);
+                    var url = await GuardarArchivo(file, galeriaSubPath);
                     if (!string.IsNullOrEmpty(url))
                     {
                         articuloExistente.Fotos.Add(new ArticuloFoto
                         {
                             ArticuloId = articulo.Id,
                             UrlFoto = url,
-                            Orden = ++initialCount,
-                            Descripcion = "Foto"
+                            Orden = orden++,
+                            Descripcion = orden.ToString()
                         });
                     }
                 }
@@ -220,11 +185,11 @@ namespace YSA.Core.Services
             var articulo = await _articuloRepository.GetByIdAsync(id);
             if (articulo == null) return;
 
-            // 1. Eliminar archivos del sistema de archivos
+            // 1. Eliminar archivos del sistema
+            EliminarArchivo(articulo.UrlImagenPortada);
             EliminarArchivo(articulo.UrlFotoDestacado);
-            EliminarArchivo(articulo.UrlImagenPrincipal);
 
-            // Eliminar todas las fotos de contenido
+            // Eliminar todas las fotos de galería
             if (articulo.Fotos != null)
             {
                 foreach (var foto in articulo.Fotos)
@@ -233,26 +198,25 @@ namespace YSA.Core.Services
                 }
             }
 
-            // 2. Eliminar de la base de datos
-            await _articuloRepository.DeleteAsync(id);
-
-            // 3. Opcional: Eliminar la carpeta completa del contenido del artículo si existe.
-            var articuloPath = Path.Combine(_hostingEnvironment.WebRootPath, RootFolderName, $"contenido/{id}");
-            if (Directory.Exists(articuloPath))
+            // 2. Eliminar carpeta de galería
+            var galeriaPath = Path.Combine(_hostingEnvironment.WebRootPath, RootFolderName, $"galeria/{id}");
+            if (Directory.Exists(galeriaPath))
             {
                 try
                 {
-                    // true para eliminar subcarpetas y archivos dentro.
-                    Directory.Delete(articuloPath, true);
+                    Directory.Delete(galeriaPath, true);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error al eliminar la carpeta del artículo {articuloPath}: {ex.Message}");
+                    Console.WriteLine($"Error al eliminar carpeta {galeriaPath}: {ex.Message}");
                 }
             }
+
+            // 3. Eliminar de la base de datos
+            await _articuloRepository.DeleteAsync(id);
         }
 
-        public async Task DeleteFotoContenidoAsync(int fotoId)
+        public async Task DeleteFotoGaleriaAsync(int fotoId)
         {
             var foto = await _articuloRepository.GetFotoByIdAsync(fotoId);
             if (foto == null) return;
@@ -260,19 +224,27 @@ namespace YSA.Core.Services
             EliminarArchivo(foto.UrlFoto);
             await _articuloRepository.DeleteFotoAsync(fotoId);
         }
+
         public async Task UpdateArticuloEstadoAsync(int id, string nuevoEstado)
         {
-            var articulo = await _articuloRepository.GetByIdAsync(id); 
-
+            var articulo = await _articuloRepository.GetByIdAsync(id);
             if (articulo == null)
             {
                 throw new KeyNotFoundException($"Artículo con ID {id} no encontrado.");
             }
 
             articulo.Estado = nuevoEstado;
+            await _articuloRepository.UpdateAsync(articulo);
+        }
 
-            await _articuloRepository.UpdateAsync(articulo); 
+        // ==================== NUEVOS MÉTODOS PARA CATÁLOGO ====================
 
+        public async Task<List<Articulo>> GetArticulosPublicadosAsync()
+        {
+            var allArticulos = await _articuloRepository.GetAllAsync();
+            return allArticulos.Where(a => a.Estado == "Publicado")
+                               .OrderByDescending(a => a.FechaPublicacion)
+                               .ToList();
         }
     }
 }

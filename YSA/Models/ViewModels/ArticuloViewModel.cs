@@ -8,53 +8,33 @@ namespace YSA.Web.Models.ViewModels
     public class ArticuloViewModel
     {
         public int Id { get; set; }
+        public string? Titulo { get; set; }
+        public string? Resumen { get; set; }
+        public string? ContenidoTexto { get; set; }
+        public string? Categoria { get; set; }
+        public string Estado { get; set; }
 
-        [Required(ErrorMessage = "El Título es obligatorio.")]
-        [StringLength(255)]
-        public string Titulo { get; set; }
+        // Persona destacada (opcional)
+        public string? NombrePersonaDestacada { get; set; }
+        public string? BiografiaCortaDestacado { get; set; }
 
-        [StringLength(500)]
-        public string Resumen { get; set; }
-
-        [Required(ErrorMessage = "El Contenido es obligatorio.")]
-        public string ContenidoTexto { get; set; }
-
-        [StringLength(50)]
-        public string Categoria { get; set; }
-
-        [StringLength(20)]
-        public string Estado { get; set; } = "Borrador"; // Por ejemplo: Borrador, Publicado
-
-        // --- Datos de la Persona Destacada ---
-        [Required(ErrorMessage = "El Nombre de la persona destacada es obligatorio.")]
-        [StringLength(100)]
-        [Display(Name = "Nombre del Destacado")]
-        public string NombrePersonaDestacada { get; set; }
-
-        [Display(Name = "Biografía Corta")]
-        public string BiografiaCortaDestacado { get; set; }
-
-        // Campo para mostrar la URL actual (en edición)
+        // URLs de imágenes
+        public string? UrlImagenPortada { get; set; }
         public string? UrlFotoDestacado { get; set; }
-
-        // Campo para la subida del nuevo archivo
-        [Display(Name = "Foto del Destacado")]
-        public IFormFile? FotoDestacadoFile { get; set; }
-
-        // --- Imagen Principal del Artículo ---
-        // Campo para mostrar la URL actual (en edición)
         public string? UrlImagenPrincipal { get; set; }
 
-        // Campo para la subida del nuevo archivo
-        [Display(Name = "Imagen Principal del Artículo")]
+        // Archivos para subir
+        public IFormFile? ImagenPortadaFile { get; set; }
+        public List<IFormFile>? FotosGaleriaFiles { get; set; }
+
+        // Para mostrar en la vista
+        public int CantidadFotos { get; set; }
+        public List<ArticuloFoto>? FotosExistentes { get; set; }
+
+        // Campos obsoletos (mantener por compatibilidad)
+        public IFormFile? FotoDestacadoFile { get; set; }
         public IFormFile? ImagenPrincipalFile { get; set; }
-
-        // --- Fotos de Contenido (Portafolio, etc.) ---
-        [Display(Name = "Fotos de Contenido Adicionales")]
         public List<IFormFile>? FotosContenidoFiles { get; set; }
-
-        // Para mostrar y gestionar las fotos ya existentes al editar
-        public List<ArticuloFoto> FotosExistentes { get; set; } = new List<ArticuloFoto>();
     }
     public class ArticuloDetalleViewModel
     {

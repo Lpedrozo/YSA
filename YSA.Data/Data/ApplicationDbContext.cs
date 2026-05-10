@@ -228,7 +228,7 @@ namespace YSA.Data.Data
                 .HasOne(af => af.Articulo)
                 .WithMany(a => a.Fotos)
                 .HasForeignKey(af => af.ArticuloId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Notificacion>(entity =>
             {
