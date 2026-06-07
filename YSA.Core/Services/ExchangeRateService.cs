@@ -51,7 +51,7 @@ namespace YSA.Core.Services
         {
             try
             {
-                var requestUrl = "USD";
+                var requestUrl = "EUR";
 
                 var response = await _httpClient.GetAsync(requestUrl);
                 response.EnsureSuccessStatusCode(); 
